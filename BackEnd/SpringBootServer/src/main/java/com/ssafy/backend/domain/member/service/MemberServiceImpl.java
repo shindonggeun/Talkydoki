@@ -45,7 +45,6 @@ public class MemberServiceImpl implements MemberService {
 
         String realPassword = member.getPassword();
 
-        // TODO: Spring Security 이용하여 비밀번호 검증 로직 필요
         if (!passwordEncoder.matches(loginRequest.password(), realPassword)) {
             throw new MemberException(MemberErrorCode.NOT_MATCH_PASSWORD);
         }
@@ -58,9 +57,8 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public MemberInfoRecord getMember(Long memberId) {
-        // TODO: 회원 관련 커스텀 Exception 처리하기
         Member member = memberRepository.findById(memberId).orElseThrow(()
-                -> new RuntimeException("해당 회원을 찾을 수 없습니다."));
+                -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
         return MemberInfoRecord.builder() // 회원 정보 반환
                 .id(member.getId())
