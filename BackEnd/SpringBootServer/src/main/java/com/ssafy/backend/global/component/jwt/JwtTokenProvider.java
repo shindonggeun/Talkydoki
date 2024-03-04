@@ -10,6 +10,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -87,6 +88,8 @@ public class JwtTokenProvider {
             throw new JwtException(JwtErrorCode.EXPIRED_TOKEN);
         } catch (MalformedJwtException | SecurityException | IllegalArgumentException e) {
             throw new JwtException(JwtErrorCode.INVALID_TOKEN);
+        } catch (SignatureException e) {
+            throw new JwtException(JwtErrorCode.SIGNATURE_INVALID);
         }
 
         return payload;
