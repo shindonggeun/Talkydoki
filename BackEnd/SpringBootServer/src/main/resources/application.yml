@@ -1,30 +1,30 @@
 spring:
   servlet:
-    # file ??? ?? ?? (????? ?? ?? ? Spring boot? ????? 1MB? ???)
+    # file 업로드 관련 세팅 (명시적으로 설정 안할 시 Spring boot는 기본적으로 1MB로 설정됨)
     multipart:
-      max-file-size: 10MB  # ?? ?? ??
-      max-request-size: 10MB  # ?? ?? ??
+      max-file-size: 10MB  # 최대 파일 크기
+      max-request-size: 10MB  # 최대 요청 크기
 
   jpa:
     open-in-view: false
     defer-datasource-initialization: true
     generate-ddl: true
     hibernate:
-      ddl-auto: create-drop                # ddl ?? ?? ??
+      ddl-auto: create-drop                # ddl 자동 작성 여부
     properties:
       hibernate:
-        format_sql: true             # ??????? ??? SQL? ??? ? ?? ?? ??
+        format_sql: true             # 하이버네이트가 실행한 SQL을 출력할 때 보기 좋게 정렬
         use_sql_comments: true
-        show_sql: true               # ??????? ??? SQL? ??
+        show_sql: true               # 하이버네이트가 실행한 SQL을 출력
         jdbc:
-          batch_size: 100              #   insert/update ??? ??? ???? ??? DB? ?? ? ?? ??
+          batch_size: 100              #   insert/update 쿼리를 원하는 개수만큼 모아서 DB에 날릴 수 있는 옵션
         default_batch_fetch_size: 100
 
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver  # DB ????
-    url: jdbc:mysql://localhost:3306/Tokidoki?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true       # ?????? URL
-    username: ssafy                     # ?????? ???
-    password: ssafy                       # ?????? ?? ????
+    driver-class-name: com.mysql.cj.jdbc.Driver  # DB 드라이버
+    url: jdbc:mysql://localhost:3306/jwt?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true       # 데이터베이스 URL
+    username: ssafy                     # 데이터베이스 계정명
+    password: ssafy                       # 데이터베이스 계정 비밀번호
 
   # NoSQL setting
   data:
@@ -37,10 +37,10 @@ spring:
 jwt:
   accessKey: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
   refreshKey: TestRefreshKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
-  accessExpiration: PT60M  # 60? (PT60M)
-  refreshExpiration: PT1080M  # 10080? (7?) (PT10080M)
+  accessExpiration: PT60M  # 60분 (PT60M)
+  refreshExpiration: PT1080M  # 10080분 (7일) (PT10080M)
 
-# log ??
+# log 관리
 logging:
   level:
     org.hibernate:
