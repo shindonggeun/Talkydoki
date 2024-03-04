@@ -1,5 +1,6 @@
 package com.ssafy.backend.domain.member.service;
 
+import com.ssafy.backend.domain.member.dto.MemberInfoRecord;
 import com.ssafy.backend.domain.member.dto.MemberLoginRequestRecord;
 import com.ssafy.backend.domain.member.dto.MemberLoginResponseRecord;
 import com.ssafy.backend.domain.member.dto.MemberSignupRequestDto;
@@ -23,4 +24,12 @@ public interface MemberService {
      * @return 로그인 응답 데이터
      */
     MemberLoginResponseRecord loginMember(MemberLoginRequestRecord loginRequest);
+
+    /**
+     * 회원 정보를 조회합니다.
+     *
+     * @param memberId 회원 ID
+     * @return 조회된 회원 정보
+     */
+    MemberInfoRecord getMember(Long memberId);
 }

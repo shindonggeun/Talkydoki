@@ -1,10 +1,12 @@
 package com.ssafy.backend.domain.member.controller;
 
+import com.ssafy.backend.domain.member.dto.MemberInfoRecord;
 import com.ssafy.backend.domain.member.dto.MemberLoginRequestRecord;
 import com.ssafy.backend.domain.member.dto.MemberLoginResponseRecord;
 import com.ssafy.backend.domain.member.dto.MemberSignupRequestDto;
 import com.ssafy.backend.domain.member.service.MemberService;
 import com.ssafy.backend.global.common.dto.Message;
+import com.ssafy.backend.global.component.jwt.security.MemberLoginActiveRecord;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
@@ -12,10 +14,9 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "회원", description = "회원 관련 API 입니다.")
 @RestController
@@ -26,7 +27,7 @@ public class MemberController {
 
     @Operation(
             summary = "회원가입",
-            description = "회원가입을 합니다."
+            description = "회원정보에 필요한 정보를 입력하여 회원가입을 하는 기능입니다."
     )
     @PostMapping("/signup")
     public ResponseEntity<Message<Void>> signupMember(@Valid @RequestBody MemberSignupRequestDto signupRequest) {
@@ -36,7 +37,7 @@ public class MemberController {
 
     @Operation(
             summary = "로그인",
-            description = "로그인을 합니다."
+            description = "이메일과 비밀번호를 입력하여 로그인을 하는 기능입니다."
     )
     @PostMapping("/login")
     public ResponseEntity<Message<MemberLoginResponseRecord>> loginMember(@RequestBody MemberLoginRequestRecord loginRequest,
@@ -48,5 +49,16 @@ public class MemberController {
         accessTokenCookie.setMaxAge(3600); // 60분(3600초)으로 설정 (3600)
         response.addCookie(accessTokenCookie);
         return ResponseEntity.ok().body(Message.success(loginResponse));
+    }
+
+    @Operation(
+            summary = "회원정보 불러오기",
+            description = "비밀번호를 제외한 회원가입때 입력한 정보를 불러오는 기능입니다."
+    )
+    @GetMapping("/get")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<MemberInfoRecord>> getMember(@AuthenticationPrincipal MemberLoginActiveRecord loginActive) {
+        MemberInfoRecord info = memberService.getMember(loginActive.id());
+        return ResponseEntity.ok().body(Message.success(info));
     }
 }
