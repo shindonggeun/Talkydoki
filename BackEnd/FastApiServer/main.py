@@ -1,10 +1,14 @@
 # main.py
 from fastapi import FastAPI
 from sqlalchemy import MetaData
-from database import engine, SessionLocal
-from models.vocabulary import Vocabulary  # 모델 임포트를 이곳으로 이동
+from database import engine
+from models.vocabulary import Vocabulary
+from routes.vocabulary import router as vocabulary_router
+
 
 app = FastAPI()
+
+app.include_router(vocabulary_router)
 
 # 서버 시작 시 테이블 생성
 @app.on_event("startup")
@@ -21,9 +25,3 @@ def shutdown_event():
     metadata = MetaData()
     # 지정된 테이블만 삭제
     metadata.drop_all(engine, tables=[Vocabulary.__table__])
-
-@app.get("/")
-async def root():
-    return {"message": "Hello World"}
-
-# 나머지 경로...
