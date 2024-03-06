@@ -8,4 +8,5 @@ class Vocabulary(Base):
     vocabulary_id = Column(BigInteger, primary_key=True, index=True)
     japanese = Column(String(255), nullable=False)
     korean = Column(String(255), nullable=False)
-    japanese_read = Column(String(255), nullable=True)
+    japanese_read = Column(String(255), nullable=False)
+    type = Column(String(4), nullable=True)
