@@ -30,10 +30,19 @@ const createAxiosInstance = (baseURL?: string) => {
     }
   );
 
+  instance.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    (error) => {
+      return error.response;
+    }
+  );
+
   return instance;
 };
 
 // 설정된 API URL을 사용하는 Axios 인스턴스
-const local = createAxiosInstance(VITE_REACT_API_URL);
+const customAxios = createAxiosInstance(VITE_REACT_API_URL);
 
-export { local };
+export { customAxios };
