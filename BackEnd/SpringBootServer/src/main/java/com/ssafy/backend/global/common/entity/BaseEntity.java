@@ -22,19 +22,21 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
 
     /**
-     * 엔티티 생성 시간
+     * 엔티티 생성 시간입니다.
      * 'created_at' 컬럼에 매핑되며, 엔티티가 생성될 때 현재 시간으로 자동 설정됩니다.
-     * 이 필드는 업데이트 되지 않습니다. (updatable = false).
+     * 이 필드는 업데이트 되지 않습니다. (updatable = false)
+     * 'nullable = false'로 설정되어 있어, 이 필드는 항상 값을 가지며 NULL이 될 수 없습니다.
      */
     @CreatedDate
-    @Column(name = "created_at", updatable = false)
+    @Column(updatable = false, nullable = false)
     private LocalDateTime createdAt;
 
     /**
-     * 엔티티 최종 수정 시간
+     * 엔티티 최종 수정 시간입니다.
      * 'updated_at' 컬럼에 매핑되며, 엔티티가 수정될 때 현재 시간으로 자동 설정됩니다.
+     * 'nullable = false'로 설정되어 있어, 이 필드는 항상 값을 가지며 NULL이 될 수 없습니다.
      */
     @LastModifiedDate
-    @Column(name = "updated_at")
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
 }
