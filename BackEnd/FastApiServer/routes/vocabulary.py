@@ -11,6 +11,7 @@ from models.vocabulary import Vocabulary
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
+
 # 데이터베이스 세션 의존성 생성
 def get_db():
     db = SessionLocal()
@@ -19,11 +20,13 @@ def get_db():
     finally:
         db.close()
 
+
 router = APIRouter()
 
 
-@router.post("/api/v2/crawling/start/{level}/{lastPage}")
+@router.post("/api/v2/crawling/start/{level}/{startPage}/{lastPage}")
 async def start_crawling(level: int = Path(),
+                         startPage: int = Path(),
                          lastPage: int = Path(),
                          db: Session = Depends(get_db)):
     # Chrome WebDriver 설정
@@ -33,7 +36,7 @@ async def start_crawling(level: int = Path(),
     driver = webdriver.Chrome(service=service, options=chrome_options)
 
     # 각 페이지를 반복
-    for page in range(1, lastPage+1):
+    for page in range(startPage, lastPage + 1):
         # 페이지 URL 업데이트
         url = f"https://ja.dict.naver.com/#/jlpt/list?level={level}&part=allClass&page={page}"
 
@@ -48,32 +51,37 @@ async def start_crawling(level: int = Path(),
 
         # 각 'row' 요소에 대해 일본어와 한국어 뜻 추출
         for row in rows:
-            # 일본어 발음 (한문) 추출
-            japanese_read = row.find_element(By.CSS_SELECTOR, 'a[lang="ja"]').text
-            # 한국어 뜻 추출
-            korean = row.find_element(By.CSS_SELECTOR, 'p.mean[lang="ko"]').text.strip()
-            # 일본어 추출 (여기서 정규식을 사용하여 필요한 처리를 합니다)
-            japanese = re.sub(r'\[|\]', '', row.find_element(By.CSS_SELECTOR, 'span.pronunciation').text).strip()
+            try:
+                # 일본어 발음 (한문) 추출
+                japanese_read_element = row.find_element(By.CSS_SELECTOR, 'a[lang="ja"]')
+                japanese_read = japanese_read_element.text if japanese_read_element else None
 
-            # 품사 정보가 있는 경우와 없는 경우를 구분하여 처리
-            word_class = None
-            if (
-                    '명사' in korean or '대명사' in korean or '동사' in korean or
-                    '조사' in korean or '형용사' in korean or '접사' in korean or
-                    '부사' in korean or '감동사' in korean or '형용동사' in korean or
-                    '기타' in korean
-            ):
-                word_class = korean.split(' ')[0]
-                korean = ' '.join(korean.split(' ')[1:])
+                # 한국어 뜻 추출
+                korean = row.find_element(By.CSS_SELECTOR, 'p.mean[lang="ko"]').text.strip()
 
-            # Vocabulary 인스턴스 생성 및 데이터베이스 세션에 추가
-            new_vocabulary = Vocabulary(
-                japanese=japanese,
-                korean=korean,
-                japanese_read=japanese_read,
-                type=word_class
-            )
-            db.add(new_vocabulary)
+                # 일본어 추출
+                japanese_elements = row.find_elements(By.CSS_SELECTOR, 'span.pronunciation')
+                japanese = re.sub(r'\[|\]', '', japanese_elements[0].text).strip() if japanese_elements else None
+
+                # 품사 정보 추출 및 처리
+                word_class = None
+                if any(pos in korean for pos in ['명사', '대명사', '동사', '조사', '형용사', '접사', '부사', '감동사', '형용동사', '기타']):
+                    word_class = korean.split(' ')[0]
+                    korean = ' '.join(korean.split(' ')[1:])
+
+                # 일본어가 None이 아닐 경우에만 데이터베이스에 저장
+                if japanese:
+                    new_vocabulary = Vocabulary(
+                        japanese=japanese,
+                        korean=korean,
+                        japanese_read=japanese_read,
+                        type=word_class
+                    )
+                    db.add(new_vocabulary)
+
+            except Exception as e:
+                # 에러 로깅 및 에러 발생한 row 건너뛰기
+                print(f"Error processing row: {e}")
 
         # 페이지별로 커밋
         db.commit()
