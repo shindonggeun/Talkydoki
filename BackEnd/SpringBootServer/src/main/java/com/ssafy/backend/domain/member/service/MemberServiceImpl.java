@@ -70,4 +70,12 @@ public class MemberServiceImpl implements MemberService {
                 .build();
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void deleteMember(Long memberId) {
+        memberRepository.deleteById(memberId);
+    }
+
 }

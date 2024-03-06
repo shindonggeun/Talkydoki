@@ -32,4 +32,11 @@ public interface MemberService {
      * @return 조회된 회원 정보
      */
     MemberInfoRecord getMember(Long memberId);
+
+    /**
+     * 회원 탈퇴를 처리합니다.
+     *
+     * @param memberId 탈퇴할 회원의 ID
+     */
+    void deleteMember(Long memberId);
 }
