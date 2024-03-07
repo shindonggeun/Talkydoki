@@ -63,11 +63,19 @@ async def start_crawling(level: int = Path(),
                 japanese_elements = row.find_elements(By.CSS_SELECTOR, 'span.pronunciation')
                 japanese = re.sub(r'\[|\]', '', japanese_elements[0].text).strip() if japanese_elements else None
 
-                # 품사 정보 추출 및 처리
-                word_class = None
-                if any(pos in korean for pos in ['명사', '대명사', '동사', '조사', '형용사', '접사', '부사', '감동사', '형용동사', '기타']):
-                    word_class = korean.split(' ')[0]
-                    korean = ' '.join(korean.split(' ')[1:])
+                # 품사 추출
+                word_class_elements = row.find_elements(By.CSS_SELECTOR, 'span.word_class')
+                word_class = word_class_elements[0].text.strip() if word_class_elements else None
+
+                # print(korean)
+
+                # 품사가 None이 아닌 경우
+                if word_class:
+                    # 한국어 앞에 품사 붙어 있는 것들 처리
+                    korean = re.sub(r'\b{}\b'.format(word_class), '', korean)
+                    korean = ' '.join(korean.split()).strip()
+
+                print(f'페이지: {page} - 일본어:  {japanese} - 품사: {word_class} - 한국어: {korean} - 일본어 발읍: {japanese_read}')
 
                 # 일본어가 None이 아닐 경우에만 데이터베이스에 저장
                 if japanese:
