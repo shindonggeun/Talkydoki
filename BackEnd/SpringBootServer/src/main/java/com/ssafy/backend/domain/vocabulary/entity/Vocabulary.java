@@ -19,10 +19,10 @@ public class Vocabulary extends BaseEntity {
     @Column(nullable = false, columnDefinition = "VARCHAR(50)")
     private String japanese;
 
-    @Column(nullable = false, columnDefinition = "VARCHAR(100)")
+    @Column(nullable = false, columnDefinition = "VARCHAR(200)")
     private String korean;
 
-    @Column(columnDefinition = "VARCHAR(50)")
+    @Column(nullable = false, columnDefinition = "VARCHAR(50)")
     private String japaneseRead;
 
     @Column(columnDefinition = "VARCHAR(50)")
