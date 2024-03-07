@@ -5,7 +5,7 @@ import { light } from "./styles/common/themes";
 import { Route, Routes } from "react-router-dom";
 
 // route 컴포넌트
-import Intro from "./routes/Intro";
+import Intro from "@/routes/Intro";
 
 function App() {
   return (
