@@ -17,6 +17,7 @@ public class VocabularyServiceImpl implements VocabularyService {
     private final VocabularyRepository vocabularyRepository;
 
     @Override
+    @Transactional(readOnly = true)
     public VocabularyInfoRecord getDailyVocabulary() {
         Vocabulary vocabulary = vocabularyRepository.findRandom().orElseThrow(()
         -> new RuntimeException("단어장 데이터가 없습니다."));
