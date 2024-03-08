@@ -24,17 +24,27 @@ export const Global = createGlobalStyle`
         --text: ${props.theme.doc.text};
         --bg: ${props.theme.doc.background};
         --bg-modal: ${props.theme.doc.backgroundModal};
-        --shadow: ${props.theme.doc.shadow};`}
+        --shadow: ${props.theme.doc.shadow};
+        --shadow-dark :${props.theme.doc.shadowDark};
+        `}
     }
 
     body, html {
       margin: 0;
       background-color: var(--bg);
+      font-family: 'ScoreDream', 'Mplus';
+    }
+
+    body, html, div, span, button, form {
+      box-sizing: border-box;
       color: var(--text);
     }
 
-    div, span, button, form {
-      box-sizing: border-box;
-      color: var(--text);
+    h1.title {
+      width: fit-content;
+      color: transparent;
+      background: radial-gradient(farthest-corner, var(--shadow), var(--shadow-dark));
+      background-clip: text;
+      font-weight: 900;
     }
 `;
