@@ -9,13 +9,11 @@ export const useLogin = () => {
       customAxios.post(`/member/login`, payload),
 
     onSuccess: (res) => {
-      if (res.status == 200) {
-        // 로그인 성공 시 (추후 추가)
+      const response = res.data;
+      if (response.dataHeader.successCode === 0) {
+        // 성공했을 때 로직 처리
       } else {
-        // 로그인 실패 시
-        for (const err of Object.keys(res.data)) {
-          console.log(res.data[err][0]);
-        }
+        alert(response.dataHeader.resultMessage);
       }
     },
 
@@ -30,13 +28,11 @@ export const useSignup = () => {
       customAxios.post(`/member/signup`, payload),
 
     onSuccess: (res) => {
-      if (res.status == 200) {
-        // 회원가입 성공 시 (추후 추가)
+      const response = res.data;
+      if (response.dataHeader.successCode === 0) {
+        // 성공했을 때 로직 처리
       } else {
-        // 회원가입 실패 시
-        for (const err of Object.keys(res.data)) {
-          console.log(res.data[err][0]);
-        }
+        alert(response.dataHeader.resultMessage);
       }
     },
 
