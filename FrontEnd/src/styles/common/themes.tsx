@@ -31,6 +31,7 @@ export const light = {
   },
   doc: {
     text: "#312a3df2",
+    textButton: "#f9f6ffee",
     background: "#F4F4FA",
     backgroundModal: "#FFFFFF",
     shadow: "#e4e4eddf",
@@ -66,13 +67,14 @@ export const dark = {
   },
   blue: {
     color: "#176CFF",
-    dark: "#38A2FF",
-    light: "#2448AB",
+    dark: "#2448AB",
+    light: "#38A2FF",
   },
   doc: {
     text: "#f9f6ffee",
+    textButton: "#f9f6ffee",
     background: "#312d40",
-    backgroundModal: "#3b334ef0",
+    backgroundModal: "#3c334fef",
     shadow: "#282838df",
     shadowDark: "#1a1a24df",
   },

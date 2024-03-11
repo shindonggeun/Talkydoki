@@ -22,6 +22,7 @@ export const Global = createGlobalStyle`
         --blue-light: ${props.theme.blue.light};
         --blue-dark: ${props.theme.blue.dark};
         --text: ${props.theme.doc.text};
+        --text-button: ${props.theme.doc.textButton};
         --bg: ${props.theme.doc.background};
         --bg-modal: ${props.theme.doc.backgroundModal};
         --shadow: ${props.theme.doc.shadow};
@@ -40,11 +41,4 @@ export const Global = createGlobalStyle`
       color: var(--text);
     }
 
-    h1.title {
-      width: fit-content;
-      color: transparent;
-      background: radial-gradient(farthest-corner, var(--shadow), var(--shadow-dark));
-      background-clip: text;
-      font-weight: 900;
-    }
 `;
