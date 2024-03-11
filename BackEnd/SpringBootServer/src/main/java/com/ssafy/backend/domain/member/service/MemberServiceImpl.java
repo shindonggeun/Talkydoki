@@ -1,9 +1,9 @@
 package com.ssafy.backend.domain.member.service;
 
-import com.ssafy.backend.domain.member.dto.MemberInfoRecord;
-import com.ssafy.backend.domain.member.dto.MemberLoginRequestRecord;
-import com.ssafy.backend.domain.member.dto.MemberLoginResponseRecord;
-import com.ssafy.backend.domain.member.dto.MemberSignupRequestDto;
+import com.ssafy.backend.domain.member.dto.MemberInfo;
+import com.ssafy.backend.domain.member.dto.MemberLoginRequest;
+import com.ssafy.backend.domain.member.dto.MemberLoginResponse;
+import com.ssafy.backend.domain.member.dto.MemberSignupRequest;
 import com.ssafy.backend.domain.member.entity.Member;
 import com.ssafy.backend.domain.member.exception.MemberErrorCode;
 import com.ssafy.backend.domain.member.exception.MemberException;
@@ -29,7 +29,7 @@ public class MemberServiceImpl implements MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
-    public void signupMember(MemberSignupRequestDto signupRequest) {
+    public void signupMember(MemberSignupRequest signupRequest) {
         if (memberRepository.existsByEmail(signupRequest.getEmail())) {
             throw new MemberException(MemberErrorCode.EXIST_MEMBER_EMAIL);
         }
@@ -43,7 +43,7 @@ public class MemberServiceImpl implements MemberService {
      * {@inheritDoc}
      */
     @Override
-    public MemberLoginResponseRecord loginMember(MemberLoginRequestRecord loginRequest) {
+    public MemberLoginResponse loginMember(MemberLoginRequest loginRequest) {
         Member member = memberRepository.findByEmail(loginRequest.email()).orElseThrow(()
                 -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
@@ -75,11 +75,11 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     @Transactional(readOnly = true)
-    public MemberInfoRecord getMember(Long memberId) {
+    public MemberInfo getMember(Long memberId) {
         Member member = memberRepository.findById(memberId).orElseThrow(()
                 -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
-        return MemberInfoRecord.builder() // 회원 정보 반환
+        return MemberInfo.builder() // 회원 정보 반환
                 .id(member.getId())
                 .email(member.getEmail())
                 .name(member.getName())

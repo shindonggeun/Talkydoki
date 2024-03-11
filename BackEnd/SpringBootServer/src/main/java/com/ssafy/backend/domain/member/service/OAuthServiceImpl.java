@@ -1,6 +1,6 @@
 package com.ssafy.backend.domain.member.service;
 
-import com.ssafy.backend.domain.member.dto.MemberLoginResponseRecord;
+import com.ssafy.backend.domain.member.dto.MemberLoginResponse;
 import com.ssafy.backend.domain.member.entity.Member;
 import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.global.component.jwt.service.JwtTokenService;
@@ -30,7 +30,7 @@ public class OAuthServiceImpl implements OAuthService {
     }
 
     @Override
-    public MemberLoginResponseRecord loginOAuth(OAuthDomain oAuthDomain, String authCode) {
+    public MemberLoginResponse loginOAuth(OAuthDomain oAuthDomain, String authCode) {
         Member oauthMember = oAuthMemberClient.fetch(oAuthDomain, authCode);
         Member member = memberRepository.findByEmail(oauthMember.getEmail()).orElseGet(()
                 -> memberRepository.save(oauthMember));

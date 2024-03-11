@@ -1,6 +1,6 @@
 package com.ssafy.backend.domain.member.controller;
 
-import com.ssafy.backend.domain.member.dto.MemberLoginResponseRecord;
+import com.ssafy.backend.domain.member.dto.MemberLoginResponse;
 import com.ssafy.backend.domain.member.service.OAuthService;
 import com.ssafy.backend.global.common.dto.Message;
 import com.ssafy.backend.global.component.oauth.vendor.enums.OAuthDomain;
@@ -23,12 +23,12 @@ public class OAuthController {
     }
 
     @GetMapping("/{oAuthDomain}/login")
-    public ResponseEntity<Message<MemberLoginResponseRecord>> loginOAuth(@PathVariable("oAuthDomain") OAuthDomain oAuthDomain,
-                                                                         @RequestParam("code") String authCode,
-                                                                         HttpServletResponse response) {
-        MemberLoginResponseRecord loginResponse = oAuthService.loginOAuth(oAuthDomain, authCode);
+    public ResponseEntity<Message<MemberLoginResponse>> loginOAuth(@PathVariable("oAuthDomain") OAuthDomain oAuthDomain,
+                                                                   @RequestParam("code") String authCode,
+                                                                   HttpServletResponse response) {
+        MemberLoginResponse loginResponse = oAuthService.loginOAuth(oAuthDomain, authCode);
         // JWT 토큰을 쿠키에 저장
-        Cookie accessTokenCookie = new Cookie("accessToken", loginResponse.token().accessToken());
+        Cookie accessTokenCookie = new Cookie("accessToken", loginResponse.jwtToken().accessToken());
         accessTokenCookie.setPath("/");
         accessTokenCookie.setMaxAge(3600); // 60분(3600초)으로 설정
         response.addCookie(accessTokenCookie);
