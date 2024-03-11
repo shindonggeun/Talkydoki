@@ -44,6 +44,9 @@ dependencies {
 	// Http Interface (webflux)
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
+	// Firebase
+	implementation 'com.google.firebase:firebase-admin:9.2.0'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'
