@@ -29,5 +29,9 @@ sudo wget https://cdn.jsdelivr.net/gh/lework/jenkins-update-center/rootCA/update
 # Jenkins 설정 파일 수정
 sudo sed -i 's#https://updates.jenkins.io/update-center.json#https://raw.githubusercontent.com/lework/jenkins-update-center/master/updates/tencent/update-center.json#' ./hudson.model.UpdateCenter.xml
 
+sudo usermod -aG docker jenkins
+
 # Jenkins 재시작 (필수)
 docker restart jenkins
+
+sudo chown jenkins:docker /var/run/docker.sock
