@@ -1,0 +1,38 @@
+version: "0.0.0"
+
+services:
+  talkydoki_frontend:
+    container_name: talkydoki_frontend
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    image: talkydoki_frontend_img
+    ports:
+      - "80:80"
+    networks:
+      - talkydoki_net
+
+  talkydoki_backend_springboot:
+    container_name: talkydoki_backend_springboot
+    build:
+      context: ./Backend/SpringBootServer
+      dockerfile: Dockerfile
+    image: talkydoki_backend_springboot_img
+    ports:
+      - "8080:8080"
+    networks:
+      - talkydoki_net
+
+  talkydoki_backend_fastapi:
+    container_name: talkydoki_backend_fastapi
+    build:
+      context: ./Backend/SpringBootServer
+      dockerfile: Dockerfile
+    image: talkydoki_backend_fastapi_img
+    ports:
+      - "8000:8000"
+    networks:
+      - talkydoki_net
+
+networks:
+  talkydoki_net:
