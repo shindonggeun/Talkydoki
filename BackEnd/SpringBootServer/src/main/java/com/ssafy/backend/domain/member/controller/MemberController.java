@@ -52,6 +52,17 @@ public class MemberController {
     }
 
     @Operation(
+            summary = "로그아웃",
+            description = "로그인 한 회원을 로그아웃을 하는 기능입니다."
+    )
+    @PostMapping("/logout")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<Void>> logoutMember(@AuthenticationPrincipal MemberLoginActiveRecord loginActive) {
+        memberService.logoutMember(loginActive.email());;
+        return ResponseEntity.ok().body(Message.success());
+    }
+
+    @Operation(
             summary = "회원정보 불러오기",
             description = "비밀번호를 제외한 회원가입때 입력한 정보를 불러오는 기능입니다."
     )

@@ -26,6 +26,13 @@ public interface MemberService {
     MemberLoginResponseRecord loginMember(MemberLoginRequestRecord loginRequest);
 
     /**
+     * 로그아웃을 처리합니다.
+     *
+     * @param email 로그아웃할 회원의 이메일
+     */
+    void logoutMember(String email);
+
+    /**
      * 회원 정보를 조회합니다.
      *
      * @param memberId 회원 ID
