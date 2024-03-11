@@ -9,6 +9,8 @@ import { muiTheme } from "./styles/common/muiTheme";
 
 // route 컴포넌트
 import Intro from "@/routes/Intro";
+import LoginPage from "./routes/user/LoginPage";
+import SignUpPage from "./routes/user/SignUpPage";
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Global />
         <Routes>
           <Route path="/" element={<Intro />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
         </Routes>
       </MUIThemeProvider>
     </ThemeProvider>
