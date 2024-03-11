@@ -66,3 +66,14 @@ oauth:
       - account_email
       - name
 
+  naver:
+    client-id: 6kxAAj5SSmXzQlEXkOao
+    client-secret: fzufMaJYRE
+    redirect_uri: http://localhost:8080/api/v1/oauth/naver/login
+    scope:
+      - nickname
+      - name
+      - email
+      - profile_image
+
+

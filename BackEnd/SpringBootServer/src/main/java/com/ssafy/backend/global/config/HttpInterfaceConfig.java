@@ -1,6 +1,7 @@
 package com.ssafy.backend.global.config;
 
 import com.ssafy.backend.global.component.oauth.vendor.kakao.client.KakaoApiClient;
+import com.ssafy.backend.global.component.oauth.vendor.naver.client.NaverApiClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -22,6 +23,16 @@ public class HttpInterfaceConfig {
     @Bean
     public KakaoApiClient kakaoApiClient() {
         return createHttpInterface(KakaoApiClient.class);
+    }
+
+    /**
+     * 네이버 API 클라이언트를 위한 빈을 생성합니다.
+     *
+     * @return 네이버 API를 사용하기 위한 프록시 인터페이스
+     */
+    @Bean
+    public NaverApiClient naverApiClient() {
+        return createHttpInterface(NaverApiClient.class);
     }
 
     /**
