@@ -1,4 +1,3 @@
-import React from "react";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 import { SvgIconTypeMap } from "@mui/material";
 import { AiChatCard } from "@/styles/ui/card";

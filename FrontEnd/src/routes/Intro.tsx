@@ -1,6 +1,5 @@
-import React from "react";
 import { Card } from "@/styles/ui/card";
-import { NavbarWrapper, SidebarWrapper, Wrapper } from "@/styles/ui/container";
+import { Wrapper } from "@/styles/ui/container";
 import { NegativeTitle } from "@/styles/ui/text";
 import Button from "@mui/material/Button";
 import AIChatCategory from "@/components/ui/AIChatCategory";
@@ -9,8 +8,6 @@ import AcUnitIcon from "@mui/icons-material/AcUnit";
 function Intro() {
   return (
     <>
-      <NavbarWrapper />
-      <SidebarWrapper>asd</SidebarWrapper>
       <Wrapper>
         <NegativeTitle>타이틀</NegativeTitle>
         <Button variant="contained" color="purple">

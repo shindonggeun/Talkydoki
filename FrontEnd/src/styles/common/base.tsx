@@ -34,9 +34,11 @@ export const Global = createGlobalStyle`
       margin: 0;
       background-color: var(--bg);
       font-family: 'ScoreDream', 'Mplus';
+      overflow-x: hidden;
+
     }
 
-    body, html, div, span, button, form {
+    body, html, div, span, button, form, section {
       box-sizing: border-box;
       color: var(--text);
     }

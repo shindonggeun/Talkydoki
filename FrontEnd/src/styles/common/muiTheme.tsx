@@ -27,5 +27,6 @@ export const muiTheme = createTheme({
       contrastText: "#fff",
       dark: "#5027f1",
     },
+    divider: light.doc.shadowDark,
   },
 });
