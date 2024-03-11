@@ -53,3 +53,16 @@ logging:
     org.hibernate:
       type.descriptor.sql: trace
       org.hibernate.SQLQuery: debug
+
+# OAUTH2.0 Setting
+oauth:
+  kakao:
+    client-id: d8f7a03a9f71c950eb689b75d7e13911   # REST API 키
+    client-secret: DoDeccr2fHvdeN9ZrVc0zfitpw9mQDaX # 보안 -> Client Secret 키
+    redirect-uri: http://localhost:8080/api/v1/oauth/kakao/login
+    scope:
+      - profile_nickname
+      - profile_image
+      - account_email
+      - name
+
