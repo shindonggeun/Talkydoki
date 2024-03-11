@@ -1,9 +1,6 @@
 package com.ssafy.backend.domain.member.service;
 
-import com.ssafy.backend.domain.member.dto.MemberInfo;
-import com.ssafy.backend.domain.member.dto.MemberLoginRequest;
-import com.ssafy.backend.domain.member.dto.MemberLoginResponse;
-import com.ssafy.backend.domain.member.dto.MemberSignupRequest;
+import com.ssafy.backend.domain.member.dto.*;
 
 /**
  * 회원 관련 서비스 인터페이스 정의.
@@ -46,4 +43,6 @@ public interface MemberService {
      * @param memberId 탈퇴할 회원의 ID
      */
     void deleteMember(Long memberId);
+
+    void updateProfileImageAndNickNameMember(Long memberId, MemberUpdateRequest updateRequest);
 }

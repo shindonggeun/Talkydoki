@@ -12,7 +12,7 @@ import java.util.Collection;
  */
 @Getter
 public class JwtAuthenticationToken extends AbstractAuthenticationToken {
-    private final MemberLoginActiveRecord principal;
+    private final MemberLoginActive principal;
     private final Object credentials;
 
     /**
@@ -22,7 +22,7 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
      * @param credentials 인증 과정에서 사용된 자격 증명 정보입니다. 일반적으로 비밀번호나, JWT 토큰 등이 될 수 있습니다.
      * @param authorities 사용자에게 부여된 권한 목록입니다. 이는 Spring Security에서 사용자의 권한을 확인하는 데 사용됩니다.
      */
-    public JwtAuthenticationToken(MemberLoginActiveRecord principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
+    public JwtAuthenticationToken(MemberLoginActive principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
         super(authorities);
         this.principal = principal;
         this.credentials = credentials;

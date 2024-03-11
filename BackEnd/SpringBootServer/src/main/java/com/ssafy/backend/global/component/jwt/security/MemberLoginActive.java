@@ -4,7 +4,7 @@ import com.ssafy.backend.domain.member.entity.enums.MemberRole;
 import lombok.Builder;
 
 @Builder
-public record MemberLoginActiveRecord(
+public record MemberLoginActive(
         Long id,
         String email,
         String name,

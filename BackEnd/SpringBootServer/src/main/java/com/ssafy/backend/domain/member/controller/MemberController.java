@@ -1,12 +1,9 @@
 package com.ssafy.backend.domain.member.controller;
 
-import com.ssafy.backend.domain.member.dto.MemberInfo;
-import com.ssafy.backend.domain.member.dto.MemberLoginRequest;
-import com.ssafy.backend.domain.member.dto.MemberLoginResponse;
-import com.ssafy.backend.domain.member.dto.MemberSignupRequest;
+import com.ssafy.backend.domain.member.dto.*;
 import com.ssafy.backend.domain.member.service.MemberService;
 import com.ssafy.backend.global.common.dto.Message;
-import com.ssafy.backend.global.component.jwt.security.MemberLoginActiveRecord;
+import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
@@ -57,7 +54,7 @@ public class MemberController {
     )
     @PostMapping("/logout")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    public ResponseEntity<Message<Void>> logoutMember(@AuthenticationPrincipal MemberLoginActiveRecord loginActive) {
+    public ResponseEntity<Message<Void>> logoutMember(@AuthenticationPrincipal MemberLoginActive loginActive) {
         memberService.logoutMember(loginActive.email());;
         return ResponseEntity.ok().body(Message.success());
     }
@@ -68,7 +65,7 @@ public class MemberController {
     )
     @GetMapping("/get")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    public ResponseEntity<Message<MemberInfo>> getMember(@AuthenticationPrincipal MemberLoginActiveRecord loginActive) {
+    public ResponseEntity<Message<MemberInfo>> getMember(@AuthenticationPrincipal MemberLoginActive loginActive) {
         MemberInfo info = memberService.getMember(loginActive.id());
         return ResponseEntity.ok().body(Message.success(info));
     }
@@ -79,8 +76,21 @@ public class MemberController {
     )
     @DeleteMapping("/delete")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    public ResponseEntity<Message<Void>> deleteMember(@AuthenticationPrincipal MemberLoginActiveRecord loginActive) {
+    public ResponseEntity<Message<Void>> deleteMember(@AuthenticationPrincipal MemberLoginActive loginActive) {
         memberService.deleteMember(loginActive.id());
         return ResponseEntity.ok().body(Message.success());
     }
+
+    @Operation(
+            summary = "회원 수정하기",
+            description = "회원 정보를 수정(닉네임, 프로필 이미지)하는 기능입니다."
+    )
+    @PatchMapping("/update")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<Void>> updateImageAndNicknameMember(@AuthenticationPrincipal MemberLoginActive loginActive,
+                                                                      @RequestBody MemberUpdateRequest updateRequest) {
+        memberService.updateProfileImageAndNickNameMember(loginActive.id(), updateRequest);
+        return ResponseEntity.ok().body(Message.success());
+    }
+
 }

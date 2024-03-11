@@ -1,9 +1,6 @@
 package com.ssafy.backend.domain.member.service;
 
-import com.ssafy.backend.domain.member.dto.MemberInfo;
-import com.ssafy.backend.domain.member.dto.MemberLoginRequest;
-import com.ssafy.backend.domain.member.dto.MemberLoginResponse;
-import com.ssafy.backend.domain.member.dto.MemberSignupRequest;
+import com.ssafy.backend.domain.member.dto.*;
 import com.ssafy.backend.domain.member.entity.Member;
 import com.ssafy.backend.domain.member.exception.MemberErrorCode;
 import com.ssafy.backend.domain.member.exception.MemberException;
@@ -95,6 +92,14 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void deleteMember(Long memberId) {
         memberRepository.deleteById(memberId);
+    }
+
+    @Override
+    public void updateProfileImageAndNickNameMember(Long memberId, MemberUpdateRequest updateRequest) {
+        Member member = memberRepository.findById(memberId).orElseThrow(()
+        -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+        member.updateProfileImageAndNickname(updateRequest);
     }
 
 }
