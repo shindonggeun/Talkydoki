@@ -10,3 +10,23 @@ export const Card = styled.div`
   box-shadow: 0px 1px 5px 3px var(--shadow);
   padding: 30px;
 `;
+
+export const AiChatCard = styled(Card)`
+  width: 20%;
+  min-width: 200px;
+  aspect-ratio: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .inner {
+    position: relative;
+
+    p.categoryName {
+      position: absolute;
+      bottom: -40%;
+      width: 100%;
+      text-align: center;
+    }
+  }
+`;

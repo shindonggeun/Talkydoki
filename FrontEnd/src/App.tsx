@@ -6,7 +6,6 @@ import { Route, Routes } from "react-router-dom";
 import { Fonts } from "@/styles/common/fonts";
 import { dark, light } from "@/styles/common/themes";
 import { muiTheme } from "./styles/common/muiTheme";
-import { Container } from "./styles/ui/container";
 
 // route 컴포넌트
 import Intro from "@/routes/Intro";
@@ -17,11 +16,9 @@ function App() {
       <MUIThemeProvider theme={muiTheme}>
         <Fonts />
         <Global />
-        <Container>
-          <Routes>
-            <Route path="/" element={<Intro />} />
-          </Routes>
-        </Container>
+        <Routes>
+          <Route path="/" element={<Intro />} />
+        </Routes>
       </MUIThemeProvider>
     </ThemeProvider>
   );

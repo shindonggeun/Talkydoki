@@ -1,15 +1,5 @@
 import styled from "styled-components";
 
-// 전체 Container
-export const Container = styled.div`
-  display: flex;
-
-  /* width 992px부터 모바일 버전 */
-  @media screen and (max-width: 992px) {
-    flex-direction: column;
-  }
-`;
-
 // 사이드바
 export const SidebarWrapper = styled.div`
   width: 18vw;
