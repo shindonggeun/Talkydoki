@@ -4,7 +4,7 @@ services:
   talkydoki_frontend:
     container_name: talkydoki_frontend
     build:
-      context: ./Frontend
+      context: ./FrontEnd
       dockerfile: Dockerfile
     image: talkydoki_frontend_img
     ports:
@@ -15,7 +15,7 @@ services:
   talkydoki_backend_springboot:
     container_name: talkydoki_backend_springboot
     build:
-      context: ./Backend/SpringBootServer
+      context: ./BackEnd/SpringBootServer
       dockerfile: Dockerfile
     image: talkydoki_backend_springboot_img
     ports:
@@ -26,7 +26,7 @@ services:
   talkydoki_backend_fastapi:
     container_name: talkydoki_backend_fastapi
     build:
-      context: ./Backend/SpringBootServer
+      context: ./BackEnd/SpringBootServer
       dockerfile: Dockerfile
     image: talkydoki_backend_fastapi_img
     ports:
