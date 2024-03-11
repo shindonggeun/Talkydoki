@@ -24,18 +24,21 @@ function Menus() {
           <ArticleIcon />
           <div>뉴스</div>
         </div>
+        <KeyboardArrowRightIcon />
       </MenuItem>
       <MenuItem>
         <div className="label">
           <ForumIcon />
           <div>AI 채팅</div>
         </div>
+        <KeyboardArrowRightIcon />
       </MenuItem>
       <MenuItem>
         <div className="label">
           <FaceIcon />
           <div>마이페이지</div>
         </div>
+        <KeyboardArrowRightIcon />
       </MenuItem>
     </div>
   );

@@ -1,6 +1,6 @@
 import { NavbarWrapper } from "@/styles/ui/container";
 import { Inner } from "@/styles/Menu/navbar";
-import Logo from "@/assets/images/logo_face.png";
+import Logo from "@/assets/images/logo_face2.png";
 import { useIsSidebarOpen, useSetIsSidebarOpen } from "@/stores/displayStore";
 import MenuIcon from "@mui/icons-material/Menu";
 

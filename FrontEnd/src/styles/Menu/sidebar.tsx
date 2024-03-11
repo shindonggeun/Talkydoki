@@ -14,7 +14,7 @@ export const ProfileSection = styled.section`
     margin: 0 5px;
 
     &:hover {
-      color: var(--main);
+      color: var(--yellow-dark);
     }
   }
 

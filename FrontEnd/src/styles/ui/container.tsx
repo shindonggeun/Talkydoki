@@ -36,7 +36,7 @@ export const NavbarWrapper = styled.div`
 export const Wrapper = styled.div`
   width: 100vw;
   min-height: 100vh;
-  padding: 3vw;
+  padding: 3vh 3vw;
   padding-left: 20vw;
 
   @media screen and (max-width: 992px) {
