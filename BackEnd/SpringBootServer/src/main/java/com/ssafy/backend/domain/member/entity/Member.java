@@ -2,6 +2,7 @@ package com.ssafy.backend.domain.member.entity;
 
 import com.ssafy.backend.domain.member.entity.enums.MemberRole;
 import com.ssafy.backend.global.common.entity.BaseEntity;
+import com.ssafy.backend.global.component.oauth.vendor.enums.OAuthDomain;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,6 +35,8 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MemberRole role;
-    
-    // 추후에 소셜 로그인 제공 업체 컬럼 추가해야함
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "provider")
+    private OAuthDomain oAuthDomain;
 }
