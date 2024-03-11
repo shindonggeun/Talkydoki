@@ -84,3 +84,8 @@ oauth:
       - profile
       - email
 
+# firebase setting
+app:
+  firebase-configuration-file: classpath:serviceAccountKey.json
+  firebase-bucket: talkydoki.appspot.com
+
