@@ -72,4 +72,15 @@ public class MemberController {
         MemberInfoRecord info = memberService.getMember(loginActive.id());
         return ResponseEntity.ok().body(Message.success(info));
     }
+
+    @Operation(
+            summary = "회원 탈퇴하기",
+            description = "해당 서비스에 가입한 회원의 회원정보를 삭제하는 기능입니다."
+    )
+    @DeleteMapping("/delete")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<Void>> deleteMember(@AuthenticationPrincipal MemberLoginActiveRecord loginActive) {
+        memberService.deleteMember(loginActive.id());
+        return ResponseEntity.ok().body(Message.success());
+    }
 }
