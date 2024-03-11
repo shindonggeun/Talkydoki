@@ -62,9 +62,9 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void logoutMember(String email) {
         Optional<String> token = refreshTokenRepository.find(email);
-        // TODO: 이미 로그아웃 한 회원 커스텀 Exception 처리
+
         if (token.isEmpty()) {
-            throw new RuntimeException("이미 로그아웃 된 회원입니다.");
+            throw new MemberException(MemberErrorCode.ALREADY_MEMBER_LOGOUT);
         }
 
         refreshTokenRepository.delete(email); // 리프레쉬 토큰 삭제
