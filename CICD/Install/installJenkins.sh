@@ -29,11 +29,5 @@ sudo wget https://cdn.jsdelivr.net/gh/lework/jenkins-update-center/rootCA/update
 # Jenkins 설정 파일 수정
 sudo sed -i 's#https://updates.jenkins.io/update-center.json#https://raw.githubusercontent.com/lework/jenkins-update-center/master/updates/tencent/update-center.json#' ./hudson.model.UpdateCenter.xml
 
-# Jenkins 사용자를 Docker 그룹에 추가
-sudo usermod -aG docker jenkins
-
 # Jenkins 재시작 (필수)
 docker restart jenkins
-
-# Docker 데몬 소켓 권한 조정
-sudo chown jenkins:docker /var/run/docker.sock
