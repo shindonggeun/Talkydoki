@@ -6,10 +6,10 @@ pipeline {
             steps {
                 script {
                     // 이전 실행에서 사용된 컨테이너 및 네트워크 정리
-                    sh "sudo docker-compose down --volumes"
+                    sh "docker-compose down --volumes"
 
                     // 새로운 푸시에 대한 스크립트 실행
-                    sh "sudo docker-compose up --build -d"
+                    sh "docker-compose up --build -d"
                 }
             }
         }
