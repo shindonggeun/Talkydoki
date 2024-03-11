@@ -19,6 +19,8 @@ public record KakaoMemberResponse(
         return Member.builder()
                 .email(kakaoAccount.email())
                 .name(kakaoAccount.name())
+                .nickname(kakaoAccount.profile.nickname)
+                .profileImage(kakaoAccount.profile.profileImageUrl)
                 .role(MemberRole.USER)
                 .oAuthDomain(OAuthDomain.KAKAO)
                 .build();
