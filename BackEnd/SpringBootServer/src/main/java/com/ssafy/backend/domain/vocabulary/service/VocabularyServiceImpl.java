@@ -1,6 +1,6 @@
 package com.ssafy.backend.domain.vocabulary.service;
 
-import com.ssafy.backend.domain.vocabulary.dto.VocabularyInfoRecord;
+import com.ssafy.backend.domain.vocabulary.dto.VocabularyInfo;
 import com.ssafy.backend.domain.vocabulary.entity.Vocabulary;
 import com.ssafy.backend.domain.vocabulary.repository.VocabularyRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +18,11 @@ public class VocabularyServiceImpl implements VocabularyService {
 
     @Override
     @Transactional(readOnly = true)
-    public VocabularyInfoRecord getDailyVocabulary() {
+    public VocabularyInfo getDailyVocabulary() {
         Vocabulary vocabulary = vocabularyRepository.findRandom().orElseThrow(()
         -> new RuntimeException("단어장 데이터가 없습니다."));
 
-        return VocabularyInfoRecord.builder()
+        return VocabularyInfo.builder()
                 .id(vocabulary.getId())
                 .japanese(vocabulary.getJapanese())
                 .japaneseRead(vocabulary.getJapaneseRead())
@@ -30,4 +30,5 @@ public class VocabularyServiceImpl implements VocabularyService {
                 .type(vocabulary.getType())
                 .build();
     }
+
 }

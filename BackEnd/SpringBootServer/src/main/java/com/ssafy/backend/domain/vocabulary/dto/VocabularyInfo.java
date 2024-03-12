@@ -3,7 +3,7 @@ package com.ssafy.backend.domain.vocabulary.dto;
 import lombok.Builder;
 
 @Builder
-public record VocabularyInfoRecord(
+public record VocabularyInfo(
         Long id,
         String japanese,
         String japaneseRead,
