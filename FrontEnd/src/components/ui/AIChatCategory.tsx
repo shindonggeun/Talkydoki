@@ -1,6 +1,7 @@
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 import { SvgIconTypeMap } from "@mui/material";
 import { AiChatCard } from "@/styles/common/ui/card";
+import { useIsMobile } from "@/stores/displayStore";
 
 type Props = {
   Icon: OverridableComponent<SvgIconTypeMap<{}, "svg">> & { muiName: string };
@@ -10,6 +11,8 @@ type Props = {
 // AI  채팅 카테고리 버튼 컴포넌트
 
 function AIChatCategory({ Icon, title }: Props) {
+  const isMoble = useIsMobile();
+
   return (
     <AiChatCard>
       <div className="inner">
@@ -19,7 +22,13 @@ function AIChatCategory({ Icon, title }: Props) {
             <stop offset={1} stopColor="var(--main)" stopOpacity={0.9} />
           </linearGradient>
         </svg>
-        <Icon sx={{ fill: "url(#gradient_svg)", fontSize: 100 }} />
+        <Icon
+          sx={
+            isMoble
+              ? { fill: "url(#gradient_svg)", fontSize: 60 }
+              : { fill: "url(#gradient_svg)", fontSize: 100 }
+          }
+        />
         <p className="categoryName">{title}</p>
       </div>
     </AiChatCard>

@@ -12,7 +12,7 @@ function Menus() {
 
   return (
     <div>
-      <MenuItem className={now == "/" ? "selected" : undefined}>
+      <MenuItem className={now == "/main" ? "selected" : undefined}>
         <div className="label">
           <HomeIcon />
           <div>홈</div>

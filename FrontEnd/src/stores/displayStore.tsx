@@ -43,3 +43,21 @@ export const useIsSidebarOpen = () =>
   useSideBar((state) => state.isSidebarOpen);
 export const useSetIsSidebarOpen = () =>
   useSideBar((state) => state.setisSidebarOpen);
+
+// 모바일 환경인 지 (* <992px) 확인하는 Store
+
+interface MobileInterface {
+  isMobile: boolean;
+  setIsMobile: (mobile: boolean) => void;
+}
+
+const useMobile = create<MobileInterface>((set) => ({
+  isMobile: window.innerWidth < 992 ? true : false,
+  setIsMobile: (mobile) =>
+    set(() => ({
+      isMobile: mobile,
+    })),
+}));
+
+export const useIsMobile = () => useMobile((state) => state.isMobile);
+export const useSetIsMobile = () => useMobile((state) => state.setIsMobile);
