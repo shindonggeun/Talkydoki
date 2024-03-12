@@ -26,7 +26,6 @@ function App() {
         <Global />
         <Menu />
         {isModalOn ? <Modal /> : null}
-
         <Routes>
           <Route path="/" element={<Intro />} />
           <Route path="/login" element={<LoginPage />} />
