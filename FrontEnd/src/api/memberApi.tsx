@@ -9,9 +9,10 @@ export const useLogin = () => {
       customAxios.post(`/member/login`, payload),
 
     onSuccess: (res) => {
+      console.log(res);
       const response = res.data;
       if (response.dataHeader.successCode === 0) {
-        // 성공했을 때 로직 처리
+        console.log("로그인 성공");
       } else {
         alert(response.dataHeader.resultMessage);
       }
@@ -35,7 +36,7 @@ export const useSignup = () => {
         alert(response.dataHeader.resultMessage);
       }
     },
-
+    //실패 메세지 추가필요
     onError: (err) => console.error(err),
   });
 };
