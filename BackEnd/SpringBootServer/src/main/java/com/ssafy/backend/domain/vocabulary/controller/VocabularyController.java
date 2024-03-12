@@ -43,11 +43,23 @@ public class VocabularyController {
         return ResponseEntity.ok().body(Message.success());
     }
 
+    @Operation(
+            summary = "나만의 단어장 (리스트) 가져오기",
+            description = "회원이 나만의 단어장들을 가져오는 기능입니다. 페이지네이션 (offset) 방식이 적용되어 있습니다."
+    )
     @GetMapping("/personal/list/get")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     public ResponseEntity<Message<SliceResponse<PersonalVocabularyInfo>>> getListPersonalVocabulary(@AuthenticationPrincipal MemberLoginActive loginActive,
                                                                                                     Pageable pageable) {
         SliceResponse<PersonalVocabularyInfo> personalVocabularyInfoList = vocabularyService.getPersonalVocabularyList(loginActive.id(), pageable);
         return ResponseEntity.ok().body(Message.success(personalVocabularyInfoList));
+    }
+
+    @DeleteMapping("/personal/delete/{personalVocabularyId}")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<Void>> deletePersonalVocabulary(@AuthenticationPrincipal MemberLoginActive loginActive,
+                                                                  @PathVariable Long personalVocabularyId) {
+        vocabularyService.deletePersonalVocabulary(loginActive.id(), personalVocabularyId);
+        return ResponseEntity.ok().body(Message.success());
     }
 }

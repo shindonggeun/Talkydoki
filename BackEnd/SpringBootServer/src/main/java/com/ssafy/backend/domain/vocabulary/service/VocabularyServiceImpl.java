@@ -73,4 +73,21 @@ public class VocabularyServiceImpl implements VocabularyService {
         return SliceResponse.of(personalVocabularyInfoList);
     }
 
+    @Override
+    public void deletePersonalVocabulary(Long memberId, Long personalVocabularyId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(()
+                -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+        // 나만의 단어장에서 단어 삭제 권한 검증
+        PersonalVocabulary personalVocabulary = personalVocabularyRepository.findById(personalVocabularyId).orElseThrow(()
+        -> new VocabularyException(VocabularyErrorCode.NOT_EXIST_PERSONAL_VOCABULARY));
+
+        // TODO: 커스텀 Exception 처리
+        if (!personalVocabulary.getMember().getId().equals(memberId)) {
+            throw new RuntimeException("소유하고 있는 나만의 단어가 아닙니다.");
+        }
+
+        personalVocabularyRepository.delete(personalVocabulary);
+    }
+
 }

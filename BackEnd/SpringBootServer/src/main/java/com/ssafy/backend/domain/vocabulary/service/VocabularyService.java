@@ -6,9 +6,15 @@ import com.ssafy.backend.global.common.dto.SliceResponse;
 import org.springframework.data.domain.Pageable;
 
 public interface VocabularyService {
+
+    // 오늘의 단어 가져오기
     VocabularyInfo getDailyVocabulary();
 
+    // 나만의 단어장에 해당 단어 추가하기
     void createPersonalVocabulary(Long memberId, Long vocabularyId);
 
+    // 나만의 단어장 가져오기 (페이지네이션 적용 - offset 방식)
     SliceResponse<PersonalVocabularyInfo> getPersonalVocabularyList(Long memberId, Pageable pageable);
+
+    void deletePersonalVocabulary(Long memberId, Long personalVocabularyId);
 }
