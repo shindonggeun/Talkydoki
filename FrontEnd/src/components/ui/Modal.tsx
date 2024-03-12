@@ -1,5 +1,5 @@
 import { useModalContent, useSetISModalOn } from "@/stores/modalStore";
-import { ModalBackground, ModalCard } from "@/styles/ui/container";
+import { ModalBackground, ModalCard } from "@/styles/common/ui/container";
 import { Button } from "@mui/material";
 
 function Modal() {

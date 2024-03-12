@@ -1,4 +1,4 @@
-import { NavbarWrapper } from "@/styles/ui/container";
+import { NavbarWrapper } from "@/styles/common/ui/container";
 import { Inner } from "@/styles/Menu/navbar";
 import Logo from "@/assets/images/logo_face2.png";
 import { useIsSidebarOpen, useSetIsSidebarOpen } from "@/stores/displayStore";

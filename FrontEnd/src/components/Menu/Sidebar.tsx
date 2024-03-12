@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import SidebarProfile from "./SidebarProfile";
 
-import { SidebarWrapper } from "@/styles/ui/container";
+import { SidebarWrapper } from "@/styles/common/ui/container";
 import { MenuDivider, SidebarBackground } from "@/styles/Menu/sidebar";
 import { useIsSidebarOpen, useSetIsSidebarOpen } from "@/stores/displayStore";
 import Menus from "./Menus";

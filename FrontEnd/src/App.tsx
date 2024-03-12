@@ -12,8 +12,7 @@ import { useIsModalOn } from "./stores/modalStore";
 import Intro from "@/routes/Intro";
 import Menu from "./routes/Menu";
 import Modal from "./components/ui/Modal";
-// import LoginPage from "./routes/user/LoginPage";
-// import SignUpPage from "./routes/user/SignUpPage";
+import Main from "./routes/Main";
 
 function App() {
   const isDark = useIsDark();
@@ -28,8 +27,7 @@ function App() {
         {isModalOn ? <Modal /> : null}
         <Routes>
           <Route path="/" element={<Intro />} />
-          {/* <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} /> */}
+          <Route path="/main" element={<Main />} />
         </Routes>
       </MUIThemeProvider>
     </ThemeProvider>

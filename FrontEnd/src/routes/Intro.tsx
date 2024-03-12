@@ -1,6 +1,6 @@
-import { Card } from "@/styles/ui/card";
-import { Wrapper } from "@/styles/ui/container";
-import { NegativeTitle } from "@/styles/ui/text";
+import { Card } from "@/styles/common/ui/card";
+import { Wrapper } from "@/styles/common/ui/container";
+import { NegativeTitle } from "@/styles/common/ui/text";
 import Button from "@mui/material/Button";
 import AIChatCategory from "@/components/ui/AIChatCategory";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
@@ -11,7 +11,7 @@ function Intro() {
     <>
       <Wrapper>
         <NegativeTitle>타이틀</NegativeTitle>
-        <Button variant="contained" color="purple">
+        <Button variant="contained" color="purple" fullWidth>
           버튼
         </Button>
         <Button variant="text" color="purple">

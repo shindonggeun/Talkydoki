@@ -1,6 +1,6 @@
 import { OverridableComponent } from "@mui/material/OverridableComponent";
 import { SvgIconTypeMap } from "@mui/material";
-import { AiChatCard } from "@/styles/ui/card";
+import { AiChatCard } from "@/styles/common/ui/card";
 
 type Props = {
   Icon: OverridableComponent<SvgIconTypeMap<{}, "svg">> & { muiName: string };
