@@ -1,12 +1,15 @@
 package com.ssafy.backend.domain.vocabulary.controller;
 
+import com.ssafy.backend.domain.vocabulary.dto.PersonalVocabularyInfo;
 import com.ssafy.backend.domain.vocabulary.dto.VocabularyInfo;
 import com.ssafy.backend.domain.vocabulary.service.VocabularyService;
 import com.ssafy.backend.global.common.dto.Message;
+import com.ssafy.backend.global.common.dto.SliceResponse;
 import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,5 +41,13 @@ public class VocabularyController {
     public ResponseEntity<Message<Void>> createPersonalVocabulary(@AuthenticationPrincipal MemberLoginActive loginActive, @PathVariable Long vocabularyId) {
         vocabularyService.createPersonalVocabulary(loginActive.id(), vocabularyId);
         return ResponseEntity.ok().body(Message.success());
+    }
+
+    @GetMapping("/personal/list/get")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<SliceResponse<PersonalVocabularyInfo>>> getListPersonalVocabulary(@AuthenticationPrincipal MemberLoginActive loginActive,
+                                                                                                    Pageable pageable) {
+        SliceResponse<PersonalVocabularyInfo> personalVocabularyInfoList = vocabularyService.getPersonalVocabularyList(loginActive.id(), pageable);
+        return ResponseEntity.ok().body(Message.success(personalVocabularyInfoList));
     }
 }

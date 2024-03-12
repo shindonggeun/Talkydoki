@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PersonalVocabularyRepository extends JpaRepository<PersonalVocabulary, Long> {
+public interface PersonalVocabularyRepository extends JpaRepository<PersonalVocabulary, Long>, PersonalVocabularyRepositoryCustom {
     boolean existsByMemberAndVocabulary(Member member, Vocabulary vocabulary);
 }

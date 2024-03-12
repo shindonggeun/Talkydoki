@@ -4,6 +4,7 @@ import com.ssafy.backend.domain.member.entity.Member;
 import com.ssafy.backend.domain.member.exception.MemberErrorCode;
 import com.ssafy.backend.domain.member.exception.MemberException;
 import com.ssafy.backend.domain.member.repository.MemberRepository;
+import com.ssafy.backend.domain.vocabulary.dto.PersonalVocabularyInfo;
 import com.ssafy.backend.domain.vocabulary.dto.VocabularyInfo;
 import com.ssafy.backend.domain.vocabulary.entity.PersonalVocabulary;
 import com.ssafy.backend.domain.vocabulary.entity.Vocabulary;
@@ -11,8 +12,11 @@ import com.ssafy.backend.domain.vocabulary.exception.VocabularyErrorCode;
 import com.ssafy.backend.domain.vocabulary.exception.VocabularyException;
 import com.ssafy.backend.domain.vocabulary.repository.PersonalVocabularyRepository;
 import com.ssafy.backend.domain.vocabulary.repository.VocabularyRepository;
+import com.ssafy.backend.global.common.dto.SliceResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -61,6 +65,12 @@ public class VocabularyServiceImpl implements VocabularyService {
                 .build();
 
         personalVocabularyRepository.save(personalVocabulary);
+    }
+
+    @Override
+    public SliceResponse<PersonalVocabularyInfo> getPersonalVocabularyList(Long memberId, Pageable pageable) {
+        Slice<PersonalVocabularyInfo> personalVocabularyInfoList = personalVocabularyRepository.findPersonalVocabularyList(memberId, pageable);
+        return SliceResponse.of(personalVocabularyInfoList);
     }
 
 }
