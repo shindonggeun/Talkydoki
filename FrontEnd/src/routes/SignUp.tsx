@@ -2,11 +2,9 @@ import { useSignup } from "@/api/memberApi";
 import { SignupParams } from "@/interface/AuthInterface";
 import {
   ButtonBox,
-  EmailDiv,
-  EmailInput,
+  // EmailDiv,
+  // EmailInput,
   FlexBox,
-  Input,
-  InputDiv,
   SignupBox,
   SingupInputBox,
   SocialButtonDiv,
@@ -16,8 +14,6 @@ import { Button, TextField } from "@mui/material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-// type Props = {};
-
 const SignUp: React.FC = () => {
   const [formData, setFormData] = useState<SignupParams>({
     email: "",
@@ -26,7 +22,7 @@ const SignUp: React.FC = () => {
     nickname: "",
   });
 
-  const { mutate: signup, isLoading } = useSignup();
+  const { mutate: signup } = useSignup();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -155,7 +151,6 @@ const SignUp: React.FC = () => {
               color="purple"
               size="small"
               sx={{ width: "72%" }}
-              disabled={isLoading}
             >
               회원가입
             </Button>
