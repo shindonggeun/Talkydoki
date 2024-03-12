@@ -1,7 +1,13 @@
 package com.ssafy.backend.domain.vocabulary.service;
 
+import com.ssafy.backend.domain.member.entity.Member;
+import com.ssafy.backend.domain.member.exception.MemberErrorCode;
+import com.ssafy.backend.domain.member.exception.MemberException;
+import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.domain.vocabulary.dto.VocabularyInfo;
+import com.ssafy.backend.domain.vocabulary.entity.PersonalVocabulary;
 import com.ssafy.backend.domain.vocabulary.entity.Vocabulary;
+import com.ssafy.backend.domain.vocabulary.repository.PersonalVocabularyRepository;
 import com.ssafy.backend.domain.vocabulary.repository.VocabularyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,10 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class VocabularyServiceImpl implements VocabularyService {
 
     private final VocabularyRepository vocabularyRepository;
+    private final MemberRepository memberRepository;
+    private final PersonalVocabularyRepository personalVocabularyRepository;
 
     @Override
     @Transactional(readOnly = true)
     public VocabularyInfo getDailyVocabulary() {
+        // TODO: 단어장 관련 커스텀 Exception 처리
         Vocabulary vocabulary = vocabularyRepository.findRandom().orElseThrow(()
         -> new RuntimeException("단어장 데이터가 없습니다."));
 
@@ -29,6 +38,23 @@ public class VocabularyServiceImpl implements VocabularyService {
                 .korean(vocabulary.getKorean())
                 .type(vocabulary.getType())
                 .build();
+    }
+
+    @Override
+    public void createPersonalVocabulary(Long memberId, Long vocabularyId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(()
+        -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+        // TODO: 단어장 관련 커스텀 Exception 처리
+        Vocabulary vocabulary = vocabularyRepository.findById(vocabularyId).orElseThrow(()
+        -> new RuntimeException("단어장 데이터가 없습니다."));
+
+        PersonalVocabulary personalVocabulary = PersonalVocabulary.builder()
+                .member(member)
+                .vocabulary(vocabulary)
+                .build();
+        
+        personalVocabularyRepository.save(personalVocabulary);
     }
 
 }
