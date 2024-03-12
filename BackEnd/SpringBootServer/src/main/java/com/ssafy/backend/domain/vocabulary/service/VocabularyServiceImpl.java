@@ -49,11 +49,17 @@ public class VocabularyServiceImpl implements VocabularyService {
         Vocabulary vocabulary = vocabularyRepository.findById(vocabularyId).orElseThrow(()
         -> new RuntimeException("단어장 데이터가 없습니다."));
 
+        // 이미 나만의 단어장에 추가된 데이터인지 확인하는 로직
+        boolean exists = personalVocabularyRepository.existsByMemberAndVocabulary(member, vocabulary);
+        if (exists) {
+            throw new RuntimeException("나만의 단어장에 이미 추가된 단어입니다.");
+        }
+
         PersonalVocabulary personalVocabulary = PersonalVocabulary.builder()
                 .member(member)
                 .vocabulary(vocabulary)
                 .build();
-        
+
         personalVocabularyRepository.save(personalVocabulary);
     }
 
