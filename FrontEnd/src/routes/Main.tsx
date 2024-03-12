@@ -1,4 +1,3 @@
-import React from "react";
 import { Wrapper } from "@/styles/common/ui/container";
 
 function Main() {
