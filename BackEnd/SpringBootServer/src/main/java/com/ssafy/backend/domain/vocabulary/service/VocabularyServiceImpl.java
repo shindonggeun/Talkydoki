@@ -7,6 +7,8 @@ import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.domain.vocabulary.dto.VocabularyInfo;
 import com.ssafy.backend.domain.vocabulary.entity.PersonalVocabulary;
 import com.ssafy.backend.domain.vocabulary.entity.Vocabulary;
+import com.ssafy.backend.domain.vocabulary.exception.VocabularyErrorCode;
+import com.ssafy.backend.domain.vocabulary.exception.VocabularyException;
 import com.ssafy.backend.domain.vocabulary.repository.PersonalVocabularyRepository;
 import com.ssafy.backend.domain.vocabulary.repository.VocabularyRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +29,8 @@ public class VocabularyServiceImpl implements VocabularyService {
     @Override
     @Transactional(readOnly = true)
     public VocabularyInfo getDailyVocabulary() {
-        // TODO: 단어장 관련 커스텀 Exception 처리
         Vocabulary vocabulary = vocabularyRepository.findRandom().orElseThrow(()
-        -> new RuntimeException("단어장 데이터가 없습니다."));
+        -> new VocabularyException(VocabularyErrorCode.NOT_EXIST_VOCABULARY));
 
         return VocabularyInfo.builder()
                 .id(vocabulary.getId())
@@ -45,14 +46,13 @@ public class VocabularyServiceImpl implements VocabularyService {
         Member member = memberRepository.findById(memberId).orElseThrow(()
         -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
-        // TODO: 단어장 관련 커스텀 Exception 처리
         Vocabulary vocabulary = vocabularyRepository.findById(vocabularyId).orElseThrow(()
-        -> new RuntimeException("단어장 데이터가 없습니다."));
+        -> new VocabularyException(VocabularyErrorCode.NOT_EXIST_VOCABULARY));
 
         // 이미 나만의 단어장에 추가된 데이터인지 확인하는 로직
         boolean exists = personalVocabularyRepository.existsByMemberAndVocabulary(member, vocabulary);
         if (exists) {
-            throw new RuntimeException("나만의 단어장에 이미 추가된 단어입니다.");
+            throw new VocabularyException(VocabularyErrorCode.DUPLICATE_PERSONAL_VOCABULARY);
         }
 
         PersonalVocabulary personalVocabulary = PersonalVocabulary.builder()
