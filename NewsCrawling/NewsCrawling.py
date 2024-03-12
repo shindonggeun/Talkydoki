@@ -14,7 +14,16 @@ import warnings
 warnings.filterwarnings('ignore')
 
 BASE_URL = "https://www3.nhk.or.jp/news"
-CAT = ["사회", "기상.재해", "과학.문화", "정치", "사업", "국제", "스포츠", "생활"]
+CAT = [    
+    "SOCIETY",
+    "WEATHER_DISASTER",
+    "SCIENCE_CULTURE",
+    "POLITICS",
+    "BUSINESS",
+    "INTERNATIONAL",
+    "SPORTS",
+    "LIFE"
+]
 CAT_URLS = [
     "/cat01.html", # 사회
     # "/saigai.html", # 기상.재해
@@ -112,12 +121,6 @@ for cat_idx, news_urls in enumerate(cat_news_urls):
    
         ########### 뉴스 작성시간 ###########
         news_date = driver.find_element(By.CLASS_NAME, CLASS_NAME_CONTENT_DATE).find_element(By.TAG_NAME, "time").text
-        # 주어진 일본어 날짜와 시간 문자열
-        date_string_japanese = news_date
-        # 일본어 문자열을 datetime 객체로 변환
-        date_object = datetime.strptime(date_string_japanese, "%Y年%m月%d日 %H時%M分")
-        # datetime 객체를 타임스탬프로 변환 (초 단위)
-        timestamp = int(date_object.timestamp())
 
         ########### 뉴스 요약 ###########
         news_summary = driver.find_element(By.CLASS_NAME, CLASS_NAME_CONTENT_SUMMARY).text
@@ -159,24 +162,11 @@ for cat_idx, news_urls in enumerate(cat_news_urls):
             "category": CAT[cat_idx],
             "content": news_body_output,
             "summary": news_summary_output,
-            "write_date": timestamp,
+            "write_date": news_date,
             "src_origin": news_url
         })
 
-# cat_news를 Pandas DataFrame으로 변환
-df_cat_news = pd.DataFrame(news)
-
-# 파일 경로 설정 (원하는 경로로 변경)
-parquet_file_path = "cat_news.parquet"
-csv_file_path = "cat_news.csv"
-
-# Pandas DataFrame을 Parquet 파일로 저장
-df_cat_news.to_parquet(parquet_file_path, index=False)
-print(f"Parquet data saved to {parquet_file_path}")
-
-# Pandas DataFrame을 CSV 파일로 저장
-df_cat_news.to_csv(csv_file_path, index=False, encoding='utf-8')
-print(f"CSV data saved to {csv_file_path}")
+print(news[0])
 
 # 브라우저 닫기
 driver.quit()
