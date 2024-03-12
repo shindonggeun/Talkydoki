@@ -4,6 +4,7 @@ import { NegativeTitle } from "@/styles/ui/text";
 import Button from "@mui/material/Button";
 import AIChatCategory from "@/components/ui/AIChatCategory";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
+import TextField from "@mui/material/TextField";
 
 function Intro() {
   return (
@@ -17,6 +18,13 @@ function Intro() {
           버튼
         </Button>
         <Button variant="outlined">버튼</Button>
+        <TextField
+          id="outlined-basic"
+          label="Outlined"
+          variant="outlined"
+          color="purple"
+          sx={{ backgroundColor: "var(--bg-modal)" }}
+        />
         <AIChatCategory Icon={AcUnitIcon} title={"눈송이"} />
         <Card>asdfasdf</Card>
         <Card>asdfasdf</Card>
