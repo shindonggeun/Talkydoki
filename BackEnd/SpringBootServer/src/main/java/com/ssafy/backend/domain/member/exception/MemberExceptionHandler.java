@@ -8,9 +8,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+
 @Slf4j
 @RestControllerAdvice
 public class MemberExceptionHandler {
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Message<Void>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         StringBuilder errorMessageBuilder = new StringBuilder();
@@ -30,6 +32,7 @@ public class MemberExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Message.fail(null, resultMessage));
     }
+
 
     @ExceptionHandler(MemberException.class)
     public ResponseEntity<Message<Void>> memberException(MemberException e) {

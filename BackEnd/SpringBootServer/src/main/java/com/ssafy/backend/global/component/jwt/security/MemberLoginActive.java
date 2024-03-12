@@ -1,10 +1,10 @@
-package com.ssafy.backend.domain.member.dto;
+package com.ssafy.backend.global.component.jwt.security;
 
 import com.ssafy.backend.domain.member.entity.enums.MemberRole;
 import lombok.Builder;
 
 @Builder
-public record MemberInfoRecord(
+public record MemberLoginActive(
         Long id,
         String email,
         String name,

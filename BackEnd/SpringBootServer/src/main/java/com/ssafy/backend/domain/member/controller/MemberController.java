@@ -1,12 +1,9 @@
 package com.ssafy.backend.domain.member.controller;
 
-import com.ssafy.backend.domain.member.dto.MemberInfoRecord;
-import com.ssafy.backend.domain.member.dto.MemberLoginRequestRecord;
-import com.ssafy.backend.domain.member.dto.MemberLoginResponseRecord;
-import com.ssafy.backend.domain.member.dto.MemberSignupRequestDto;
+import com.ssafy.backend.domain.member.dto.*;
 import com.ssafy.backend.domain.member.service.MemberService;
 import com.ssafy.backend.global.common.dto.Message;
-import com.ssafy.backend.global.component.jwt.security.MemberLoginActiveRecord;
+import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
@@ -30,7 +27,7 @@ public class MemberController {
             description = "회원정보에 필요한 정보를 입력하여 회원가입을 하는 기능입니다."
     )
     @PostMapping("/signup")
-    public ResponseEntity<Message<Void>> signupMember(@Valid @RequestBody MemberSignupRequestDto signupRequest) {
+    public ResponseEntity<Message<Void>> signupMember(@Valid @RequestBody MemberSignupRequest signupRequest) {
         memberService.signupMember(signupRequest);
         return ResponseEntity.ok().body(Message.success());
     }
@@ -40,15 +37,26 @@ public class MemberController {
             description = "이메일과 비밀번호를 입력하여 로그인을 하는 기능입니다."
     )
     @PostMapping("/login")
-    public ResponseEntity<Message<MemberLoginResponseRecord>> loginMember(@RequestBody MemberLoginRequestRecord loginRequest,
-                                                                          HttpServletResponse response) {
-        MemberLoginResponseRecord loginResponse = memberService.loginMember(loginRequest);
+    public ResponseEntity<Message<MemberLoginResponse>> loginMember(@RequestBody MemberLoginRequest loginRequest,
+                                                                    HttpServletResponse response) {
+        MemberLoginResponse loginResponse = memberService.loginMember(loginRequest);
         // JWT 토큰을 쿠키에 저장
-        Cookie accessTokenCookie = new Cookie("accessToken", loginResponse.token().accessToken());
+        Cookie accessTokenCookie = new Cookie("accessToken", loginResponse.jwtToken().accessToken());
         accessTokenCookie.setPath("/");
         accessTokenCookie.setMaxAge(3600); // 60분(3600초)으로 설정 (3600)
         response.addCookie(accessTokenCookie);
         return ResponseEntity.ok().body(Message.success(loginResponse));
+    }
+
+    @Operation(
+            summary = "로그아웃",
+            description = "로그인 한 회원을 로그아웃을 하는 기능입니다."
+    )
+    @PostMapping("/logout")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<Void>> logoutMember(@AuthenticationPrincipal MemberLoginActive loginActive) {
+        memberService.logoutMember(loginActive.email());;
+        return ResponseEntity.ok().body(Message.success());
     }
 
     @Operation(
@@ -57,8 +65,32 @@ public class MemberController {
     )
     @GetMapping("/get")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    public ResponseEntity<Message<MemberInfoRecord>> getMember(@AuthenticationPrincipal MemberLoginActiveRecord loginActive) {
-        MemberInfoRecord info = memberService.getMember(loginActive.id());
+    public ResponseEntity<Message<MemberInfo>> getMember(@AuthenticationPrincipal MemberLoginActive loginActive) {
+        MemberInfo info = memberService.getMember(loginActive.id());
         return ResponseEntity.ok().body(Message.success(info));
     }
+
+    @Operation(
+            summary = "회원 탈퇴하기",
+            description = "해당 서비스에 가입한 회원의 회원정보를 삭제하는 기능입니다."
+    )
+    @DeleteMapping("/delete")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<Void>> deleteMember(@AuthenticationPrincipal MemberLoginActive loginActive) {
+        memberService.deleteMember(loginActive.id());
+        return ResponseEntity.ok().body(Message.success());
+    }
+
+    @Operation(
+            summary = "회원 수정하기",
+            description = "회원 정보를 수정(닉네임, 프로필 이미지)하는 기능입니다."
+    )
+    @PatchMapping("/update")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<Void>> updateImageAndNicknameMember(@AuthenticationPrincipal MemberLoginActive loginActive,
+                                                                      @RequestBody MemberUpdateRequest updateRequest) {
+        memberService.updateProfileImageAndNickNameMember(loginActive.id(), updateRequest);
+        return ResponseEntity.ok().body(Message.success());
+    }
+
 }

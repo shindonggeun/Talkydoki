@@ -50,7 +50,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
 
         if (StringUtils.hasText(accessToken)) {
             try {
-                MemberLoginActiveRecord member = jwtTokenProvider.parseAccessToken(accessToken);
+                MemberLoginActive member = jwtTokenProvider.parseAccessToken(accessToken);
 
                 // 로그를 통해 인증된 회원의 ID와 요청 시도를 기록합니다.
                 log.info("회원 ID : {}  - 요청 시도", member.id());
@@ -90,7 +90,7 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
      * @param member 사용자 정보
      * @return 생성된 JwtAuthenticationToken 객체
      */
-    private JwtAuthenticationToken createAuthenticationToken(MemberLoginActiveRecord member) {
+    private JwtAuthenticationToken createAuthenticationToken(MemberLoginActive member) {
         return new JwtAuthenticationToken(member, "",
                 List.of(new SimpleGrantedAuthority(member.role().name())));
     }

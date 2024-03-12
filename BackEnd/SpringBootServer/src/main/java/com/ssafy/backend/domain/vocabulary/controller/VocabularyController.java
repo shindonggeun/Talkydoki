@@ -1,12 +1,10 @@
 package com.ssafy.backend.domain.vocabulary.controller;
 
-import com.ssafy.backend.domain.member.dto.MemberSignupRequestDto;
 import com.ssafy.backend.domain.vocabulary.dto.VocabularyInfoRecord;
 import com.ssafy.backend.domain.vocabulary.service.VocabularyService;
 import com.ssafy.backend.global.common.dto.Message;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
