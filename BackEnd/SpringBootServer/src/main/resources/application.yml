@@ -1,7 +1,3 @@
-server:
-  base-url: j10c107.p.ssafy.io
-  # base-url: localhost
-
 spring:
   servlet:
     # file 업로드 관련 세팅 (명시적으로 설정 안할 시 Spring boot는 기본적으로 1MB로 설정됨)
@@ -26,9 +22,9 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver  # DB 드라이버
-    url: jdbc:mysql://${server.base-url}:3306/talkydoki?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true       # 데이터베이스 URL
-    username: root                     # 데이터베이스 계정명
-    password: cccc                       # 데이터베이스 계정 비밀번호
+    url: jdbc:mysql://j10c107.p.ssafy.io:3306/talkydoki?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true       # 데이터베이스 URL
+    username: ssafy                     # 데이터베이스 계정명
+    password: ssafy                       # 데이터베이스 계정 비밀번호
 
   # data_테이블명.sql 관련 실행 setting
   sql:
@@ -41,7 +37,7 @@ spring:
   data:
     # Redis setting
     redis:
-      host: ${server.base-url}
+      host: j10c107.p.ssafy.io
       port: 6379
 
 # jwt setting
@@ -63,7 +59,7 @@ oauth:
   kakao:
     client-id: d8f7a03a9f71c950eb689b75d7e13911   # REST API 키
     client-secret: DoDeccr2fHvdeN9ZrVc0zfitpw9mQDaX # 보안 -> Client Secret 키
-    redirect-uri: http://${server.base-url}:8080/api/v1/oauth/kakao/login
+    redirect-uri: http://j10c107.p.ssafy.io:8080/api/v1/oauth/kakao/login
     scope:
       - profile_nickname
       - profile_image
@@ -73,7 +69,7 @@ oauth:
   naver:
     client-id: 6kxAAj5SSmXzQlEXkOao
     client-secret: fzufMaJYRE
-    redirect_uri: http://${server.base-url}:8080/api/v1/oauth/naver/login
+    redirect_uri: http://j10c107.p.ssafy.io:8080/api/v1/oauth/naver/login
     scope:
       - nickname
       - name
@@ -82,7 +78,7 @@ oauth:
 
   google:
     client_id: 998604407617-m2ggcrfhvka7a6tjsfqbsni6vsaqclr1.apps.googleusercontent.com
-    redirect_uri: http://${server.base-url}:8080/api/v1/oauth/google/login
+    redirect_uri: http://j10c107.p.ssafy.io:8080/api/v1/oauth/google/login
     client_secret: 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
     scope:
       - profile
