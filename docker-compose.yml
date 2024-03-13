@@ -20,6 +20,8 @@ services:
     image: talkydoki_backend_springboot_img
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
     networks:
       - talkydoki_net
 
