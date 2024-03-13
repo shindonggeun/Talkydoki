@@ -62,5 +62,6 @@ export const useGetMember = () => {
     queryFn: () => customAxios.get(`/member/get`),
     select: (res) => res.data,
     staleTime: Infinity, // 유저 정보 새로 가져오는 타이밍 (현재 무기한 연기)
+    gcTime: Infinity,
   });
 };

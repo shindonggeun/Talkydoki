@@ -61,6 +61,7 @@ export const ModalCard = styled(Card)`
     display: flex;
     justify-content: center;
     align-items: center;
+    word-break: keep-all;
   }
 
   .buttons {
@@ -83,9 +84,20 @@ export const ModalBackground = styled.div`
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgb(0, 0, 0, 0.3);
+  background-color: rgb(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 101;
+`;
+
+export const SectionWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1vh 1.5vw;
+
+  @media screen and (max-width: 992px) {
+    flex-direction: column;
+  }
 `;

@@ -1,14 +1,15 @@
+import TodaysVoca from "./RandomVoca";
 import UserKeywordChart from "./UserKeywordChart";
-import { Card } from "@/styles/common/ui/card";
+import { SectionWrapper } from "@/styles/common/ui/container";
 
 type Props = {};
 
 function KeywordSection({}: Props) {
   return (
-    <div style={{ display: "flex", margin: "3vw" }}>
+    <SectionWrapper>
       <UserKeywordChart />
-      <Card>sdfsdfsdfsdfasdklasjdkljdkalsjsdkfjksdlfjlskd</Card>
-    </div>
+      <TodaysVoca />
+    </SectionWrapper>
   );
 }
 

@@ -61,13 +61,30 @@ function UserKeywordChart() {
         show: false,
       },
       chart: {
-        height: 100,
         type: "treemap",
         toolbar: {
           show: false,
         },
       },
       colors: [theme.main.color],
+      tooltip: {
+        enabled: false,
+      },
+      stroke: {
+        show: false,
+        colors: [theme.doc.backgroundModal],
+      },
+      xaxis: {
+        labels: {
+          show: false,
+        },
+        axisBorder: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
+      },
     },
   };
 
@@ -79,6 +96,8 @@ function UserKeywordChart() {
         series={chartData.series}
         options={chartData.options}
         type="treemap"
+        width={"100%"}
+        height={"90%"}
       />
     </KeywordChartWrapper>
   );

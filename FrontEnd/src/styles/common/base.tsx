@@ -28,6 +28,22 @@ export const Global = createGlobalStyle`
         --shadow: ${props.theme.doc.shadow};
         --shadow-dark :${props.theme.doc.shadowDark};
         `}
+
+        /* 아이콘 클릭 시 줄어들었다가 커지는 애니메이션 */
+        @keyframes iconAnimation {
+          0% {
+            transform: scale(1);
+          }
+          10% {
+            transform: scale(0.5);
+          }
+          60% {
+            transform: scale(1.3);
+          }
+          100% {
+            transform: scale(1);
+          }
+        }
     }
 
     body, html {
@@ -35,7 +51,6 @@ export const Global = createGlobalStyle`
       background-color: var(--bg);
       font-family: 'ScoreDream', 'Mplus';
       overflow-x: hidden;
-
     }
 
     body, html, div, span, button, form, section {
