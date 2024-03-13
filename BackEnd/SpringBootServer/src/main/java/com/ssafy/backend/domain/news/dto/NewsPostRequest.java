@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @AllArgsConstructor
-public class NewsDataRequest {
+public class NewsPostRequest {
     @NotBlank(message = "제목은 필수 입력값입니다")
     private String title;
 

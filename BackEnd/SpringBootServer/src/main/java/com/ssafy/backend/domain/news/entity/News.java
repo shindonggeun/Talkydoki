@@ -3,7 +3,6 @@ package com.ssafy.backend.domain.news.entity;
 import java.time.LocalDateTime;
 
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
-import com.ssafy.backend.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
 @Entity
-public class News extends BaseEntity {
+public class News {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
