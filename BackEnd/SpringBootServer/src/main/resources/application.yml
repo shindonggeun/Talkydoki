@@ -1,6 +1,6 @@
 server:
-  base-url: j10c107.p.ssafy.io
-  # base-url: localhost
+#  base-url: j10c107.p.ssafy.io
+   base-url: localhost
 
 spring:
   servlet:
@@ -92,3 +92,10 @@ oauth:
 app:
   firebase-configuration-file: classpath:serviceAccountKey.json
   firebase-bucket: talkydoki.appspot.com
+
+# rabbitMQ setting
+rabbitmq:
+  host: ${server.base-url}
+  port: 5672
+  username: guest
+  password: guest
