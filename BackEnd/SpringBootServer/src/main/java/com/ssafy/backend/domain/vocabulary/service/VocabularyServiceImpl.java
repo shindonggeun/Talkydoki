@@ -82,9 +82,8 @@ public class VocabularyServiceImpl implements VocabularyService {
         PersonalVocabulary personalVocabulary = personalVocabularyRepository.findById(personalVocabularyId).orElseThrow(()
         -> new VocabularyException(VocabularyErrorCode.NOT_EXIST_PERSONAL_VOCABULARY));
 
-        // TODO: 커스텀 Exception 처리
         if (!personalVocabulary.getMember().getId().equals(memberId)) {
-            throw new RuntimeException("소유하고 있는 나만의 단어가 아닙니다.");
+            throw new VocabularyException(VocabularyErrorCode.NOT_OWNED_PERSONAL_VOCABULARY);
         }
 
         personalVocabularyRepository.delete(personalVocabulary);
