@@ -57,12 +57,12 @@ export const EmailDiv = styled.div`
   margin-bottom: 5%;
 `;
 
-export const EmailInput = styled.input`
-  width: 12vw;
-  height: 4.5vh;
-  border-radius: 0.625rem;
-  border: 1.5px solid #d9d9d9;
-`;
+// export const EmailInput = styled.input`
+//   width: 12vw;
+//   height: 4.5vh;
+//   border-radius: 0.625rem;
+//   border: 1.5px solid #d9d9d9;
+// `;
 
 export const SocialButtonDiv = styled.div`
   width: 18vw;
