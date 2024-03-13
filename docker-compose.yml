@@ -45,7 +45,6 @@ services:
   talkydoki_rabbitmq:
     image: rabbitmq:management
     container_name: talkydoki_rabbitmq
-    command: rabbitmq-plugins enable rabbitmq_web_stomp
     ports:
       - "5672:5672"
       - "15672:15672"

@@ -10,6 +10,9 @@ pipeline {
 
                     // 새로운 푸시에 대한 스크립트 실행
                     sh "docker-compose up --build -d"
+
+                    // WebStomp 플러그인 활성화
+                    sh "docker exec rabbitmq rabbitmq-plugins enable rabbitmq_web_stomp"
                 }
             }
         }
