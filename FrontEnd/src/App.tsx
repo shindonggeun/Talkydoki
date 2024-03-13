@@ -16,6 +16,7 @@ import Main from "./routes/Main";
 import SignUp from "./routes/SignUp";
 import Login from "./routes/Login";
 import News from "./routes/News";
+import Protected from "./components/Protect/Protect";
 
 function App() {
   const isDark = useIsDark();
@@ -30,9 +31,16 @@ function App() {
         {isModalOn ? <Modal /> : null}
         <Routes>
           <Route path="/" element={<Intro />} />
-          <Route path="/main" element={<Main />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
+          <Route
+            path="/main"
+            element={
+              <Protected>
+                <Main />
+              </Protected>
+            }
+          />
+          <Route path="/SignUp" element={<SignUp />} />
+          <Route path="/Login" element={<Login />} />
           <Route path="/news" element={<News />} />
         </Routes>
       </MUIThemeProvider>
