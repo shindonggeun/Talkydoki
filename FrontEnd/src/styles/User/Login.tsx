@@ -27,12 +27,13 @@ export const LoginHeader = styled.div`
 `;
 
 export const Title = styled.div`
-  width: 25vw;
+  width: 100%;
   font-size: 1.5rem;
   font-family: "ScoreDream";
   font-weight: 600;
-  margin-left: 7vw;
-  height: 10%;
+  text-align: center;
+  /* height: 10%; */
+  /* border: 1px solid; */
 `;
 
 export const LoginMain = styled.div`
