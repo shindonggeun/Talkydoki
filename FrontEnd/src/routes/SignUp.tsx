@@ -47,7 +47,9 @@ const SignUp: React.FC = () => {
   //   setShowPassword(!showPassword);
   // };
   // 비밀번호 마우스 포커스 방지
-  const handleMouseDownPassword = (event) => {
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
     event.preventDefault();
   };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
