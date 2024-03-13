@@ -1,7 +1,7 @@
 import { Global } from "@/styles/common/base";
 import { ThemeProvider } from "styled-components";
 import { ThemeProvider as MUIThemeProvider } from "@mui/material";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { Fonts } from "@/styles/common/fonts";
 import { dark, light } from "@/styles/common/themes";
 import { muiDarkTheme, muiTheme } from "./styles/common/muiTheme";
@@ -17,17 +17,19 @@ import SignUp from "./routes/SignUp";
 import Login from "./routes/Login";
 import News from "./routes/News";
 import Protected from "./components/Protect/Protect";
+import { useAuthStore } from "./stores/userStore";
 
 function App() {
   const isDark = useIsDark();
   const isModalOn = useIsModalOn();
+  const isLogin = useAuthStore.getState().isLogin;
 
   return (
     <ThemeProvider theme={isDark ? dark : light}>
       <MUIThemeProvider theme={isDark ? muiDarkTheme : muiTheme}>
         <Fonts />
         <Global />
-        <Menu />
+        {isLogin ? <Menu /> : null}
         {isModalOn ? <Modal /> : null}
         <Routes>
           <Route path="/" element={<Intro />} />
@@ -39,8 +41,8 @@ function App() {
               </Protected>
             }
           />
-          <Route path="/SignUp" element={<SignUp />} />
-          <Route path="/Login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
           <Route path="/news" element={<News />} />
         </Routes>
       </MUIThemeProvider>

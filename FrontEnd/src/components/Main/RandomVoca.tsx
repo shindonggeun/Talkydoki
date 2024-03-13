@@ -2,7 +2,6 @@ import { useAddVoca, useGetVoca } from "@/api/vocaApi";
 import { AddVocaBtn, VocaCard } from "@/styles/Main/voca";
 import { splitMeaning } from "@/util/language/voca";
 import { useState } from "react";
-import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 
 import CircularProgress from "@mui/material/CircularProgress";
 import AddIcon from "@mui/icons-material/Add";
@@ -12,8 +11,6 @@ function TodaysVoca() {
   const [isAdded, setIsAdded] = useState(false);
   const { data, isLoading } = useGetVoca();
   const { mutate: addVoca } = useAddVoca();
-  const setIsModalOn = useSetISModalOn();
-  const setModalContent = useSetModalContent();
 
   if (!data) return <VocaCard></VocaCard>;
   if (isLoading)

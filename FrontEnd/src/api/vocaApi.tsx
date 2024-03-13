@@ -1,7 +1,7 @@
 import { VocaInterface } from "@/interface/VocaInterface";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 import { customAxios } from "@/util/auth/customAxios";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const useGetVoca = () => {
   return useQuery({

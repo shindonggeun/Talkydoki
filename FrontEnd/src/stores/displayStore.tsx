@@ -8,7 +8,7 @@ interface DarkModeInterface {
   setIsDark: () => void;
 }
 
-const useDarkMode = create(
+const useDarkModeStore = create(
   persist<DarkModeInterface>(
     (set) => ({
       isDark: false,
@@ -24,8 +24,9 @@ const useDarkMode = create(
   )
 );
 
-export const useIsDark = () => useDarkMode((state) => state.isDark);
-export const useDisplayAction = () => useDarkMode((state) => state.setIsDark);
+export const useIsDark = () => useDarkModeStore((state) => state.isDark);
+export const useDisplayAction = () =>
+  useDarkModeStore((state) => state.setIsDark);
 
 // 반응형 사이드바 토글
 
@@ -34,15 +35,15 @@ interface NavBarInterface {
   setisSidebarOpen: (open: boolean) => void;
 }
 
-const useSideBar = create<NavBarInterface>((set) => ({
+const useSideBarStore = create<NavBarInterface>((set) => ({
   isSidebarOpen: window.innerWidth < 992 ? false : true,
   setisSidebarOpen: (open) => set(() => ({ isSidebarOpen: open })),
 }));
 
 export const useIsSidebarOpen = () =>
-  useSideBar((state) => state.isSidebarOpen);
+  useSideBarStore((state) => state.isSidebarOpen);
 export const useSetIsSidebarOpen = () =>
-  useSideBar((state) => state.setisSidebarOpen);
+  useSideBarStore((state) => state.setisSidebarOpen);
 
 // 모바일 환경인 지 (* <992px) 확인하는 Store
 
@@ -51,7 +52,7 @@ interface MobileInterface {
   setIsMobile: (mobile: boolean) => void;
 }
 
-const useMobile = create<MobileInterface>((set) => ({
+const useMobileStore = create<MobileInterface>((set) => ({
   isMobile: window.innerWidth < 992 ? true : false,
   setIsMobile: (mobile) =>
     set(() => ({
@@ -59,5 +60,6 @@ const useMobile = create<MobileInterface>((set) => ({
     })),
 }));
 
-export const useIsMobile = () => useMobile((state) => state.isMobile);
-export const useSetIsMobile = () => useMobile((state) => state.setIsMobile);
+export const useIsMobile = () => useMobileStore((state) => state.isMobile);
+export const useSetIsMobile = () =>
+  useMobileStore((state) => state.setIsMobile);
