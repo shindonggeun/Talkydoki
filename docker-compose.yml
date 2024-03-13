@@ -47,6 +47,7 @@ services:
     build:
       context: ./CICD
       dockerfile: rabbitmq.Dockerfile
+    image: talkydoki_rabbitmq_img
     ports:
       - "5672:5672"
       - "15672:15672"
