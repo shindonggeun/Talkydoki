@@ -1,7 +1,7 @@
 import { Global } from "@/styles/common/base";
 import { ThemeProvider } from "styled-components";
 import { ThemeProvider as MUIThemeProvider } from "@mui/material";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { Fonts } from "@/styles/common/fonts";
 import { dark, light } from "@/styles/common/themes";
 import { muiDarkTheme, muiTheme } from "./styles/common/muiTheme";
@@ -15,6 +15,7 @@ import Modal from "./components/ui/Modal";
 import Main from "./routes/Main";
 import SignUp from "./routes/SignUp";
 import Login from "./routes/Login";
+import News from "./routes/News";
 
 function App() {
   const isDark = useIsDark();
@@ -30,8 +31,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Intro />} />
           <Route path="/main" element={<Main />} />
-          <Route path="/SignUp" element={<SignUp />} />
-          <Route path="/Login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/news" element={<News />} />
         </Routes>
       </MUIThemeProvider>
     </ThemeProvider>

@@ -23,7 +23,7 @@ function Intro() {
           label="Outlined"
           variant="outlined"
           color="purple"
-          sx={{ backgroundColor: "var(--bg-modal)" }}
+          // sx={{ backgroundColor: "var(--bg-modal)" }}
         />
         <AIChatCategory Icon={AcUnitIcon} title={"눈송이"} />
         <Card>asdfasdf</Card>

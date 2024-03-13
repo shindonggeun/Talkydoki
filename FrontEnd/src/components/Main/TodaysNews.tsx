@@ -4,6 +4,7 @@ import TimerCarousel from "@/components/Main/TimerCarousel";
 import Image1 from "@/assets/images/sampleimage/img1.jpg";
 import Image2 from "@/assets/images/sampleimage/img2.jpg";
 import Image3 from "@/assets/images/sampleimage/img3.jpg";
+import { useGetVoca } from "@/api/vocaApi";
 
 type Props = {};
 
