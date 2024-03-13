@@ -83,14 +83,15 @@ public class RabbitConfig {
             String messageBody = new String(message.getBody());
             log.info("Received message: {}", messageBody);
 
-            try {
-                AiChatCreateRequest request = objectMapper.readValue(messageBody,AiChatCreateRequest.class);
-
-                aiChatService.saveChat(request);
-
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
+            // 이게 맞는지 Controller에서 하는 것이 맞는 지 확인 필요
+//            try {
+//                AiChatCreateRequest request = objectMapper.readValue(messageBody,AiChatCreateRequest.class);
+//
+//                aiChatService.saveChat(request);
+//
+//            } catch (JsonProcessingException e) {
+//                throw new RuntimeException(e);
+//            }
 
         });
 
