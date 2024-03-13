@@ -34,5 +34,27 @@ services:
     networks:
       - talkydoki_net
 
+  talkydoki_redis:
+    image: redis
+    container_name: talkydoki_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - talkydoki_net
+
+  talkydoki_rabbitmq:
+    image: rabbitmq:management
+    container_name: talkydoki_rabbitmq
+    command: rabbitmq-plugins enable rabbitmq_web_stomp
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "61613:61613"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - talkydoki_net
+
 networks:
   talkydoki_net:
