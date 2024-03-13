@@ -30,12 +30,12 @@ spring:
     username: ssafy                     # 데이터베이스 계정명
     password: ssafy                       # 데이터베이스 계정 비밀번호
 
-  # # data_테이블명.sql 관련 실행 setting
-  # sql:
-  #   init:
-  #     mode: always
-  #     data-locations:
-  #       - 'classpath:/data_vocabulary.sql'
+  # data_테이블명.sql 관련 실행 setting
+  sql:
+    init:
+      mode: always
+      data-locations:
+        - 'classpath:/data_vocabulary.sql'
 
   # NoSQL setting
   data:
