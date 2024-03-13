@@ -1,4 +1,3 @@
-import React from "react";
 import UserKeywordChart from "./UserKeywordChart";
 import { Card } from "@/styles/common/ui/card";
 

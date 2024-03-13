@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import SidebarProfile from "./SidebarProfile";
 
 import { SidebarWrapper } from "@/styles/common/ui/container";

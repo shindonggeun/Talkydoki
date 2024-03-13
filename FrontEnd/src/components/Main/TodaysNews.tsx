@@ -1,4 +1,3 @@
-import React from "react";
 import { NegativeTitle } from "@/styles/common/ui/text";
 import TimerCarousel from "@/components/Main/TimerCarousel";
 

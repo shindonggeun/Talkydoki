@@ -1,16 +1,15 @@
 import { KeywordChartWrapper } from "@/styles/Main/keywordChart";
 import { Divider } from "@mui/material";
 import { ApexOptions } from "apexcharts";
-import { useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import { useTheme } from "styled-components";
 
 function UserKeywordChart() {
   const theme = useTheme();
-  const [chartData, setChartdata] = useState<{
+  const chartData: {
     series: ApexOptions["series"];
     options: ApexOptions;
-  }>({
+  } = {
     series: [
       {
         data: [
@@ -70,7 +69,7 @@ function UserKeywordChart() {
       },
       colors: [theme.main.color],
     },
-  });
+  };
 
   return (
     <KeywordChartWrapper>

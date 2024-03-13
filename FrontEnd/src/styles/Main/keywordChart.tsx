@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import { Card } from "../common/ui/card";
 
 export const KeywordChartWrapper = styled.div`
   width: 60%;

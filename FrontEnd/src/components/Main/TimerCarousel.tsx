@@ -17,10 +17,10 @@ function TimerCarousel({ width, height, news }: Props) {
     setTimeout(() => {
       setTimer((prev) => {
         if (prev < 100) {
-          setNextTime((prev) => 1);
+          setNextTime(1);
           return prev + 0.025;
         } else {
-          setNextTime((prev) => 1000);
+          setNextTime(1000);
           setNow((prev) => (prev + 1 < news.length ? prev + 1 : 0));
           return 0;
         }
