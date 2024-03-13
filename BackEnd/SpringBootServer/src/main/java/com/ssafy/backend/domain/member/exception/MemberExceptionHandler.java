@@ -28,8 +28,7 @@ public class MemberExceptionHandler {
             errors.put(fieldName + "Error", message);
         });
 
-        // Map을 직접 반환
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Message.fail(null, errors));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Message.fail("validError", errors));
     }
 
 

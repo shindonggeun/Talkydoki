@@ -82,7 +82,7 @@ public class VocabularyServiceImpl implements VocabularyService {
         PersonalVocabulary personalVocabulary = personalVocabularyRepository.findById(personalVocabularyId).orElseThrow(()
         -> new VocabularyException(VocabularyErrorCode.NOT_EXIST_PERSONAL_VOCABULARY));
 
-        if (!personalVocabulary.getMember().getId().equals(memberId)) {
+        if (!personalVocabulary.getMember().equals(member)) {
             throw new VocabularyException(VocabularyErrorCode.NOT_OWNED_PERSONAL_VOCABULARY);
         }
 

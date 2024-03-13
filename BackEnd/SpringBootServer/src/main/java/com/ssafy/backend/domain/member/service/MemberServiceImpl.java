@@ -114,15 +114,17 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberException(MemberErrorCode.NOT_MATCH_PASSWORD);
         }
 
-        // 현재 비밀번호와 변경하려는 비밀번호가 같은지 확인
+        // 현재 비밀번호와 변경하려는 비밀번호가 같은지 확인 (같은 경우 Exception 발생)
         if (passwordEncoder.matches(passwordChangeRequest.changePassword(), realPassword)) {
             throw new MemberException(MemberErrorCode.CURRENT_CHANGE_MATCH_PASSWORD);
         }
 
-        // 비밀번호 변경과 비밀번호 변경 확인 서로 같은지 확인
-        if (passwordChangeRequest.changePassword().equals(passwordChangeRequest.changeCheckPassword())) {
+        // 비밀번호 변경과 비밀번호 변경 확인 서로 같은지 확인 (다른 경우 Exception 발생)
+        if (!passwordChangeRequest.changePassword().equals(passwordChangeRequest.changePasswordCheck())) {
             throw new MemberException(MemberErrorCode.PASSWORD_CONFIRMATION_MISMATCH);
         }
+
+        member.updataPassword(passwordEncoder.encode(passwordChangeRequest.changePassword()));
     }
 
 }
