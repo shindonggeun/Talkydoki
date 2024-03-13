@@ -16,4 +16,6 @@ public record AiChatRoomCreatedResponse(
                 aiChatRoom.getCategory()
         );
     }
+
+
 }

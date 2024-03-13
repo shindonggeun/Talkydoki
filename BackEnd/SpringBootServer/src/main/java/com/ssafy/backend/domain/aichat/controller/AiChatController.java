@@ -36,7 +36,7 @@ public class AiChatController {
     public AiChatInfo enterUser(@DestinationVariable("roomId") Long roomId, @AuthenticationPrincipal MemberLoginActive loginActive, @Payload AiChatCreateRequest message) {
         Long userId = loginActive.id();
         message.setContent(message.getSender() + "님이 채팅방에 입장했습니다.");
-        return aiChatService.saveChat(userId, roomId, message);
+        return aiChatService.saveChat(message);
     }
 
     /**
@@ -50,6 +50,6 @@ public class AiChatController {
     public AiChatInfo talkUser(@DestinationVariable("roomId") Long roomId, @DestinationVariable("userId") @AuthenticationPrincipal MemberLoginActive loginActive, @Payload AiChatCreateRequest message ) {
         Long userId = loginActive.id();
         rabbitTemplate.convertAndSend("chat.exchange", "*.room."+roomId, message);
-        return aiChatService.saveChat(userId, roomId, message);
+        return aiChatService.saveChat(message);
     }
 }

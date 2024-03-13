@@ -2,6 +2,7 @@ package com.ssafy.backend.domain.aichat.service;
 
 import com.ssafy.backend.domain.aichat.dto.AiChatRoomCreateRequest;
 import com.ssafy.backend.domain.aichat.dto.AiChatRoomCreatedResponse;
+import com.ssafy.backend.domain.aichat.dto.CreatedStompEndpointResponse;
 import com.ssafy.backend.domain.aichat.entity.AiChatRoom;
 import com.ssafy.backend.domain.aichat.entity.enums.Category;
 import com.ssafy.backend.domain.aichat.repository.AiChatRoomRepository;
@@ -20,7 +21,7 @@ public class AiChatRoomServiceImpl implements AiChatRoomService {
     private final MemberRepository memberRepository;
 
     @Override
-    public AiChatRoomCreatedResponse createRoom(AiChatRoomCreateRequest createRequest) {
+    public CreatedStompEndpointResponse createRoom(AiChatRoomCreateRequest createRequest) {
 
         Member member = memberRepository.findById(createRequest.userId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found with the id: " + createRequest.userId()));
@@ -33,8 +34,15 @@ public class AiChatRoomServiceImpl implements AiChatRoomService {
 
         aiChatRoomRepository.save(aiChatRoom);
 
+        // 생성된 roomId와 userId를 사용하여 STOMP 엔드포인트 URL 생성
+        String stompEndpoint = String.format("http://localhost:8080/chat-room.%d", aiChatRoom.getId());
 
-        return AiChatRoomCreatedResponse.from(aiChatRoom);
+        // format 배포 시, 그리고 https 인증 받는 다면
+        // 변경해 주어야함!
+        // JPA .. .getId(), 그냥 .id() dao, dto 타입에 따라 어떻게 다른지 확인하기!!
+
+
+        return CreatedStompEndpointResponse.from(aiChatRoom, stompEndpoint);
     }
 
     @Override

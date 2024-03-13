@@ -50,15 +50,23 @@ public class AiChatServiceImpl implements AiChatService {
     }
 
     @Override
-    public AiChatInfo saveChat(Long memberId, Long roomId, AiChatCreateRequest aiChatCreateRequest) {
-        AiChat aiChatMessage = aiChatCreateRequest.toEntity();
-        AiChatRoom aiChatRoom = validateUserAccessToRoom(memberId, roomId);
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(()->new IllegalArgumentException("User not found with id: "+memberId));
-        aiChatMessage.setAiChatRoom(aiChatRoom);
-        aiChatMessage.setMember(member);
-        aiChatRepository.save(aiChatMessage);
+    public AiChatInfo saveChat( AiChatCreateRequest aiChatCreateRequest) {
 
-        return AiChatInfo.from(aiChatMessage); // 위와 동일하지 않나
+        Member member = memberRepository.findById(aiChatCreateRequest.getUserId())
+                .orElseThrow(()->new IllegalArgumentException("User not found with the id: " + aiChatCreateRequest.getUserId()));
+        AiChatRoom aiChatRoom = aiChatRoomRepository.findById(aiChatCreateRequest.getRoomId())
+                .orElseThrow(()->new IllegalArgumentException("User not found with the id: " + aiChatCreateRequest.getRoomId()));
+
+
+        AiChat aiChat = AiChat.builder()
+                .member(member)
+                .aiChatRoom(aiChatRoom)
+                .sender(aiChatCreateRequest.getSender())
+                .content(aiChatCreateRequest.getContent())
+                .build();
+
+        aiChatRepository.save(aiChat);
+
+        return AiChatInfo.from(aiChat);
     }
 }

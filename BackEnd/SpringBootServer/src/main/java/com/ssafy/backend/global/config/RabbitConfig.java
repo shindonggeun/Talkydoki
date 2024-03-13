@@ -1,5 +1,14 @@
 package com.ssafy.backend.global.config;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.backend.domain.aichat.dto.AiChatCreateRequest;
+import com.ssafy.backend.domain.aichat.entity.AiChat;
+import com.ssafy.backend.domain.aichat.repository.AiChatRepository;
+import com.ssafy.backend.domain.aichat.service.AiChatService;
+import com.ssafy.backend.domain.member.entity.Member;
+import com.ssafy.backend.domain.member.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Binding;
@@ -18,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @EnableRabbit
+@RequiredArgsConstructor
 public class RabbitConfig {
     private static final String CHAT_QUEUE_NAME = "chat.queue";
     private static final String CHAT_EXCHANGE_NAME = "chat.exchange";
@@ -25,6 +35,11 @@ public class RabbitConfig {
 
     // Initialize Logger instance
     private static final Logger log = LoggerFactory.getLogger(RabbitConfig.class);
+
+    private final ObjectMapper objectMapper;
+//    private final MemberRepository memberRepository;
+//    private final AiChatRepository aiChatRepository;
+    private final AiChatService aiChatService;
 
     // Queue 등록
     @Bean
@@ -39,6 +54,7 @@ public class RabbitConfig {
     }
 
     // Exchange와 Queue 바인딩
+    // 특정 교환기와 큐를 라우팅 키를 기바능로 연결
     @Bean
     public Binding binding(Queue queue, TopicExchange exchange) {
         return BindingBuilder
@@ -64,12 +80,25 @@ public class RabbitConfig {
         container.setQueueNames(CHAT_QUEUE_NAME);
 
         container.setMessageListener(message -> {
-            log.info("Received message: {}", new String(message.getBody()));
+            String messageBody = new String(message.getBody());
+            log.info("Received message: {}", messageBody);
+
+            try {
+                AiChatCreateRequest request = objectMapper.readValue(messageBody,AiChatCreateRequest.class);
+
+                aiChatService.saveChat(request);
+
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException(e);
+            }
+
         });
+
         return container;
     }
 
 
+    // RabbitMQ 서버에 연결하기 위한 ConnectionFactory 설정 제공
     // Spring에서 자동생성 해주는 ConnectionFactory가 아니라 (SimpleConnectionFactory) CahcingConnectionFactory이기에 새로 등록
     @Bean
     public ConnectionFactory connectionFactory(

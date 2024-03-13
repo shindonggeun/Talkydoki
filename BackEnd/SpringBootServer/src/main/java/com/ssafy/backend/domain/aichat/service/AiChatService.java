@@ -12,6 +12,6 @@ public interface AiChatService {
     public List<AiChatInfo> getAllMessagesByRoomId(Long userId, Long roomId);
 
     @Transactional
-    public AiChatInfo saveChat(Long userId, Long roomId, AiChatCreateRequest aiChatCreateRequest);
+    public AiChatInfo saveChat(AiChatCreateRequest aiChatCreateRequest);
 
 }

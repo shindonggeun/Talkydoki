@@ -3,6 +3,7 @@ package com.ssafy.backend.domain.aichat.controller;
 
 import com.ssafy.backend.domain.aichat.dto.AiChatRoomCreateRequest;
 import com.ssafy.backend.domain.aichat.dto.AiChatRoomCreatedResponse;
+import com.ssafy.backend.domain.aichat.dto.CreatedStompEndpointResponse;
 import com.ssafy.backend.domain.aichat.service.AiChatRoomService;
 import com.ssafy.backend.global.common.dto.Message;
 import com.ssafy.backend.global.component.jwt.exception.JwtException;
@@ -32,19 +33,13 @@ public class AiChatRoomController {
             summary = "채팅방 생성",
             description = "새로운 채팅방을 생성합니다"
     )
-//    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    public ResponseEntity<Message<AiChatRoomCreatedResponse>> createRoom(@AuthenticationPrincipal MemberLoginActive loginActive, @RequestBody @Valid AiChatRoomCreateRequest createRequest){
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<CreatedStompEndpointResponse>> createRoom(@AuthenticationPrincipal MemberLoginActive loginActive, @RequestBody @Valid AiChatRoomCreateRequest createRequest){
         try {
-//            Long userId = loginActive.id();
 
-            AiChatRoomCreatedResponse createdRoomInfo = aiChatRoomService.createRoom( createRequest);
+            CreatedStompEndpointResponse createdRoomInfo = aiChatRoomService.createRoom(createRequest);
 
-            // 생성된 roomId와 userId를 사용하여 STOMP 엔드포인트 URL 생성
-            String stompEndpoint = String.format("http://localhost:8080/chat-room/%d/%d", createdRoomInfo.id(), createRequest.userId());
-            // format 배포 시, 그리고 https 인증 받는 다면
-            // 변경해 주어야함!
-            // JPA .. .getId(), 그냥 .id() dao, dto 타입에 따라 어떻게 다른지 확인하기!!
-
+            // redirect 해줄 수도...
             return ResponseEntity.ok(Message.success(createdRoomInfo));
 
         } catch(JwtException ex){
@@ -54,9 +49,10 @@ public class AiChatRoomController {
         } catch(AccessDeniedException ex) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Message.fail("403","Access denied"));
 
-        } catch(Exception ex){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Message.fail("500", "An error occurred."));
         }
+//        catch(Exception ex){
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Message.fail("500", "An error occurred."));
+//        }
     }
 
 }
