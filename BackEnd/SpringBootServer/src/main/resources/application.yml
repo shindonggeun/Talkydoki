@@ -1,6 +1,6 @@
 server:
   base-url: j10c107.p.ssafy.io
-#  base-url: localhost
+  # base-url: localhost
 
 spring:
   servlet:

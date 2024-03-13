@@ -13,6 +13,8 @@ import Intro from "@/routes/Intro";
 import Menu from "./routes/Menu";
 import Modal from "./components/ui/Modal";
 import Main from "./routes/Main";
+import SignUp from "./routes/SignUp";
+import Login from "./routes/Login";
 
 function App() {
   const isDark = useIsDark();
@@ -28,6 +30,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Intro />} />
           <Route path="/main" element={<Main />} />
+          <Route path="/SignUp" element={<SignUp />} />
+          <Route path="/Login" element={<Login />} />
         </Routes>
       </MUIThemeProvider>
     </ThemeProvider>

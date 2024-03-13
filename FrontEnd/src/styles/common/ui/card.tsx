@@ -12,8 +12,7 @@ export const Card = styled.div`
 `;
 
 export const AiChatCard = styled(Card)`
-  width: 20%;
-  min-width: 200px;
+  width: 30%;
   aspect-ratio: 1;
   display: flex;
   justify-content: center;
@@ -24,9 +23,16 @@ export const AiChatCard = styled(Card)`
 
     p.categoryName {
       position: absolute;
+      left: 0;
       bottom: -40%;
       width: 100%;
       text-align: center;
     }
+  }
+
+  /* 모바일 버전 비율 (화면 반정도) */
+  @media screen and (max-width: 992px) {
+    width: calc(50% - 3vw);
+    aspect-ratio: 1;
   }
 `;

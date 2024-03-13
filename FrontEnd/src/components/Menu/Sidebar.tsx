@@ -1,9 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import SidebarProfile from "./SidebarProfile";
 
 import { SidebarWrapper } from "@/styles/common/ui/container";
 import { MenuDivider, SidebarBackground } from "@/styles/Menu/sidebar";
-import { useIsSidebarOpen, useSetIsSidebarOpen } from "@/stores/displayStore";
+import {
+  useIsMobile,
+  useIsSidebarOpen,
+  useSetIsMobile,
+  useSetIsSidebarOpen,
+} from "@/stores/displayStore";
 import Menus from "./Menus";
 
 type Props = {};
@@ -12,9 +17,8 @@ function Sidebar({}: Props) {
   const isSidebarOpen = useIsSidebarOpen();
   const setIsSidebarOpen = useSetIsSidebarOpen();
 
-  const [isMobile, setIsMobile] = useState(
-    window.innerWidth < 992 ? true : false
-  );
+  const isMobile = useIsMobile();
+  const setIsMobile = useSetIsMobile();
 
   const resizeHandler = () => {
     setIsMobile(window.innerWidth < 992 ? true : false);

@@ -10,6 +10,9 @@ pipeline {
 
                     // 새로운 푸시에 대한 스크립트 실행
                     sh "docker-compose up --build -d"
+
+                    // 스프링 부트 재실행
+                    sh "docker restart talkydoki_backend_springboot"
                 }
             }
         }
