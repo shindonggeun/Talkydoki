@@ -12,7 +12,10 @@ pipeline {
                     sh "docker-compose up --build -d"
 
                     // WebStomp 플러그인 활성화
-                    sh "docker exec rabbitmq rabbitmq-plugins enable rabbitmq_web_stomp"
+                    sh "docker exec talkydoki_rabbitmq rabbitmq-plugins enable rabbitmq_web_stomp"
+
+                    // 스프링 부트 재실행
+                    sh "docker restart talkydoki_backend_springboot"
                 }
             }
         }
