@@ -66,5 +66,5 @@ public class WebSocketAuthenticationInterceptor implements ChannelInterceptor {
             throw new JwtException(JwtErrorCode.INVALID_TOKEN);
         }
     }
-    
+
 }

@@ -1,6 +1,6 @@
 package com.ssafy.backend.domain.aichat.entity;
 
-import com.ssafy.backend.domain.aichat.entity.enums.Category;
+import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
 import com.ssafy.backend.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -27,7 +27,7 @@ public class AiChatRoom {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Category category;
+    private AiChatCategory category;
 
 //    @Builder.Default
 //    @Column(nullable=false, columnDefinition = "boolean default false")

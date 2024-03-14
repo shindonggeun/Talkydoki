@@ -1,12 +1,12 @@
 package com.ssafy.backend.domain.aichat.dto;
 
 import com.ssafy.backend.domain.aichat.entity.AiChatRoom;
-import com.ssafy.backend.domain.aichat.entity.enums.Category;
+import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
 
 public record CreatedStompEndpointResponse(
         Long id,
         Long userId,
-        Category category,
+        AiChatCategory category,
         String stompEndpoint
 
 ) {

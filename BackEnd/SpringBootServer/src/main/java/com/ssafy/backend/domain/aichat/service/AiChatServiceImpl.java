@@ -2,36 +2,26 @@ package com.ssafy.backend.domain.aichat.service;
 
 import com.ssafy.backend.domain.aichat.dto.AiChatCreateRequest;
 import com.ssafy.backend.domain.aichat.dto.AiChatInfo;
+import com.ssafy.backend.domain.aichat.dto.AiChatRoomCreateResponse;
 import com.ssafy.backend.domain.aichat.entity.AiChat;
 import com.ssafy.backend.domain.aichat.entity.AiChatRoom;
-import com.ssafy.backend.domain.aichat.repository.AiChatRepository;
+import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
+import com.ssafy.backend.domain.aichat.repository.AiChatHistoryRepository;
 import com.ssafy.backend.domain.aichat.repository.AiChatRoomRepository;
 import com.ssafy.backend.domain.member.entity.Member;
+import com.ssafy.backend.domain.member.exception.MemberErrorCode;
+import com.ssafy.backend.domain.member.exception.MemberException;
 import com.ssafy.backend.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class AiChatServiceImpl implements AiChatService {
 
-    private final AiChatRepository aiChatRepository;
+    private final AiChatHistoryRepository aiChatHistoryRepository;
     private final MemberRepository memberRepository;
     private final AiChatRoomRepository aiChatRoomRepository;
-
-    @Override
-    public List<AiChatInfo> getAllMessagesByRoomId(Long userId, Long roomId) {
-        // 방의 접근 권한을 검증
-        validateUserAccessToRoom(userId, roomId);
-
-        // 방 ID에 해당하는 모든 메시지를 조회
-        // Jpa에 따라 이미 만들어진 메서드
-        List<AiChat> messages = aiChatRepository.findByAiChatRoomId(roomId);
-        return messages.stream().map(AiChatInfo::from).toList();
-
-    }
 
 
     private AiChatRoom validateUserAccessToRoom(Long userId, Long roomId) {
@@ -65,8 +55,27 @@ public class AiChatServiceImpl implements AiChatService {
                 .content(aiChatCreateRequest.getContent())
                 .build();
 
-        aiChatRepository.save(aiChat);
+        aiChatHistoryRepository.save(aiChat);
 
         return AiChatInfo.from(aiChat);
+    }
+
+    @Override
+    public AiChatRoomCreateResponse creatAiChatRoom(Long memberId, AiChatCategory category) {
+        Member member = memberRepository.findById(memberId).orElseThrow(()
+        -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+        AiChatRoom aiChatRoom = AiChatRoom.builder()
+                .member(member)
+                .category(category)
+                .build();
+
+        AiChatRoom room = aiChatRoomRepository.save(aiChatRoom);
+
+        return AiChatRoomCreateResponse.builder()
+                .id(room.getId())
+                .memberId(memberId)
+                .category(category)
+                .build();
     }
 }
