@@ -1,11 +1,8 @@
 import { useLogin } from "@/api/memberApi";
-<<<<<<< HEAD
 import GoogleIcon from "@/assets/icon/google.png";
 import KakaoIcon from "@/assets/icon/kakao.png";
 import NaverIcon from "@/assets/icon/naver.png";
 
-=======
->>>>>>> 3525c07d9d9fe9ed21b29c87056e57b48fc9655c
 import {
   AuthMain,
   AuthFooter,

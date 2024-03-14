@@ -7,19 +7,28 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { useDisplayAction, useIsDark } from "@/stores/displayStore";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 import { getProfileImage } from "@/util/common/getFullUrl";
-import { useGetMember } from "@/api/memberApi";
+import { useGetMember, useLogout } from "@/api/memberApi";
+import { useQueryClient } from "@tanstack/react-query";
+import { UserInterface } from "@/interface/UserInterface";
 
 function SidebarProfile() {
   const isDark = useIsDark();
   const toggleDarkmode = useDisplayAction();
   const setModalContent = useSetModalContent();
   const setIsModalOn = useSetISModalOn();
-  const { data, isLoading } = useGetMember();
+  const queryClient = useQueryClient();
+
+  const { isLoading } = useGetMember();
+  const data = queryClient.getQueryData(["getMember"]) as UserInterface;
+  const { mutate: logout } = useLogout();
 
   const handleLogoutModal = () => {
     setModalContent({
       message: "정말 로그아웃하시겠습니까?",
-      onSuccess: () => {},
+      onSuccess: () => {
+        logout();
+        setIsModalOn(false);
+      },
       isInfo: false,
     });
     setIsModalOn(true);

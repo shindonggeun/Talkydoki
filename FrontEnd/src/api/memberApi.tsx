@@ -32,7 +32,7 @@ export const useLogin = () => {
         // 로그인 후 return 받은 데이터 getMember 쿼리에 저장
         queryClient.setQueryData(
           ["getMember"],
-          res.data.dataBody as UserInterface
+          data.dataBody.memberInfo as UserInterface
         );
         setIsLogin(true);
         navigate(`/`);
