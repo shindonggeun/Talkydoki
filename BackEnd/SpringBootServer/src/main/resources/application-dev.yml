@@ -40,7 +40,7 @@ spring:
   data:
     # Redis setting
     redis:
-      host: ${server.base-url}
+      host: talkydoki_redis
       port: 6379
 
 # jwt setting
@@ -94,7 +94,7 @@ app:
 
 # rabbitMQ setting
 rabbitmq:
-  host: ${server.base-url}
+  host: talkydoki_rabbitmq
   port: 5672
   username: guest
   password: guest
