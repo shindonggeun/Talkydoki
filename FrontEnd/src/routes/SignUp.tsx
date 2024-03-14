@@ -1,5 +1,8 @@
 import { useSignup } from "@/api/memberApi";
 import { SignupParams } from "@/interface/AuthInterface";
+import { useSetIsSidebarOpen } from "@/stores/displayStore";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+
 import {
   ButtonBox,
   // EmailDiv,
@@ -10,11 +13,22 @@ import {
   SocialButtonDiv,
   Title,
 } from "@/styles/User/SignUp";
-import { Button, TextField } from "@mui/material";
-import { useState } from "react";
+import {
+  Button,
+  FormControl,
+  IconButton,
+  InputAdornment,
+  InputLabel,
+  OutlinedInput,
+  TextField,
+} from "@mui/material";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
 const SignUp: React.FC = () => {
+  const [showPassword, setShowPassword] = useState(false);
+  // const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+
   const [formData, setFormData] = useState<SignupParams>({
     email: "",
     password: "",
@@ -22,8 +36,22 @@ const SignUp: React.FC = () => {
     nickname: "",
   });
 
-  const { mutate: signup } = useSignup();
+  const setIsSidebarOpen = useSetIsSidebarOpen();
 
+  const { mutate: signup } = useSignup();
+  // 비밀번호 토글
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+  // const handleClickShowPasswordConfirm = () => {
+  //   setShowPassword(!showPassword);
+  // };
+  // 비밀번호 마우스 포커스 방지
+  const handleMouseDownPassword = (
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => {
+    event.preventDefault();
+  };
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -38,6 +66,12 @@ const SignUp: React.FC = () => {
     console.log(formData);
     signup(formData);
   };
+
+  //   사이드바 감추기
+
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  });
 
   return (
     <FlexBox>
@@ -121,28 +155,75 @@ const SignUp: React.FC = () => {
                 버튼
               </Button>
             </EmailDiv> */}
-            <TextField
-              label="비밀번호"
-              variant="outlined"
-              color="purple"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
+
+            <FormControl
               sx={{
                 width: "72%",
                 marginBottom: "5%",
                 backgroundColor: "var(--bg-modal)",
               }}
-              size="small"
-            />
-            <TextField
-              id="outlined-basic"
-              label="비밀번호 확인"
               variant="outlined"
-              color="purple"
-              sx={{ width: "72%", backgroundColor: "var(--bg-modal)" }}
               size="small"
-            />
+            >
+              <InputLabel htmlFor="outlined-adornment-password">
+                비밀번호
+              </InputLabel>
+              <OutlinedInput
+                id="outlined-adornment-password"
+                type={showPassword ? "text" : "password"}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Password"
+                name="password"
+                value={formData.password}
+                onChange={handleChange}
+              />
+            </FormControl>
+            {/* <FormControl 비밀번호 확인 부분 제작 및 컴포넌트로 빼서 관리필요
+              sx={{
+                width: "72%",
+                marginBottom: "5%",
+                backgroundColor: "var(--bg-modal)",
+              }}
+              variant="outlined"
+              size="small"
+            >
+              <InputLabel htmlFor="outlined-adornment-password">
+                비밀번호확인
+              </InputLabel>
+              <OutlinedInput
+                id="outlined-adornment-password"
+                type={showPasswordConfirm ? "text" : "passwordConfirm"}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPasswordConfirm}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPasswordConfirm ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Password"
+                // value={password}
+                // onChange={(e) => {
+                //   console.log(e.target.value); // 이제 여기서만 비밀번호 입력 값이 콘솔에 로그됩니다.
+                //   setPasswordConfirm(e.target.value);
+                // }}
+              />
+            </FormControl> */}
           </SingupInputBox>
           <ButtonBox>
             <Button

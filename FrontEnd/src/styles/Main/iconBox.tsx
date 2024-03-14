@@ -1,11 +1,19 @@
 import styled from "styled-components";
+import { AiChatCard } from "../common/ui/card";
 
+// 회화 카테고리 아이콘 컨테이너
 export const IconBox = styled.div`
   width: calc(100% - 3vw);
   margin: 0 1.5vw;
   display: inline-flex;
   flex-grow: 1;
   height: fit-content;
+  justify-content: space-between;
+
+  ${AiChatCard} {
+    margin: 0;
+    width: 25%;
+  }
 
   .titleBox {
     position: relative;
@@ -22,7 +30,8 @@ export const IconBox = styled.div`
 
     .icon {
       position: absolute;
-      bottom: 10px;
+      bottom: 0;
+      right: 0;
 
       * {
         font-size: 130px;
@@ -32,8 +41,12 @@ export const IconBox = styled.div`
 
   @media screen and (max-width: 992px) {
     flex-wrap: wrap-reverse;
-    justify-content: space-evenly;
+    justify-content: space-between;
     align-items: center;
+
+    ${AiChatCard} {
+      width: calc(50% - 3vw);
+    }
 
     .titleBox {
       height: auto;
@@ -51,7 +64,7 @@ export const IconBox = styled.div`
         right: 10px;
 
         * {
-          font-size: ${window.innerWidth * 0.4}px;
+          font-size: 40vw;
         }
       }
     }

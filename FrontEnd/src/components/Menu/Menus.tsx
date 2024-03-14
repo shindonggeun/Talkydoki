@@ -5,21 +5,28 @@ import ForumIcon from "@mui/icons-material/Forum";
 import FaceIcon from "@mui/icons-material/Face";
 
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 function Menus() {
   const { pathname: now } = useLocation();
+  const navigate = useNavigate();
 
   return (
     <div>
-      <MenuItem className={now == "/main" ? "selected" : undefined}>
+      <MenuItem
+        onClick={() => navigate("/main")}
+        className={now == "/main" ? "selected" : undefined}
+      >
         <div className="label">
           <HomeIcon />
           <div>홈</div>
         </div>
         <KeyboardArrowRightIcon />
       </MenuItem>
-      <MenuItem>
+      <MenuItem
+        onClick={() => navigate("/news")}
+        className={now == "/news" ? "selected" : undefined}
+      >
         <div className="label">
           <ArticleIcon />
           <div>뉴스</div>

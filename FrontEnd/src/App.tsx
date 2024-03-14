@@ -15,23 +15,35 @@ import Modal from "./components/ui/Modal";
 import Main from "./routes/Main";
 import SignUp from "./routes/SignUp";
 import Login from "./routes/Login";
+import News from "./routes/News";
+import Protected from "./components/Protect/Protect";
+import { useAuthStore } from "./stores/userStore";
 
 function App() {
   const isDark = useIsDark();
   const isModalOn = useIsModalOn();
+  const isLogin = useAuthStore.getState().isLogin;
 
   return (
     <ThemeProvider theme={isDark ? dark : light}>
       <MUIThemeProvider theme={isDark ? muiDarkTheme : muiTheme}>
         <Fonts />
         <Global />
-        <Menu />
+        {isLogin ? <Menu /> : null}
         {isModalOn ? <Modal /> : null}
         <Routes>
           <Route path="/" element={<Intro />} />
-          <Route path="/main" element={<Main />} />
-          <Route path="/SignUp" element={<SignUp />} />
-          <Route path="/Login" element={<Login />} />
+          <Route
+            path="/main"
+            element={
+              <Protected>
+                <Main />
+              </Protected>
+            }
+          />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/news" element={<News />} />
         </Routes>
       </MUIThemeProvider>
     </ThemeProvider>
