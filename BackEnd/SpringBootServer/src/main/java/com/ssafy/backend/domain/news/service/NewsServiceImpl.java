@@ -51,6 +51,6 @@ public class NewsServiceImpl implements NewsService {
     @Transactional(readOnly = true)
     public Page<News> getAllNews(int page, int size) {
         // 카테고리별로 뉴스를 조회하고, 리미트를 적용하여 반환
-        return newsRepository.OrderByWriteDateDesc(PageRequest.of(page, size));
+        return newsRepository.findAllByOrderByWriteDateDesc(PageRequest.of(page, size));
     }
 }

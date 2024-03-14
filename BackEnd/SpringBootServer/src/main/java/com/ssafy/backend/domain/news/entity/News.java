@@ -42,6 +42,6 @@ public class News {
     @Column(nullable = false)
     private String srcOrigin;
 
-    @OneToMany(mappedBy = "news")
+    @OneToMany(mappedBy = "news", fetch = FetchType.EAGER)
     private List<NewsKeywordMapping> newsKeywordMappings = new ArrayList<>();
 }
