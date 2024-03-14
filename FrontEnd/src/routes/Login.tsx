@@ -49,11 +49,6 @@ function Login({}: Props) {
     loginMutation.mutate({ email, password });
   };
 
-  //   사이드바 감추기
-  useEffect(() => {
-    setIsSidebarOpen(false);
-  });
-
   return (
     <FlexBox>
       <form onSubmit={handleLogin}>
@@ -85,6 +80,7 @@ function Login({}: Props) {
                 }}
                 variant="outlined"
                 size="small"
+                color="purple"
               >
                 <InputLabel htmlFor="outlined-adornment-password">
                   비밀번호
