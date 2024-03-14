@@ -91,3 +91,10 @@ oauth:
 app:
   firebase-configuration-file: classpath:serviceAccountKey.json
   firebase-bucket: talkydoki.appspot.com
+
+# rabbitMQ setting
+rabbitmq:
+  host: ${server.base-url}
+  port: 5672
+  username: guest
+  password: guest
