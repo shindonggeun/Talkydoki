@@ -45,27 +45,10 @@ def get_news(db: Session):
 def save_data(news_data, filename = "news_data.txt"):
     with open(filename, "w", encoding = "utf-8") as file:
         for news in news_data:
-            file.write(f"ID : {news.id}\nTITLE : {news.title}\nSUMMARY : {news.summary}\nCONTENT : {news.content}\n")
+            file.write(f"ID\n{news.id}\nTITLE\n{news.title}\nSUMMARY\n{news.summary}\nCONTENT\n{news.content}\n")
 
 @app.get("/fetch-news")
 def fetch_news_to_file(db: Session = Depends(get_db)):
     news_data = get_news(db)
     save_data(news_data)
     return {"message": "News data fetched and saved successfully!"}
-
-@app.post("/test/")
-async def test_hadoop_streaming():
-    # mapper.py 실행 후 출력을 파일에 직접 저장
-    mapper_cmd = "python wordcount_mapper.py < news_data.txt > temp_mapper_output.txt"
-    subprocess.run(mapper_cmd, shell=True, check=True)
-
-    # reducer.py 실행
-    reducer_cmd = "sort temp_mapper_output.txt | python wordcount_reducer.py"
-    reducer_result = subprocess.run(reducer_cmd, shell=True, text=True, capture_output=True)
-
-    # 임시 파일 삭제
-    subprocess.run("rm temp_mapper_output.txt", shell=True)
-
-    # reducer의 결과를 반환
-    processed_data = reducer_result.stdout
-    return {"processed_data": processed_data}
