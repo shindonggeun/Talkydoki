@@ -67,3 +67,23 @@ export const useGetMember = () => {
 };
 
 // 로그아웃 구현하기
+
+export const useLogout = () => {
+  const navigate = useNavigate();
+  const setIsLogin = useAuthStore((state) => state.setIsLogin);
+  return useMutation({
+    mutationFn: () => customAxios.post(`/member/logout`),
+
+    onSuccess: (res) => {
+      const response = res.data;
+      if (response.dataHeader.successCode === 0) {
+        console.log(`로그아웃 성공`);
+        navigate("/intro");
+        setIsLogin(false);
+      } else {
+        console.log("로그아웃실패");
+      }
+    },
+    onError: (err) => console.error(err),
+  });
+};
