@@ -1,3 +1,4 @@
+import { getCookie } from "@/util/auth/userCookie";
 import { create } from "zustand";
 
 interface AuthState {
@@ -7,7 +8,7 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
-  isLogin: false,
+  // isLogin: false,
+  isLogin: getCookie() == undefined ? false : true,
   setIsLogin: (isLogin) => set(() => ({ isLogin: isLogin })),
 }));
-
