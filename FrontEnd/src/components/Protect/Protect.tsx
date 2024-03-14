@@ -1,7 +1,6 @@
 // components/ProtectedRoute.tsx
-import React, { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Cookies } from "react-cookie";
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useAuthStore } from "@/stores/userStore";
 import { useShallow } from "zustand/react/shallow";
 import { getCookie } from "@/util/auth/userCookie";

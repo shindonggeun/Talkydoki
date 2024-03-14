@@ -1,5 +1,4 @@
 import { useLogin } from "@/api/memberApi";
-import { useSetIsSidebarOpen } from "@/stores/displayStore";
 import {
   LoginHeader,
   LoginMain,
@@ -21,7 +20,7 @@ import {
   OutlinedInput,
   TextField,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 type Props = {};
@@ -31,7 +30,6 @@ function Login({}: Props) {
   const [password, setPassword] = useState("");
   const loginMutation = useLogin();
   const [showPassword, setShowPassword] = useState(false);
-  const setIsSidebarOpen = useSetIsSidebarOpen();
 
   // 비밀번호 토글
   const handleClickShowPassword = () => {

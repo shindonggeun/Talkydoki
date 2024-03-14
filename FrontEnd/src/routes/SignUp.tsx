@@ -1,6 +1,5 @@
 import { useSignup } from "@/api/memberApi";
 import { SignupParams } from "@/interface/AuthInterface";
-import { useSetIsSidebarOpen } from "@/stores/displayStore";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import {
@@ -22,7 +21,7 @@ import {
   OutlinedInput,
   TextField,
 } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 
 const SignUp: React.FC = () => {
@@ -35,8 +34,6 @@ const SignUp: React.FC = () => {
     name: "",
     nickname: "",
   });
-
-  const setIsSidebarOpen = useSetIsSidebarOpen();
 
   const { mutate: signup } = useSignup();
   // 비밀번호 토글
