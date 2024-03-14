@@ -1,5 +1,6 @@
 package com.ssafy.backend.domain.aichat.entity;
 
+import com.ssafy.backend.domain.aichat.entity.enums.AiChatSender;
 import com.ssafy.backend.domain.aichat.entity.enums.Sender;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,7 +24,7 @@ public class AiChatHistory {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Sender sender;
+    private AiChatSender sender;
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
