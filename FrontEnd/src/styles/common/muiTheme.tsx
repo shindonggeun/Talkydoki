@@ -11,6 +11,9 @@ declare module "@mui/material" {
   interface TextFieldPropsColorOverrides {
     purple: true;
   }
+  interface FormControlPropsColorOverrides {
+    purple: true;
+  }
 }
 
 declare module "@mui/material/styles" {
