@@ -17,11 +17,11 @@ public class NewsKeywordMapping {
 
     private Float weight;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "news_id")
     private News news;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "keyword_id")
     private Keyword keyword;
 }

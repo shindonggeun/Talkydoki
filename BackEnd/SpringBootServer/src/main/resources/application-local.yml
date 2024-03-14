@@ -44,6 +44,13 @@ spring:
       host: ${server.base-url}
       port: 6379
 
+  # rabbitMQ setting
+  rabbitmq:
+    host: ${server.base-url}
+    port: 5672
+    username: guest
+    password: guest
+
 # jwt setting
 jwt:
   accessKey: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
@@ -93,7 +100,7 @@ app:
   firebase-configuration-file: classpath:serviceAccountKey.json
   firebase-bucket: talkydoki.appspot.com
 
-# rabbitMQ setting
+  # rabbitMQ setting
 rabbitmq:
   host: ${server.base-url}
   port: 5672
