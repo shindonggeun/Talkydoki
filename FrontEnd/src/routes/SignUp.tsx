@@ -67,12 +67,6 @@ const SignUp: React.FC = () => {
     signup(formData);
   };
 
-  //   사이드바 감추기
-
-  useEffect(() => {
-    setIsSidebarOpen(false);
-  });
-
   return (
     <FlexBox>
       <SignupBox>
@@ -164,6 +158,7 @@ const SignUp: React.FC = () => {
               }}
               variant="outlined"
               size="small"
+              color="purple"
             >
               <InputLabel htmlFor="outlined-adornment-password">
                 비밀번호
