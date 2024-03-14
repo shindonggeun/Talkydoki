@@ -13,6 +13,7 @@ function Menus() {
 
   return (
     <div>
+      {/* 홈 */}
       <MenuItem
         onClick={() => navigate("/main")}
         className={now == "/main" ? "selected" : undefined}
@@ -23,6 +24,7 @@ function Menus() {
         </div>
         <KeyboardArrowRightIcon />
       </MenuItem>
+      {/* 뉴스 */}
       <MenuItem
         onClick={() => navigate("/news")}
         className={now == "/news" ? "selected" : undefined}
@@ -33,6 +35,7 @@ function Menus() {
         </div>
         <KeyboardArrowRightIcon />
       </MenuItem>
+      {/* AI 채팅 */}
       <MenuItem>
         <div className="label">
           <ForumIcon />
@@ -40,6 +43,7 @@ function Menus() {
         </div>
         <KeyboardArrowRightIcon />
       </MenuItem>
+      {/* 마이페이지 */}
       <MenuItem>
         <div className="label">
           <FaceIcon />
