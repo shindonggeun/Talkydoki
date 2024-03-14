@@ -124,7 +124,7 @@ public class MemberServiceImpl implements MemberService {
             throw new MemberException(MemberErrorCode.PASSWORD_CONFIRMATION_MISMATCH);
         }
 
-        member.updataPassword(passwordEncoder.encode(passwordChangeRequest.changePassword()));
+        member.updatePassword(passwordEncoder.encode(passwordChangeRequest.changePassword()));
     }
 
 }

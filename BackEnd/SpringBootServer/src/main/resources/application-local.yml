@@ -35,6 +35,7 @@ spring:
       mode: always
       data-locations:
         - 'classpath:/data_vocabulary.sql'
+        - 'classpath:/data_news.sql'
 
   # NoSQL setting
   data:
@@ -42,6 +43,13 @@ spring:
     redis:
       host: ${server.base-url}
       port: 6379
+
+  # rabbitMQ setting
+  rabbitmq:
+    host: ${server.base-url}
+    port: 5672
+    username: guest
+    password: guest
 
 # jwt setting
 jwt:
@@ -91,3 +99,10 @@ oauth:
 app:
   firebase-configuration-file: classpath:serviceAccountKey.json
   firebase-bucket: talkydoki.appspot.com
+
+  # rabbitMQ setting
+rabbitmq:
+  host: ${server.base-url}
+  port: 5672
+  username: guest
+  password: guest

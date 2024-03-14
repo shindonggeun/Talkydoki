@@ -54,8 +54,14 @@ public class MemberController {
     )
     @PostMapping("/logout")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    public ResponseEntity<Message<Void>> logoutMember(@AuthenticationPrincipal MemberLoginActive loginActive) {
+    public ResponseEntity<Message<Void>> logoutMember(@AuthenticationPrincipal MemberLoginActive loginActive,
+                                                      HttpServletResponse response) {
         memberService.logoutMember(loginActive.email());;
+        // 쿠키 삭제
+        Cookie accessTokenCookie = new Cookie("accessToken", null);
+        accessTokenCookie.setMaxAge(0);
+        accessTokenCookie.setPath("/");
+        response.addCookie(accessTokenCookie);
         return ResponseEntity.ok().body(Message.success());
     }
 

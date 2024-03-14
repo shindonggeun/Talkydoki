@@ -1,25 +1,30 @@
-package com.ssafy.backend.domain.vocabulary.entity;
+package com.ssafy.backend.domain.news.entity;
 
 import com.ssafy.backend.domain.member.entity.Member;
+import com.ssafy.backend.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
-@Entity
-@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class PersonalVocabulary {
+@Builder
+@Entity
+public class NewsKeywordHistory extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(columnDefinition = "INT UNSIGNED")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Column(nullable = false)
+    private Integer readCount = 0;
+
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
     @OneToOne
-    @JoinColumn(name = "vocabulary_id")
-    private Vocabulary vocabulary;
+    @JoinColumn(name = "keyword_id")
+    private Keyword keyword;
 }

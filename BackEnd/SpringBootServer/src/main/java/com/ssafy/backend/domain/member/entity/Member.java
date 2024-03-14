@@ -2,6 +2,7 @@ package com.ssafy.backend.domain.member.entity;
 
 import com.ssafy.backend.domain.member.dto.MemberUpdateRequest;
 import com.ssafy.backend.domain.member.entity.enums.MemberRole;
+import com.ssafy.backend.domain.news.entity.NewsKeywordHistory;
 import com.ssafy.backend.domain.vocabulary.entity.PersonalVocabulary;
 import com.ssafy.backend.global.common.entity.BaseEntity;
 import com.ssafy.backend.global.component.oauth.vendor.enums.OAuthDomain;
@@ -47,12 +48,15 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member")
     private List<PersonalVocabulary> personalVocabularies = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member")
+    private List<NewsKeywordHistory> newsKeywordHistories = new ArrayList<>();
+
     public void updateProfileImageAndNickname(MemberUpdateRequest updateRequest) {
         this.nickname = updateRequest.nickname();
         this.profileImage = updateRequest.profileImage();
     }
 
-    public void updataPassword(String password) {
+    public void updatePassword(String password) {
         this.password = password;
     }
 }

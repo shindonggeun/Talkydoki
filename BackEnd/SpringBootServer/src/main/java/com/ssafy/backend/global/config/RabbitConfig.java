@@ -1,13 +1,7 @@
 package com.ssafy.backend.global.config;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.backend.domain.aichat.dto.AiChatCreateRequest;
-import com.ssafy.backend.domain.aichat.entity.AiChat;
-import com.ssafy.backend.domain.aichat.repository.AiChatRepository;
 import com.ssafy.backend.domain.aichat.service.AiChatService;
-import com.ssafy.backend.domain.member.entity.Member;
-import com.ssafy.backend.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

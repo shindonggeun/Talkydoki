@@ -1,6 +1,8 @@
 package com.ssafy.backend.domain.news.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import jakarta.persistence.*;
@@ -40,4 +42,6 @@ public class News {
     @Column(nullable = false)
     private String srcOrigin;
 
+    @OneToMany(mappedBy = "news")
+    private List<NewsKeywordMapping> newsKeywordMappings = new ArrayList<>();
 }

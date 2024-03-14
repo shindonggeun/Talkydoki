@@ -6,12 +6,12 @@ import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.domain.news.exception.NewsErrorCode;
 import com.ssafy.backend.domain.news.exception.NewsException;
 import com.ssafy.backend.domain.news.repository.NewsRepository;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -42,13 +42,13 @@ public class NewsServiceImpl implements NewsService {
         newsRepository.save(newsPostRequest.toEntity(writeDateTime));
     }
     @Override
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public Page<News> getNewsByCategory(NewsCategory category, int page, int size) {
         // 카테고리별로 뉴스를 조회하고, 리미트를 적용하여 반환
         return newsRepository.findByCategoryOrderByWriteDateDesc(category, PageRequest.of(page, size));
     }
     @Override
-    @org.springframework.transaction.annotation.Transactional(readOnly = true)
+    @Transactional(readOnly = true)
     public Page<News> getAllNews(int page, int size) {
         // 카테고리별로 뉴스를 조회하고, 리미트를 적용하여 반환
         return newsRepository.OrderByWriteDateDesc(PageRequest.of(page, size));
