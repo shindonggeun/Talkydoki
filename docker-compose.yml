@@ -20,17 +20,50 @@ services:
     image: talkydoki_backend_springboot_img
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
     networks:
       - talkydoki_net
 
-  talkydoki_backend_fastapi:
-    container_name: talkydoki_backend_fastapi
-    build:
-      context: ./BackEnd/SpringBootServer
-      dockerfile: Dockerfile
-    image: talkydoki_backend_fastapi_img
+  # talkydoki_backend_fastapi:
+  #   container_name: talkydoki_backend_fastapi
+  #   build:
+  #     context: ./BackEnd/FastApiServer
+  #     dockerfile: Dockerfile
+  #   image: talkydoki_backend_fastapi_img
+  #   ports:
+  #     - "8000:8000"
+  #   networks:
+  #     - talkydoki_net
+
+  talkydoki_redis:
+    image: redis
+    container_name: talkydoki_redis
     ports:
-      - "8000:8000"
+      - "6379:6379"
+    networks:
+      - talkydoki_net
+
+  talkydoki_rabbitmq:
+    container_name: talkydoki_rabbitmq
+    build:
+      context: ./CICD
+      dockerfile: rabbitmq.Dockerfile
+    image: talkydoki_rabbitmq_img
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+      - "61613:61613"
+    environment:
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+    command: [ "rabbitmq-server" ]
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    restart: unless-stopped
     networks:
       - talkydoki_net
 

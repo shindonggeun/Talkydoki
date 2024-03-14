@@ -27,4 +27,7 @@ public class Vocabulary extends BaseEntity {
 
     @Column(columnDefinition = "VARCHAR(50)")
     private String type;
+
+    @OneToOne(mappedBy = "vocabulary", cascade = CascadeType.ALL)
+    private PersonalVocabulary personalVocabulary;
 }

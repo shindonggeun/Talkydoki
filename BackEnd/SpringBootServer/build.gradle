@@ -47,6 +47,29 @@ dependencies {
 	// Firebase
 	implementation 'com.google.firebase:firebase-admin:9.2.0'
 
+	// QueryDSL
+	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+	// Redis for caching and session storage
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis' // 스프링 부트 Redis 데이터 접근 스타터
+
+	// Websocket for real-time web applications
+	implementation 'org.springframework.boot:spring-boot-starter-websocket' // 스프링 부트 웹소켓 스타터
+
+	// RabbitMQ for messaging and event-driven architectures
+	implementation 'org.springframework.security:spring-security-messaging' // 스프링 시큐리티 메시징
+	testImplementation 'org.springframework.amqp:spring-rabbit-test' // RabbitMQ 테스트 지원
+	implementation 'org.springframework.boot:spring-boot-starter-amqp' // 스프링 부트 AMQP(Advanced Message Queuing Protocol) 스타터
+	implementation 'org.springframework.amqp:spring-rabbit-stream' // 스프링 래빗MQ 스트림 지원
+
+	// RSocket for building reactive applications
+	testImplementation 'io.projectreactor:reactor-test' // 리액터 프로젝트 테스트 유틸리티
+	implementation 'org.springframework.boot:spring-boot-starter-rsocket' // 스프링 부트 RSocket 스타터
+	implementation 'org.springframework.security:spring-security-rsocket' // 스프링 시큐리티 RSocket 지원
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'

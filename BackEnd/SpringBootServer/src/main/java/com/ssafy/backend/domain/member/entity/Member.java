@@ -2,10 +2,14 @@ package com.ssafy.backend.domain.member.entity;
 
 import com.ssafy.backend.domain.member.dto.MemberUpdateRequest;
 import com.ssafy.backend.domain.member.entity.enums.MemberRole;
+import com.ssafy.backend.domain.vocabulary.entity.PersonalVocabulary;
 import com.ssafy.backend.global.common.entity.BaseEntity;
 import com.ssafy.backend.global.component.oauth.vendor.enums.OAuthDomain;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -40,8 +44,15 @@ public class Member extends BaseEntity {
     @Column(name = "provider")
     private OAuthDomain oAuthDomain;
 
+    @OneToMany(mappedBy = "member")
+    private List<PersonalVocabulary> personalVocabularies = new ArrayList<>();
+
     public void updateProfileImageAndNickname(MemberUpdateRequest updateRequest) {
         this.nickname = updateRequest.nickname();
         this.profileImage = updateRequest.profileImage();
+    }
+
+    public void updataPassword(String password) {
+        this.password = password;
     }
 }

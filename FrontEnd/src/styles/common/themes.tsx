@@ -11,23 +11,23 @@ export const light = {
   },
   green: {
     color: "#54EA75",
-    dark: "#8FFF9D",
-    light: "#19DB3B",
+    dark: "#19DB3B",
+    light: "#8FFF9D",
   },
   red: {
     color: "#E03849",
-    dark: "#FF8F9A",
-    light: "#BF0013",
+    dark: "#BF0013",
+    light: "#FF8F9A",
   },
   yellow: {
     color: "#FFD324",
-    dark: "#FFE47A",
-    light: "#FAB22D",
+    dark: "#FAB22D",
+    light: "#FFE47A",
   },
   blue: {
     color: "#176CFF",
-    dark: "#38A2FF",
-    light: "#2448AB",
+    dark: "#2448AB",
+    light: "#38A2FF",
   },
   doc: {
     text: "#312a3df2",
@@ -52,18 +52,18 @@ export const dark = {
   },
   green: {
     color: "#54EA75",
-    dark: "#8FFF9D",
-    light: "#19DB3B",
+    dark: "#19DB3B",
+    light: "#8FFF9D",
   },
   red: {
     color: "#E03849",
-    dark: "#FF8F9A",
-    light: "#BF0013",
+    dark: "#BF0013",
+    light: "#FF8F9A",
   },
   yellow: {
     color: "#FFD324",
-    dark: "#FFE47A",
-    light: "#FAB22D",
+    dark: "#FAB22D",
+    light: "#FFE47A",
   },
   blue: {
     color: "#176CFF",

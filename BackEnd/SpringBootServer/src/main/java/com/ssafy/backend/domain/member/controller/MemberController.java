@@ -93,4 +93,15 @@ public class MemberController {
         return ResponseEntity.ok().body(Message.success());
     }
 
+    @Operation(
+            summary = "비밀번호 변경하기",
+            description = "회원이 현재 비밀번호, 비밀번호 변경, 비밀번호 변경 확인을 입력하여 비밀번호를 변경하는 기능입니다."
+    )
+    @PatchMapping("/password/change")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<Void>> updatePasswordMember(@AuthenticationPrincipal MemberLoginActive loginActive,
+                                                              @Valid @RequestBody MemberPasswordChangeRequest passwordChangeRequest) {
+        memberService.updatePasswordMember(loginActive.id(), passwordChangeRequest);
+        return ResponseEntity.ok().body(Message.success());
+    }
 }

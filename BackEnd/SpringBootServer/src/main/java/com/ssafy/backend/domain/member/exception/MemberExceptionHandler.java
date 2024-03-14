@@ -4,9 +4,13 @@ import com.ssafy.backend.global.common.dto.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 @Slf4j
@@ -14,23 +18,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class MemberExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Message<Void>> handleValidationExceptions(MethodArgumentNotValidException ex) {
-        StringBuilder errorMessageBuilder = new StringBuilder();
+    public ResponseEntity<Message<Map<String, String>>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
 
         // 오류 메시지를 순서대로 추가합니다.
         ex.getBindingResult().getAllErrors().forEach(error -> {
-            if (!errorMessageBuilder.isEmpty()) {
-                errorMessageBuilder.append(", ");
-            }
-//            String fieldName = ((FieldError) error).getField();
+            String fieldName = ((FieldError) error).getField();
             String message = error.getDefaultMessage();
-            errorMessageBuilder.append(message);
+            errors.put(fieldName + "Error", message);
         });
 
-        // 첫 번째 오류 메시지를 resultMessage에 포함
-        String resultMessage = errorMessageBuilder.toString();
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Message.fail(null, resultMessage));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Message.fail("validError", errors));
     }
 
 
