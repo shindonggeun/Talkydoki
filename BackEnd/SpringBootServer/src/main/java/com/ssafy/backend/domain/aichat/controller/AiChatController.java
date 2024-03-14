@@ -33,7 +33,7 @@ public class AiChatController {
     // 이제 이 roomId, userId 정보를
     // room 만들어지고 그 값 사용하게 그리고
     // userId받아서 사용하게
-    @MessageMapping("chat-room.{roomId}.enter")
+    @MessageMapping("chatroom/{roomId}/enter")
     public AiChatInfo enterUser(@DestinationVariable("roomId") Long roomId, @AuthenticationPrincipal MemberLoginActive loginActive, @Payload AiChatCreateRequest message) {
         Long userId = loginActive.id();
         message.setContent(message.getSender() + "님이 채팅방에 입장했습니다.");
@@ -47,8 +47,8 @@ public class AiChatController {
      * @param message 메시지
      * @return 채팅 정보
      */
-    @MessageMapping("chat-room.{roomId}")
-    @SendTo("/topic/chat-room.{roomId}") // 필요 ?? 
+    @MessageMapping("chatroom/{roomId}")
+    @SendTo("/topic/chatroom/{roomId}") // 필요 ??
     public AiChatInfo processMessage(@DestinationVariable("roomId") Long roomId, @AuthenticationPrincipal MemberLoginActive loginActive, @Payload AiChatCreateRequest message ) {
 //        Long userId = loginActive.id();
         rabbitTemplate.convertAndSend("chat.exchange", "*.room."+roomId, message);

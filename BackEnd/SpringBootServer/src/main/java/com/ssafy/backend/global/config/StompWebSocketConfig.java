@@ -29,7 +29,7 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
         // 그리고 생각해봐서 roomId,userId에 대한 엔드포인트 설정 시
         // 원본 데이터를  암호화해서(해시..? return 타입 정수)
         // 설정해 줄 수도 있겠다.
-        registry.addEndpoint("/chat-room.{roomId}")
+        registry.addEndpoint("/chatroom/{roomId}")
                 .setAllowedOriginPatterns("*")
                 .withSockJS();
     }
@@ -43,7 +43,7 @@ public class StompWebSocketConfig implements WebSocketMessageBrokerConfigurer {
      */
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry){
-        registry.setPathMatcher(new AntPathMatcher(".")); // URL / -> . 으로...?
+//        registry.setPathMatcher(new AntPathMatcher(".")); // URL / -> . 으로...?
         registry.enableStompBrokerRelay("/queue","/topic","/exchange", "/amq/queue");
         registry.setApplicationDestinationPrefixes("/app");
 
