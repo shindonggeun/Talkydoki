@@ -14,7 +14,7 @@ RUN npm install
 COPY . .
 
 # 프론트엔드 코드 빌드
-RUN npm run build
+RUN REACT_APP_API_URL=http://j10c107.p.ssafy.io/:8080/api/v1 npm run build
 
 # NGINX 이미지 생성
 FROM nginx:latest
