@@ -36,6 +36,7 @@ spring:
       mode: always
       data-locations:
         - 'classpath:/data_vocabulary.sql'
+        - 'classpath:/data_news.sql'
 
   # NoSQL setting
   data:
