@@ -13,8 +13,11 @@ RUN npm install
 # 나머지 애플리케이션 코드 복사
 COPY . .
 
+# .env 파일 변경
+COPY .env-dev .env
+
 # 프론트엔드 코드 빌드
-RUN REACT_APP_API_URL=http://j10c107.p.ssafy.io/:8080/api/v1 npm run build
+RUN npm run build
 
 # NGINX 이미지 생성
 FROM nginx:latest
