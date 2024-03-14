@@ -1,7 +1,7 @@
 # profile 설정
 # application-{spring:profiles:active}.yml 설정파일에 레벨별로 환경변수 설정
 # 배포 환경에서는 profile을 dev로 변경해서 사용해도 되고, 또는 도커에서 명령어를 직접 입력해 dev로 설정 가능
-# docker-compose.yml 파일 내에서 배포 환경에서 사용하는 yml 파일 프로필 가져오기 설정
+# docker-compose.yml 파일 내에서 배포 환경에서 사용하는 yml 파일 프로필 가져오기 설정 
 spring:
   profiles:
     active : local
