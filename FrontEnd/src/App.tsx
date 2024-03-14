@@ -1,7 +1,7 @@
 import { Global } from "@/styles/common/base";
 import { ThemeProvider } from "styled-components";
 import { ThemeProvider as MUIThemeProvider } from "@mui/material";
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { Fonts } from "@/styles/common/fonts";
 import { dark, light } from "@/styles/common/themes";
 import { muiDarkTheme, muiTheme } from "./styles/common/muiTheme";
@@ -22,29 +22,34 @@ import { useAuthStore } from "./stores/userStore";
 function App() {
   const isDark = useIsDark();
   const isModalOn = useIsModalOn();
-  const isLogin = useAuthStore.getState().isLogin;
+  const isLogin = useAuthStore((state) => state.isLogin);
 
   return (
     <ThemeProvider theme={isDark ? dark : light}>
       <MUIThemeProvider theme={isDark ? muiDarkTheme : muiTheme}>
         <Fonts />
         <Global />
-        {isLogin ? <Menu /> : null}
+        <Protected />
         {isModalOn ? <Modal /> : null}
-        <Routes>
-          <Route path="/" element={<Intro />} />
-          <Route
-            path="/main"
-            element={
-              <Protected>
-                <Main />
-              </Protected>
-            }
-          />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/news" element={<News />} />
-        </Routes>
+        {isLogin ? (
+          <>
+            <Menu />
+            <Routes>
+              <Route path="/" element={<Navigate replace to="/main" />} />
+              <Route path="/main" element={<Main />} />
+              <Route path="/news" element={<News />} />
+              <Route path="/*" element={<Navigate replace to="/main" />} />
+            </Routes>
+          </>
+        ) : (
+          <Routes>
+            <Route path="/" element={<Navigate replace to="/intro" />} />
+            <Route path="/intro" element={<Intro />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/*" element={<Navigate replace to="/login" />} />
+          </Routes>
+        )}
       </MUIThemeProvider>
     </ThemeProvider>
   );

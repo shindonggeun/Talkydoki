@@ -1,24 +1,38 @@
 // components/ProtectedRoute.tsx
-import React from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Cookies } from "react-cookie";
 import { useAuthStore } from "@/stores/userStore";
-
-interface ProtectedRouteProps {
-  children: JSX.Element;
-}
+import { useShallow } from "zustand/react/shallow";
+import { getCookie } from "@/util/auth/userCookie";
 
 // 로그인 필요 체크용 프로텍트라우터
-const Protected: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isLogin, setIsLogin } = useAuthStore();
-  const cookies = new Cookies();
-  const accessToken = cookies.get("accessToken");
-  const navigate = useNavigate();
+const Protected = () => {
+  const { isLogin, setIsLogin } = useAuthStore(
+    useShallow((state) => ({
+      isLogin: state.isLogin,
+      setIsLogin: state.setIsLogin,
+    }))
+  );
 
-  if (!accessToken) {
-    setIsLogin(false);
-    navigate("/login");
-  }
+  const { pathname } = useLocation();
+  console.log(pathname);
+
+  useEffect(() => {
+    const accessToken = getCookie();
+    if (accessToken != undefined) {
+      setIsLogin(true);
+      console.log(isLogin);
+    } else {
+      setIsLogin(false);
+      console.log(isLogin);
+    }
+  }, [pathname]);
+
+  // if (!accessToken) {
+  //   setIsLogin(false);
+  //   navigate("/login");
+  // }
   //   else {
 
   //     // useQuery('refreshToken', refreshToken, {
@@ -53,7 +67,7 @@ const Protected: React.FC<ProtectedRouteProps> = ({ children }) => {
   //   }
 
   // 로그인 상태가 true이면 자식 컴포넌트 렌더링
-  return isLogin ? children : <></>;
+  return <></>;
 };
 
 export default Protected;
