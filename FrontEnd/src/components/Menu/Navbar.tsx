@@ -4,9 +4,7 @@ import Logo from "@/assets/images/logo_face2.png";
 import { useIsSidebarOpen, useSetIsSidebarOpen } from "@/stores/displayStore";
 import MenuIcon from "@mui/icons-material/Menu";
 
-type Props = {};
-
-function Navbar({}: Props) {
+function Navbar() {
   const isSidebarOpen = useIsSidebarOpen();
   const toggleSidebar = useSetIsSidebarOpen();
 

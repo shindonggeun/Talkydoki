@@ -7,8 +7,6 @@ const cookies = new Cookies();
 
 // Axios 인스턴스 생성 함수
 const createAxiosInstance = (baseURL?: string) => {
-  const accessToken = cookies.get("accessToken");
-
   const instance = axios.create({
     withCredentials: true,
     baseURL: baseURL || "",
@@ -20,22 +18,15 @@ const createAxiosInstance = (baseURL?: string) => {
   // 요청 인터셉터 설정
   instance.interceptors.request.use(
     (config) => {
+      const accessToken = cookies.get("accessToken");
       if (accessToken) {
         config.headers["Authorization"] = `Bearer ${accessToken}`;
       }
+
       return config;
     },
     (error) => {
       return Promise.reject(error);
-    }
-  );
-
-  instance.interceptors.response.use(
-    (response) => {
-      return response;
-    },
-    (error) => {
-      return error.response;
     }
   );
 

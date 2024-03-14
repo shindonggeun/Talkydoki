@@ -5,8 +5,6 @@ import Image1 from "@/assets/images/sampleimage/img1.jpg";
 import Image2 from "@/assets/images/sampleimage/img2.jpg";
 import Image3 from "@/assets/images/sampleimage/img3.jpg";
 
-type Props = {};
-
 const newsList = [
   {
     img: Image1,
@@ -28,7 +26,7 @@ const newsList = [
   },
 ];
 
-function TodaysNews({}: Props) {
+function TodaysNews() {
   return (
     <>
       <NegativeTitle>오늘의 뉴스</NegativeTitle>

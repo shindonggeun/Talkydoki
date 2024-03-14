@@ -12,3 +12,6 @@ export const useAuthStore = create<AuthState>((set) => ({
   isLogin: getCookie() == undefined ? false : true,
   setIsLogin: (isLogin) => set(() => ({ isLogin: isLogin })),
 }));
+
+export const useIsLogin = () => useAuthStore((state) => state.isLogin);
+export const useSetIsLogin = () => useAuthStore((state) => state.setIsLogin);

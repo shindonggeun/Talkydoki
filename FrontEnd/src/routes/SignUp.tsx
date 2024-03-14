@@ -3,18 +3,17 @@ import { SignupParams } from "@/interface/AuthInterface";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 import {
-  ButtonBox,
-  // EmailDiv,
-  // EmailInput,
   FlexBox,
-  SignupBox,
-  SingupInputBox,
-  SocialButtonDiv,
   Title,
-} from "@/styles/User/SignUp";
+  AuthContainer,
+  AuthMain,
+  AuthMainFooter,
+} from "@/styles/User/AuthForm";
 import {
   Button,
+  Divider,
   FormControl,
+  FormHelperText,
   IconButton,
   InputAdornment,
   InputLabel,
@@ -23,10 +22,16 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { isSamePassword, isValidAuth } from "@/util/common/validator";
+import { useSignupErrors } from "@/stores/signUpStore";
 
 const SignUp: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
-  // const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+
+  const { emailError, nameError, nicknameError, passwordError } =
+    useSignupErrors();
 
   const [formData, setFormData] = useState<SignupParams>({
     email: "",
@@ -36,19 +41,14 @@ const SignUp: React.FC = () => {
   });
 
   const { mutate: signup } = useSignup();
-  // 비밀번호 토글
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-  // const handleClickShowPasswordConfirm = () => {
-  //   setShowPassword(!showPassword);
-  // };
+
   // 비밀번호 마우스 포커스 방지
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
   };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -66,37 +66,21 @@ const SignUp: React.FC = () => {
 
   return (
     <FlexBox>
-      <SignupBox>
+      <AuthContainer>
         <Title>회원가입</Title>
         <form onSubmit={handleSubmit}>
-          <SingupInputBox>
+          {/* 회원가입 폼 */}
+          <AuthMain>
             <TextField
-              label="아이디"
+              label="이메일"
               variant="outlined"
               color="purple"
               name="email"
               value={formData.email}
               onChange={handleChange}
-              sx={{
-                width: "72%",
-                marginBottom: "5%",
-                backgroundColor: "var(--bg-modal)",
-              }}
-              size="small"
-            />
-            <TextField
-              label="닉네임"
-              variant="outlined"
-              color="purple"
-              name="nickname"
-              value={formData.nickname}
-              onChange={handleChange}
-              sx={{
-                width: "72%",
-                marginBottom: "5%",
-                backgroundColor: "var(--bg-modal)",
-              }}
-              size="small"
+              fullWidth
+              error={emailError ? true : false}
+              helperText={emailError ? emailError : null}
             />
             <TextField
               label="이름"
@@ -105,12 +89,20 @@ const SignUp: React.FC = () => {
               name="name"
               value={formData.name}
               onChange={handleChange}
-              sx={{
-                width: "72%",
-                marginBottom: "5%",
-                backgroundColor: "var(--bg-modal)",
-              }}
-              size="small"
+              fullWidth
+              error={nameError ? true : false}
+              helperText={nameError ? nameError : null}
+            />
+            <TextField
+              label="닉네임"
+              variant="outlined"
+              color="purple"
+              name="nickname"
+              value={formData.nickname}
+              onChange={handleChange}
+              fullWidth
+              error={nicknameError ? true : false}
+              helperText={nicknameError ? nicknameError : null}
             />
             {/* 이메일 부분 사용시 주석해제 */}
             {/* <EmailDiv>
@@ -147,27 +139,18 @@ const SignUp: React.FC = () => {
               </Button>
             </EmailDiv> */}
 
-            <FormControl
-              sx={{
-                width: "72%",
-                marginBottom: "5%",
-                backgroundColor: "var(--bg-modal)",
-              }}
-              variant="outlined"
-              size="small"
-              color="purple"
-            >
-              <InputLabel htmlFor="outlined-adornment-password">
-                비밀번호
-              </InputLabel>
+            <FormControl fullWidth variant="outlined" color="purple">
+              <InputLabel htmlFor="password">비밀번호</InputLabel>
               <OutlinedInput
-                id="outlined-adornment-password"
+                id="password"
                 type={showPassword ? "text" : "password"}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
+                      onClick={() => {
+                        setShowPassword((prev) => !prev);
+                      }}
                       onMouseDown={handleMouseDownPassword}
                       edge="end"
                     >
@@ -179,28 +162,24 @@ const SignUp: React.FC = () => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
+                error={passwordError ? true : false}
               />
+              <FormHelperText error={passwordError ? true : false}>
+                8~16자, 영문, 숫자, 특수문자 포함
+              </FormHelperText>
             </FormControl>
-            {/* <FormControl 비밀번호 확인 부분 제작 및 컴포넌트로 빼서 관리필요
-              sx={{
-                width: "72%",
-                marginBottom: "5%",
-                backgroundColor: "var(--bg-modal)",
-              }}
-              variant="outlined"
-              size="small"
-            >
-              <InputLabel htmlFor="outlined-adornment-password">
-                비밀번호확인
-              </InputLabel>
+
+            <FormControl variant="outlined" color="purple" fullWidth>
+              <InputLabel htmlFor="passwordConfirm">비밀번호확인</InputLabel>
               <OutlinedInput
-                id="outlined-adornment-password"
-                type={showPasswordConfirm ? "text" : "passwordConfirm"}
+                error={!isSamePassword(formData.password, passwordConfirm)}
+                id="passwordConfirm"
+                type={showPasswordConfirm ? "text" : "password"}
                 endAdornment={
                   <InputAdornment position="end">
                     <IconButton
                       aria-label="toggle password visibility"
-                      onClick={handleClickShowPasswordConfirm}
+                      onClick={() => setShowPasswordConfirm((prev) => !prev)}
                       onMouseDown={handleMouseDownPassword}
                       edge="end"
                     >
@@ -209,46 +188,38 @@ const SignUp: React.FC = () => {
                   </InputAdornment>
                 }
                 label="Password"
-                // value={password}
-                // onChange={(e) => {
-                //   console.log(e.target.value); // 이제 여기서만 비밀번호 입력 값이 콘솔에 로그됩니다.
-                //   setPasswordConfirm(e.target.value);
-                // }}
+                value={passwordConfirm}
+                onChange={(e) => {
+                  setPasswordConfirm(e.target.value);
+                }}
               />
-            </FormControl> */}
-          </SingupInputBox>
-          <ButtonBox>
-            <Button
-              type="submit"
-              variant="contained"
-              color="purple"
-              size="small"
-              sx={{ width: "72%" }}
-            >
-              회원가입
-            </Button>
-            <SocialButtonDiv>
-              <Button variant="contained" color="purple" size="small">
-                네이버
-              </Button>
-              <Button variant="contained" color="purple" size="small">
-                카카오
-              </Button>
-              <Button variant="contained" color="purple" size="small">
-                구글
-              </Button>
-            </SocialButtonDiv>
-            <p>
-              <Link
-                to="/login"
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
+              {!isSamePassword(formData.password, passwordConfirm) && (
+                <FormHelperText error>
+                  정확한 비밀번호를 입력해주세요
+                </FormHelperText>
+              )}
+            </FormControl>
+          </AuthMain>
+          <AuthMainFooter>
+            <Divider textAlign="center">or</Divider>
+            <div>
+              이미 가입하셨나요?{" "}
+              <Link className="link" to="/login">
                 로그인
               </Link>
-            </p>
-          </ButtonBox>
+            </div>
+          </AuthMainFooter>
+          <Button
+            type="submit"
+            variant="contained"
+            color="purple"
+            fullWidth
+            disabled={!isValidAuth(formData, passwordConfirm)}
+          >
+            회원가입
+          </Button>
         </form>
-      </SignupBox>
+      </AuthContainer>
     </FlexBox>
   );
 };

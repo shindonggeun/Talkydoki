@@ -1,29 +1,42 @@
 import { ProfileSection } from "@/styles/Menu/sidebar";
 
 import Logo from "@/assets/images/logo_text_light.png";
-import DefaultImg from "@/assets/images/default_profile.png";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { useDisplayAction, useIsDark } from "@/stores/displayStore";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
+import { getProfileImage } from "@/util/common/getFullUrl";
+import { useGetMember, useLogout } from "@/api/memberApi";
+import { useQueryClient } from "@tanstack/react-query";
+import { UserInterface } from "@/interface/UserInterface";
 
-type Props = {};
-
-function SidebarProfile({}: Props) {
+function SidebarProfile() {
   const isDark = useIsDark();
   const toggleDarkmode = useDisplayAction();
   const setModalContent = useSetModalContent();
   const setIsModalOn = useSetISModalOn();
+  const queryClient = useQueryClient();
+
+  const { isLoading } = useGetMember();
+  const data = queryClient.getQueryData(["getMember"]) as UserInterface;
+  const { mutate: logout } = useLogout();
 
   const handleLogoutModal = () => {
     setModalContent({
       message: "정말 로그아웃하시겠습니까?",
-      onSuccess: () => {},
+      onSuccess: () => {
+        logout();
+        setIsModalOn(false);
+      },
       isInfo: false,
     });
     setIsModalOn(true);
   };
+
+  if (!data || isLoading) return <></>;
+
+  const { nickname, profileImage } = data;
 
   return (
     <ProfileSection>
@@ -41,8 +54,12 @@ function SidebarProfile({}: Props) {
       </div>
       {/* 프로필사진 / 이름 / 로그아웃 */}
       <div className="profileDiv">
-        <img src={DefaultImg} alt="profileImage" className="profileImg" />
-        <div className="name">김싸피</div>
+        <img
+          src={getProfileImage(profileImage)}
+          alt="profileImage"
+          className="profileImg"
+        />
+        <div className="name">{nickname}</div>
       </div>
     </ProfileSection>
   );

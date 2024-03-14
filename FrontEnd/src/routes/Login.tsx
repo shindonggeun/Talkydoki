@@ -1,18 +1,21 @@
 import { useLogin } from "@/api/memberApi";
+import GoogleIcon from "@/assets/icon/google.png";
+import KakaoIcon from "@/assets/icon/kakao.png";
+import NaverIcon from "@/assets/icon/naver.png";
+
 import {
-  LoginHeader,
-  LoginMain,
-  LoginFooter,
+  AuthMain,
+  AuthFooter,
   FlexBox,
-  LoginBox,
-  LoginInputDiv,
+  AuthContainer,
   SocialButtonDiv,
   Title,
-  LoginMainFooter,
-} from "@/styles/User/Login";
+  AuthMainFooter,
+} from "@/styles/User/AuthForm";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Button,
+  Divider,
   FormControl,
   IconButton,
   InputAdornment,
@@ -50,95 +53,74 @@ function Login({}: Props) {
   return (
     <FlexBox>
       <form onSubmit={handleLogin}>
-        <LoginBox>
-          <LoginHeader>
-            <Title>로그인</Title>
-          </LoginHeader>
-          <LoginMain>
-            <LoginInputDiv>
-              <TextField
-                label="아이디"
-                variant="outlined"
-                color="purple"
-                sx={{
-                  width: "100%",
-                  backgroundColor: "var(--bg-modal)",
-                }}
-                size="small"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-            </LoginInputDiv>
-
-            <LoginInputDiv>
-              <FormControl
-                sx={{
-                  width: "100%",
-                  backgroundColor: "var(--bg-modal)",
-                }}
-                variant="outlined"
-                size="small"
-                color="purple"
-              >
-                <InputLabel htmlFor="outlined-adornment-password">
-                  비밀번호
-                </InputLabel>
-                <OutlinedInput
-                  id="outlined-adornment-password"
-                  type={showPassword ? "text" : "password"}
-                  endAdornment={
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword}
-                        edge="end"
-                      >
-                        {showPassword ? <VisibilityOff /> : <Visibility />}
-                      </IconButton>
-                    </InputAdornment>
-                  }
-                  label="Password"
-                  value={password}
-                  onChange={(e) => {
-                    console.log(e.target.value); // 이제 여기서만 비밀번호 입력 값이 콘솔에 로그됩니다.
-                    setPassword(e.target.value);
-                  }}
-                />
-              </FormControl>
-            </LoginInputDiv>
-            <LoginMainFooter>
-              <Link
-                to="/signup"
-                style={{ textDecoration: "none", color: "inherit" }}
-              >
-                회원가입
-              </Link>
-            </LoginMainFooter>
-          </LoginMain>
-          <LoginFooter>
-            <SocialButtonDiv>
-              <Button variant="contained" color="purple" size="small">
-                네이버
-              </Button>
-              <Button variant="contained" color="purple" size="small">
-                카카오
-              </Button>
-              <Button variant="contained" color="purple" size="small">
-                구글
-              </Button>
-            </SocialButtonDiv>
-            <Button
-              type="submit"
-              variant="contained"
+        <AuthContainer>
+          <Title>로그인</Title>
+          <AuthMain>
+            {/* 아이디 */}
+            <TextField
+              label="이메일"
+              variant="outlined"
               color="purple"
-              size="small"
-              sx={{ width: "72%" }}
-            >
+              fullWidth
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+
+            <FormControl fullWidth variant="outlined" color="purple">
+              <InputLabel htmlFor="password">비밀번호</InputLabel>
+              <OutlinedInput
+                id="password"
+                type={showPassword ? "text" : "password"}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                }
+                label="Password"
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
+              />
+            </FormControl>
+
+            {/* 회원가입 */}
+            <AuthMainFooter>
+              <div>
+                아이디가 없으신가요?{" "}
+                <Link className="link" to="/signup">
+                  회원가입
+                </Link>
+              </div>
+            </AuthMainFooter>
+          </AuthMain>
+          <Divider textAlign="center">or</Divider>
+
+          {/* 소셜로그인 */}
+          <AuthFooter>
+            <SocialButtonDiv>
+              <div className="social">
+                <img className="icon" src={GoogleIcon} alt="구글로 로그인" />
+              </div>
+              <div className="social">
+                <img className="icon" src={KakaoIcon} alt="카카오로 로그인" />
+              </div>
+              <div className="social">
+                <img className="icon" src={NaverIcon} alt="네이버로 로그인" />
+              </div>
+            </SocialButtonDiv>
+            <Button type="submit" variant="contained" color="purple" fullWidth>
               로그인
             </Button>
-          </LoginFooter>
-        </LoginBox>
+          </AuthFooter>
+        </AuthContainer>
       </form>
     </FlexBox>
   );
