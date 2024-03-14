@@ -22,6 +22,8 @@ function SidebarProfile() {
   const data = queryClient.getQueryData(["getMember"]) as UserInterface;
   const { mutate: logout } = useLogout();
 
+  // const userInfo = typeof(data) ==
+
   const handleLogoutModal = () => {
     setModalContent({
       message: "정말 로그아웃하시겠습니까?",

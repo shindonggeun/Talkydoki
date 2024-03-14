@@ -1,7 +1,12 @@
+// import { useGetNewsList } from "@/api/newsApi";
+import { Wrapper } from "@/styles/common/ui/container";
+
 type Props = {};
 
 function News({}: Props) {
-  return <div>News</div>;
+  // const { data } = useGetNewsList("SOCIETY");
+
+  return <Wrapper>News</Wrapper>;
 }
 
 export default News;

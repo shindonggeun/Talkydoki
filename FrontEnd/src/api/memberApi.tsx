@@ -80,13 +80,18 @@ export const useSignup = () => {
 // 회원정보 가져오기
 export const useGetMember = () => {
   const isLogin = useIsLogin();
+  const queryClient = useQueryClient();
 
   return useQuery({
     queryKey: ["getMember"],
-    queryFn: () => customAxios.get(`/member/get`).then((res) => res.data),
+    queryFn: () => {
+      console.log("가져온당");
+      return customAxios.get(`/member/get`).then((res) => res.data);
+    },
     select: (data) => {
       // get 성공 시 data.dataBody를 getMember로 쿼리에 저장
       if (data.dataHeader.successCode == 0) {
+        queryClient.setQueryData(["getMember"], data.dataBody as UserInterface);
         return data.dataBody as UserInterface;
       } else {
         return null;

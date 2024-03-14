@@ -1,5 +1,6 @@
 import { SignupParams } from "@/interface/AuthInterface";
 
+// 비밀번호==비밀번호 확인
 export const isSamePassword = (password: string, password2: string) => {
   if (password.length == 0 && password2.length == 0) return true;
   if (password != password2) {
@@ -9,6 +10,7 @@ export const isSamePassword = (password: string, password2: string) => {
   }
 };
 
+// 회원가입 유효성 검사 함수
 export const isValidAuth = (form: SignupParams, password2: string) => {
   const { email, name, nickname, password } = form;
 
