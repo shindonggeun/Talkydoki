@@ -5,7 +5,7 @@ import { useGetNewsList } from "@/api/newsApi";
 type Props = {};
 
 function News({}: Props) {
-  const { data } = useGetNewsList("SOCIETY");
+  // const { data } = useGetNewsList("SOCIETY");
 
   return <Wrapper>News</Wrapper>;
 }
