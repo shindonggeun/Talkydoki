@@ -1,6 +1,6 @@
 // import { useGetNewsList } from "@/api/newsApi";
 import { Wrapper } from "@/styles/common/ui/container";
-import { useGetNewsList } from "@/api/newsApi";
+// import { useGetNewsList } from "@/api/newsApi";
 
 type Props = {};
 
