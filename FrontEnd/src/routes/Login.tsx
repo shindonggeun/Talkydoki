@@ -1,4 +1,4 @@
-import { useLogin } from "@/api/memberApi";
+import { useLogin, startSocialLogin } from "@/api/memberApi";
 import GoogleIcon from "@/assets/icon/google.png";
 import KakaoIcon from "@/assets/icon/kakao.png";
 import NaverIcon from "@/assets/icon/naver.png";
@@ -31,8 +31,9 @@ type Props = {};
 function Login({}: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const loginMutation = useLogin();
   const [showPassword, setShowPassword] = useState(false);
+  const loginMutation = useLogin();
+  const { mutate: startSocial } = startSocialLogin();
 
   // 비밀번호 토글
   const handleClickShowPassword = () => {
@@ -48,6 +49,11 @@ function Login({}: Props) {
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     loginMutation.mutate({ email, password });
+  };
+
+  const socialLogin = (platform: string) => {
+    console.log(platform);
+    startSocial(platform);
   };
 
   return (
@@ -106,13 +112,13 @@ function Login({}: Props) {
           {/* 소셜로그인 */}
           <AuthFooter>
             <SocialButtonDiv>
-              <div className="social">
+              <div className="social" onClick={() => socialLogin("google")}>
                 <img className="icon" src={GoogleIcon} alt="구글로 로그인" />
               </div>
-              <div className="social">
+              <div className="social" onClick={() => socialLogin("kakao")}>
                 <img className="icon" src={KakaoIcon} alt="카카오로 로그인" />
               </div>
-              <div className="social">
+              <div className="social" onClick={() => socialLogin("naver")}>
                 <img className="icon" src={NaverIcon} alt="네이버로 로그인" />
               </div>
             </SocialButtonDiv>

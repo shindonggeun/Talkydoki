@@ -1,5 +1,9 @@
 import { customAxios } from "../util/auth/customAxios";
-import { LoginParams, SignupParams } from "../interface/AuthInterface";
+import {
+  LoginParams,
+  SignupParams,
+  SocialLoginPayload,
+} from "../interface/AuthInterface";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore, useIsLogin } from "@/stores/userStore";
@@ -119,6 +123,46 @@ export const useLogout = () => {
         setIsLogin(false);
       } else {
         console.log("로그아웃실패");
+      }
+    },
+    onError: (err) => console.error(err),
+  });
+};
+
+// 소셜 로그인
+
+export const startSocialLogin = () => {
+  return useMutation({
+    mutationFn: (payload: string) => customAxios.get(`/oauth/${payload}`),
+    onSuccess: (res) => {
+      const { data } = res;
+      console.log(data);
+      if (data.dataHeader.successCode === 0) {
+        window.location.href = data.dataBody;
+      } else {
+        alert(data.dataHeader.resultMessage);
+      }
+    },
+    onError: (err) => console.error(err),
+  });
+};
+
+export const finishSocialLogin = () => {
+  // const setIsLogin = useAuthStore((state) => state.setIsLogin);
+  // const navigate = useNavigate();
+  return useMutation({
+    mutationFn: (payload: SocialLoginPayload) =>
+      customAxios.get(`/oauth/${payload.provider}/login`, {
+        params: { extra: payload.code },
+      }),
+    onSuccess: (res) => {
+      const { data } = res;
+      console.log(data);
+      if (data.dataHeader.successCode === 0) {
+        // setIsLogin(true); 1. 추가 작업  확인 필요
+        // navigate("/main");
+      } else {
+        alert(data.dataHeader.resultMessage);
       }
     },
     onError: (err) => console.error(err),
