@@ -6,7 +6,3 @@
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
-# Text Files
-japanese.txt
-news_data.txt
-local_part-00000.txt
