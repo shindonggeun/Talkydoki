@@ -7,6 +7,7 @@ import { dark, light } from "@/styles/common/themes";
 import { muiDarkTheme, muiTheme } from "./styles/common/muiTheme";
 import { useIsDark } from "./stores/displayStore";
 import { useIsModalOn } from "./stores/modalStore";
+import { useAuthStore } from "./stores/userStore";
 
 // route 컴포넌트
 import Intro from "@/routes/Intro";
@@ -17,7 +18,7 @@ import SignUp from "./routes/SignUp";
 import Login from "./routes/Login";
 import News from "./routes/News";
 import Protected from "./components/Protect/Protect";
-import { useAuthStore } from "./stores/userStore";
+import MyVoca from "./routes/MyVoca";
 
 function App() {
   const isDark = useIsDark();
@@ -38,6 +39,7 @@ function App() {
               <Route path="/" element={<Navigate replace to="/main" />} />
               <Route path="/main" element={<Main />} />
               <Route path="/news" element={<News />} />
+              <Route path="/myvoca" element={<MyVoca />} />
               <Route path="/*" element={<Navigate replace to="/main" />} />
             </Routes>
           </>

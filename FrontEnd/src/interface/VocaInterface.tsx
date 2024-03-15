@@ -7,3 +7,11 @@ export interface VocaInterface {
   korean: string;
   type: string;
 }
+
+export interface PersonalVocaInterface {
+  personalVocabularyId: number;
+  japanese: string;
+  japaneseRead: string;
+  korean: string;
+  type: string;
+}

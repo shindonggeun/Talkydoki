@@ -1,22 +1,50 @@
 import { customAxios } from "@/util/auth/customAxios";
-import { useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
-export const useGetNewsList = (category?: string) => {
+export const useGetNewsList = (category: string, page: number) => {
+  const cat = category == "" ? null : category;
+  const queryClient = useQueryClient();
+
   return useQuery({
-    queryKey: ["getNewsList"],
-    queryFn: () =>
-      customAxios.get("/news/get", {
+    queryKey: ["getNewsList", cat != null ? cat : "all"],
+    queryFn: () => {
+      console.log("실행한당");
+      return customAxios.get("/news/get", {
         params: {
-          category: category,
-          page: 0,
+          category: cat,
+          page: page,
           size: 2,
         },
-      }),
-    select: (res) => {
-      console.log(res);
-      return res;
+      });
     },
+    initialData: queryClient.getQueryData(["getNewsList", cat]),
+    placeholderData: keepPreviousData,
+    select: ({ data }) => data,
     staleTime: Infinity,
     gcTime: Infinity,
   });
 };
+
+// export const useGetNewsList = (category?: string) => {
+//   return useQuery({
+//     queryKey: ["getNewsList"],
+//     queryFn: () =>
+//       customAxios.get("/news/get", {
+//         params: {
+//           category: category,
+//           page: 0,
+//           size: 2,
+//         },
+//       }),
+//     select: (res) => {
+//       console.log(res);
+//       return res;
+//     },
+//     staleTime: Infinity,
+//     gcTime: Infinity,
+//   });
+// };
