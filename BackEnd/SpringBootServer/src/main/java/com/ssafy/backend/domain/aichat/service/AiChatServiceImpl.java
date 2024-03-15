@@ -2,7 +2,6 @@ package com.ssafy.backend.domain.aichat.service;
 
 import com.ssafy.backend.domain.aichat.dto.AiChatMessage;
 import com.ssafy.backend.domain.aichat.dto.AiChatRoomCreateResponse;
-import com.ssafy.backend.domain.aichat.dto.ChatMessage;
 import com.ssafy.backend.domain.aichat.entity.AiChatHistory;
 import com.ssafy.backend.domain.aichat.entity.AiChatRoom;
 import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
@@ -31,27 +30,6 @@ public class AiChatServiceImpl implements AiChatService {
     private final RabbitTemplate rabbitTemplate;
     private final TopicExchange topicExchange;
 
-
-//    @Override
-//    public AiChatInfo saveChat( AiChatCreateRequest aiChatCreateRequest) {
-//
-//        Member member = memberRepository.findById(aiChatCreateRequest.getUserId())
-//                .orElseThrow(()->new IllegalArgumentException("User not found with the id: " + aiChatCreateRequest.getUserId()));
-//        AiChatRoom aiChatRoom = aiChatRoomRepository.findById(aiChatCreateRequest.getRoomId())
-//                .orElseThrow(()->new IllegalArgumentException("User not found with the id: " + aiChatCreateRequest.getRoomId()));
-//
-//
-//        AiChat aiChat = AiChat.builder()
-//                .member(member)
-//                .aiChatRoom(aiChatRoom)
-//                .sender(aiChatCreateRequest.getSender())
-//                .content(aiChatCreateRequest.getContent())
-//                .build();
-//
-//        aiChatHistoryRepository.save(aiChat);
-//
-//        return AiChatInfo.from(aiChat);
-//    }
 
     @Override
     public AiChatRoomCreateResponse creatAiChatRoom(Long memberId, AiChatCategory category) {

@@ -5,10 +5,6 @@ import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
 
 public interface AiChatService {
 
-//    @Transactional
-//    public AiChatInfo saveChat(AiChatCreateRequest aiChatCreateRequest);
-
-
     // AI 회화 채팅방 만들기
     AiChatRoomCreateResponse creatAiChatRoom(Long memberId, AiChatCategory category);
 

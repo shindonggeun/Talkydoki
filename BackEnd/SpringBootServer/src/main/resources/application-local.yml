@@ -47,7 +47,7 @@ spring:
   # rabbitMQ setting
   rabbitmq:
     host: ${server.base-url}
-    port: 5672
+    port: 15672
     username: guest
     password: guest
 
@@ -101,8 +101,8 @@ app:
   firebase-bucket: talkydoki.appspot.com
 
   # rabbitMQ setting
-rabbitmq:
-  host: ${server.base-url}
-  port: 5672
-  username: guest
-  password: guest
+#rabbitmq:
+#  host: ${server.base-url}
+#  port: 5672
+#  username: guest
+#  password: guest
