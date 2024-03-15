@@ -1,7 +1,8 @@
 package com.ssafy.backend.domain.news.service;
 
+import com.ssafy.backend.domain.news.dto.NewsInfo;
+import com.ssafy.backend.domain.news.dto.NewsListInfo;
 import com.ssafy.backend.domain.news.dto.NewsPostRequest;
-import com.ssafy.backend.domain.news.entity.News;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.domain.news.exception.NewsErrorCode;
 import com.ssafy.backend.domain.news.exception.NewsException;
@@ -44,14 +45,8 @@ public class NewsServiceImpl implements NewsService {
     }
     @Override
     @Transactional(readOnly = true)
-    public Page<News> getNewsByCategory(NewsCategory category, int page, int size) {
+    public Page<NewsListInfo> getNewsByCategory(NewsCategory category, int page, int size) {
         // 카테고리별로 뉴스를 조회하고, 리미트를 적용하여 반환
         return newsRepository.findByCategoryOrderByWriteDateDesc(category, PageRequest.of(page, size));
-    }
-    @Override
-    @Transactional(readOnly = true)
-    public Page<News> getAllNews(int page, int size) {
-        // 카테고리별로 뉴스를 조회하고, 리미트를 적용하여 반환
-        return newsRepository.findAllByOrderByWriteDateDesc(PageRequest.of(page, size));
     }
 }

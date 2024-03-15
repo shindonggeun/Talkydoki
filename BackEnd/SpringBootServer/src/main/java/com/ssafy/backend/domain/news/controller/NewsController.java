@@ -1,7 +1,7 @@
 package com.ssafy.backend.domain.news.controller;
 
+import com.ssafy.backend.domain.news.dto.NewsListInfo;
 import com.ssafy.backend.domain.news.dto.NewsPostRequest;
-import com.ssafy.backend.domain.news.entity.News;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.domain.news.service.NewsService;
 import com.ssafy.backend.global.common.dto.Message;
@@ -29,22 +29,19 @@ public class NewsController {
         newsService.insertNews(newsPostRequest);
         return ResponseEntity.ok().body(Message.success());
     }
+
     @Operation(
-            summary = "뉴스 불러오기",
-            description = "뉴스 정보를 불러오는 기능입니다."
+            summary = "전체 뉴스 리스트 불러오기",
+            description = "전체 뉴스 리스트 정보를 불러오는 기능입니다."
     )
     @GetMapping("/get")
-    public ResponseEntity<Message<Page<News>>> getNews(
+    public ResponseEntity<Message<Page<NewsListInfo>>> getNews(
             @RequestParam(required = false) NewsCategory category,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size // 기본값을 10으로 설정
     ) {
-        Page<News> news;
-        if (category != null) {
-            news = newsService.getNewsByCategory(category, page, size);
-        } else {
-            news = newsService.getAllNews(page, size);
-        }
+        Page<NewsListInfo> news;
+        news = newsService.getNewsByCategory(category, page, size);
         return ResponseEntity.ok().body(Message.success(news));
     }
 }
