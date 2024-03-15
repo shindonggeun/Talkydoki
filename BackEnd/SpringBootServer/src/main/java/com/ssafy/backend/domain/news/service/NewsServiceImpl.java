@@ -23,6 +23,7 @@ import java.time.format.DateTimeParseException;
 @RequiredArgsConstructor
 public class NewsServiceImpl implements NewsService {
     private final NewsRepository newsRepository;
+
     @Override
     public void insertNews(NewsPostRequest newsPostRequest) {
         if (newsRepository.existsBySrcOrigin(newsPostRequest.getSrcOrigin())) {
