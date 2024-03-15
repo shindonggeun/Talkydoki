@@ -52,6 +52,10 @@ export const Global = createGlobalStyle`
       font-family: 'ScoreDream', 'Mplus';
       overflow-x: hidden;
 
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     body, html, div, span, button, form, section {
