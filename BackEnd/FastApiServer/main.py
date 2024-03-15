@@ -88,7 +88,7 @@ async def upload_keywords():
             for line in file:
                 japanese = line.strip()
                 keyword_data = {
-                    "japanese": japanese,
+                    "japanese": japanese
                 }
                 response = requests.post(f'{API_URL}/api/v1/keywords/post', json=keyword_data)
                 
