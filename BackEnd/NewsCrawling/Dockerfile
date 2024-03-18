@@ -17,7 +17,7 @@ RUN chmod +x NewsCrawling.sh
 
 # 크론 작업을 추가합니다.
 # 크론 작업을 정의하는 파일을 컨테이너 내부로 복사합니다.
-COPY crontab /etc/cron.d/cron-job
+COPY cronTab /etc/cron.d/cron-job
 
 # 크론 작업 권한을 설정합니다.
 RUN chmod 0644 /etc/cron.d/cron-job
