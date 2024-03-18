@@ -18,7 +18,6 @@ import SignUp from "./routes/SignUp";
 import Login from "./routes/Login";
 import News from "./routes/News";
 import Protected from "./components/Protect/Protect";
-import { useAuthStore } from "./stores/userStore";
 import AiChatList from "./routes/AiChatList";
 import SocialLoading from "./routes/SocialLoading";
 import MyVoca from "./routes/MyVoca";

@@ -14,6 +14,9 @@ declare module "@mui/material" {
   interface FormControlPropsColorOverrides {
     purple: true;
   }
+  interface SwitchPropsColorOverrides {
+    purple: true;
+  }
 }
 
 declare module "@mui/material/styles" {
@@ -28,6 +31,27 @@ declare module "@mui/material/styles" {
 
 // 라이트모드
 export const muiTheme = createTheme({
+  components: {
+    MuiSwitch: {
+      styleOverrides: {
+        colorPrimary: {
+          "&.Mui-checked": {
+            color: light.main.dark,
+          },
+        },
+        thumb: {
+          backgroundColor: light.main.dark,
+        },
+        track: {
+          backgroundColor: "#312a3d",
+          ".Mui-checked.Mui-checked + &": {
+            opacity: 0.7,
+            backgroundColor: light.main.color,
+          },
+        },
+      },
+    },
+  },
   palette: {
     purple: {
       main: light.main.dark,
@@ -40,6 +64,27 @@ export const muiTheme = createTheme({
 
 // 다크모드
 export const muiDarkTheme = createTheme({
+  components: {
+    MuiSwitch: {
+      styleOverrides: {
+        colorPrimary: {
+          "&.Mui-checked": {
+            color: dark.main.color,
+          },
+        },
+        thumb: {
+          backgroundColor: dark.main.color,
+        },
+        track: {
+          backgroundColor: dark.doc.textButton,
+          ".Mui-checked.Mui-checked + &": {
+            opacity: 0.7,
+            backgroundColor: dark.main.color,
+          },
+        },
+      },
+    },
+  },
   palette: {
     mode: "dark",
     purple: {
