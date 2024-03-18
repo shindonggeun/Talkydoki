@@ -62,6 +62,9 @@ dependencies {
 	// Jasypt (Java Simplified Encryption)
 	implementation 'com.github.ulisesbocchio:jasypt-spring-boot-starter:3.0.5'
 
+	// Java Mail Sender (Google Email - Gmail)
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'
