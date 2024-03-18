@@ -19,4 +19,4 @@ RUN cp build/libs/*.jar /app/app.jar
 RUN mkdir /app/videos
 
 # Spring Boot 애플리케이션 실행을 위한 명령 설정
-ENTRYPOINT ["java", "-Dspring.profiles.active=dev", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=dev", "-Djasypt.encryptor.password=ssafy", "-jar", "/app/app.jar"]
