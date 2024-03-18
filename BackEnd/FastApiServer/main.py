@@ -58,7 +58,6 @@ def fetch_news_to_file(db: Session = Depends(get_db)):
 @app.get("/extract-japanese")
 async def extract_japanese():
     input_filename = "local_part-00000.txt"
-
     try:
         with open(input_filename, "r", encoding = "utf-8") as file:
             content = file.readlines()
