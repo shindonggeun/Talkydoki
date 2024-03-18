@@ -4,11 +4,6 @@ FROM python:3
 # 작업 디렉토리 생성 및 설정
 WORKDIR /usr/src/app
 
-# MeCab 및 MeCab의 Python 바인딩 설치를 위한 종속성 설치
-RUN apt-get update && \
-    apt-get install -y mecab libmecab-dev mecab-ipadic-utf8 git make curl xz-utils file && \
-    pip install mecab-python3
-
 # 필요한 경우 requirements.txt 파일을 사용하여 패키지를 설치합니다.
 COPY requirements.txt ./
 RUN pip3 install --no-cache-dir -r requirements.txt
@@ -26,6 +21,9 @@ COPY cronTab /etc/cron.d/cron-job
 
 # 크론 작업 권한을 설정합니다.
 RUN chmod 0644 /etc/cron.d/cron-job
+
+# cron 서비스 설치 및 시작
+RUN apt-get update && apt-get -y install cron
 
 # 크론 작업 실행 명령어를 추가합니다.
 CMD ["cron", "-f"]
