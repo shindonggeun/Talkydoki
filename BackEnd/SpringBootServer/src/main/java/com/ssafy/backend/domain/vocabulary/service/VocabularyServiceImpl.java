@@ -82,4 +82,23 @@ public class VocabularyServiceImpl implements VocabularyService {
         }
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public VocabularyInfo searchVocabulary(Long memberId, String japanese) {
+        Member member = memberRepository.findById(memberId).orElseThrow(()
+                -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+
+        Vocabulary vocabulary = vocabularyRepository.findByJapanese(japanese).orElseThrow(()
+        -> new VocabularyException(VocabularyErrorCode.NOT_EXIST_VOCABULARY));
+
+        return VocabularyInfo.builder()
+                .id(vocabulary.getId())
+                .japanese(vocabulary.getJapanese())
+                .japaneseRead(vocabulary.getJapaneseRead())
+                .korean(vocabulary.getKorean())
+                .type(vocabulary.getType())
+                .build();
+    }
+
 }

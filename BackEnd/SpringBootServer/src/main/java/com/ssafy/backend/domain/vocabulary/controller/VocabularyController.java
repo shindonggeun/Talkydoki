@@ -62,4 +62,12 @@ public class VocabularyController {
         vocabularyService.deletePersonalVocabulary(loginActive.id(), personalVocabularyId);
         return ResponseEntity.ok().body(Message.success());
     }
+
+    @GetMapping("/search/{japanese}")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<VocabularyInfo>> searchVocabulary(@AuthenticationPrincipal MemberLoginActive loginActive,
+                                                                    @PathVariable String japanese) {
+        VocabularyInfo vocabularyInfo = vocabularyService.searchVocabulary(loginActive.id(), japanese);
+        return ResponseEntity.ok().body(Message.success(vocabularyInfo));
+    }
 }
