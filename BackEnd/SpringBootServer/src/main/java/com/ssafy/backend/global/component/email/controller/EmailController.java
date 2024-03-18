@@ -22,4 +22,10 @@ public class EmailController {
         emailService.sendEmailCode(memberEmail);
         return ResponseEntity.ok().body(Message.success());
     }
+
+    @PostMapping("/verify/{memberEmail}/{emailCode}")
+    public ResponseEntity<Message<Void>> verifyEmailCode(@PathVariable String memberEmail, @PathVariable String emailCode) {
+        emailService.verifyEmailCode(memberEmail, emailCode);
+        return ResponseEntity.ok().body(Message.success());
+    }
 }

@@ -6,8 +6,10 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -22,11 +24,24 @@ public class EmailServiceImpl implements EmailService {
 
 
     @Override
+    @Async("threadPoolTaskExecutor") // threadPoolTaskExecutor를 사용하여 비동기 처리
     public void sendEmailCode(String toEmail) {
         String emailCode = createKey();
         MimeMessage mimeMessage = createMessage(toEmail, emailCode);
         javaMailSender.send(mimeMessage);
         emailRepository.save(toEmail, emailCode, EXPIRES_MIN);
+    }
+
+    @Override
+    public void verifyEmailCode(String email, String code) {
+        Optional<String> saveCode = emailRepository.findSignupCode(email);
+
+        // TODO: 이메일 관련 커스텀 Exception 처리
+        if (saveCode.isEmpty() || !saveCode.get().equals(code)) {
+            throw new RuntimeException("이메일 인증코드를 잘못 입력하였습니다.");
+        }
+
+        emailRepository.deleteSignupCode(email);
     }
 
     private String createKey() {
