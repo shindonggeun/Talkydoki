@@ -10,7 +10,7 @@ import {
   useInfiniteQuery,
   useMutation,
   useQuery,
-  useQueryClient,
+  // useQueryClient,
 } from "@tanstack/react-query";
 
 // 랜덤단어
@@ -94,7 +94,7 @@ export const useMyVoca = () => {
 
 // 단어 삭제
 export const useDeleteMyVoca = () => {
-  const queryClient = useQueryClient();
+  // const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (id: number) => {
