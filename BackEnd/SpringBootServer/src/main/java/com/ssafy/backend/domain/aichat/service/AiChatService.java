@@ -12,5 +12,4 @@ public interface AiChatService {
     // AI 회화 채팅 메시지 보내기
     void sendMessageAiChat(Long memberId, Long roomId, AiChatMessage messageRequest);
 
-//    Mono<String> sendMessageAiChat(Long memberId, Long roomId, AiChatMessage messageRequest);
 }
