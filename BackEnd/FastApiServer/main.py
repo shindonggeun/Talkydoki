@@ -74,12 +74,16 @@ async def fetch_news_to_file(db: Session = Depends(get_db)):
     if execution_env == "EC2":
         save_data(news_data, path="/input")
         if start_hadoop_streaming():
-            return {"message": "News data fetched and Hadoop Streaming job started successfully!"}
+            message = "News data fetched and Hadoop Streaming job started successfully!"
+            # Hadoop Streaming 작업 성공 시 extract_japanese 호출
+            await extract_japanese()
         else:
-            return {"message": "News data fetched, but failed to start Hadoop Streaming job."}
+            message = "News data fetched, but failed to start Hadoop Streaming job."
     else:
         save_data(news_data)
-        return {"message": "News data fetched and saved successfully!"}
+        message = "News data fetched and saved successfully!"
+    
+    return {"message": message}
 
 @app.get("/extract-japanese")
 async def extract_japanese():
@@ -112,6 +116,9 @@ async def extract_japanese():
         for word in sorted(unique_words):
             file.write(word + "\n")
     
+    # extract_japanese 작업 성공 시 upload_keywords 호출
+    await upload_keywords()
+
     return FileResponse(result_filename)
 
 @app.get("/upload-keywords")
