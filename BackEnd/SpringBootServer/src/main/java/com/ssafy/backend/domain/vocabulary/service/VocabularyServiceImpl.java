@@ -75,18 +75,11 @@ public class VocabularyServiceImpl implements VocabularyService {
 
     @Override
     public void deletePersonalVocabulary(Long memberId, Long personalVocabularyId) {
-        Member member = memberRepository.findById(memberId).orElseThrow(()
-                -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
-
-        // 나만의 단어장에서 단어 삭제 권한 검증
-        PersonalVocabulary personalVocabulary = personalVocabularyRepository.findById(personalVocabularyId).orElseThrow(()
-        -> new VocabularyException(VocabularyErrorCode.NOT_EXIST_PERSONAL_VOCABULARY));
-
-        if (!personalVocabulary.getMember().equals(member)) {
-            throw new VocabularyException(VocabularyErrorCode.NOT_OWNED_PERSONAL_VOCABULARY);
+        int deletedCount = personalVocabularyRepository.deleteByIdAndMemberId(personalVocabularyId, memberId);
+        if (deletedCount == 0) {
+            // 삭제할 데이터가 없거나, memberId와 personalVocabularyId가 일치하는 데이터가 없는 경우
+            throw new VocabularyException(VocabularyErrorCode.NOT_EXIST_PERSONAL_VOCABULARY);
         }
-
-        personalVocabularyRepository.delete(personalVocabulary);
     }
 
 }

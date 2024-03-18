@@ -9,7 +9,6 @@ import java.util.Optional;
 
 @Repository
 public interface VocabularyRepository extends JpaRepository<Vocabulary, Long> {
-
     @Query(value = "SELECT * FROM vocabulary ORDER BY RAND() LIMIT 1", nativeQuery = true)
     Optional<Vocabulary> findRandom();
 }

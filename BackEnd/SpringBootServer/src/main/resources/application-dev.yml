@@ -26,8 +26,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver  # DB 드라이버
     url: jdbc:mysql://${server.base-url}:3306/talkydoki?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true       # 데이터베이스 URL
-    username: ssafy                     # 데이터베이스 계정명
-    password: ssafy                       # 데이터베이스 계정 비밀번호
+    username: ENC(f0r0VaK09iSvSITZnTanow==)                     # 데이터베이스 계정명
+    password: ENC(pcq3fN0xzVJNEAPYy/U+mQ==)                     # 데이터베이스 계정 비밀번호
 
   # data_테이블명.sql 관련 실행 setting
   sql:
@@ -61,8 +61,8 @@ logging:
 # OAUTH2.0 Setting
 oauth:
   kakao:
-    client-id: d8f7a03a9f71c950eb689b75d7e13911   # REST API 키
-    client-secret: DoDeccr2fHvdeN9ZrVc0zfitpw9mQDaX # 보안 -> Client Secret 키
+    client-id: ENC(xXJBYLYseH03J0xQOHI5SrrJQOHWhNEbikRaHOVIs6zaVkcCsQsIYyvfIb0OcwdK)   # REST API 키
+    client-secret: ENC(Xdqh6qXZCZJdO23Dssp3e71h0PAMbidg9HQqkDpCEpFEjIDoSHdp3NF)        # 보안 -> Client Secret 키
     redirect-uri: http://${server.base-url}/member/loading/kakao
     scope:
       - profile_nickname
@@ -71,8 +71,8 @@ oauth:
       - name
 
   naver:
-    client-id: 6kxAAj5SSmXzQlEXkOao
-    client-secret: fzufMaJYRE
+    client-id: ENC(f/Q2OaY/fA3jzQtHnRMredOSO1iGNslHP1Rj3AyL0XQ=)
+    client-secret: ENC(EanzH/wWtNQTri/ipaTLjpJRncOi2oMl)
     redirect_uri: http://${server.base-url}/member/loading/naver
     scope:
       - nickname
@@ -81,9 +81,9 @@ oauth:
       - profile_image
 
   google:
-    client_id: 998604407617-m2ggcrfhvka7a6tjsfqbsni6vsaqclr1.apps.googleusercontent.com
+    client_id: ENC(ZXiW2x7m3ZOFSOf6IuL3U/irYjoZ5AK6yifN+wMCXwg6+iqc4Em6HivS2fJTIpgd8leqY7oMR4/Jmic1tr9M2q9TqUc/C3b2orCAvbbyeHlFF9HQ/wXr2g==)
+    client_secret: ENC(UpM1KN7rqMsnufSgnq6hrAWacgpL+2Xeu/f/fyYwCCQ9hFHoQ7gQRIMZpX2EMTpZ)
     redirect_uri: http://${server.base-url}/member/loading/google
-    client_secret: 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
     scope:
       - profile
       - email
@@ -91,11 +91,4 @@ oauth:
 # firebase setting
 app:
   firebase-configuration-file: classpath:serviceAccountKey.json
-  firebase-bucket: talkydoki.appspot.com
-
-# rabbitMQ setting
-rabbitmq:
-  host: talkydoki_rabbitmq
-  port: 5672
-  username: guest
-  password: guest
+  firebase-bucket: ENC(SLVtdlieYMj0aGKJbbtcNZ7jAOk5GmHVdu8mazNsH18=)
