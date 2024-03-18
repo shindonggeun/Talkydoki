@@ -159,6 +159,7 @@ export const finishSocialLogin = () => {
       const { data } = res;
       console.log(data);
       if (data.dataHeader.successCode === 0) {
+        console.log(data.dataBody);
         // setIsLogin(true); 1. 추가 작업  확인 필요
         // navigate("/main");
       } else {
