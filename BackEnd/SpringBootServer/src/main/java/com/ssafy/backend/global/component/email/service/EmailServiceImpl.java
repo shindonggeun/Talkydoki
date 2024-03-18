@@ -1,6 +1,8 @@
 package com.ssafy.backend.global.component.email.service;
 
 import com.ssafy.backend.global.component.email.repository.EmailRepository;
+import com.ssafy.backend.global.exception.GlobalErrorCode;
+import com.ssafy.backend.global.exception.GlobalException;
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
@@ -36,9 +38,8 @@ public class EmailServiceImpl implements EmailService {
     public void verifyEmailCode(String email, String code) {
         Optional<String> saveCode = emailRepository.findSignupCode(email);
 
-        // TODO: 이메일 관련 커스텀 Exception 처리
         if (saveCode.isEmpty() || !saveCode.get().equals(code)) {
-            throw new RuntimeException("이메일 인증코드를 잘못 입력하였습니다.");
+            throw new GlobalException(GlobalErrorCode.INVALID_EMAIL_VERIFICATION_CODE);
         }
 
         emailRepository.deleteSignupCode(email);
