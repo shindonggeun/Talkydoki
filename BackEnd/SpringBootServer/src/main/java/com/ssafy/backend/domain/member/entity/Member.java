@@ -45,7 +45,7 @@ public class Member extends BaseEntity {
     @Column(name = "provider")
     private OAuthDomain oAuthDomain;
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     private List<PersonalVocabulary> personalVocabularies = new ArrayList<>();
 
     @OneToMany(mappedBy = "member")
