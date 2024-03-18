@@ -20,5 +20,5 @@ public interface VocabularyService {
     void deletePersonalVocabulary(Long memberId, Long personalVocabularyId);
 
     // 해당 단어 검색하기 (뉴스 기사에 사용)
-    VocabularyInfo searchVocabulary(String japanese);
+    VocabularyInfo searchVocabulary(Long memberId, String japanese);
 }
