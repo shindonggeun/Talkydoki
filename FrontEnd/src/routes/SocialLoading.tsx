@@ -11,12 +11,7 @@ function SocialLoading({}: Props) {
 
   const { mutate: finishSocial } = finishSocialLogin();
 
-  console.log("provider:", provider);
-
-  console.log(code);
-
   useEffect(() => {
-    console.log("프로바이더", provider);
     if (provider && code) {
       finishSocial({ provider, code });
     }
