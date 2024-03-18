@@ -28,6 +28,6 @@ public class NewsShadowing extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToMany(mappedBy = "news_shadowing")
+    @OneToMany(mappedBy = "newsShadowing")
     private List<ShadowingEvaluation> shadowingEvaluations = new ArrayList<>();
 }
