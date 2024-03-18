@@ -44,4 +44,7 @@ public class News {
 
     @OneToMany(mappedBy = "news", fetch = FetchType.EAGER)
     private List<NewsKeywordMapping> newsKeywordMappings = new ArrayList<>();
+
+    @OneToOne(mappedBy = "news")
+    private NewsShadowing newsShadowing;
 }
