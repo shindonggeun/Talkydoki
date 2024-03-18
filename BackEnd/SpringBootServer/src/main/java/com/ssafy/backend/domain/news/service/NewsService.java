@@ -1,9 +1,9 @@
 package com.ssafy.backend.domain.news.service;
-import com.ssafy.backend.domain.news.dto.NewsInfo;
 import com.ssafy.backend.domain.news.dto.NewsListInfo;
 import com.ssafy.backend.domain.news.dto.NewsPostRequest;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
-import org.springframework.data.domain.Page;
+import com.ssafy.backend.global.common.dto.SliceResponse;
+import org.springframework.data.domain.Pageable;
 
 public interface NewsService {
 
@@ -15,9 +15,9 @@ public interface NewsService {
     void insertNews(NewsPostRequest newsPostRequest);
 
     /**
-     * 카테로리별 뉴스를 조회합니다.
+     * 카테로리별 뉴스를 조회합니다. (페이지네이션 적용 - offset 방식)
      *
      * @return 카테로리별 조회된 뉴스
      */
-    Page<NewsListInfo> getNewsByCategory(NewsCategory category, int page, int size);
+    SliceResponse<NewsListInfo> getNewsByCategory(NewsCategory category, Pageable pageable);
 }
