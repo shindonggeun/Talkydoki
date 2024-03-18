@@ -1,16 +1,19 @@
 package com.ssafy.backend.domain.news.dto;
 
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
-import lombok.Builder;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Builder
-public record NewsListInfo(
-        Long id,
-        String title,
-        NewsCategory category,
-        LocalDateTime writeDate,
-        String srcOrigin
-) {
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class NewsListInfo {
+    Long newsId;
+    String title;
+    String titleTranslated;
+    NewsCategory category;
+    LocalDateTime writeDate;
+    String srcOrigin;
 }

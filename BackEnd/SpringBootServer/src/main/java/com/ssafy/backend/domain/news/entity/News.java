@@ -3,7 +3,6 @@ package com.ssafy.backend.domain.news.entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import jakarta.persistence.*;
 import lombok.*;
@@ -24,6 +23,10 @@ public class News {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String title;
 
+    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String titleTranslated;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private NewsCategory category;
@@ -34,7 +37,15 @@ public class News {
 
     @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
+    private String contentTranslated;
+
+    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String summary;
+
+    @Lob
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String summaryTranslated;
 
     @Column(updatable = false, nullable = false, columnDefinition = "TIMESTAMP")
     private LocalDateTime writeDate;
