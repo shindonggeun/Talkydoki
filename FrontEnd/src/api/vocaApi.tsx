@@ -10,7 +10,7 @@ import {
   useInfiniteQuery,
   useMutation,
   useQuery,
-  useQueryClient,
+  // useQueryClient,
 } from "@tanstack/react-query";
 
 // 랜덤단어
