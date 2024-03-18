@@ -6,15 +6,25 @@ import FaceIcon from "@mui/icons-material/Face";
 
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useIsMobile, useSetIsSidebarOpen } from "@/stores/displayStore";
 
 function Menus() {
   const { pathname: now } = useLocation();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const setIsSidebarOpen = useSetIsSidebarOpen();
+
+  // 모바일 환경일 경우 메뉴 이동 시 사이드바 닫힘
+  const menuHandler = (route: string) => {
+    if (isMobile) setIsSidebarOpen(false);
+    navigate(route);
+  };
 
   return (
     <div>
+      {/* 홈 */}
       <MenuItem
-        onClick={() => navigate("/main")}
+        onClick={() => menuHandler("/main")}
         className={now == "/main" ? "selected" : undefined}
       >
         <div className="label">
@@ -23,8 +33,9 @@ function Menus() {
         </div>
         <KeyboardArrowRightIcon />
       </MenuItem>
+      {/* 뉴스 */}
       <MenuItem
-        onClick={() => navigate("/news")}
+        onClick={() => menuHandler("/news")}
         className={now == "/news" ? "selected" : undefined}
       >
         <div className="label">
@@ -33,6 +44,7 @@ function Menus() {
         </div>
         <KeyboardArrowRightIcon />
       </MenuItem>
+      {/* AI 채팅 */}
       <MenuItem>
         <div className="label">
           <ForumIcon />
@@ -40,6 +52,7 @@ function Menus() {
         </div>
         <KeyboardArrowRightIcon />
       </MenuItem>
+      {/* 마이페이지 */}
       <MenuItem>
         <div className="label">
           <FaceIcon />

@@ -54,6 +54,7 @@ export const ModalCard = styled(Card)`
   max-height: 80vh;
   z-index: 102;
   box-shadow: none;
+  animation: moveToTop 0.2s ease-out;
 
   .innerText {
     width: 100%;
@@ -73,6 +74,18 @@ export const ModalCard = styled(Card)`
 
     & > * {
       margin: 0 3px;
+    }
+  }
+
+  /* 팝업 애니메이션 */
+  @-webkit-keyframes moveToTop {
+    0% {
+      opacity: 0.3;
+      transform: translateY(50px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 `;

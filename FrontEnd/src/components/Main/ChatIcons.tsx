@@ -7,6 +7,7 @@ import { useIsMobile } from "@/stores/displayStore";
 
 type Props = {};
 
+// 오늘의 회화 아이콘
 function ChatIcons({}: Props) {
   const isMobile = useIsMobile();
 

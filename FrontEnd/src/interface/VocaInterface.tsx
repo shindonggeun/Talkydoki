@@ -1,3 +1,5 @@
+// 단어장 관련 인터페이스
+
 export interface VocaInterface {
   id: number;
   japanese: string;

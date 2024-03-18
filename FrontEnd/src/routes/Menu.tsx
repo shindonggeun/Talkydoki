@@ -1,9 +1,7 @@
 import Navbar from "@/components/Menu/Navbar";
 import Sidebar from "@/components/Menu/Sidebar";
 
-type Props = {};
-
-function Menu({}: Props) {
+function Menu() {
   return (
     <>
       <Sidebar />

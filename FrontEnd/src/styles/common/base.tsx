@@ -51,11 +51,30 @@ export const Global = createGlobalStyle`
       background-color: var(--bg);
       font-family: 'ScoreDream', 'Mplus';
       overflow-x: hidden;
+
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
     body, html, div, span, button, form, section {
       box-sizing: border-box;
       color: var(--text);
+
+      &::-webkit-scrollbar {
+        width: 10px;
+        background-color: transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--main-light);
+        border-radius: 50px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background-color: transparent;
+      }
     }
 
 `;

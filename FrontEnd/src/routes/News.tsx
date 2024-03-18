@@ -1,12 +1,13 @@
-import React from 'react';
-import { Wrapper } from '@/styles/common/ui/container';
+// import { useGetNewsList } from "@/api/newsApi";
+import { Wrapper } from "@/styles/common/ui/container";
+// import { useGetNewsList } from "@/api/newsApi";
 
-const News: React.FC = () => {
-  return (
-    <Wrapper>
-    뉴스
-    </Wrapper>
-  );
-};
+type Props = {};
+
+function News({}: Props) {
+  // const { data } = useGetNewsList("SOCIETY");
+
+  return <Wrapper>News</Wrapper>;
+}
 
 export default News;

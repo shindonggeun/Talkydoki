@@ -2,20 +2,13 @@
 
 export const splitMeaning = (meaning: string) => {
   if (meaning.charAt(0) != "1") return [meaning];
-  const newArr = [];
-  let st = 0;
-  let ed = 1;
+  const newArr: string[] = [];
 
-  for (let i = 1; i < meaning.length; i++) {
-    const word = meaning.charAt(i);
-
-    if ("123456789".split("").indexOf(word) > -1) {
-      newArr.push(meaning.slice(st, ed));
-      st = ed;
-    } else {
-      ed += 1;
+  meaning.split(/[0-9]/).forEach((each, idx) => {
+    if (idx > 0) {
+      newArr.push(idx.toString() + each);
     }
-  }
+  });
 
   return newArr;
 };
