@@ -16,5 +16,9 @@ public interface VocabularyService {
     // 나만의 단어장 가져오기 (페이지네이션 적용 - offset 방식)
     SliceResponse<PersonalVocabularyInfo> getPersonalVocabularyList(Long memberId, Pageable pageable);
 
+    // 나만의 단어장에서 해당 단어 삭제하기
     void deletePersonalVocabulary(Long memberId, Long personalVocabularyId);
+
+    // 해당 단어 검색하기 (뉴스 기사에 사용)
+    VocabularyInfo searchVocabulary(String japanese);
 }

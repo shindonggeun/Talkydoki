@@ -82,4 +82,9 @@ public class VocabularyServiceImpl implements VocabularyService {
         }
     }
 
+    @Override
+    public VocabularyInfo searchVocabulary(String japanese) {
+        return null;
+    }
+
 }
