@@ -18,6 +18,9 @@ import SignUp from "./routes/SignUp";
 import Login from "./routes/Login";
 import News from "./routes/News";
 import Protected from "./components/Protect/Protect";
+import { useAuthStore } from "./stores/userStore";
+import AiChatList from "./routes/AiChatList";
+import SocialLoading from "./routes/SocialLoading";
 import MyVoca from "./routes/MyVoca";
 
 function App() {
@@ -30,6 +33,7 @@ function App() {
       <MUIThemeProvider theme={isDark ? muiDarkTheme : muiTheme}>
         <Fonts />
         <Global />
+
         <Protected />
         {isModalOn ? <Modal /> : null}
         {isLogin ? (
@@ -39,6 +43,7 @@ function App() {
               <Route path="/" element={<Navigate replace to="/main" />} />
               <Route path="/main" element={<Main />} />
               <Route path="/news" element={<News />} />
+              <Route path="/aichatlist" element={<AiChatList />} />
               <Route path="/myvoca" element={<MyVoca />} />
               <Route path="/*" element={<Navigate replace to="/main" />} />
             </Routes>
@@ -46,6 +51,7 @@ function App() {
         ) : (
           <Routes>
             <Route path="/" element={<Navigate replace to="/intro" />} />
+            <Route path="/oauth/:provider/login" element={<SocialLoading />} />
             <Route path="/intro" element={<Intro />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/login" element={<Login />} />

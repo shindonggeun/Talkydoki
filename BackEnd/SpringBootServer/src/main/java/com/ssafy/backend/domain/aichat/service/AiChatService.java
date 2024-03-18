@@ -1,17 +1,13 @@
 package com.ssafy.backend.domain.aichat.service;
 
-import com.ssafy.backend.domain.aichat.dto.AiChatCreateRequest;
-import com.ssafy.backend.domain.aichat.dto.AiChatInfo;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
+import com.ssafy.backend.domain.aichat.dto.*;
+import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
 
 public interface AiChatService {
 
-    @Transactional(readOnly=true)
-    public List<AiChatInfo> getAllMessagesByRoomId(Long userId, Long roomId);
+    // AI 회화 채팅방 만들기
+    AiChatRoomCreateResponse creatAiChatRoom(Long memberId, AiChatCategory category);
 
-    @Transactional
-    public AiChatInfo saveChat(AiChatCreateRequest aiChatCreateRequest);
-
+    // AI 회화 채팅 메시지 보내기
+    void sendMessageAiChat(Long memberId, Long roomId, AiChatMessage messageRequest);
 }

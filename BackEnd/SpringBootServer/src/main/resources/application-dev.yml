@@ -63,7 +63,7 @@ oauth:
   kakao:
     client-id: d8f7a03a9f71c950eb689b75d7e13911   # REST API 키
     client-secret: DoDeccr2fHvdeN9ZrVc0zfitpw9mQDaX # 보안 -> Client Secret 키
-    redirect-uri: http://${server.base-url}/api/v1/oauth/kakao/login
+    redirect-uri: http://${server.base-url}/member/loading/kakao
     scope:
       - profile_nickname
       - profile_image
@@ -73,7 +73,7 @@ oauth:
   naver:
     client-id: 6kxAAj5SSmXzQlEXkOao
     client-secret: fzufMaJYRE
-    redirect_uri: http://${server.base-url}/api/v1/oauth/naver/login
+    redirect_uri: http://${server.base-url}/member/loading/naver
     scope:
       - nickname
       - name
@@ -82,7 +82,7 @@ oauth:
 
   google:
     client_id: 998604407617-m2ggcrfhvka7a6tjsfqbsni6vsaqclr1.apps.googleusercontent.com
-    redirect_uri: http://${server.base-url}/api/v1/oauth/google/login
+    redirect_uri: http://${server.base-url}/member/loading/google
     client_secret: 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
     scope:
       - profile

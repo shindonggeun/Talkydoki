@@ -1,57 +1,43 @@
 package com.ssafy.backend.domain.aichat.controller;
 
-import com.ssafy.backend.domain.aichat.dto.AiChatCreateRequest;
-import com.ssafy.backend.domain.aichat.dto.AiChatInfo;
+
+import com.ssafy.backend.domain.aichat.dto.AiChatMessage;
+import com.ssafy.backend.domain.aichat.dto.AiChatRoomCreateResponse;
+import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
 import com.ssafy.backend.domain.aichat.service.AiChatService;
+import com.ssafy.backend.global.common.dto.Message;
 import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
 import lombok.RequiredArgsConstructor;
-import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
-@Controller
+import java.security.Principal;
+
+@Slf4j
+@RestController
 @RequiredArgsConstructor
+@RequestMapping("/api/v1/ai/chat")
 public class AiChatController {
 
     private final AiChatService aiChatService;
-    private final RabbitTemplate rabbitTemplate;
-    private final StringRedisTemplate redisTemplate;
 
-    /**
-     * 채팅방 입장 시 처리
-     * @param roomId 채팅방 아이디
-     * @param loginActive 권한 인증 및 userId 사용 위함
-     * @param message 메시지
-     * @return 채팅 정보
-     */
-
-    // 이제 이 roomId, userId 정보를
-    // room 만들어지고 그 값 사용하게 그리고
-    // userId받아서 사용하게
-    @MessageMapping("chatroom/{roomId}/enter")
-    public AiChatInfo enterUser(@DestinationVariable("roomId") Long roomId, @AuthenticationPrincipal MemberLoginActive loginActive, @Payload AiChatCreateRequest message) {
-        Long userId = loginActive.id();
-        message.setContent(message.getSender() + "님이 채팅방에 입장했습니다.");
-        return aiChatService.saveChat(message);
+    @PostMapping("/room/create/{category}")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<AiChatRoomCreateResponse>> creatAiChatRoom(@AuthenticationPrincipal MemberLoginActive loginActive,
+                                                                             @PathVariable AiChatCategory category) {
+        AiChatRoomCreateResponse createResponse = aiChatService.creatAiChatRoom(loginActive.id(), category);
+        return ResponseEntity.ok().body(Message.success(createResponse));
     }
 
-    /**
-     * 채팅방 메시지 전송 시 처리
-     * @param roomId 채팅방 아이디
-     * @param loginActive 권한 인증 및 userId 사용 위함
-     * @param message 메시지
-     * @return 채팅 정보
-     */
-    @MessageMapping("chatroom/{roomId}")
-    @SendTo("/topic/chatroom/{roomId}") // 필요 ??
-    public AiChatInfo processMessage(@DestinationVariable("roomId") Long roomId, @AuthenticationPrincipal MemberLoginActive loginActive, @Payload AiChatCreateRequest message ) {
-//        Long userId = loginActive.id();
-        rabbitTemplate.convertAndSend("chat.exchange", "*.room."+roomId, message);
-        return aiChatService.saveChat(message);
+    @MessageMapping("/ai/chat/{roomId}")
+    public void send(Principal principal, AiChatMessage aiChatMessage, @DestinationVariable Long roomId) {
+        aiChatService.sendMessageAiChat(Long.valueOf(principal.getName()), roomId, aiChatMessage);
     }
 }
+
+
