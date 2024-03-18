@@ -1,7 +1,7 @@
 import { useDeleteMyVoca, useMyVoca } from "@/api/vocaApi";
 import { Wrapper } from "@/styles/common/ui/container";
 import { InvalidateQueryFilters, useQueryClient } from "@tanstack/react-query";
-import React from "react";
+// import React from "react";
 
 type Props = {};
 

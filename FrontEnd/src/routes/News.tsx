@@ -28,7 +28,7 @@ function News({}: Props) {
       </select>
       <button onClick={() => refetch()}>ㅇㅇㅇㅇㅇ</button>
       {data &&
-        data.dataBody.content.map((each, idx) => (
+        data.dataBody.content.map((each: {title: string}, idx: number) => (
           <div key={idx}>{each.title}</div>
         ))}
     </Wrapper>
