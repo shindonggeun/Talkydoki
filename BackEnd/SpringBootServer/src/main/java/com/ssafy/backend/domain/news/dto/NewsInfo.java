@@ -9,9 +9,12 @@ import java.time.LocalDateTime;
 public record NewsInfo(
         Long id,
         String title,
+        String titleTranslated,
         NewsCategory category,
         String content,
+        String contentTranslated,
         String summary,
+        String summaryTranslated,
         LocalDateTime writeDate,
         String srcOrigin
 ) {

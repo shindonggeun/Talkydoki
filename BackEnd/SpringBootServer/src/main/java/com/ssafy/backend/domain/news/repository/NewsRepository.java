@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 @Repository
-public interface NewsRepository extends JpaRepository<News, Long> {
+public interface NewsRepository extends JpaRepository<News, Long>, NewsRepositoryCustom {
     boolean existsBySrcOrigin(String srcOrigin);
-    Page<NewsListInfo> findByCategoryOrderByWriteDateDesc(NewsCategory category, Pageable pageable);
 }

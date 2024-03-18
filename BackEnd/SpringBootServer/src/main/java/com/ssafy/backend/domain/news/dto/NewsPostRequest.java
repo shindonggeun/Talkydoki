@@ -16,30 +16,39 @@ public class NewsPostRequest {
     @NotBlank(message = "제목은 필수 입력값입니다")
     private String title;
 
+    @NotBlank(message = "제목 번역은 필수 입력값입니다")
+    private String titleTranslated;
+
     private NewsCategory category;
 
     @NotBlank(message = "내용은 필수 입력값입니다")
     private String content;
 
+    @NotBlank(message = "내용 번역은 필수 입력값입니다")
+    private String contentTranslated;
+
     @NotBlank(message = "요약은 필수 입력값입니다")
     private String summary;
 
-    // 이제 writeDate는 String 타입으로 받습니다.
+    @NotBlank(message = "요약 번역은 필수 입력값입니다")
+    private String summaryTranslated;
+
     @NotBlank(message = "작성 날짜는 필수 입력값입니다")
     private String writeDate;
 
     @NotBlank(message = "원문 링크는 필수 입력값입니다")
     private String srcOrigin;
 
-    // toEntity 메소드에서는 writeDate 변환 로직을 적용하지 않습니다.
-    // 변환 로직은 서비스 레이어에서 처리해야 합니다.
     public News toEntity(LocalDateTime writeDateTime) {
         return News.builder()
                 .title(title)
+                .titleTranslated(titleTranslated)
                 .category(category)
                 .content(content)
+                .contentTranslated(contentTranslated)
                 .summary(summary)
-                .writeDate(writeDateTime) // 서비스 레이어에서 변환된 LocalDateTime 객체를 사용
+                .summaryTranslated(summaryTranslated)
+                .writeDate(writeDateTime)
                 .srcOrigin(srcOrigin)
                 .build();
     }
