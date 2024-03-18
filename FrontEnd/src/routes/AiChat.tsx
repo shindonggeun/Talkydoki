@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Client, Frame } from 'webstomp-client';
 import { connectStompClient, getStompClient } from '@/util/websocket/stompConnection';
 import { getCookie } from '@/util/auth/userCookie';
 import { Wrapper } from '@/styles/common/ui/container';
@@ -10,30 +11,30 @@ type ChatMessage = {
 const { VITE_REACT_WS_URL } = import.meta.env;
 
 const AiChat: React.FC = () => {
-  const [isConnected, setIsConnected] = useState<boolean>(false);
   const [chats, setChats] = useState<ChatMessage[]>([]);
   const [chatText, setChatText] = useState<string>('');
 
-  // 여기에 이제 roomId 동적으로 할당받아야함
-  const roomId = 1;
+  const roomId = 1; // 나중에 동적으로 할당받도록 로직 구현 필요
 
   useEffect(() => {
-    const serverURL = VITE_REACT_WS_URL;
+    const serverURL = VITE_REACT_WS_URL as string; // 환경변수가 undefined일 수 없으므로 assertion
     const token = getCookie();
-    console.log(token);
 
-    const onConnected = () => {
-      setIsConnected(true);
-      const subscription = getStompClient()?.subscribe(`/topic/room.${roomId}`, message => {
-        const chat = JSON.parse(message.body);
+    const onConnected = (client: Client) => {
+      const subscription = client.subscribe(`/topic/room.${roomId}`, message => {
+        const chat = JSON.parse(message.body) as ChatMessage;
         setChats(prev => [...prev, chat]);
       });
 
-      return subscription?.unsubscribe;
+      return () => subscription.unsubscribe();
     };
 
-    const onError = (error: string) => {
-      console.error("Connection error: ", error);
+    const onError = (error: Frame | string) => {
+      if (typeof error === 'string') {
+        console.error("Connection string error: ", error);
+      } else {
+        console.error("Connection frame error: ", error.headers.message);
+      }
     };
 
     connectStompClient(serverURL, token, onConnected, onError);
@@ -61,13 +62,12 @@ const AiChat: React.FC = () => {
 
   return (
     <Wrapper>
-
-    <div className="chat-container">
+      <div className="chat-container">
       <div className="chat-scroll">
-        {chats.map((chat) => (
-              <div className="message-content">
-                {chat.content}
-              </div>
+        {chats.map((chat, index) => (
+          <div key={index} className="message-content">
+            {chat.content}
+          </div>
         ))}
       </div>
       <div className="input-box">
@@ -81,6 +81,7 @@ const AiChat: React.FC = () => {
       </div>
     </div>
     </Wrapper>
+    
   );
 };
 
