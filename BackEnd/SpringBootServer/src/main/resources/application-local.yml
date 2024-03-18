@@ -106,3 +106,7 @@ app:
 #  port: 5672
 #  username: guest
 #  password: guest
+
+# gpt-api setting
+openai:
+  key: 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
