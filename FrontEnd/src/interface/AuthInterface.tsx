@@ -9,4 +9,10 @@ export interface SignupParams {
   email: string;
   password: string;
   name: string;
+  nickname: string;
+}
+
+export interface SocialLoginPayload {
+  provider: string;
+  code: string;
 }

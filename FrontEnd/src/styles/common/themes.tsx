@@ -1,38 +1,81 @@
 export const light = {
   main: {
-    color: "#864EE6",
-    dark: "#5C2CB0",
-    light: "#C09CFF",
+    color: "#957DF8",
+    dark: "#6744F3",
+    light: "#cdc6fb",
   },
   grey: {
-    color: "#A79EB5",
-    dark: "#857D91",
-    light: "#A79EB5",
+    color: "#b5b8cde9",
+    dark: "#706c74e7",
+    light: "#e0dbe8db",
   },
   green: {
     color: "#54EA75",
-    dark: "#8FFF9D",
-    light: "#19DB3B",
+    dark: "#19DB3B",
+    light: "#8FFF9D",
   },
   red: {
     color: "#E03849",
-    dark: "#FF8F9A",
-    light: "#BF0013",
+    dark: "#BF0013",
+    light: "#FF8F9A",
   },
   yellow: {
     color: "#FFD324",
-    dark: "#FFE47A",
-    light: "#FAB22D",
+    dark: "#FAB22D",
+    light: "#FFE47A",
   },
   blue: {
     color: "#176CFF",
-    dark: "#38A2FF",
-    light: "#2448AB",
+    dark: "#2448AB",
+    light: "#38A2FF",
   },
   doc: {
-    text: "#312A3D",
+    text: "#312a3df2",
+    textButton: "#f9f6ffee",
     background: "#F4F4FA",
-    backgroundModal: "FFFFFF",
-    shadow: "#ECEDF9",
+    backgroundModal: "#FFFFFF",
+    shadow: "#e4e4eddf",
+    shadowDark: "#c4c4e4eb",
+  },
+};
+
+export const dark = {
+  main: {
+    color: "#957DF8",
+    dark: "#6744F3",
+    light: "#cdc6fb",
+  },
+  grey: {
+    color: "#b5b8cde9",
+    dark: "#706c74e7",
+    light: "#e0dbe8db",
+  },
+  green: {
+    color: "#54EA75",
+    dark: "#19DB3B",
+    light: "#8FFF9D",
+  },
+  red: {
+    color: "#E03849",
+    dark: "#BF0013",
+    light: "#FF8F9A",
+  },
+  yellow: {
+    color: "#FFD324",
+    dark: "#FAB22D",
+    light: "#FFE47A",
+  },
+  blue: {
+    color: "#176CFF",
+    dark: "#2448AB",
+    light: "#38A2FF",
+  },
+  doc: {
+    text: "#f9f6ffee",
+    textButton: "#f9f6ffee",
+    background: "#312d40",
+    backgroundModal: "#3c334fef",
+    shadow: "#282838df",
+    shadowDark: "#1a1a24df",
   },
 };

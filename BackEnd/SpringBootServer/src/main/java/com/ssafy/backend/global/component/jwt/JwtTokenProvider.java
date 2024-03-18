@@ -4,7 +4,7 @@ import com.ssafy.backend.domain.member.entity.Member;
 import com.ssafy.backend.domain.member.entity.enums.MemberRole;
 import com.ssafy.backend.global.component.jwt.exception.JwtErrorCode;
 import com.ssafy.backend.global.component.jwt.exception.JwtException;
-import com.ssafy.backend.global.component.jwt.security.MemberLoginActiveRecord;
+import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -71,12 +71,12 @@ public class JwtTokenProvider {
      * @param accessToken 파싱할 액세스 토큰 문자열
      * @return 파싱된 사용자 정보가 담긴 MemberLoginActiveRecord 객체
      */
-    public MemberLoginActiveRecord parseAccessToken(String accessToken) {
+    public MemberLoginActive parseAccessToken(String accessToken) {
         // 액세스 토큰 파싱
         Claims payload = parseToken(accessToken, jwtProps.accessKey());
 
         // 파싱된 데이터를 기반으로 MemberLoginActiveRecord 객체 생성 및 반환
-        return MemberLoginActiveRecord.builder()
+        return MemberLoginActive.builder()
                 .id(Long.valueOf(payload.getId()))
                 .email(payload.get(CLAIM_EMAIL, String.class))
                 .name(payload.get(CLAIM_NAME, String.class))

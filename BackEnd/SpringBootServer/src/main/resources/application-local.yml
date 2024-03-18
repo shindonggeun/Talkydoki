@@ -1,0 +1,126 @@
+server:
+  base-url: localhost
+
+spring:
+  servlet:
+    # file 업로드 관련 세팅 (명시적으로 설정 안할 시 Spring boot는 기본적으로 1MB로 설정됨)
+    multipart:
+      max-file-size: 10MB  # 최대 파일 크기
+      max-request-size: 10MB  # 최대 요청 크기
+
+  jpa:
+    open-in-view: false
+    defer-datasource-initialization: true
+    generate-ddl: true
+    hibernate:
+      ddl-auto: create-drop                # ddl 자동 작성 여부
+    properties:
+      hibernate:
+        format_sql: true             # 하이버네이트가 실행한 SQL을 출력할 때 보기 좋게 정렬
+        use_sql_comments: true
+        show_sql: true               # 하이버네이트가 실행한 SQL을 출력
+        jdbc:
+          batch_size: 100              #   insert/update 쿼리를 원하는 개수만큼 모아서 DB에 날릴 수 있는 옵션
+        default_batch_fetch_size: 100
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver  # DB 드라이버
+    url: jdbc:mysql://${server.base-url}:3306/talkydoki?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true       # 데이터베이스 URL
+    username: ENC(oIucHTMgwwzUiBqlBzyB9g==)                     # 데이터베이스 계정명
+    password: ENC(nA/sTfx2u8plMWgVt5MQ3A==)                     # 데이터베이스 계정 비밀번호
+
+  # data_테이블명.sql 관련 실행 setting
+  sql:
+    init:
+      mode: always
+      data-locations:
+        - 'classpath:/data_vocabulary.sql'
+        - 'classpath:/data_news.sql'
+
+  # NoSQL setting
+  data:
+    # Redis setting
+    redis:
+      host: ${server.base-url}
+      port: 6379
+
+  # rabbitMQ setting
+  rabbitmq:
+    host: ${server.base-url}
+    port: 15672
+    username: guest
+    password: guest
+
+  # Java Mail Sender setting (Google Mail)
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ENC(9zcJxzMJjdfsV97O7BJQvAtUCYHyAV12FmzBkDqpDW8=)
+    password: ENC(bad9dzuo4Yv1McadA8EOSn13JEEl/6UeyvsknQfCXyQ=)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# jwt setting
+jwt:
+  accessKey: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
+  refreshKey: TestRefreshKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
+  accessExpiration: PT60M  # 60분 (PT60M)
+  refreshExpiration: PT1080M  # 10080분 (7일) (PT10080M)
+
+# log 관리
+logging:
+  level:
+    org.hibernate:
+      type.descriptor.sql: trace
+      org.hibernate.SQLQuery: debug
+
+# OAUTH2.0 Setting
+oauth:
+  kakao:
+    client-id: ENC(BWjHj+A/SJQBzhtK+vutMYiLyOsKAo2lQwFqW2PqRPDxuWfF6Ncx+Qq5piFGk1SY)   # REST API 키
+    client-secret: ENC(BWjHj+A/SJQBzhtK+vutMYiLyOsKAo2lQwFqW2PqRPDxuWfF6Ncx+Qq5piFGk1SY) # 보안 -> Client Secret 키
+    redirect-uri: http://${server.base-url}:5173/member/loading/kakao
+    scope:
+      - profile_nickname
+      - profile_image
+      - account_email
+      - name
+
+  naver:
+    client-id: ENC(yyBV/ueEBgJtvkDlLenjkPwTcYy1AYXQuIDYlVxrVZE=)
+    client-secret: ENC(4zsZi9kyz8gJf75VByLo4PtdGuq9iqfS)
+    redirect_uri: http://${server.base-url}:5173/member/loading/naver
+    scope:
+      - nickname
+      - name
+      - email
+      - profile_image
+
+  google:
+    client_id: ENC(rg6zRGzhH2As0ap38BB/G74FEw8/Q1aHOPqsEdASNH/yO35xyN3j5J/gjwvLQlKfWVT3xDB+JNjrOBSmd927lDLW+gK69XthjXyFrbN087NzYTHPKjCXaw==)
+    client_secret: ENC(i19O1JCsABZV+KTXIz0B5CT4VuO3YMEPd7JkxLsTrbhiYxFzOD4JSYDFnx+IbOxb)
+    redirect_uri: http://${server.base-url}:5173/member/loading/google
+    scope:
+      - profile
+      - email
+
+# firebase setting
+app:
+  firebase-configuration-file: classpath:serviceAccountKey.json
+  firebase-bucket: ENC(web/1dqCEyq3z3sEPNyoxYLJJD87LW/MD7nkwKabmuE=)
+
+  # rabbitMQ setting
+#rabbitmq:
+#  host: ${server.base-url}
+#  port: 5672
+#  username: guest
+#  password: guest
+
+# gpt-api setting
+openai:
+  key: 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
+
