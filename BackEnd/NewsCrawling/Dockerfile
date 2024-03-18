@@ -6,7 +6,7 @@ WORKDIR /usr/src/app
 
 # 필요한 경우 requirements.txt 파일을 사용하여 패키지를 설치합니다.
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 # 스크립트 파일을 컨테이너 내부로 복사
 COPY NewsCrawling.py .
