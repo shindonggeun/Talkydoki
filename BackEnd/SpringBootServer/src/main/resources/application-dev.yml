@@ -61,8 +61,8 @@ logging:
 # OAUTH2.0 Setting
 oauth:
   kakao:
-    client-id: ENC(xXJBYLYseH03J0xQOHI5SrrJQOHWhNEbikRaHOVIs6zaVkcCsQsIYyvfIb0OcwdK)   # REST API 키
-    client-secret: ENC(Xdqh6qXZCZJdO23Dssp3e71h0PAMbidg9HQqkDpCEpFEjIDoSHdp3NF)        # 보안 -> Client Secret 키
+    client-id: d8f7a03a9f71c950eb689b75d7e13911 # REST API 키
+    client-secret: DoDeccr2fHvdeN9ZrVc0zfitpw9mQDaX # 보안 -> Client Secret 키
     redirect-uri: http://${server.base-url}/member/loading/kakao
     scope:
       - profile_nickname
@@ -71,8 +71,8 @@ oauth:
       - name
 
   naver:
-    client-id: ENC(f/Q2OaY/fA3jzQtHnRMredOSO1iGNslHP1Rj3AyL0XQ=)
-    client-secret: ENC(EanzH/wWtNQTri/ipaTLjpJRncOi2oMl)
+    client-id: 6kxAAj5SSmXzQlEXkOao
+    client-secret: fzufMaJYRE
     redirect_uri: http://${server.base-url}/member/loading/naver
     scope:
       - nickname
