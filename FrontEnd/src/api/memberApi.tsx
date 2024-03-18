@@ -129,7 +129,7 @@ export const useLogout = () => {
   });
 };
 
-// 소셜 로그인
+// 소셜 로그인 창 띄우기
 
 export const startSocialLogin = () => {
   return useMutation({
@@ -147,21 +147,22 @@ export const startSocialLogin = () => {
   });
 };
 
+// 소셜 로그인
+
 export const finishSocialLogin = () => {
-  // const setIsLogin = useAuthStore((state) => state.setIsLogin);
-  // const navigate = useNavigate();
+  const setIsLogin = useAuthStore((state) => state.setIsLogin);
+  const navigate = useNavigate();
   return useMutation({
     mutationFn: (payload: SocialLoginPayload) =>
       customAxios.get(`/oauth/${payload.provider}/login`, {
-        params: { extra: payload.code },
+        params: { code: payload.code },
       }),
     onSuccess: (res) => {
       const { data } = res;
-      console.log(data);
+      console.log("소셜로그인  데이터:", data);
       if (data.dataHeader.successCode === 0) {
-        console.log(data.dataBody);
-        // setIsLogin(true); 1. 추가 작업  확인 필요
-        // navigate("/main");
+        setIsLogin(true);
+        navigate("/main");
       } else {
         alert(data.dataHeader.resultMessage);
       }
