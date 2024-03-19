@@ -11,7 +11,11 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { useAuthStore, useIsLogin } from "@/stores/userStore";
+import {
+  useAuthStore,
+  useIsLogin,
+  useSetMemberEmail,
+} from "@/stores/userStore";
 
 import { UserInterface } from "@/interface/UserInterface";
 import { useSetSignupErrors } from "@/stores/signUpStore";
@@ -23,7 +27,7 @@ export const useLogin = () => {
   const setIsLogin = useAuthStore((state) => state.setIsLogin);
   // 로그인시 되는지 전역 확인용 후에 삭제 예정
   const isLogin = useAuthStore((state) => state.isLogin);
-  const setMemberEmail = useAuthStore((state) => state.setMemberEmail);
+  const setMemberEmail = useSetMemberEmail();
   const queryClient = useQueryClient();
 
   const setModalContent = useSetModalContent();
@@ -106,7 +110,6 @@ export const useGetMember = () => {
         } else {
           return data.dataBody as UserInterface;
         }
-        // queryClient.setQueryData(["getMember"], data.dataBody as UserInterface);
       } else {
         return null;
       }
