@@ -1,0 +1,16 @@
+version: "0.0.0"
+
+services:
+  talkydoki_backend_fastapi:
+    container_name: talkydoki_backend_fastapi
+    build:
+      context: ./BackEnd/FastApiServer
+      dockerfile: Dockerfile
+    image: talkydoki_backend_fastapi_img
+    ports:
+      - "8000:8000"
+    networks:
+      - talkydoki_net
+
+networks:
+  talkydoki_net:
