@@ -169,4 +169,4 @@ async def word_recommend(member_id: str):
     recommended_item_index = untrained_item_indices[torch.argmax(predictions).item()]
     recommended_item_name = list(dataset.items.keys())[list(dataset.items.values()).index(recommended_item_index)]
     
-    return {"member_id": member_id, "recommended_item": recommended_item_name}
+    return {"memberId": member_id, "recommended_item": recommended_item_name}
