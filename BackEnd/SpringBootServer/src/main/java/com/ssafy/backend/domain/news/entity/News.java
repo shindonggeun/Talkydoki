@@ -7,11 +7,11 @@ import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import jakarta.persistence.*;
 import lombok.*;
 
+@Entity
 @Getter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-@Builder
-@Entity
 public class News {
 
     @Id
@@ -47,7 +47,7 @@ public class News {
     @Column(nullable = false)
     private String srcOrigin;
 
-    @OneToMany(mappedBy = "news", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "news", fetch = FetchType.LAZY)
     private List<NewsKeywordMapping> newsKeywordMappings = new ArrayList<>();
 
     @OneToOne(mappedBy = "news")

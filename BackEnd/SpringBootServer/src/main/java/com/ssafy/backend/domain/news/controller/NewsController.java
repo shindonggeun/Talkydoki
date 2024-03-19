@@ -1,6 +1,6 @@
 package com.ssafy.backend.domain.news.controller;
 
-import com.ssafy.backend.domain.news.dto.NewsListInfo;
+import com.ssafy.backend.domain.news.dto.NewsSimplyInfo;
 import com.ssafy.backend.domain.news.dto.NewsPostRequest;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.domain.news.service.NewsService;
@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,16 +31,28 @@ public class NewsController {
         return ResponseEntity.ok().body(Message.success());
     }
 
+//    @Operation(
+//            summary = "전체 뉴스 리스트 불러오기",
+//            description = "전체 뉴스 리스트 정보를 불러오는 기능입니다. 페이지네이션 (offset) 방식이 적용되어 있습니다."
+//    )
+//    @GetMapping("/list/get")
+//    public ResponseEntity<Message<SliceResponse<NewsSimplyInfo>>> getListNews(
+//            @RequestParam(required = false) NewsCategory category,
+//            Pageable pageable
+//    ) {
+//        SliceResponse<NewsSimplyInfo> newsListInfo = newsService.getNewsByCategory(category, pageable);
+//        return ResponseEntity.ok().body(Message.success(newsListInfo));
+//    }
+
     @Operation(
-            summary = "전체 뉴스 리스트 불러오기",
-            description = "전체 뉴스 리스트 정보를 불러오는 기능입니다. 페이지네이션 (offset) 방식이 적용되어 있습니다."
+            summary = "뉴스 목록 가져오기",
+            description = "뉴스 목록을 불러오는 기능입니다. noOffset 방식이 적용되어 있습니다."
     )
     @GetMapping("/list/get")
-    public ResponseEntity<Message<SliceResponse<NewsListInfo>>> getListNews(
-            @RequestParam(required = false) NewsCategory category,
-            Pageable pageable
-    ) {
-        SliceResponse<NewsListInfo> newsListInfo = newsService.getNewsByCategory(category, pageable);
-        return ResponseEntity.ok().body(Message.success(newsListInfo));
+    public ResponseEntity<Message<SliceResponse<NewsSimplyInfo>>> getNewsList(@RequestParam(required = false) NewsCategory category,
+                                                                              @RequestParam(required = false) Long lastNewsId,
+                                                                              @RequestParam(defaultValue = "10") int limit) {
+        SliceResponse<NewsSimplyInfo> newsSimplyInfoList = newsService.getNewsList(category, lastNewsId, limit);
+        return ResponseEntity.ok().body(Message.success(newsSimplyInfoList));
     }
 }

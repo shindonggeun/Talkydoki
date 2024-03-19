@@ -1,6 +1,6 @@
 package com.ssafy.backend.domain.news.service;
 
-import com.ssafy.backend.domain.news.dto.NewsListInfo;
+import com.ssafy.backend.domain.news.dto.NewsSimplyInfo;
 import com.ssafy.backend.domain.news.dto.NewsPostRequest;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.domain.news.exception.NewsErrorCode;
@@ -44,9 +44,15 @@ public class NewsServiceImpl implements NewsService {
     }
     @Override
     @Transactional(readOnly = true)
-    public SliceResponse<NewsListInfo> getNewsByCategory(NewsCategory category, Pageable pageable) {
+    public SliceResponse<NewsSimplyInfo> getNewsByCategory(NewsCategory category, Pageable pageable) {
         // 카테고리별로 뉴스를 조회하고, 리미트를 적용하여 반환
-        Slice<NewsListInfo> newsListInfo = newsRepository.findNewsListInfo(category, pageable);
+        Slice<NewsSimplyInfo> newsListInfo = newsRepository.findNewsListInfo(category, pageable);
         return SliceResponse.of(newsListInfo);
+    }
+
+    @Override
+    public SliceResponse<NewsSimplyInfo> getNewsList(NewsCategory category, Long lastNewsId, int limit) {
+        Slice<NewsSimplyInfo> newsSimplyInfoList = newsRepository.findNewsListInfoNoOffset(category, lastNewsId, limit);
+        return SliceResponse.of(newsSimplyInfoList);
     }
 }

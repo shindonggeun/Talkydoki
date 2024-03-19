@@ -1,5 +1,5 @@
 package com.ssafy.backend.domain.news.service;
-import com.ssafy.backend.domain.news.dto.NewsListInfo;
+import com.ssafy.backend.domain.news.dto.NewsSimplyInfo;
 import com.ssafy.backend.domain.news.dto.NewsPostRequest;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.global.common.dto.SliceResponse;
@@ -19,5 +19,7 @@ public interface NewsService {
      *
      * @return 카테로리별 조회된 뉴스
      */
-    SliceResponse<NewsListInfo> getNewsByCategory(NewsCategory category, Pageable pageable);
+    SliceResponse<NewsSimplyInfo> getNewsByCategory(NewsCategory category, Pageable pageable);
+
+    SliceResponse<NewsSimplyInfo> getNewsList(NewsCategory category, Long lastNewsId, int limit);
 }
