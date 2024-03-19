@@ -4,7 +4,12 @@ import {
   SignupParams,
   SocialLoginPayload,
 } from "../interface/AuthInterface";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  QueryFilters,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore, useIsLogin } from "@/stores/userStore";
 
@@ -34,10 +39,7 @@ export const useLogin = () => {
         console.log("로그인 성공");
         console.log("전역 로그인 확인", isLogin);
         // 로그인 후 return 받은 데이터 getMember 쿼리에 저장
-        queryClient.setQueryData(
-          ["getMember"],
-          data.dataBody.memberInfo as UserInterface
-        );
+        queryClient.setQueryData(["getMember"], data);
         setIsLogin(true);
         navigate(`/`);
       } else {
@@ -84,7 +86,6 @@ export const useSignup = () => {
 // 회원정보 가져오기
 export const useGetMember = () => {
   const isLogin = useIsLogin();
-  const queryClient = useQueryClient();
 
   return useQuery({
     queryKey: ["getMember"],
@@ -95,8 +96,14 @@ export const useGetMember = () => {
     select: (data) => {
       // get 성공 시 data.dataBody를 getMember로 쿼리에 저장
       if (data.dataHeader.successCode == 0) {
-        queryClient.setQueryData(["getMember"], data.dataBody as UserInterface);
-        return data.dataBody as UserInterface;
+        if (data.dataBody.memberInfo) {
+          console.log("로그인으로 불러오기");
+          return data.dataBody.memberInfo as UserInterface;
+        } else {
+          console.log("새로 받아오기");
+          return data.dataBody as UserInterface;
+        }
+        // queryClient.setQueryData(["getMember"], data.dataBody as UserInterface);
       } else {
         return null;
       }
@@ -112,13 +119,15 @@ export const useGetMember = () => {
 export const useLogout = () => {
   const navigate = useNavigate();
   const setIsLogin = useAuthStore((state) => state.setIsLogin);
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: () => customAxios.post(`/member/logout`),
 
     onSuccess: (res) => {
       const response = res.data;
       if (response.dataHeader.successCode === 0) {
-        console.log(`로그아웃 성공`);
+        queryClient.removeQueries(["getMember"] as QueryFilters);
         navigate("/intro");
         setIsLogin(false);
       } else {
@@ -152,6 +161,7 @@ export const startSocialLogin = () => {
 export const finishSocialLogin = () => {
   const setIsLogin = useAuthStore((state) => state.setIsLogin);
   const navigate = useNavigate();
+
   return useMutation({
     mutationFn: (payload: SocialLoginPayload) =>
       customAxios.get(`/oauth/${payload.provider}/login`, {

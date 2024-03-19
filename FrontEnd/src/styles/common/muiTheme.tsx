@@ -17,6 +17,12 @@ declare module "@mui/material" {
   interface SwitchPropsColorOverrides {
     purple: true;
   }
+  interface CircularProgressPropsColorOverrides {
+    purple: true;
+  }
+  interface TabsPropsIndicatorColorOverrides {
+    purple: true;
+  }
 }
 
 declare module "@mui/material/styles" {

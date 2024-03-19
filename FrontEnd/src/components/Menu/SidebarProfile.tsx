@@ -16,10 +16,8 @@ function SidebarProfile() {
   const toggleDarkmode = useDisplayAction();
   const setModalContent = useSetModalContent();
   const setIsModalOn = useSetISModalOn();
-  const queryClient = useQueryClient();
 
-  const { isLoading } = useGetMember();
-  const data = queryClient.getQueryData(["getMember"]) as UserInterface;
+  const { data, isLoading } = useGetMember();
   const { mutate: logout } = useLogout();
 
   // const userInfo = typeof(data) ==
@@ -39,6 +37,7 @@ function SidebarProfile() {
   if (!data || isLoading) return <></>;
 
   const { nickname, profileImage } = data;
+  console.log(profileImage);
 
   return (
     <ProfileSection>

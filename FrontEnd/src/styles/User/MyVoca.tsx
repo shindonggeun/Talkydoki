@@ -1,8 +1,6 @@
 import styled from "styled-components";
 import { Card } from "../common/ui/card";
 
-import Switch from "@mui/material/Switch";
-
 export const VocaContainer = styled.div`
   width: 100%;
   display: flex;
@@ -10,6 +8,8 @@ export const VocaContainer = styled.div`
 
   div.options {
     width: 100%;
+    text-align: end;
+    padding: 0 3vw;
   }
 `;
 
@@ -21,14 +21,21 @@ export const VocaCard = styled(Card)`
   position: relative;
 
   *.hide {
-    background-color: var(--main);
-    color: var(--main);
-    opacity: 0.5;
+    background-color: var(--shadow);
+    & > * {
+      color: var(--shadow);
+    }
   }
 
-  .deleteButton {
+  .deleteNadd {
     position: absolute;
     right: 30px;
+    top: 30px;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.5;
+    }
   }
 
   .jpNtype {
@@ -37,10 +44,11 @@ export const VocaCard = styled(Card)`
     .japanese {
       font-size: 24pt;
       font-weight: 700;
+      word-break: keep-all;
     }
     .type {
-      color: var(--text);
       opacity: 0.5;
+      color: var(--text);
     }
   }
 
@@ -54,13 +62,13 @@ export const VocaCard = styled(Card)`
 
       & > * {
         margin: 0 5px;
-        color: var(--text);
         opacity: 0.5;
       }
     }
 
     .meaning {
       margin: 2px 0 2px 10px;
+      height: 80%;
     }
   }
 

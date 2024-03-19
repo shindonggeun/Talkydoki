@@ -10,7 +10,7 @@ import {
   useInfiniteQuery,
   useMutation,
   useQuery,
-  // useQueryClient,
+  useQueryClient,
 } from "@tanstack/react-query";
 
 // 랜덤단어
@@ -66,7 +66,7 @@ export const useMyVoca = () => {
         .get("/vocabulary/personal/list/get", {
           params: {
             page: pageParam,
-            size: 5,
+            size: 10,
           },
         })
         .then((res) => res.data.dataBody);
@@ -94,7 +94,7 @@ export const useMyVoca = () => {
 
 // 단어 삭제
 export const useDeleteMyVoca = () => {
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (id: number) => {
@@ -123,13 +123,17 @@ export const useDeleteMyVoca = () => {
               hasNext: page.hasNext,
             };
           });
+          console.log(old);
           return old;
         }
       );
 
       return { previousWords };
     },
-    onSuccess: (res) => console.log(res),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries(["getVocaList"] as InvalidateQueryFilters);
+      console.log(res);
+    },
     onError: (err, id, context) => {
       queryClient.setQueryData(["getVocaList"], context?.previousWords);
     },

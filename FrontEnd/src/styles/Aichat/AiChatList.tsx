@@ -27,6 +27,7 @@ export const NegativeTiTle = styled(NegativeTitle)`
   margin: 0;
   /* border: 1px solid; */
 `;
+
 export const Categorybox = styled.div`
   width: calc(100% - 3vw);
   height: 100%;
