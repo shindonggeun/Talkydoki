@@ -19,7 +19,7 @@ type Props = {
 
 function UpdateProfileSection({ index, value, user }: Props) {
   const { 
-    // email,  name, 
+    email,  name, 
     id, nickname, profileImage 
   } = user;
 
