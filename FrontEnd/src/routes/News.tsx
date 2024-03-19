@@ -1,21 +1,21 @@
 // import { useGetNewsList } from "@/api/newsApi";
 import { Wrapper } from "@/styles/common/ui/container";
 // import { useGetNewsList } from "@/api/newsApi";
-import { useGetNewsList } from "@/api/newsApi";
-import { useState } from "react";
+// import { useGetNewsList } from "@/api/newsApi";
+// import { useState } from "react";
 
 type Props = {};
 
 function News({}: Props) {
-  const [cat, setCat] = useState<string>("");
-  const [num, setNum] = useState(0);
-  const { data, isLoading, refetch } = useGetNewsList(cat, num);
+  // const [cat, setCat] = useState<string>("");
+  // const [num, setNum] = useState(0);
+  // const { data, isLoading, refetch } = useGetNewsList(cat, num);
 
-  if (isLoading) return <></>;
+  // if (isLoading) return <></>;
 
   return (
     <Wrapper>
-      <select
+      {/* <select
         value={cat}
         onChange={(e) => {
           setCat(e.target.value);
@@ -28,9 +28,9 @@ function News({}: Props) {
       </select>
       <button onClick={() => refetch()}>ㅇㅇㅇㅇㅇ</button>
       {data &&
-        data.dataBody.content.map((each: {title: string}, idx: number) => (
+        data.dataBody.content.map((each: { title: string }, idx: number) => (
           <div key={idx}>{each.title}</div>
-        ))}
+        ))} */}
     </Wrapper>
   );
 }

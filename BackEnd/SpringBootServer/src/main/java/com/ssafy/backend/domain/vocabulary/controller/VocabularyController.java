@@ -15,7 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "단어장", description = "단어장 관련 API 입니다.")
+@Tag(name = "단어사전", description = "단어사전 관련 API 입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/vocabulary")

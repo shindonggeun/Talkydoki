@@ -55,7 +55,7 @@ function Menus() {
       {/* 마이페이지 */}
       <MenuItem
         onClick={() => menuHandler("/mypage")}
-        className={now == "/mypage" ? "selected" : undefined}
+        className={now.startsWith("/mypage") ? "selected" : undefined}
       >
         <div className="label">
           <FaceIcon />
