@@ -8,8 +8,6 @@ import { useDisplayAction, useIsDark } from "@/stores/displayStore";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 import { getProfileImage } from "@/util/common/getFullUrl";
 import { useGetMember, useLogout } from "@/api/memberApi";
-import { useQueryClient } from "@tanstack/react-query";
-import { UserInterface } from "@/interface/UserInterface";
 
 function SidebarProfile() {
   const isDark = useIsDark();

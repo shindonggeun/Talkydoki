@@ -1,15 +1,10 @@
-import { useQueryClient } from "@tanstack/react-query";
-
 import { UpdateProfileContext } from "@/styles/ProfileUpdate/UpdateForm";
 import { Button } from "@mui/material";
 
 import { getProfileImage } from "@/util/common/getFullUrl";
 import { useEffect, useRef, useState } from "react";
 import { useUpdateProfile, useUploadImageFile } from "@/api/profileApi";
-import { useGetMember } from "@/api/memberApi";
 import { UserInterface } from "@/interface/UserInterface";
-import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
-import { useNavigate } from "react-router-dom";
 
 type Props = {
   children?: React.ReactNode;

@@ -8,7 +8,7 @@ function MyPage({}: Props) {
 
   return (
     <Wrapper>
-      <button onClick={() => navigate("/myvoca")}>단어장</button>
+      <button onClick={() => navigate("myvoca")}>단어장</button>
       <button onClick={() => navigate("update")}>프로필 수정</button>
     </Wrapper>
   );

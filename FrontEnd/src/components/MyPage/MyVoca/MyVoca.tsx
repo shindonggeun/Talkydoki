@@ -6,7 +6,7 @@ import { VocaContainer } from "@/styles/User/MyVoca";
 
 import { FormControlLabel, Switch } from "@mui/material";
 import { useState } from "react";
-import MyVocaCard from "@/components/MyVoca/MyVocaCard";
+import MyVocaCard from "@/components/MyPage/MyVoca/MyVocaCard";
 import InfiniteObserver from "@/components/ui/InfiniteObserver";
 
 function MyVoca() {

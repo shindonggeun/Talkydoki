@@ -134,7 +134,7 @@ export const useDeleteMyVoca = () => {
       queryClient.invalidateQueries(["getVocaList"] as InvalidateQueryFilters);
       console.log(res);
     },
-    onError: (err, id, context) => {
+    onError: (_err, _id, context) => {
       queryClient.setQueryData(["getVocaList"], context?.previousWords);
     },
   });

@@ -1,7 +1,5 @@
 import { Wrapper } from "@/styles/common/ui/container";
 import UpdateProfileSection from "@/components/ProfileUpdate/UpdateProfileSection";
-import { useQueryClient } from "@tanstack/react-query";
-import { UserInterface } from "@/interface/UserInterface";
 
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -22,7 +20,7 @@ function ProfileUpdate({}: Props) {
       <UpdateWrapper>
         <Tabs
           value={now}
-          onChange={(e, nV) => setNow(nV)}
+          onChange={(_e, nV) => setNow(nV)}
           textColor="inherit"
           TabIndicatorProps={{
             style: {
