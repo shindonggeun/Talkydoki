@@ -3,8 +3,13 @@ package com.ssafy.backend.global.component.jwt.service;
 import com.ssafy.backend.domain.member.dto.MemberInfo;
 import com.ssafy.backend.domain.member.dto.MemberLoginResponse;
 import com.ssafy.backend.domain.member.entity.Member;
+import com.ssafy.backend.domain.member.exception.MemberErrorCode;
+import com.ssafy.backend.domain.member.exception.MemberException;
+import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.global.component.jwt.JwtTokenProvider;
 import com.ssafy.backend.global.component.jwt.dto.JwtToken;
+import com.ssafy.backend.global.component.jwt.exception.JwtErrorCode;
+import com.ssafy.backend.global.component.jwt.exception.JwtException;
 import com.ssafy.backend.global.component.jwt.repository.RefreshTokenRepository;
 import com.ssafy.backend.global.exception.GlobalErrorCode;
 import com.ssafy.backend.global.exception.GlobalException;
@@ -19,6 +24,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public MemberLoginResponse issueAndSaveTokens(Member member) {
@@ -43,5 +49,16 @@ public class JwtTokenServiceImpl implements JwtTokenService {
                 .build();
 
         return new MemberLoginResponse(jwtToken, memberInfo); // 로그인 응답 데이터 반환
+    }
+
+    @Override
+    public String reissueAccessToken(String email) {
+        String refreshToken = refreshTokenRepository.find(email).orElseThrow(()
+        -> new MemberException(MemberErrorCode.REDIS_NOT_TOKEN));
+
+        Member member = memberRepository.findByEmail(email).orElseThrow(()
+        -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+        return jwtTokenProvider.issueAccessToken(member);
     }
 }

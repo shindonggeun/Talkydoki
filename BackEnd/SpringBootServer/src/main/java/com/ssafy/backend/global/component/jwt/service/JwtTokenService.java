@@ -5,4 +5,6 @@ import com.ssafy.backend.domain.member.entity.Member;
 
 public interface JwtTokenService {
     MemberLoginResponse issueAndSaveTokens(Member member);
+
+    String reissueAccessToken(String email);
 }
