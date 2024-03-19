@@ -34,14 +34,6 @@ export const VocaCard = styled(Card)`
         margin: 2px 0;
         opacity: 0.6;
         cursor: pointer;
-
-        &.hide {
-          background-color: var(--text);
-
-          &:hover {
-            background-color: transparent;
-          }
-        }
       }
     }
 

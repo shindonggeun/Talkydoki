@@ -1,10 +1,20 @@
 import { useModalContent, useSetISModalOn } from "@/stores/modalStore";
 import { ModalBackground, ModalCard } from "@/styles/common/ui/container";
 import { Button } from "@mui/material";
+import { useEffect } from "react";
 
 function Modal() {
   const setIsModalOn = useSetISModalOn();
   const { message, onSuccess, isInfo } = useModalContent();
+
+  const preventScroll = (e: WheelEvent) => {
+    e.preventDefault();
+  };
+
+  useEffect(() => {
+    window.addEventListener("wheel", preventScroll, { passive: false });
+    return () => window.removeEventListener("wheel", preventScroll);
+  }, []);
 
   return (
     <>

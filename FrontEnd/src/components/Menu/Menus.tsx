@@ -53,7 +53,10 @@ function Menus() {
         <KeyboardArrowRightIcon />
       </MenuItem>
       {/* 마이페이지 */}
-      <MenuItem>
+      <MenuItem
+        onClick={() => menuHandler("/mypage")}
+        className={now == "/mypage" ? "selected" : undefined}
+      >
         <div className="label">
           <FaceIcon />
           <div>마이페이지</div>

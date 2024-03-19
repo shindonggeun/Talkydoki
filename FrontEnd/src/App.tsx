@@ -20,9 +20,10 @@ import News from "./routes/News";
 import Protected from "./components/Protect/Protect";
 import AiChatList from "./routes/AiChatList";
 import SocialLoading from "./routes/SocialLoading";
-import MyVoca from "./routes/MyVoca";
+import MyVoca from "./components/MyPage/MyVoca/MyVoca";
 import AiChatRoom from "./routes/AiChatRoom";
-import AiChat from "./routes/AiChat";
+import MyPage from "./routes/MyPage";
+import ProfileUpdate from "./routes/ProfileUpdate";
 
 function App() {
   const isDark = useIsDark();
@@ -46,7 +47,9 @@ function App() {
               <Route path="/news" element={<News />} />
               <Route path="/aichatlist" element={<AiChatList />} />
               <Route path="/aichatroom" element={<AiChatRoom />} />
-              <Route path="/myvoca" element={<MyVoca />} />
+              <Route path="/mypage" element={<MyPage />} />
+              <Route path="/mypage/myvoca" element={<MyVoca />} />
+              <Route path="/mypage/update" element={<ProfileUpdate />} />
               <Route path="/*" element={<Navigate replace to="/main" />} />
             </Routes>
           </>
