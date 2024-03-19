@@ -1,10 +1,16 @@
 package com.ssafy.backend.domain.aichat.dto.api;
 
-public record AiChatReportCreateRequest(
+import lombok.Builder;
+
+@Builder
+public record AiChatReportCreateResponse(
+        Long id,
+        Long aiChatRoomId,
         String conversationSummary,
         Float vocabularyScore,
         Float grammarScore,
         Float wordScore,
-        Float contextScore
+        Float FluencyScore,
+        Float ContextScore
 ) {
 }
