@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -29,6 +30,8 @@ public class AiChatServiceImpl implements AiChatService {
 
     private final RabbitTemplate rabbitTemplate;
     private final TopicExchange topicExchange;
+
+    private final OpenAiService openAiService;
 
 
     @Override
@@ -50,15 +53,18 @@ public class AiChatServiceImpl implements AiChatService {
                 .build();
     }
 
+
     @Override
     public void sendMessageAiChat(Long memberId, Long roomId, AiChatMessage aiChatMessage) {
         Member member = memberRepository.findById(memberId).orElseThrow(()
-        -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+                -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
         log.info("메시지 보내는사람: {}", member.getName());
 
         // TODO: AI 회화 채팅 커스텀 Exception 처리
         AiChatRoom aiChatRoom = aiChatRoomRepository.findById(roomId).orElseThrow(()
-        -> new RuntimeException("해당 AI 회화 채팅방을 찾을 수 없습니다."));
+                -> new RuntimeException("해당 AI 회화 채팅방을 찾을 수 없습니다."));
+
+
 
         AiChatHistory aiChatHistory = AiChatHistory.builder()
                 .aiChatRoom(aiChatRoom)
@@ -69,5 +75,25 @@ public class AiChatServiceImpl implements AiChatService {
         aiChatHistoryRepository.save(aiChatHistory);
 
         rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, aiChatMessage);
+
+        Mono<String> gptResponse = openAiService.sendMessage(aiChatMessage);
+
+        gptResponse.subscribe(response -> {
+            //메세지 저장
+            AiChatHistory gptHistory = AiChatHistory.builder()
+                    .aiChatRoom(aiChatRoom)
+                    .sender(AiChatSender.GPT)
+                    .content(response)
+                    .build();
+            aiChatHistoryRepository.save(gptHistory);
+
+            // RabbitMQ로 응답 전송
+            AiChatMessage gptMessage = AiChatMessage.builder()
+                    .sender(AiChatSender.GPT)
+                    .content(response)
+                    .build();
+            rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
+        });
+
     }
 }

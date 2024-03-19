@@ -1,0 +1,3 @@
+# 크론 작업 정의
+# 매 시 0분마다 스크립트를 실행합니다.
+0 * * * * root /usr/bin/python3 /usr/src/app/NewsCrawling.sh

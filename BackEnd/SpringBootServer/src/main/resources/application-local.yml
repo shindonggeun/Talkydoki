@@ -51,6 +51,19 @@ spring:
     username: guest
     password: guest
 
+  # Java Mail Sender setting (Google Mail)
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ENC(9zcJxzMJjdfsV97O7BJQvAtUCYHyAV12FmzBkDqpDW8=)
+    password: ENC(bad9dzuo4Yv1McadA8EOSn13JEEl/6UeyvsknQfCXyQ=)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 # jwt setting
 jwt:
   accessKey: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
@@ -99,3 +112,15 @@ oauth:
 app:
   firebase-configuration-file: classpath:serviceAccountKey.json
   firebase-bucket: ENC(web/1dqCEyq3z3sEPNyoxYLJJD87LW/MD7nkwKabmuE=)
+
+  # rabbitMQ setting
+#rabbitmq:
+#  host: ${server.base-url}
+#  port: 5672
+#  username: guest
+#  password: guest
+
+# gpt-api setting
+openai:
+  key: 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
+

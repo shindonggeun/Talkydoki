@@ -20,6 +20,17 @@ services:
     image: talkydoki_backend_springboot_img
     ports:
       - "8080:8080"
+    environment:
+      - jasypt.encryptor.key=ssafy
+    networks:
+      - talkydoki_net
+
+  talkydoki_backend_newscrawling:
+    container_name: talkydoki_backend_newscrawling
+    build:
+      context: ./BackEnd/NewsCrawling
+      dockerfile: Dockerfile
+    image: talkydoki_backend_newscrawling_img
     networks:
       - talkydoki_net
 

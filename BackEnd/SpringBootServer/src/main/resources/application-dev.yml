@@ -44,6 +44,26 @@ spring:
       host: talkydoki_redis
       port: 6379
 
+  # rabbitMQ setting
+  rabbitmq:
+    host: talkydoki_rabbitmq
+    port: 15672
+    username: guest
+    password: guest
+
+  # Java Mail Sender setting (Google Mail)
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ENC(9zcJxzMJjdfsV97O7BJQvAtUCYHyAV12FmzBkDqpDW8=)
+    password: ENC(bad9dzuo4Yv1McadA8EOSn13JEEl/6UeyvsknQfCXyQ=)
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
 # jwt setting
 jwt:
   accessKey: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
@@ -61,8 +81,8 @@ logging:
 # OAUTH2.0 Setting
 oauth:
   kakao:
-    client-id: ENC(xXJBYLYseH03J0xQOHI5SrrJQOHWhNEbikRaHOVIs6zaVkcCsQsIYyvfIb0OcwdK)   # REST API 키
-    client-secret: ENC(Xdqh6qXZCZJdO23Dssp3e71h0PAMbidg9HQqkDpCEpFEjIDoSHdp3NF)        # 보안 -> Client Secret 키
+    client-id: d8f7a03a9f71c950eb689b75d7e13911 # REST API 키
+    client-secret: DoDeccr2fHvdeN9ZrVc0zfitpw9mQDaX # 보안 -> Client Secret 키
     redirect-uri: http://${server.base-url}/member/loading/kakao
     scope:
       - profile_nickname
@@ -71,8 +91,8 @@ oauth:
       - name
 
   naver:
-    client-id: ENC(f/Q2OaY/fA3jzQtHnRMredOSO1iGNslHP1Rj3AyL0XQ=)
-    client-secret: ENC(EanzH/wWtNQTri/ipaTLjpJRncOi2oMl)
+    client-id: 6kxAAj5SSmXzQlEXkOao
+    client-secret: fzufMaJYRE
     redirect_uri: http://${server.base-url}/member/loading/naver
     scope:
       - nickname
@@ -92,3 +112,14 @@ oauth:
 app:
   firebase-configuration-file: classpath:serviceAccountKey.json
   firebase-bucket: ENC(SLVtdlieYMj0aGKJbbtcNZ7jAOk5GmHVdu8mazNsH18=)
+
+# rabbitMQ setting
+rabbitmq:
+  host: talkydoki_rabbitmq
+  port: 5672
+  username: guest
+  password: guest
+
+# gpt-api setting
+openai:
+  key: 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
