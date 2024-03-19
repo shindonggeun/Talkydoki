@@ -29,8 +29,4 @@ public class AiChatRoom {
     @Column(nullable = false)
     private AiChatCategory category;
 
-//    @Builder.Default
-//    @Column(nullable=false, columnDefinition = "boolean default false")
-//    private Boolean isDone = false;
-
 }

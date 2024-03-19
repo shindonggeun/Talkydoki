@@ -1,9 +1,14 @@
 package com.ssafy.backend.global.component.jwt;
 
+import com.ssafy.backend.domain.member.dto.MemberLoginResponse;
 import com.ssafy.backend.domain.member.entity.Member;
 import com.ssafy.backend.domain.member.entity.enums.MemberRole;
+import com.ssafy.backend.domain.member.exception.MemberErrorCode;
+import com.ssafy.backend.domain.member.exception.MemberException;
+import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.global.component.jwt.exception.JwtErrorCode;
 import com.ssafy.backend.global.component.jwt.exception.JwtException;
+import com.ssafy.backend.global.component.jwt.repository.RefreshTokenRepository;
 import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -26,7 +31,10 @@ import java.util.Date;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
+
     private final JwtProps jwtProps;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final MemberRepository memberRepository;
 
     private static final String CLAIM_EMAIL = "email";
     private static final String CLAIM_NAME = "name";
@@ -136,5 +144,30 @@ public class JwtTokenProvider {
         }
 
         return payload;
+    }
+
+    public String getEmailFromExpiredAccessToken(String expiredAccessToken) {
+        try {
+            Claims claims = Jwts.parser()
+                    .verifyWith(Keys.hmacShaKeyFor(jwtProps.accessKey().getBytes()))
+                    .build()
+                    .parseSignedClaims(expiredAccessToken).getPayload();
+
+            return claims.get(CLAIM_EMAIL, String.class);
+        } catch (ExpiredJwtException e) {
+            // ExpiredJwtException 발생 시에도 Claims를 얻을 수 있습니다.
+            return e.getClaims().get(CLAIM_EMAIL, String.class);
+        }
+    }
+
+    public String reissueAccessToken(String email) {
+        // TODO: RefreshToken발급 관려 커스텀 Exception 처리
+        String refreshToken = refreshTokenRepository.find(email).orElseThrow(()
+                -> new RuntimeException("해당 이메일에 저장된 RefreshToken이 Redis에 저장되어 있지 않아 재발급이 불가능합니다."));
+
+        Member member = memberRepository.findByEmail(email).orElseThrow(()
+                -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+        return issueAccessToken(member);
     }
 }

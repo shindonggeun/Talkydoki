@@ -3,15 +3,18 @@ package com.ssafy.backend.global.component.jwt.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.global.common.dto.Message;
 import com.ssafy.backend.global.component.jwt.JwtTokenProvider;
+import com.ssafy.backend.global.component.jwt.exception.JwtErrorCode;
 import com.ssafy.backend.global.component.jwt.exception.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.StringUtils;
@@ -56,9 +59,29 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
                 log.info("회원 ID : {}  - 요청 시도", member.id());
                 SecurityContextHolder.getContext().setAuthentication(createAuthenticationToken(member));
             } catch (JwtException e) {
-                SecurityContextHolder.clearContext();
-                sendError(response, e);
-                return;
+                if (e.getErrorCode() == JwtErrorCode.EXPIRED_TOKEN) {
+                    try {
+                        String email = jwtTokenProvider.getEmailFromExpiredAccessToken(accessToken);
+                        // 이메일을 이용하여 redis에 refreshToken 저장됐는지 확인 후 재발급 처리
+                        String reissueAccessToken = jwtTokenProvider.reissueAccessToken(email);
+                        // 재발급 된 accessToken을 이용하여 현재 로그인 활성화된 회원정보 가져오기
+                        MemberLoginActive member = jwtTokenProvider.parseAccessToken(reissueAccessToken);
+
+                        // 로그를 통해 인증된 회원의 ID와 요청 시도를 기록합니다.
+                        log.info("회원 ID : {}  - 요청 시도", member.id());
+                        SecurityContextHolder.getContext().setAuthentication(createAuthenticationToken(member));
+
+                        // 쿠키에 accessToken 저장하는 메서드 부르기
+                        addNewAccessTokenToResponse(response, reissueAccessToken);
+                    } catch (JwtException ex) {
+                        SecurityContextHolder.clearContext();
+                        sendError(response, ex);
+                    }
+                } else {
+                    SecurityContextHolder.clearContext();
+                    sendError(response, e);
+                    return;
+                }
             }
         }
 
@@ -110,5 +133,12 @@ public class JwtSecurityFilter extends OncePerRequestFilter {
         PrintWriter writer = response.getWriter();
         writer.write(objectMapper.writeValueAsString(Message.fail(e.getErrorCode().name(), e.getMessage())));
         writer.flush();
+    }
+
+    private void addNewAccessTokenToResponse(HttpServletResponse response, String accessToken) {
+        Cookie accessTokenCookie = new Cookie("accessToken", accessToken);
+        accessTokenCookie.setPath("/");
+        accessTokenCookie.setMaxAge(3600);
+        response.addCookie(accessTokenCookie);
     }
 }
