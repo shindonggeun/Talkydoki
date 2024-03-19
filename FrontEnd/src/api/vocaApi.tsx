@@ -6,7 +6,6 @@ import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 import { customAxios } from "@/util/auth/customAxios";
 import {
   InfiniteData,
-  InvalidateQueryFilters,
   useInfiniteQuery,
   useMutation,
   useQuery,
@@ -17,7 +16,10 @@ import {
 export const useGetVoca = () => {
   return useQuery({
     queryKey: ["getVoca"],
-    queryFn: () => customAxios.get("/vocabulary/daily/get"),
+    queryFn: () => {
+      console.log("getVoca 실행");
+      return customAxios.get("/vocabulary/daily/get");
+    },
     staleTime: Infinity,
     gcTime: Infinity,
     select: ({ data }) => {
@@ -36,6 +38,7 @@ export const useGetVoca = () => {
 export const useAddVoca = () => {
   const setIsModalOn = useSetISModalOn();
   const setModalContent = useSetModalContent();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationKey: ["addVoca"],
@@ -44,14 +47,13 @@ export const useAddVoca = () => {
     onSuccess: ({ data }) => {
       const { dataHeader } = data;
       if (dataHeader.successCode == 0) {
-        return true;
+        queryClient.invalidateQueries({ queryKey: ["getVocaList"] });
       } else {
         setModalContent({
           message: dataHeader.resultMessage,
           isInfo: true,
         });
         setIsModalOn(true);
-        return true;
       }
     },
   });
@@ -61,7 +63,7 @@ export const useMyVoca = () => {
   return useInfiniteQuery({
     queryKey: ["getVocaList"],
     queryFn: ({ pageParam }) => {
-      console.log("단어불러오기");
+      console.log("getVocaList 실행");
       return customAxios
         .get("/vocabulary/personal/list/get", {
           params: {
@@ -123,7 +125,6 @@ export const useDeleteMyVoca = () => {
               hasNext: page.hasNext,
             };
           });
-          console.log(old);
           return old;
         }
       );
@@ -131,7 +132,7 @@ export const useDeleteMyVoca = () => {
       return { previousWords };
     },
     onSuccess: (res) => {
-      queryClient.invalidateQueries(["getVocaList"] as InvalidateQueryFilters);
+      queryClient.invalidateQueries({ queryKey: ["getVocaList"] });
       console.log(res);
     },
     onError: (_err, _id, context) => {

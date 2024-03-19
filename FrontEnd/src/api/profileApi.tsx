@@ -5,11 +5,7 @@ import {
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 import { useSetPasswordErrors } from "@/stores/signUpStore";
 import { customAxios } from "@/util/auth/customAxios";
-import {
-  InvalidateQueryFilters,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 // 이미지 업로드
@@ -35,7 +31,7 @@ export const useUpdateProfile = () => {
     mutationFn: (payload: ProfileUpdateParams) =>
       customAxios.patch("/member/update", payload, {}),
     onSuccess: () => {
-      queryClient.invalidateQueries(["getMember"] as InvalidateQueryFilters);
+      queryClient.invalidateQueries({ queryKey: ["getMember"] });
       navigate("/mypage");
     },
   });
