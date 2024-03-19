@@ -35,7 +35,6 @@ function SidebarProfile() {
   if (!data || isLoading) return <></>;
 
   const { nickname, profileImage } = data;
-  console.log(profileImage);
 
   return (
     <ProfileSection>

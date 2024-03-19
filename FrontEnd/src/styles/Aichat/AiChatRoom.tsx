@@ -43,10 +43,10 @@ export const HeaderContainer = styled.div`
 `;
 
 export const MainContainer = styled.div`
-  border-top: 3px solid #dddae1;
-  border-bottom: 3px solid #dddae1;
+  border-top: 3px solid var(--shadow);
+  border-bottom: 3px solid var(--shadow);
   height: 79%;
-  background: rgba(222, 224, 238, 0.25);
+  background: var(--shadow);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -57,7 +57,8 @@ export const MainContainer = styled.div`
   .message-item {
     padding: 10px;
     margin-bottom: 10px;
-    background: #fff;
+    background: var(--bg-modal);
+    color: var(--text);
     border-radius: 10px;
     max-width: 60%;
     align-self: flex-start;
@@ -65,12 +66,15 @@ export const MainContainer = styled.div`
     box-shadow: 0px 1px 5px 3px var(--shadow);
   }
   .message-item.self {
-    background-color: #957df8;
+    background-color: var(--main);
     align-self: flex-end;
     border-radius: 5px;
     box-shadow: 0px 1px 5px 3px var(--shadow);
     .message-text {
-      color: white;
+      color: var(--text-button);
+    }
+    .buttonbox {
+      color: var(--text-button);
     }
   }
   .chatbot-icon-container {
@@ -119,7 +123,7 @@ export const FooterContainer = styled.div`
     left: 42.5%;
     cursor: pointer;
     @media screen and (max-width: 992px) {
-      left: 40%;
+      left: 38%;
     }
   }
   .micdiv {

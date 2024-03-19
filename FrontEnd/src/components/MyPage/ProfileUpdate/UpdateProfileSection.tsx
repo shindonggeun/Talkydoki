@@ -18,10 +18,7 @@ type Props = {
 };
 
 function UpdateProfileSection({ index, value, user }: Props) {
-  const { 
-    email,  name, 
-    id, nickname, profileImage 
-  } = user;
+  const { email, name, id, nickname, profileImage } = user;
 
   const originalProfImg = getProfileImage(profileImage); // 기존 프로필 사진 주소
   const [newProfThumb, setNewProfThumb] = useState(originalProfImg); // 썸네일용 프로필 사진

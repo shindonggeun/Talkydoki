@@ -114,13 +114,8 @@ public class MemberController {
     }
 
     @PostMapping("/reissue/accessToken/{memberEmail}")
-    public ResponseEntity<Message<Void>> reissueAccessToken(@PathVariable String memberEmail, HttpServletResponse response) {
+    public ResponseEntity<Message<String>> reissueAccessToken(@PathVariable String memberEmail) {
         String reissueAccessToken = jwtTokenService.reissueAccessToken(memberEmail);
-        // JWT 토큰을 쿠키에 저장
-        Cookie accessTokenCookie = new Cookie("accessToken", reissueAccessToken);
-        accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(3600); // 60분(3600초)으로 설정 (3600)
-        response.addCookie(accessTokenCookie);
-        return ResponseEntity.ok().body(Message.success());
+        return ResponseEntity.ok().body(Message.success(reissueAccessToken));
     }
 }
