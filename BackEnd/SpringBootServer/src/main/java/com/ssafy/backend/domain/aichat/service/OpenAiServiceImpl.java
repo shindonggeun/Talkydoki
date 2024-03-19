@@ -3,7 +3,6 @@ package com.ssafy.backend.domain.aichat.service;
 import com.ssafy.backend.domain.aichat.dto.AiChatMessage;
 import com.ssafy.backend.domain.aichat.dto.api.ChatCompletionRequest;
 import com.ssafy.backend.domain.aichat.dto.api.ChatCompletionResponse;
-import com.ssafy.backend.domain.aichat.dto.api.OpenAiMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
