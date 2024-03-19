@@ -1,5 +1,5 @@
 import { Wrapper } from "@/styles/common/ui/container";
-import UpdateProfileSection from "@/components/ProfileUpdate/UpdateProfileSection";
+import UpdateProfileSection from "@/components/MyPage/ProfileUpdate/UpdateProfileSection";
 
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
@@ -7,6 +7,7 @@ import { UpdateWrapper } from "@/styles/ProfileUpdate/UpdateForm";
 import { useState } from "react";
 import { useTheme } from "styled-components";
 import { useGetMember } from "@/api/memberApi";
+import UpdatePasswordSection from "@/components/MyPage/ProfileUpdate/UpdatePasswordSection";
 
 type Props = {};
 
@@ -32,7 +33,7 @@ function ProfileUpdate({}: Props) {
           <Tab label="회원 수정" />
         </Tabs>
         {data && <UpdateProfileSection value={now} index={0} user={data} />}
-        {data && <UpdateProfileSection value={now} index={1} user={data} />}
+        {data && <UpdatePasswordSection value={now} index={1} />}
       </UpdateWrapper>
     </Wrapper>
   );

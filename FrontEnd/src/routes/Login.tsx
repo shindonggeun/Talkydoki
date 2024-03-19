@@ -2,6 +2,7 @@ import { useLogin, startSocialLogin } from "@/api/memberApi";
 import GoogleIcon from "@/assets/icon/google.png";
 import KakaoIcon from "@/assets/icon/kakao.png";
 import NaverIcon from "@/assets/icon/naver.png";
+import PasswordInput from "@/components/ui/PasswordInput";
 
 import {
   AuthMain,
@@ -12,17 +13,7 @@ import {
   Title,
   AuthMainFooter,
 } from "@/styles/User/AuthForm";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import {
-  Button,
-  Divider,
-  FormControl,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  TextField,
-} from "@mui/material";
+import { Button, Divider, TextField } from "@mui/material";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
@@ -31,20 +22,8 @@ type Props = {};
 function Login({}: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const loginMutation = useLogin();
   const { mutate: startSocial } = startSocialLogin();
-
-  // 비밀번호 토글
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-  // 비밀번호 마우스 포커스 방지
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -71,31 +50,11 @@ function Login({}: Props) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
-
-            <FormControl fullWidth variant="outlined" color="purple">
-              <InputLabel htmlFor="password">비밀번호</InputLabel>
-              <OutlinedInput
-                id="password"
-                type={showPassword ? "text" : "password"}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={handleClickShowPassword}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-                value={password}
-                onChange={(e) => {
-                  setPassword(e.target.value);
-                }}
-              />
-            </FormControl>
+            <PasswordInput
+              password={password}
+              setPassword={setPassword}
+              isConfirm={false}
+            />
 
             {/* 회원가입 */}
             <AuthMainFooter>

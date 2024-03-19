@@ -26,6 +26,12 @@ export interface ImageUploadParams {
 
 // 프로필 수정 Params
 export interface ProfileUpdateParams {
-  profileImage: string;
+  profileImage: string | null;
   nickname: string;
+}
+
+export interface PasswordChangeParams {
+  nowPassword: string;
+  changePassword: string;
+  changePasswordCheck: string;
 }

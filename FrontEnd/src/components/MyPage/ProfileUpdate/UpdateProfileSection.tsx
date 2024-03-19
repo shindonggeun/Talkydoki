@@ -1,10 +1,14 @@
 import { UpdateProfileContext } from "@/styles/ProfileUpdate/UpdateForm";
-import { Button } from "@mui/material";
+import { Button, Divider } from "@mui/material";
+import TextField from "@mui/material/TextField";
 
 import { getProfileImage } from "@/util/common/getFullUrl";
 import { useEffect, useRef, useState } from "react";
 import { useUpdateProfile, useUploadImageFile } from "@/api/profileApi";
 import { UserInterface } from "@/interface/UserInterface";
+import { isValidImage } from "@/util/common/validator";
+import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   children?: React.ReactNode;
@@ -24,6 +28,9 @@ function UpdateProfileSection({ index, value, user }: Props) {
   const [newProfImg, setNewProfImg] = useState(originalProfImg); // 변경된 프로필 사진 주소
   const newProfForm = useRef(new FormData());
   const [newNickname, setNewNickname] = useState(nickname); // 변경된 닉네임
+  const setModalContent = useSetModalContent();
+  const setIsModalOn = useSetISModalOn();
+  const navigate = useNavigate();
 
   const { mutate: updateProfile } = useUpdateProfile();
   const {
@@ -57,8 +64,9 @@ function UpdateProfileSection({ index, value, user }: Props) {
       {/* 프로필사진 수정 section */}
       <div className="imageSection">
         <img src={newProfThumb} alt="프로필 이미지" />
+
         {/* 프로필 사진 변경 폼 */}
-        <Button component="label" color="purple" variant="contained">
+        <Button component="label" color="purple" variant="contained" fullWidth>
           파일 업로드
           <input
             type="file"
@@ -67,6 +75,16 @@ function UpdateProfileSection({ index, value, user }: Props) {
             onChange={(e) => {
               e.preventDefault();
               if (!e.target.files) return;
+
+              // 유효성 검사
+              if (!isValidImage(e.target.files[0])) {
+                setModalContent({
+                  message: "지원하지 않는 파일 형식입니다.",
+                  isInfo: true,
+                });
+                setIsModalOn(true);
+                return;
+              }
               const thumbnail = URL.createObjectURL(e.target.files[0]);
 
               // 썸네일 미리보기 변경
@@ -83,6 +101,7 @@ function UpdateProfileSection({ index, value, user }: Props) {
         <Button
           variant="outlined"
           color="error"
+          fullWidth
           onClick={() => {
             // 변경 취소 버튼 (초기 profile Image로 되돌림)
             setNewProfThumb(originalProfImg);
@@ -91,25 +110,56 @@ function UpdateProfileSection({ index, value, user }: Props) {
         >
           되돌리기
         </Button>
-        {/* 닉네임 수정 */}
-        <input
-          type="text"
-          value={newNickname}
-          // error={Boolean(newNickname.length == 0)}
-          onChange={(e) => {
-            setNewNickname(e.target.value);
-          }}
-        />
+        <div className="label">.jpg, .jpeg, .png 확장자만 사용 가능</div>
       </div>
-      <button
-        onClick={() => {
-          if (newProfForm.current.get("file")) {
-            uploadImage(newProfForm.current);
-          }
-        }}
-      >
-        저장
-      </button>
+      {/* 닉네임 수정칸 */}
+      <div className="infoSection">
+        <div className="inputGroup">
+          <Divider textAlign="left">개인정보 수정</Divider>
+          <TextField label="이메일" defaultValue={email} disabled fullWidth />
+          <TextField label="이름" defaultValue={name} disabled fullWidth />
+          <TextField
+            fullWidth
+            label="닉네임"
+            color="purple"
+            value={newNickname}
+            onChange={(e) => {
+              setNewNickname(e.target.value);
+            }}
+            error={Boolean(newNickname.length == 0)}
+            helperText={
+              newNickname.length == 0 ? "닉네임은 비워둘 수 없습니다" : false
+            }
+          />
+        </div>
+        <div className="inputGroup">
+          <Button
+            variant="contained"
+            color="purple"
+            fullWidth
+            onClick={() => {
+              if (newProfForm.current.get("file")) {
+                uploadImage(newProfForm.current);
+              } else {
+                updateProfile({
+                  nickname: newNickname,
+                  profileImage: profileImage,
+                });
+              }
+            }}
+          >
+            저장
+          </Button>
+          <Button
+            variant="outlined"
+            color="purple"
+            fullWidth
+            onClick={() => navigate("/mypage")}
+          >
+            취소
+          </Button>
+        </div>
+      </div>
     </UpdateProfileContext>
   );
 }

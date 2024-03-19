@@ -41,3 +41,39 @@ export const useSignupErrors = () =>
       emailError: state.emailError,
     }))
   );
+
+// 비밀번호 변경 유효성 오류 처리
+interface pwChangeInterface {
+  changePasswordCheckError: null | string;
+  changePasswordError: null | string;
+  setErrors: (errors: {
+    changePasswordCheckError?: string;
+    changePasswordError?: string;
+  }) => void;
+}
+
+const usePWChangeStore = create<pwChangeInterface>((set) => ({
+  changePasswordCheckError: null,
+  changePasswordError: null,
+
+  setErrors: (errors) =>
+    set(() => ({
+      changePasswordCheckError: errors.changePasswordCheckError
+        ? errors.changePasswordCheckError
+        : null,
+      changePasswordError: errors.changePasswordError
+        ? errors.changePasswordError
+        : null,
+    })),
+}));
+
+export const useSetPasswordErrors = () =>
+  usePWChangeStore((state) => state.setErrors);
+
+export const usePasswordErrors = () =>
+  usePWChangeStore(
+    useShallow((state) => ({
+      changePasswordCheckError: state.changePasswordCheckError,
+      changePasswordError: state.changePasswordError,
+    }))
+  );

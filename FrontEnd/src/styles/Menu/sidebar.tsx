@@ -34,9 +34,12 @@ export const ProfileSection = styled.section`
     justify-content: center;
     align-items: center;
     padding: 20px 0 15px 0;
+    width: 100%;
 
     .profileImg {
       width: 70%;
+      aspect-ratio: 1;
+      object-fit: cover;
       border-radius: 50%;
     }
 

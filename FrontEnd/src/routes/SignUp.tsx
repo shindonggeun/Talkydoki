@@ -1,6 +1,5 @@
 import { useSignup } from "@/api/memberApi";
-import { SignupParams } from "@/interface/AuthInterface";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
+import PasswordInput from "@/components/ui/PasswordInput";
 
 import {
   FlexBox,
@@ -9,59 +8,28 @@ import {
   AuthMain,
   AuthMainFooter,
 } from "@/styles/User/AuthForm";
-import {
-  Button,
-  Divider,
-  FormControl,
-  FormHelperText,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
-  TextField,
-} from "@mui/material";
+import { Button, Divider, TextField } from "@mui/material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { isSamePassword, isValidAuth } from "@/util/common/validator";
 import { useSignupErrors } from "@/stores/signUpStore";
 
 const SignUp: React.FC = () => {
-  const [showPassword, setShowPassword] = useState(false);
+  const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
+  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [nickname, setNickname] = useState("");
 
   const { emailError, nameError, nicknameError, passwordError } =
     useSignupErrors();
 
-  const [formData, setFormData] = useState<SignupParams>({
-    email: "",
-    password: "",
-    name: "",
-    nickname: "",
-  });
-
   const { mutate: signup } = useSignup();
-
-  // 비밀번호 마우스 포커스 방지
-  const handleMouseDownPassword = (
-    event: React.MouseEvent<HTMLButtonElement>
-  ) => {
-    event.preventDefault();
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      [name]: value,
-    }));
-  };
 
   // 회원가입요청 보내는 코드
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
-    signup(formData);
+    signup({ name, email, password, nickname });
   };
 
   return (
@@ -76,8 +44,8 @@ const SignUp: React.FC = () => {
               variant="outlined"
               color="purple"
               name="email"
-              value={formData.email}
-              onChange={handleChange}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               fullWidth
               error={emailError ? true : false}
               helperText={emailError ? emailError : null}
@@ -87,8 +55,8 @@ const SignUp: React.FC = () => {
               variant="outlined"
               color="purple"
               name="name"
-              value={formData.name}
-              onChange={handleChange}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               fullWidth
               error={nameError ? true : false}
               helperText={nameError ? nameError : null}
@@ -98,8 +66,8 @@ const SignUp: React.FC = () => {
               variant="outlined"
               color="purple"
               name="nickname"
-              value={formData.nickname}
-              onChange={handleChange}
+              value={nickname}
+              onChange={(e) => setNickname(e.target.value)}
               fullWidth
               error={nicknameError ? true : false}
               helperText={nicknameError ? nicknameError : null}
@@ -138,67 +106,18 @@ const SignUp: React.FC = () => {
                 버튼
               </Button>
             </EmailDiv> */}
-
-            <FormControl fullWidth variant="outlined" color="purple">
-              <InputLabel htmlFor="password">비밀번호</InputLabel>
-              <OutlinedInput
-                id="password"
-                type={showPassword ? "text" : "password"}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => {
-                        setShowPassword((prev) => !prev);
-                      }}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                error={passwordError ? true : false}
-              />
-              <FormHelperText error={passwordError ? true : false}>
-                8~16자, 영문, 숫자, 특수문자 포함
-              </FormHelperText>
-            </FormControl>
-
-            <FormControl variant="outlined" color="purple" fullWidth>
-              <InputLabel htmlFor="passwordConfirm">비밀번호확인</InputLabel>
-              <OutlinedInput
-                error={!isSamePassword(formData.password, passwordConfirm)}
-                id="passwordConfirm"
-                type={showPasswordConfirm ? "text" : "password"}
-                endAdornment={
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => setShowPasswordConfirm((prev) => !prev)}
-                      onMouseDown={handleMouseDownPassword}
-                      edge="end"
-                    >
-                      {showPasswordConfirm ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                }
-                label="Password"
-                value={passwordConfirm}
-                onChange={(e) => {
-                  setPasswordConfirm(e.target.value);
-                }}
-              />
-              {!isSamePassword(formData.password, passwordConfirm) && (
-                <FormHelperText error>
-                  정확한 비밀번호를 입력해주세요
-                </FormHelperText>
-              )}
-            </FormControl>
+            <PasswordInput
+              password={password}
+              setPassword={setPassword}
+              isConfirm={false}
+              error={passwordError}
+            />
+            <PasswordInput
+              password={passwordConfirm}
+              setPassword={setPasswordConfirm}
+              isConfirm={true}
+              isDefferent={!isSamePassword(password, passwordConfirm)}
+            />
           </AuthMain>
           <AuthMainFooter>
             <Divider textAlign="center">or</Divider>
@@ -214,7 +133,9 @@ const SignUp: React.FC = () => {
             variant="contained"
             color="purple"
             fullWidth
-            disabled={!isValidAuth(formData, passwordConfirm)}
+            disabled={
+              !isValidAuth({ name, nickname, password, email }, passwordConfirm)
+            }
           >
             회원가입
           </Button>

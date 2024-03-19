@@ -33,3 +33,23 @@ export const isValidAuth = (form: SignupParams, password2: string) => {
 
   return true;
 };
+
+// 비밀번호 변경 시 유효성 검사
+export const isValidPWChange = (
+  oldpassword: string,
+  password1: string,
+  password2: string
+) => {
+  const pwCheck =
+    /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/;
+  if (oldpassword.length == 0) return false;
+  if (!isSamePassword(password1, password2)) return false;
+  if (!pwCheck.test(password1)) return false;
+  return true;
+};
+
+// 프로필 사진 등록 시 확장자 체크
+export const isValidImage = (file: File) => {
+  const imgRegex = /^(.+)[.jpg|.png|.jpeg]$/;
+  return imgRegex.test(file.name);
+};
