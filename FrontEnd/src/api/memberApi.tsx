@@ -23,6 +23,7 @@ export const useLogin = () => {
   const setIsLogin = useAuthStore((state) => state.setIsLogin);
   // 로그인시 되는지 전역 확인용 후에 삭제 예정
   const isLogin = useAuthStore((state) => state.isLogin);
+  const setMemberEmail = useAuthStore((state) => state.setMemberEmail);
   const queryClient = useQueryClient();
 
   const setModalContent = useSetModalContent();
@@ -38,6 +39,10 @@ export const useLogin = () => {
       if (data.dataHeader.successCode === 0) {
         console.log("로그인 성공");
         console.log("전역 로그인 확인", isLogin);
+
+        // 로그인 후 반환된 email memberEmail에 저장
+        setMemberEmail(data.dataBody.memberInfo.email);
+
         // 로그인 후 return 받은 데이터 getMember 쿼리에 저장
         queryClient.setQueryData(["getMember"], data);
         setIsLogin(true);
@@ -113,7 +118,6 @@ export const useGetMember = () => {
 };
 
 // 로그아웃 구현하기
-
 export const useLogout = () => {
   const navigate = useNavigate();
   const setIsLogin = useAuthStore((state) => state.setIsLogin);

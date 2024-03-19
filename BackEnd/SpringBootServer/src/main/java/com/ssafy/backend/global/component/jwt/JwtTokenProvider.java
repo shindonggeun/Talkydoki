@@ -26,6 +26,7 @@ import java.util.Date;
 @Component
 @RequiredArgsConstructor
 public class JwtTokenProvider {
+
     private final JwtProps jwtProps;
 
     private static final String CLAIM_EMAIL = "email";
