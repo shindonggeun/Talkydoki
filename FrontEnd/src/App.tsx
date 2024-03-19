@@ -8,6 +8,7 @@ import { muiDarkTheme, muiTheme } from "./styles/common/muiTheme";
 import { useIsDark } from "@/stores/displayStore";
 import { useIsModalOn } from "@/stores/modalStore";
 import { useAuthStore } from "@/stores/userStore";
+import "regenerator-runtime/runtime";
 
 // route 컴포넌트
 import Intro from "@/routes/Intro";
