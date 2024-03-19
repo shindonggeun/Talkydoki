@@ -19,11 +19,9 @@ public class News {
     @Column(columnDefinition = "INT UNSIGNED")
     private Long id;
 
-    @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String title;
 
-    @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String titleTranslated;
 
@@ -31,19 +29,15 @@ public class News {
     @Column(nullable = false)
     private NewsCategory category;
 
-    @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String contentTranslated;
 
-    @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String summary;
 
-    @Lob
     @Column(nullable = false, columnDefinition = "TEXT")
     private String summaryTranslated;
 
