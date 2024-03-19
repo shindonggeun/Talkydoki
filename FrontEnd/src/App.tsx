@@ -22,6 +22,7 @@ import AiChatList from "./routes/AiChatList";
 import SocialLoading from "./routes/SocialLoading";
 import MyVoca from "./routes/MyVoca";
 import AiChatRoom from "./routes/AiChatRoom";
+import AiChat from "./routes/AiChat";
 
 function App() {
   const isDark = useIsDark();
