@@ -29,7 +29,7 @@ public interface NewsService {
     SliceResponse<NewsSimplyInfo> getNewsList(List<String> categories, Long lastNewsId, int limit);
 
     /**
-     * 사용자 ID에 맞는 뉴스를 추천합니다.
+     * 사용자에 맞는 뉴스를 추천합니다.
      *
      * @param memberId 사용자 PK
      */

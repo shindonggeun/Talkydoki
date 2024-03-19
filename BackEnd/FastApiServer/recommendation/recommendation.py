@@ -67,14 +67,14 @@ class DataStorage:
         self.cosine_sim = cosine_similarity(self.user_word_df_norm, self.article_word_df)
         self.cosine_sim_df = pd.DataFrame(self.cosine_sim, columns=self.articles, index=self.users)
 
-@router.get("/recommend/news/{memberId}")
-async def news_recommend(memberId: str):
-    if memberId not in data_storage.users:
+@router.get("/recommend/news/{member_id}")
+async def news_recommend(member_id: str):
+    if member_id not in data_storage.users:
         raise HTTPException(status_code=404, detail="User not found")
-    user_data = data_storage.cosine_sim_df.loc[memberId].sort_values(ascending=False)
+    user_data = data_storage.cosine_sim_df.loc[member_id].sort_values(ascending=False)
     recommendations = user_data.index.values.tolist()[:3]
 
-    return {"memberId": memberId, "recommendations": recommendations}
+    return {"memberId": member_id, "recommendations": recommendations}
 
 class MatrixFactorization(nn.Module):
     def __init__(self, num_users, num_items, latent_dim, dropout_rate=0.8, l2=0.01):
@@ -147,12 +147,12 @@ model, dataset, device = load_model_and_dataset(data_storage.user_word_df)
 class UserRecommendationRequest(BaseModel):
     user_index: int
 
-@router.get("/recommend/word/{user_id}")
-async def word_recommend(user_id: str):
-    if user_id not in data_storage.users:
+@router.get("/recommend/word/{member_id}")
+async def word_recommend(member_id: str):
+    if member_id not in data_storage.users:
         raise HTTPException(status_code=404, detail="User not found")
     
-    user_index = data_storage.users.index(user_id)
+    user_index = data_storage.users.index(member_id)
     
     untrained_item_indices = []
     untrained_item_names = data_storage.user_word_df.iloc[user_index][data_storage.user_word_df.iloc[user_index] == 0].index.tolist()
@@ -169,4 +169,4 @@ async def word_recommend(user_id: str):
     recommended_item_index = untrained_item_indices[torch.argmax(predictions).item()]
     recommended_item_name = list(dataset.items.keys())[list(dataset.items.values()).index(recommended_item_index)]
     
-    return {"user_id": user_id, "recommended_item": recommended_item_name}
+    return {"member_id": member_id, "recommended_item": recommended_item_name}
