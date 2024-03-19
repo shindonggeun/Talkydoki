@@ -1,6 +1,6 @@
 import ChatRoom from "@/components/Aichat/ChatRoom/ChatRoom";
 import { Flexbox, Wrapper } from "@/styles/Aichat/AiChatRoom";
-import React from "react";
+// import React from "react";
 
 type Props = {};
 
