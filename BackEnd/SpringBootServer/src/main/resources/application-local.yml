@@ -68,8 +68,8 @@ spring:
 jwt:
   accessKey: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
   refreshKey: TestRefreshKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
-  accessExpiration: PT1M  # 60분 (PT60M)
-  refreshExpiration: PT1080M  # 10080분 (7일) (PT10080M)
+  accessExpiration: PT60M  # 60분 (PT60M)
+  refreshExpiration: PT10080M  # 10080분 (7일) (PT10080M)
 
 # log 관리
 logging:

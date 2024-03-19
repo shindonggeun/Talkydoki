@@ -126,5 +126,4 @@ public class MemberServiceImpl implements MemberService {
 
         member.updatePassword(passwordEncoder.encode(passwordChangeRequest.changePassword()));
     }
-
 }
