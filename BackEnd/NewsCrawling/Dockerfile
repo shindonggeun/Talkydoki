@@ -8,22 +8,32 @@ WORKDIR /usr/src/app
 COPY requirements.txt ./
 RUN pip3 install --no-cache-dir -r requirements.txt
 
+# MeCab 및 관련 패키지 설치
+RUN apt-get update && apt-get -q -y install file mecab libmecab-dev mecab-ipadic-utf8 git curl python3-mecab
+RUN pip3 install mecab-python3
+RUN pip3 install unidic-lite
+
+# Chrome 및 ChromeDriver 설치
+RUN apt-get update && apt-get install -y wget
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list'
+RUN apt-get update && apt-get install -y google-chrome-stable
+
+# ChromeDriver 다운로드 및 설치
+RUN python -c "from webdriver_manager.chrome import ChromeDriverManager; ChromeDriverManager().install()"
+
+# 크론 서비스 설치 및 크론 작업 추가
+RUN apt-get -y install cron
+COPY crontab /etc/cron.d/cronjob
+RUN chmod 0644 /etc/cron.d/cronjob
+RUN crontab /etc/cron.d/cronjob
+
 # 스크립트 파일을 컨테이너 내부로 복사
 COPY NewsCrawling.py .
 COPY NewsCrawling.sh .
 
 # 스크립트 실행 권한 부여
 RUN chmod +x NewsCrawling.sh
-
-# 크론 작업을 추가합니다.
-# 크론 작업을 정의하는 파일을 컨테이너 내부로 복사합니다.
-COPY cronTab /etc/cron.d/cron-job
-
-# 크론 작업 권한을 설정합니다.
-RUN chmod 0644 /etc/cron.d/cron-job
-
-# cron 서비스 설치 및 시작
-RUN apt-get update && apt-get -y install cron
 
 # 크론 작업 실행 명령어를 추가합니다.
 CMD ["cron", "-f"]

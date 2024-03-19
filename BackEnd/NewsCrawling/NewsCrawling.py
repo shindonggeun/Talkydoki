@@ -8,7 +8,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from googletrans import Translator
 import MeCab
-import locale
 import requests
 import sys
 import json
@@ -17,8 +16,8 @@ warnings.filterwarnings('ignore')
 translator = Translator()
 
 BASE_URL = "https://www3.nhk.or.jp/news"
-API_URL = "http://192.168.100.137:8080/api/v1/news"
-# API_URL = "http://j10c107.p.ssafy.io:8080/api/v1/news"
+# API_URL = "http://192.168.100.137:8080/api/v1/news"
+API_URL = "http://j10c107.p.ssafy.io:8080/api/v1/news"
 
 # 카테고리 정보를 받아오기
 cat_info = json.loads(sys.argv[1])
@@ -40,15 +39,15 @@ CLASS_NAME_BODY_TEXT = "body-text"
 service = Service(ChromeDriverManager().install())
 chrome_options = Options()
 chrome_options.add_argument("--headless")
+chrome_options.add_argument("--no-sandbox")
+chrome_options.add_argument("--disable-dev-shm-usage")
+
 
 # WebDriver 생성
 driver = webdriver.Chrome(service=service, options=chrome_options)
 
 # MeCab 초기화
 mecab = MeCab.Tagger()
-
-# 일본어 로케일 설정
-locale.setlocale(locale.LC_TIME, 'ja_JP.UTF-8')
 
 def morphological_analysis(text):# MeCab 실행 파일의 경로
     morphemes = mecab.parse(text)
