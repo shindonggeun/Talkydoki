@@ -1,6 +1,5 @@
 package com.ssafy.backend.domain.news.service;
 
-import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.domain.news.dto.NewsListInfo;
 import com.ssafy.backend.domain.news.dto.NewsPostRequest;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
@@ -62,7 +61,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public Mono<Map<String, Object>> getNewsRecommendation(Long memberId) {
         return webClient.get()
-                .uri("http://localhost:8000/recommend/new/{userId}", memberId)
+                .uri("http://localhost:8000/recommend/news/{member_id}", memberId)
                 // .uri("http://j10c107a.p.ssafy.io:8000/recommend/new/{userId}", memberId)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {});
