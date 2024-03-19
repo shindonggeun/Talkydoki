@@ -1,10 +1,14 @@
 package com.ssafy.backend.domain.news.service;
 
+import com.ssafy.backend.domain.news.dto.NewsImageInfo;
 import com.ssafy.backend.domain.news.dto.NewsListInfo;
 import com.ssafy.backend.domain.news.dto.NewsPostRequest;
+import com.ssafy.backend.domain.news.entity.News;
+import com.ssafy.backend.domain.news.entity.NewsImage;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.domain.news.exception.NewsErrorCode;
 import com.ssafy.backend.domain.news.exception.NewsException;
+import com.ssafy.backend.domain.news.repository.NewsImageRepository;
 import com.ssafy.backend.domain.news.repository.NewsRepository;
 import com.ssafy.backend.global.common.dto.SliceResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +27,10 @@ import java.time.format.DateTimeParseException;
 @RequiredArgsConstructor
 public class NewsServiceImpl implements NewsService {
     private final NewsRepository newsRepository;
+    private final NewsImageRepository newsImageRepository;
 
     @Override
-    public void insertNews(NewsPostRequest newsPostRequest) {
+    public Long insertNews(NewsPostRequest newsPostRequest) {
         if (newsRepository.existsBySrcOrigin(newsPostRequest.getSrcOrigin())) {
             throw new NewsException(NewsErrorCode.EXIST_NEWS_SRC_ORIGIN);
         }
@@ -40,8 +45,28 @@ public class NewsServiceImpl implements NewsService {
             throw new IllegalArgumentException("날짜 형식이 잘못되었습니다: " + newsPostRequest.getWriteDate(), e);
         }
 
-        newsRepository.save(newsPostRequest.toEntity(writeDateTime));
+        News savedNews = newsRepository.save(newsPostRequest.toEntity(writeDateTime));
+        return  savedNews.getId();
     }
+
+    @Override
+    public void insertNewsImage(NewsImageInfo newsImageInfo) {
+        News news = newsRepository.findById(newsImageInfo.getNewsId()).orElseThrow(()
+                -> new NewsException(NewsErrorCode.NOT_FOUND_NEWS));
+
+        boolean exists = newsImageRepository.existsByImageUrl(newsImageInfo.getImageUrl());
+        if (exists) {
+            throw new NewsException(NewsErrorCode.EXIST_NEWS_IMAGE);
+        }
+
+        NewsImage newsImage = NewsImage.builder()
+                .imageUrl(newsImageInfo.getImageUrl())
+                .news(news)
+                .build();
+
+        newsImageRepository.save(newsImage);
+    }
+
     @Override
     @Transactional(readOnly = true)
     public SliceResponse<NewsListInfo> getNewsByCategory(NewsCategory category, Pageable pageable) {

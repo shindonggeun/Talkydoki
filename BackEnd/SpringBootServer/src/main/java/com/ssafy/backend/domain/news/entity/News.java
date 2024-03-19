@@ -53,6 +53,9 @@ public class News {
     @Column(nullable = false)
     private String srcOrigin;
 
+    @OneToMany(mappedBy = "news")
+    private List<NewsImage> newsImages = new ArrayList<>();
+
     @OneToMany(mappedBy = "news", fetch = FetchType.EAGER)
     private List<NewsKeywordMapping> newsKeywordMappings = new ArrayList<>();
 

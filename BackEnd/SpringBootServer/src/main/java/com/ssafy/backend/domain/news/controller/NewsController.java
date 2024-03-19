@@ -1,5 +1,6 @@
 package com.ssafy.backend.domain.news.controller;
 
+import com.ssafy.backend.domain.news.dto.NewsImageInfo;
 import com.ssafy.backend.domain.news.dto.NewsListInfo;
 import com.ssafy.backend.domain.news.dto.NewsPostRequest;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
@@ -27,8 +28,19 @@ public class NewsController {
             description = "크롤링한 뉴스를 DB에 저장하는 기능입니다."
     )
     @PostMapping("/post")
-    public ResponseEntity<Message<Void>> insertNews(@Valid @RequestBody NewsPostRequest newsPostRequest) {
-        newsService.insertNews(newsPostRequest);
+    public ResponseEntity<Message<Long>> insertNews(@Valid @RequestBody NewsPostRequest newsPostRequest) {
+        Long newsId = newsService.insertNews(newsPostRequest);
+        return ResponseEntity.ok().body(Message.success(newsId));
+    }
+
+    @Operation(
+            summary = "뉴스 이미지 저장",
+            description = "뉴스 이미지를 DB에 저장하는 기능입니다."
+
+    )
+    @PostMapping("/images/post")
+    public ResponseEntity<Message<Void>> insertNewsImage(@Valid @RequestBody NewsImageInfo newsImageInfo) {
+        newsService.insertNewsImage(newsImageInfo);
         return ResponseEntity.ok().body(Message.success());
     }
 
