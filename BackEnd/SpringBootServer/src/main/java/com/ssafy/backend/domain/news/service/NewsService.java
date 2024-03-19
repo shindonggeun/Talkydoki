@@ -4,8 +4,11 @@ import com.ssafy.backend.domain.news.dto.NewsPostRequest;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.global.common.dto.SliceResponse;
 import org.springframework.data.domain.Pageable;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
+
+import java.util.Map;
 
 public interface NewsService {
 
@@ -24,4 +27,11 @@ public interface NewsService {
     SliceResponse<NewsSimplyInfo> getNewsByCategory(NewsCategory category, Pageable pageable);
 
     SliceResponse<NewsSimplyInfo> getNewsList(List<String> categories, Long lastNewsId, int limit);
+
+    /**
+     * 사용자 ID에 맞는 뉴스를 추천합니다.
+     *
+     * @param memberId 사용자 PK
+     */
+    Mono<Map<String, Object>> getNewsRecommendation(Long memberId);
 }
