@@ -6,6 +6,7 @@ import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.domain.news.service.NewsService;
 import com.ssafy.backend.global.common.dto.Message;
 import com.ssafy.backend.global.common.dto.SliceResponse;
+import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -13,7 +14,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
+
+import java.util.Map;
 
 @Tag(name = "뉴스", description = "뉴스 관련 API 입니다.")
 @RestController
@@ -43,5 +48,14 @@ public class NewsController {
     ) {
         SliceResponse<NewsListInfo> newsListInfo = newsService.getNewsByCategory(category, pageable);
         return ResponseEntity.ok().body(Message.success(newsListInfo));
+    }
+
+    @Operation(
+            summary = "사용자 뉴스 추천",
+            description = "사용자에게 맞춤형 뉴스를 추천하는 기능입니다."
+    )
+    @GetMapping("/recommend")
+    public Mono<Map<String, Object>> getNewsRecommendation(@AuthenticationPrincipal MemberLoginActive loginActive) {
+        return newsService.getNewsRecommendation(loginActive.id());
     }
 }

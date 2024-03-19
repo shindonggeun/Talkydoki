@@ -14,7 +14,7 @@ router = APIRouter()
 
 class DataStorage:
     def __init__(self):
-        self.users = ['user' + str(i) for i in range(1, 1001)]
+        self.users = [str(i) for i in range(1, 1001)]
         self.categories = ['사회', '경제', '정치', '과학', '문화']
         self.articles = [f"{category}기사{i}" for category in self.categories for i in range(1, 201)]
         self.words = [f"{category}_{i}" for category in self.categories for i in range(1, 201)]
@@ -67,14 +67,14 @@ class DataStorage:
         self.cosine_sim = cosine_similarity(self.user_word_df_norm, self.article_word_df)
         self.cosine_sim_df = pd.DataFrame(self.cosine_sim, columns=self.articles, index=self.users)
 
-@router.get("/recommend/news/{user_id}")
-async def news_recommend(user_id: str):
-    if user_id not in data_storage.users:
+@router.get("/recommend/news/{memberId}")
+async def news_recommend(memberId: str):
+    if memberId not in data_storage.users:
         raise HTTPException(status_code=404, detail="User not found")
-    user_data = data_storage.cosine_sim_df.loc[user_id].sort_values(ascending=False)
+    user_data = data_storage.cosine_sim_df.loc[memberId].sort_values(ascending=False)
     recommendations = user_data.index.values.tolist()[:3]
 
-    return {"user_id": user_id, "recommendations": recommendations}
+    return {"memberId": memberId, "recommendations": recommendations}
 
 class MatrixFactorization(nn.Module):
     def __init__(self, num_users, num_items, latent_dim, dropout_rate=0.8, l2=0.01):
