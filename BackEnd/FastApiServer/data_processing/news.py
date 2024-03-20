@@ -110,18 +110,26 @@ async def upload_keywords():
         if not os.path.exists(input_filename):
             raise HTTPException(status_code=404, detail="japanese.txt file not found")
 
+    failed_keywords = []  # 실패한 키워드를 추적하기 위한 리스트
     try:
         with open(input_filename, "r", encoding="utf-8") as file:
             for line in file:
                 japanese = line.strip()
-                keyword_data = {
-                    "japanese": japanese
-                }
-                response = requests.post(f'{API_URL}/api/v1/keywords/post', json=keyword_data)
+                keyword_data = {"japanese": japanese}
+                try:
+                    response = requests.post(f'{API_URL}/api/v1/keywords/post', json=keyword_data)
+                    if response.status_code != 200:
+                        failed_keywords.append(japanese)
+                except Exception as e:
+                    failed_keywords.append(japanese)
+                    print(f"Error while inserting keyword: {japanese}, Error: {str(e)}")
                 
-                if response.status_code != 200:
-                    return {"message": f"Failed to insert keyword: {japanese}", "status_code": response.status_code}
-                
+        if failed_keywords:
+            return {
+                "message": "Some keywords failed to be inserted.",
+                "failed_keywords": failed_keywords,
+                "failed_count": len(failed_keywords)
+            }
         return {"message": "All keywords were successfully inserted."}
     except FileNotFoundError:
-        raise HTTPException(status_code = 404, detail = "File not found")
+        raise HTTPException(status_code=404, detail="File not found")
