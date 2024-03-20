@@ -25,7 +25,7 @@ def get_news(db: Session):
 def save_data(db: Session):
     news_data = get_news(db)
     save_path = '/app/data'
-    filename = f"{save_path}/news_data_{datetime.now().strftime('%Y%m%d')}.txt"
+    filename = f"/home/ubuntu/data-processing/news_data_{datetime.now().strftime('%Y%m%d')}.txt"
     with open(filename, "w", encoding="utf-8") as file:
         for news in news_data:
             file.write(f"ID\n{news.id}\nTITLE\n{news.title}\nSUMMARY\n{news.summary}\nCONTENT\n{news.content}\n")
@@ -35,11 +35,6 @@ def copy_to_hdfs(local_path, hdfs_path="/input", ec2_ip="3.36.72.23", username="
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(ec2_ip, username=username, key_filename=key_file)
-    
-    sftp = ssh.open_sftp()
-    remote_path = f"/tmp/{os.path.basename(local_path)}"
-    sftp.put(local_path, remote_path)
-    sftp.close()
 
     hadoop_command = "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64; " \
                     "export HADOOP_HOME=/usr/local/hadoop; " \
