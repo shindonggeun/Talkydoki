@@ -22,7 +22,7 @@ def get_db():
 def get_news(db: Session):
     return db.query(News.id, News.title, News.content, News.summary).all()
 
-def save_data(news_data, base_path="/input"):
+def save_data(news_data, base_path="/home/ubuntu/data-processing"):
     if not os.path.exists(base_path):
         os.makedirs(base_path)
 
@@ -35,13 +35,13 @@ def save_data(news_data, base_path="/input"):
     return full_path
 
 def copy_to_hdfs(local_path, hdfs_path="/input"):
-    result = subprocess.run(["/usr/local/hadoop/bin/hdfs", "dfs", "-put", local_path, hdfs_path], capture_output=True, text=True)
-
-    if result.returncode != 0:
-        print(f"Error copying file to HDFS: {result.stderr}")
-        raise subprocess.CalledProcessError(result.returncode, result.args, output=result.stdout, stderr=result.stderr)
-    else:
-        print(f"File {local_path} copied to HDFS path {hdfs_path} successfully.")
+    hadoop_command = f"hdfs dfs -put {local_path} {hdfs_path}"
+    try:
+        subprocess.run(hadoop_command, check=True, shell=True)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing Hadoop Streaming Job : {e}")
+        return False
 
 def generate_output_path(base_path="/output"):
     timestamp = datetime.now().strftime("%Y%m%d")
