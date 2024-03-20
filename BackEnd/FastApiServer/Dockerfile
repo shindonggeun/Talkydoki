@@ -1,8 +1,6 @@
 # 공식 Python 런타임 이미지를 사용합니다
 FROM python:3.10-slim
 
-USER ubuntu
-
 # 컨테이너 내에서 작업 디렉토리를 설정합니다
 WORKDIR /app
 
@@ -16,6 +14,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 8000
 
 # 환경 변수를 정의합니다
+ENV HOME /home/ubuntu
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
+ENV HADOOP_HOME /usr/local/hadoop
+ENV PATH "${PATH}:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin"
 ENV FASTAPI_ENV production
 
 # 애플리케이션을 실행하는 명령어를 정의합니다
