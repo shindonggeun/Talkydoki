@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class NewsListInfo {
+public class NewsSimplyInfo {
     Long newsId;
     String title;
     String titleTranslated;

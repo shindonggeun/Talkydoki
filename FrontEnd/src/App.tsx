@@ -19,10 +19,11 @@ import SignUp from "@/routes/SignUp";
 import Login from "@/routes/Login";
 import News from "@/routes/News";
 import Protected from "./components/Protect/Protect";
-import AiChatList from "@/routes/AiChatList";
-import SocialLoading from "@/routes/SocialLoading";
-import AiChatRoom from "@/routes/AiChatRoom";
-import MyPage from "@/routes/MyPage";
+import AiChatList from "./routes/AiChatList";
+import SocialLoading from "./routes/SocialLoading";
+import MyVoca from "./routes/MyVoca";
+import AiChatRoom from "./routes/AiChatRoom";
+import AiChat from "./routes/AiChat";
 
 // 마이페이지 내부 링크
 import MyVoca from "./components/MyPage/MyVoca/MyVoca";

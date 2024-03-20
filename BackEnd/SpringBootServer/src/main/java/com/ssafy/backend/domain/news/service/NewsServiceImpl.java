@@ -1,6 +1,6 @@
 package com.ssafy.backend.domain.news.service;
 
-import com.ssafy.backend.domain.news.dto.NewsListInfo;
+import com.ssafy.backend.domain.news.dto.NewsSimplyInfo;
 import com.ssafy.backend.domain.news.dto.NewsPostRequest;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.domain.news.exception.NewsErrorCode;
@@ -10,7 +10,6 @@ import com.ssafy.backend.global.common.dto.SliceResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +19,7 @@ import reactor.core.publisher.Mono;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -50,19 +50,27 @@ public class NewsServiceImpl implements NewsService {
         newsRepository.save(newsPostRequest.toEntity(writeDateTime));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
-    public SliceResponse<NewsListInfo> getNewsByCategory(NewsCategory category, Pageable pageable) {
-        // 카테고리별로 뉴스를 조회하고, 리미트를 적용하여 반환
-        Slice<NewsListInfo> newsListInfo = newsRepository.findNewsListInfo(category, pageable);
-        return SliceResponse.of(newsListInfo);
+    public SliceResponse<NewsSimplyInfo> getNewsList(List<String> categories, Long lastNewsId, int limit) {
+        List<NewsCategory> categoryEnums = null;
+        if (categories != null) {
+            categoryEnums = categories.stream()
+                    .map(NewsCategory::fromName)
+                    .toList();
+        }
+
+        Slice<NewsSimplyInfo> newsSimplyInfoList = newsRepository.findNewsListInfoNoOffset(categoryEnums, lastNewsId, limit);
+        return SliceResponse.of(newsSimplyInfoList);
     }
 
     @Override
     public Mono<Map<String, Object>> getNewsRecommendation(Long memberId) {
         return webClient.get()
-                .uri("http://localhost:8000/recommend/news/{member_id}", memberId)
-                // .uri("http://j10c107a.p.ssafy.io:8000/recommend/new/{userId}", memberId)
+                .uri("http://j10c107a.p.ssafy.io:8000/recommend/new/{userId}", memberId)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {});
     }
