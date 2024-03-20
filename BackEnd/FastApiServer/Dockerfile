@@ -1,6 +1,8 @@
 # 공식 Python 런타임 이미지를 사용합니다
 FROM python:3.10-slim
 
+USER ubuntu
+
 # 컨테이너 내에서 작업 디렉토리를 설정합니다
 WORKDIR /app
 
