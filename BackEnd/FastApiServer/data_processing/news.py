@@ -19,41 +19,23 @@ def get_db():
     finally:
         db.close()
 
-def log_environment_variables():
-    print("Current Environment Variables:")
-    for key, value in os.environ.items():
-        print(f"{key}: {value}")
-
-def check_command_availability(command):
-    hadoop_path = "/hadoop/bin"  # 예시 경로, 실제 경로에 따라 조정이 필요할 수 있습니다.
-    full_path = os.path.join(hadoop_path, command)
-    if os.path.exists(full_path) and os.access(full_path, os.X_OK):
-        print(f"{command} is available at {full_path}")
-        return True
-    else:
-        print(f"{command} is not found in PATH")
-        return False
-
 def get_news(db: Session):
     return db.query(News.id, News.title, News.content, News.summary).all()
 
-def save_data(news_data, base_path="/home/ubuntu/data-processing"):
-    if not os.path.exists(base_path):
-        os.makedirs(base_path)
-
-    today_str = datetime.now().strftime("%Y%m%d")
-    filename = f"news_data_{today_str}.txt"
-    full_path = os.path.join(base_path, filename)
-    with open(full_path, "w", encoding="utf-8") as file:
+def save_data(db: Session):
+    news_data = get_news(db)
+    save_path = '/app/data'
+    filename = f"{save_path}/news_data_{datetime.now().strftime('%Y%m%d')}.txt"
+    with open(filename, "w", encoding="utf-8") as file:
         for news in news_data:
             file.write(f"ID\n{news.id}\nTITLE\n{news.title}\nSUMMARY\n{news.summary}\nCONTENT\n{news.content}\n")
-    return full_path
+    return filename
 
 def copy_to_hdfs(local_path, hdfs_path="/input"):
     hadoop_command = f"hdfs dfs -put {local_path} {hdfs_path}"
     try:
         subprocess.run(hadoop_command, check=True, shell=True)
-        return True
+        return os.path.join(hdfs_path, os.path.basename(local_path))
     except subprocess.CalledProcessError as e:
         print(f"Error executing Hadoop Streaming Job : {e}")
         return False
@@ -62,8 +44,9 @@ def generate_output_path(base_path="/output"):
     timestamp = datetime.now().strftime("%Y%m%d")
     return f"{base_path}/{timestamp}"
 
-def start_hadoop_streaming(input_file):
-    hadoop_command = f"/hadoop/bin/hadoop jar /hadoop/share/hadoop/tools/lib/hadoop-streaming-*.jar -files /home/ubuntu/data-processing/TF_mapper.py,/home/ubuntu/data-processing/TF_reducer.py -mapper 'python3 /home/ubuntu/data-processing/TF_mapper.py' -reducer 'python3 /home/ubuntu/data-processing/TF_reducer.py' -input {input_file} -output {generate_output_path()}"
+def start_hadoop_streaming(input_path):
+    output_path = generate_output_path()
+    hadoop_command = f"/hadoop/bin/hadoop jar /hadoop/share/hadoop/tools/lib/hadoop-streaming-*.jar -files /home/ubuntu/data-processing/TF_mapper.py,/home/ubuntu/data-processing/TF_reducer.py -mapper 'python3 /home/ubuntu/data-processing/TF_mapper.py' -reducer 'python3 /home/ubuntu/data-processing/TF_reducer.py' -input {input_path} -output {output_path}"
     try:
         subprocess.run(hadoop_command, check=True, shell=True)
         return True
@@ -73,19 +56,11 @@ def start_hadoop_streaming(input_file):
 
 @router.get("/fetch-news")
 async def fetch_news_to_file(db: Session = Depends(get_db)):
-    log_environment_variables()
-    if not check_command_availability("hdfs"):
-        print("HDFS command is not available. Please check your Hadoop installation and PATH environment variable.")
-    if not check_command_availability("hadoop"):
-        print("Hadoop command is not available. Please check your Hadoop installation and PATH environment variable.")
-    
-    news_data = get_news(db)
-    input_file = save_data(news_data)
-    copy_to_hdfs(input_file)
-    hdfs_input_file = "/input/" + os.path.basename(input_file)
-    if start_hadoop_streaming(hdfs_input_file):
+    input_file = save_data(db)
+    hdfs_input_path = copy_to_hdfs(input_file)
+    if start_hadoop_streaming(hdfs_input_path):
         message = "News data fetched and copied to HDFS successfully. Hadoop Streaming job started successfully!"
-        await extract_japanese()
+        # await extract_japanese()
     else:
         message = "News data fetched and copied to HDFS, but failed to start Hadoop Streaming job."
     
