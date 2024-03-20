@@ -46,7 +46,7 @@ def generate_output_path(base_path="/output"):
 
 def start_hadoop_streaming(input_path):
     output_path = generate_output_path()
-    hadoop_command = f"/hadoop/bin/hadoop jar /hadoop/share/hadoop/tools/lib/hadoop-streaming-*.jar -files /home/ubuntu/data-processing/TF_mapper.py,/home/ubuntu/data-processing/TF_reducer.py -mapper 'python3 /home/ubuntu/data-processing/TF_mapper.py' -reducer 'python3 /home/ubuntu/data-processing/TF_reducer.py' -input {input_path} -output {output_path}"
+    hadoop_command = f"hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-*.jar -files /home/ubuntu/data-processing/TF_mapper.py,/home/ubuntu/data-processing/TF_reducer.py -mapper 'python3 /home/ubuntu/data-processing/TF_mapper.py' -reducer 'python3 /home/ubuntu/data-processing/TF_reducer.py' -input {input_path} -output {output_path}"
     try:
         subprocess.run(hadoop_command, check=True, shell=True)
         return True
