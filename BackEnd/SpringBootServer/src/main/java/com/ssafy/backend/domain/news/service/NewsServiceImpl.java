@@ -1,6 +1,5 @@
 package com.ssafy.backend.domain.news.service;
 
-import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.domain.news.dto.NewsSimplyInfo;
 import com.ssafy.backend.domain.news.dto.NewsPostRequest;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
@@ -11,7 +10,6 @@ import com.ssafy.backend.global.common.dto.SliceResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +20,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.Map;
 
 @Slf4j
@@ -53,15 +50,11 @@ public class NewsServiceImpl implements NewsService {
         newsRepository.save(newsPostRequest.toEntity(writeDateTime));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Transactional(readOnly = true)
-    public SliceResponse<NewsSimplyInfo> getNewsByCategory(NewsCategory category, Pageable pageable) {
-        // 카테고리별로 뉴스를 조회하고, 리미트를 적용하여 반환
-        Slice<NewsSimplyInfo> newsListInfo = newsRepository.findNewsListInfo(category, pageable);
-        return SliceResponse.of(newsListInfo);
-    }
-
-    @Override
     public SliceResponse<NewsSimplyInfo> getNewsList(List<String> categories, Long lastNewsId, int limit) {
         List<NewsCategory> categoryEnums = null;
         if (categories != null) {

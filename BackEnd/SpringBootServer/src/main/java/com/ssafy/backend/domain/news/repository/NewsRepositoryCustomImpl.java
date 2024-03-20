@@ -14,46 +14,28 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * NewsRepositoryCustom 인터페이스의 구현 클래스입니다.
+ * QueryDSL을 사용하여 뉴스 데이터에 대한 복잡한 쿼리를 실행합니다.
+ */
 @Repository
 @RequiredArgsConstructor
 public class NewsRepositoryCustomImpl implements NewsRepositoryCustom {
-    private final JPAQueryFactory queryFactory;
+    private final JPAQueryFactory queryFactory; // QueryDSL 쿼리 팩토리
 
-    @Override
-    public Slice<NewsSimplyInfo> findNewsListInfo(NewsCategory category, Pageable pageable) {
-        QNews qNews = QNews.news;
-
-        List<NewsSimplyInfo> newsListInfoSimply = queryFactory
-                .select(Projections.bean(
-                        NewsSimplyInfo.class,
-                        qNews.id.as("newsId"),
-                        qNews.title,
-                        qNews.titleTranslated,
-                        qNews.category,
-                        qNews.writeDate,
-                        qNews.srcOrigin
-                ))
-                .from(qNews)
-                .where(qNews.category.eq(category))
-                .orderBy(qNews.writeDate.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize() + 1)
-                .fetch();
-        return new SliceImpl<>(newsListInfoSimply, pageable, hasNext(newsListInfoSimply, pageable.getPageSize()));
-    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Slice<NewsSimplyInfo> findNewsListInfoNoOffset(List<NewsCategory> categories, Long lastNewsId, int limit) {
-        QNews qNews = QNews.news;
+        QNews qNews = QNews.news;   // QNews 엔티티의 인스턴스 생성
 
-        // 여러 카테고리에 대한 조건을 처리합니다.
-        BooleanExpression categoryCondition = null;
-        if (categories != null && !categories.isEmpty()) {
-            categoryCondition = qNews.category.in(categories);
-        }
-
+        // 카테고리 조건 설정. 카테고리 목록이 비어있지 않은 경우에만 적용됩니다.
+        BooleanExpression categoryCondition = categories != null && !categories.isEmpty() ? qNews.category.in(categories) : null;
+        // 마지막 뉴스 ID 조건 설정. lastNewsId가 null이 아닐 때만 적용됩니다.
         BooleanExpression lastNewsIdCondition = lastNewsId != null ? qNews.id.lt(lastNewsId) : null;
 
+        // 뉴스 조회 쿼리 실행
         List<NewsSimplyInfo> newsSimplyInfoList = queryFactory
                 .select(Projections.bean(
                         NewsSimplyInfo.class,
@@ -65,12 +47,12 @@ public class NewsRepositoryCustomImpl implements NewsRepositoryCustom {
                         qNews.srcOrigin
                 ))
                 .from(qNews)
-                .where(categoryCondition, lastNewsIdCondition)
-                .orderBy(qNews.id.asc())
-                .limit(limit + 1)  // 'limit + 1'을 사용하여 'hasNext'를 확인
+                .where(categoryCondition, lastNewsIdCondition)  // 조건 적용
+                .orderBy(qNews.id.asc())    // ID 오름차순으로 정렬
+                .limit(limit + 1)  // 'hasNext' 확인을 위해 'limit + 1'로 설정
                 .fetch();
 
-        // 'hasNext'를 계산하기 위해 리스트의 크기가 'limit'보다 큰지 확인
+        // 'hasNext'를 계산하기 위해 리스트의 크기가 'limit'보다 큰지 확인 (다음 페이지 존재 여부 확인)
         boolean hasNext = hasNext(newsSimplyInfoList, limit);
 
         // 'hasNext'가 true인 경우 마지막 항목을 제거
@@ -86,7 +68,7 @@ public class NewsRepositoryCustomImpl implements NewsRepositoryCustom {
      * 조회 결과 리스트에서 다음 페이지 유무를 확인합니다.
      * @param contents 조회된 콘텐츠 리스트
      * @param limit 페이지당 항목 수
-     * @return 다음 페이지 존재 여부
+     * @return 다음 페이지 존재 여부. true일 경우 다음 페이지가 있음을 의미합니다.
      */
     private boolean hasNext(List<?> contents, int limit) {
         // 리스트의 크기가 'limit + 1'과 같다면 다음 페이지가 존재한다는 것을 의미
