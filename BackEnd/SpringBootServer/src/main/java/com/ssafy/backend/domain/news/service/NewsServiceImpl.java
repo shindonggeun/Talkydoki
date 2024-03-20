@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -51,8 +53,15 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public SliceResponse<NewsSimplyInfo> getNewsList(NewsCategory category, Long lastNewsId, int limit) {
-        Slice<NewsSimplyInfo> newsSimplyInfoList = newsRepository.findNewsListInfoNoOffset(category, lastNewsId, limit);
+    public SliceResponse<NewsSimplyInfo> getNewsList(List<String> categories, Long lastNewsId, int limit) {
+        List<NewsCategory> categoryEnums = null;
+        if (categories != null) {
+            categoryEnums = categories.stream()
+                    .map(NewsCategory::fromName)
+                    .toList();
+        }
+
+        Slice<NewsSimplyInfo> newsSimplyInfoList = newsRepository.findNewsListInfoNoOffset(categoryEnums, lastNewsId, limit);
         return SliceResponse.of(newsSimplyInfoList);
     }
 }

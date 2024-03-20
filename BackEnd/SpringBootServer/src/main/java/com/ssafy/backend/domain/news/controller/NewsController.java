@@ -14,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "뉴스", description = "뉴스 관련 API 입니다.")
 @RestController
 @RequiredArgsConstructor
@@ -49,10 +51,10 @@ public class NewsController {
             description = "뉴스 목록을 불러오는 기능입니다. noOffset 방식이 적용되어 있습니다."
     )
     @GetMapping("/list/get")
-    public ResponseEntity<Message<SliceResponse<NewsSimplyInfo>>> getNewsList(@RequestParam(required = false) NewsCategory category,
+    public ResponseEntity<Message<SliceResponse<NewsSimplyInfo>>> getNewsList(@RequestParam(required = false) List<String> categories,
                                                                               @RequestParam(required = false) Long lastNewsId,
-                                                                              @RequestParam(defaultValue = "10") int limit) {
-        SliceResponse<NewsSimplyInfo> newsSimplyInfoList = newsService.getNewsList(category, lastNewsId, limit);
+                                                                              @RequestParam(defaultValue = "11") int limit) {
+        SliceResponse<NewsSimplyInfo> newsSimplyInfoList = newsService.getNewsList(categories, lastNewsId, limit);
         return ResponseEntity.ok().body(Message.success(newsSimplyInfoList));
     }
 }

@@ -5,6 +5,8 @@ import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.global.common.dto.SliceResponse;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface NewsService {
 
     /**
@@ -21,5 +23,5 @@ public interface NewsService {
      */
     SliceResponse<NewsSimplyInfo> getNewsByCategory(NewsCategory category, Pageable pageable);
 
-    SliceResponse<NewsSimplyInfo> getNewsList(NewsCategory category, Long lastNewsId, int limit);
+    SliceResponse<NewsSimplyInfo> getNewsList(List<String> categories, Long lastNewsId, int limit);
 }

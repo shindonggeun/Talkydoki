@@ -43,11 +43,15 @@ public class NewsRepositoryCustomImpl implements NewsRepositoryCustom {
     }
 
     @Override
-    public Slice<NewsSimplyInfo> findNewsListInfoNoOffset(NewsCategory category, Long lastNewsId, int limit) {
+    public Slice<NewsSimplyInfo> findNewsListInfoNoOffset(List<NewsCategory> categories, Long lastNewsId, int limit) {
         QNews qNews = QNews.news;
 
-        // category가 null일 경우의 조건을 처리합니다.
-        BooleanExpression categoryCondition = category != null ? qNews.category.eq(category) : null;
+        // 여러 카테고리에 대한 조건을 처리합니다.
+        BooleanExpression categoryCondition = null;
+        if (categories != null && !categories.isEmpty()) {
+            categoryCondition = qNews.category.in(categories);
+        }
+
         BooleanExpression lastNewsIdCondition = lastNewsId != null ? qNews.id.lt(lastNewsId) : null;
 
         List<NewsSimplyInfo> newsSimplyInfoList = queryFactory
