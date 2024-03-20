@@ -1,22 +1,27 @@
 import {
-  NewsListInterface,
   NewsListItemInterface,
+  categoryInterface,
 } from "@/interface/NewsInterface";
 import { customAxios } from "@/util/auth/customAxios";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
-export const useGetNewsList = () => {
+// 뉴스 리스트 get 하는 함수
+export const useGetNewsList = (category: categoryInterface[]) => {
+  const catName = category.map((each) => each.name);
+  const params = new URLSearchParams();
+  category.forEach((each) => {
+    params.append("categories", each.name);
+  });
+
   return useInfiniteQuery({
-    queryKey: ["getNewsList"],
+    queryKey: ["getNewsList", ...catName],
     queryFn: ({ pageParam }) => {
       console.log("getNewsList 실행");
+      if (pageParam != 0) params.append("lastNewsId", pageParam.toString());
+
       return customAxios
         .get("/news/list/get", {
-          params: {
-            categories: null,
-            lastNewsId: pageParam == 0 ? null : pageParam,
-            // limit: 6,
-          },
+          params: params,
         })
         .then((res) => {
           if (res.data.dataHeader.successCode == 0) {
@@ -44,5 +49,7 @@ export const useGetNewsList = () => {
 
       return newsList;
     },
+    staleTime: 1000 * 60 * 60, // 1시간
+    gcTime: 1000 * 60 * 60, // 1시간
   });
 };

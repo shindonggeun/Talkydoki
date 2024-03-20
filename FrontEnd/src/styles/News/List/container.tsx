@@ -2,8 +2,10 @@ import styled from "styled-components";
 
 export const CategorySection = styled.section`
   width: 100%;
-  height: 15vh;
-  background-color: pink;
+  padding: 0 1.5vw;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: start;
 `;
 
 export const MenuBarSection = styled.section`
