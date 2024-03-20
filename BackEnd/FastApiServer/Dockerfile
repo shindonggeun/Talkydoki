@@ -14,10 +14,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 8000
 
 # 환경 변수를 정의합니다
-ENV HOME /home/ubuntu
-ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
-ENV HADOOP_HOME /usr/local/hadoop
-ENV PATH "${PATH}:${HADOOP_HOME}/bin:${HADOOP_HOME}/sbin"
 ENV FASTAPI_ENV production
 
 # 애플리케이션을 실행하는 명령어를 정의합니다

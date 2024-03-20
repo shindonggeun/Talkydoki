@@ -25,14 +25,14 @@ def log_environment_variables():
         print(f"{key}: {value}")
 
 def check_command_availability(command):
-    path = os.getenv('PATH')
-    for dir_path in path.split(os.pathsep):
-        full_path = os.path.join(dir_path, command)
-        if os.path.exists(full_path) and os.access(full_path, os.X_OK):
-            print(f"{command} is available at {full_path}")
-            return True
-    print(f"{command} is not found in PATH")
-    return False
+    hadoop_path = "/hadoop/bin"  # 예시 경로, 실제 경로에 따라 조정이 필요할 수 있습니다.
+    full_path = os.path.join(hadoop_path, command)
+    if os.path.exists(full_path) and os.access(full_path, os.X_OK):
+        print(f"{command} is available at {full_path}")
+        return True
+    else:
+        print(f"{command} is not found in PATH")
+        return False
 
 def get_news(db: Session):
     return db.query(News.id, News.title, News.content, News.summary).all()
@@ -63,8 +63,7 @@ def generate_output_path(base_path="/output"):
     return f"{base_path}/{timestamp}"
 
 def start_hadoop_streaming(input_file):
-    output_path = generate_output_path()
-    hadoop_command = f"hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-*.jar -files /home/ubuntu/data-processing/TF_mapper.py,/home/ubuntu/data-processing/TF_reducer.py -mapper 'python3 /home/ubuntu/data-processing/TF_mapper.py' -reducer 'python3 /home/ubuntu/data-processing/TF_reducer.py' -input {input_file} -output {output_path}"
+    hadoop_command = f"/hadoop/bin/hadoop jar /hadoop/share/hadoop/tools/lib/hadoop-streaming-*.jar -files /home/ubuntu/data-processing/TF_mapper.py,/home/ubuntu/data-processing/TF_reducer.py -mapper 'python3 /home/ubuntu/data-processing/TF_mapper.py' -reducer 'python3 /home/ubuntu/data-processing/TF_reducer.py' -input {input_file} -output {generate_output_path()}"
     try:
         subprocess.run(hadoop_command, check=True, shell=True)
         return True
