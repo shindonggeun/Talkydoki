@@ -36,8 +36,7 @@ public class KeywordServiceImpl implements KeywordService {
     @Override
     public Mono<Map<String, Object>> getWordRecommendation(Long memberId) {
         return webClient.get()
-                .uri("http://localhost:8000/recommend/word/{member_id}", memberId)
-                // .uri("http://j10c107a.p.ssafy.io:8000/recommend/new/{userId}", memberId)
+                .uri("http://j10c107a.p.ssafy.io:8000/recommend/new/{userId}", memberId)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {});
     }

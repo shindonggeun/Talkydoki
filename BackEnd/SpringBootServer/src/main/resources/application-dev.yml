@@ -36,6 +36,7 @@ spring:
       data-locations:
         - 'classpath:/data_vocabulary.sql'
         - 'classpath:/data_news.sql'
+        - 'classpath:/data_member.sql'
 
   # NoSQL setting
   data:
@@ -112,13 +113,6 @@ oauth:
 app:
   firebase-configuration-file: classpath:serviceAccountKey.json
   firebase-bucket: ENC(SLVtdlieYMj0aGKJbbtcNZ7jAOk5GmHVdu8mazNsH18=)
-
-# rabbitMQ setting
-rabbitmq:
-  host: talkydoki_rabbitmq
-  port: 5672
-  username: guest
-  password: guest
 
 # gpt-api setting
 openai:

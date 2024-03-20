@@ -48,7 +48,7 @@ public class NewsRepositoryCustomImpl implements NewsRepositoryCustom {
                 ))
                 .from(qNews)
                 .where(categoryCondition, lastNewsIdCondition)  // 조건 적용
-                .orderBy(qNews.id.asc())    // ID 오름차순으로 정렬
+                .orderBy(qNews.writeDate.desc(), qNews.id.desc()) // 먼저 writeDate로 내림차순, 같은 날짜면 id로 내림차순
                 .limit(limit + 1)  // 'hasNext' 확인을 위해 'limit + 1'로 설정
                 .fetch();
 
