@@ -32,7 +32,7 @@ def save_data(db: Session):
             file.write(f"ID\n{news.id}\nTITLE\n{news.title}\nSUMMARY\n{news.summary}\nCONTENT\n{news.content}\n")
     return local_filename
 
-def copy_to_hdfs(local_path, hdfs_path="/input", ec2_ip="3.36.72.23", username="ubuntu", key_file="/app/data/J10C107T.pem"):
+def copy_to_hdfs(local_path, hdfs_path="/input/", ec2_ip="3.36.72.23", username="ubuntu", key_file="/app/data/J10C107T.pem"):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(ec2_ip, username=username, key_filename=key_file)
