@@ -36,9 +36,9 @@ public class AiChatController {
         return ResponseEntity.ok().body(Message.success(createResponse));
     }
 
-    @MessageMapping("/ai/chat/{roomId}")
+    @MessageMapping("/ai/chat/user/{roomId}")
     public void send(Principal principal, AiChatMessage aiChatMessage, @DestinationVariable Long roomId) {
-        aiChatService.sendMessageAiChat(Long.valueOf(principal.getName()), roomId, aiChatMessage);
+        aiChatService.sendAiChatMessageByUser(Long.valueOf(principal.getName()), roomId, aiChatMessage);
     }
 }
 

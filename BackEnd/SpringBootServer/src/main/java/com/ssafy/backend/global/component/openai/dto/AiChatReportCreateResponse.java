@@ -1,4 +1,4 @@
-package com.ssafy.backend.domain.aichat.dto.api;
+package com.ssafy.backend.global.component.openai.dto;
 
 import lombok.Builder;
 

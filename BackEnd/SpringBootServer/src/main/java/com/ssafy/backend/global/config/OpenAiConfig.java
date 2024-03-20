@@ -3,22 +3,21 @@ package com.ssafy.backend.global.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+
 
 @Configuration
 public class OpenAiConfig {
+
     @Value("${openai.key}")
     private String openAiKey;
 
     @Bean
-    public RestTemplate restTemplate(){
-        RestTemplate restTemplate = new RestTemplate();
-        restTemplate.getInterceptors().add((request, body, execution) -> {
-            request.getHeaders().add("Authorization", "Bearer " + openAiKey);
-
-            return execution.execute(request, body);
-        });
-
-        return restTemplate;
+    public WebClient openAiWebClient() {
+        // WebClient 인스턴스를 생성하고 설정합니다.
+        return WebClient.builder()
+                .baseUrl("https://api.openai.com/v1/chat")
+                .defaultHeader("Authorization", "Bearer " + openAiKey)
+                .build();
     }
 }

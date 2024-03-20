@@ -18,7 +18,6 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 import java.util.Map;
 
-
 @Tag(name = "뉴스", description = "뉴스 관련 API 입니다.")
 @RestController
 @RequiredArgsConstructor

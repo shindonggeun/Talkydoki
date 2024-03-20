@@ -9,7 +9,8 @@ public interface AiChatService {
     // AI 회화 채팅방 만들기
     AiChatRoomCreateResponse creatAiChatRoom(Long memberId, AiChatCategory category);
 
-    // AI 회화 채팅 메시지 보내기
-    void sendMessageAiChat(Long memberId, Long roomId, AiChatMessage messageRequest);
+    // AI 회화 채팅 메시지 보내기 (사용자 - USER)
+    void sendAiChatMessageByUser(Long memberId, Long roomId, AiChatMessage userMessage);
 
+    void sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage);
 }

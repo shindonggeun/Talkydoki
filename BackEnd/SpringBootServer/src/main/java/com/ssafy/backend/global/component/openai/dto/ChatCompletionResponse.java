@@ -1,4 +1,4 @@
-package com.ssafy.backend.domain.aichat.dto.api;
+package com.ssafy.backend.global.component.openai.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,6 +20,6 @@ public class ChatCompletionResponse {
     @NoArgsConstructor
     public static class Choice{
         private int index;
-        private OpenAiMessage message;
+        private GptDialogueMessage message;
     }
 }

@@ -12,6 +12,7 @@ import com.ssafy.backend.domain.member.entity.Member;
 import com.ssafy.backend.domain.member.exception.MemberErrorCode;
 import com.ssafy.backend.domain.member.exception.MemberException;
 import com.ssafy.backend.domain.member.repository.MemberRepository;
+import com.ssafy.backend.global.component.openai.service.OpenAiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.TopicExchange;
@@ -56,7 +57,7 @@ public class AiChatServiceImpl implements AiChatService {
 
 
     @Override
-    public void sendMessageAiChat(Long memberId, Long roomId, AiChatMessage aiChatMessage) {
+    public void sendAiChatMessageByUser(Long memberId, Long roomId, AiChatMessage userMessage) {
         Member member = memberRepository.findById(memberId).orElseThrow(()
                 -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
         log.info("메시지 보내는사람: {}", member.getName());
@@ -70,14 +71,16 @@ public class AiChatServiceImpl implements AiChatService {
         AiChatHistory aiChatHistory = AiChatHistory.builder()
                 .aiChatRoom(aiChatRoom)
                 .sender(AiChatSender.USER)
-                .content(aiChatMessage.content())
+                .content(userMessage.content())
                 .build();
 
         aiChatHistoryRepository.save(aiChatHistory);
 
-        rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, aiChatMessage);
+        rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, userMessage);
 
-        Mono<String> gptResponse = openAiService.sendMessage(aiChatMessage);
+
+
+        Mono<String> gptResponse = openAiService.sendPromptToGpt(userMessage);
 
         gptResponse.subscribeOn(Schedulers.boundedElastic())
                 .subscribe(response -> {
@@ -95,6 +98,15 @@ public class AiChatServiceImpl implements AiChatService {
                     AiChatMessage gptMessage = new AiChatMessage(AiChatSender.GPT, response);
                     rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
                 });
+
+    }
+
+    @Override
+    public void sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage) {
+        // TODO: AI 회화 채팅 커스텀 Exception 처리
+        AiChatRoom aiChatRoom = aiChatRoomRepository.findById(roomId).orElseThrow(()
+                -> new RuntimeException("해당 AI 회화 채팅방을 찾을 수 없습니다."));
+
 
     }
 }
