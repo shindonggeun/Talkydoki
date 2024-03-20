@@ -75,4 +75,13 @@ public class NewsServiceImpl implements NewsService {
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {});
     }
+
+    @Override
+    public Mono<Map<String, Object>> getNewsRecommendation(Long memberId) {
+        return webClient.get()
+                .uri("http://localhost:8000/recommend/news/{member_id}", memberId)
+                // .uri("http://j10c107a.p.ssafy.io:8000/recommend/new/{userId}", memberId)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {});
+    }
 }

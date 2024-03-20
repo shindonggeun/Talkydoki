@@ -56,4 +56,13 @@ public class NewsController {
     public Mono<Map<String, Object>> getNewsRecommendation(@AuthenticationPrincipal MemberLoginActive loginActive) {
         return newsService.getNewsRecommendation(loginActive.id());
     }
+
+    @Operation(
+            summary = "사용자 뉴스 추천",
+            description = "사용자에게 맞춤형 뉴스를 추천하는 기능입니다."
+    )
+    @GetMapping("/recommend")
+    public Mono<Map<String, Object>> getNewsRecommendation(@AuthenticationPrincipal MemberLoginActive loginActive) {
+        return newsService.getNewsRecommendation(loginActive.id());
+    }
 }
