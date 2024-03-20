@@ -9,8 +9,6 @@ import requests, subprocess, os
 
 router = APIRouter()
 
-execution_env = os.getenv("EXECUTION_ENV", "LOCAL")
-
 API_URL = "http://j10c107.p.ssafy.io:8080"
 
 # 데이터베이스 세션 생성
@@ -27,7 +25,7 @@ def get_news(db: Session):
 def save_data(news_data, base_path="/input"):
     if not os.path.exists(base_path):
         os.makedirs(base_path)
-        
+
     today_str = datetime.now().strftime("%Y%m%d")
     filename = f"news_data_{today_str}.txt"
     full_path = os.path.join(base_path, filename)
@@ -37,13 +35,17 @@ def save_data(news_data, base_path="/input"):
     return full_path
 
 def copy_to_hdfs(local_path, hdfs_path="/input"):
-    hadoop_fs_put_command = f"hdfs dfs -put {local_path} {hdfs_path}"
-    try:
-        subprocess.run(hadoop_fs_put_command, check=True, shell=True)
+    hadoop_home = os.environ.get("HADOOP_HOME")
+    if hadoop_home:
+        os.environ["PATH"] += os.pathsep + os.path.join(hadoop_home, "bin")
+ 
+    result = subprocess.run(["hdfs", "dfs", "-put", local_path, hdfs_path], capture_output=True, text=True)
+
+    if result.returncode != 0:
+        print(f"Error copying file to HDFS: {result.stderr}")
+        raise subprocess.CalledProcessError(result.returncode, result.args, output=result.stdout, stderr=result.stderr)
+    else:
         print(f"File {local_path} copied to HDFS path {hdfs_path} successfully.")
-    except subprocess.CalledProcessError as e:
-        print(f"Error copying file to HDFS: {e}")
-        raise
 
 def generate_output_path(base_path="/output"):
     timestamp = datetime.now().strftime("%Y%m%d")
