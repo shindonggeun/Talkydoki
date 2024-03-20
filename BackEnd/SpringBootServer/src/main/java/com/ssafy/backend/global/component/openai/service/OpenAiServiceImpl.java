@@ -22,12 +22,12 @@ public class OpenAiServiceImpl implements OpenAiService {
 
 
     @Override
-    public Mono<String> sendPromptToGpt(AiChatMessage createRequest){
-        GptChatRequest request = GptChatRequest.fromAiChatMessage(createRequest);
+    public Mono<String> sendPromptToGpt(AiChatMessage aiChatMessage){
+        GptChatRequest gptChatRequest = GptChatRequest.from(aiChatMessage);
 
         return openAiWebClient.post()
                 .uri("/completions")
-                .bodyValue(request)
+                .bodyValue(gptChatRequest)
                 .retrieve()
                 .bodyToMono(ChatCompletionResponse.class)
                 .map(response -> response.getChoices().get(0).getMessage().content());

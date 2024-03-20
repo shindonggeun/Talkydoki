@@ -15,13 +15,13 @@ public record GptChatRequest(
     /**
      * AiChatMessage 객체를 GPT와의 대화 요청으로 변환합니다.
      *
-     * @param createRequest 사용자의 메시지를 포함하는 AiChatMessage 객체
+     * @param aiChatMessage 사용자의 메시지를 포함하는 AiChatMessage 객체
      * @return GptChatRequest 객체
      */
-    public static GptChatRequest fromAiChatMessage(AiChatMessage createRequest) {
+    public static GptChatRequest from(AiChatMessage aiChatMessage) {
         return new GptChatRequest(
                 "gpt-3.5-turbo",
-                List.of(new GptDialogueMessage("user", createRequest.content())),
+                List.of(new GptDialogueMessage("user", aiChatMessage.content())),
                 30
         );
     }
