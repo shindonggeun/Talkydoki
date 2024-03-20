@@ -25,8 +25,8 @@ def get_news(db: Session):
 def save_data(db: Session):
     news_data = get_news(db)
     save_path = '/app/data'
-    filename = f"{save_path}/news_data_{datetime.now().strftime('%Y%m%d_%H%M')}.txt"
-    local_filename = f"/home/ubuntu/data-processing/news_data_{datetime.now().strftime('%Y%m%d_%H%M')}.txt"
+    filename = f"{save_path}/news_data_{datetime.now().strftime('%Y%m%d_%H')}.txt"
+    local_filename = f"/home/ubuntu/data-processing/news_data_{datetime.now().strftime('%Y%m%d_%H')}.txt"
     with open(filename, "w", encoding="utf-8") as file:
         for news in news_data:
             file.write(f"ID\n{news.id}\nTITLE\n{news.title}\nSUMMARY\n{news.summary}\nCONTENT\n{news.content}\n")
@@ -73,7 +73,7 @@ def copy_from_hdfs(hdfs_path, local_path, ec2_ip="3.36.72.23", username="ubuntu"
         return False
 
 def generate_output_path(base_path="/output"):
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
+    timestamp = datetime.now().strftime("%Y%m%d_%H")
     return f"{base_path}/{timestamp}"
 
 def start_hadoop_streaming(input_path, ec2_ip="3.36.72.23", username="ubuntu", key_file="/app/data/J10C107T.pem"):
@@ -114,7 +114,7 @@ async def fetch_news_to_file(db: Session = Depends(get_db)):
 @router.get("/extract-japanese")
 async def extract_japanese():
     base_path = "/output"
-    today_str = datetime.now().strftime("%Y%m%d_%H%M")
+    today_str = datetime.now().strftime("%Y%m%d_%H")
     hdfs_input_path = os.path.join(base_path, today_str, "part-00000")
     local_filename = f"./data-processing/{today_str}_part-00000"
     
