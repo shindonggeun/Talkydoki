@@ -25,6 +25,9 @@ def get_news(db: Session):
     return db.query(News.id, News.title, News.content, News.summary).all()
 
 def save_data(news_data, base_path="/input"):
+    if not os.path.exists(base_path):
+        os.makedirs(base_path)
+        
     today_str = datetime.now().strftime("%Y%m%d")
     filename = f"news_data_{today_str}.txt"
     full_path = os.path.join(base_path, filename)
