@@ -6,6 +6,8 @@ import com.ssafy.backend.domain.aichat.repository.AiChatRoomRepository;
 import com.ssafy.backend.domain.aichat.service.OpenAiService;
 import com.ssafy.backend.global.common.dto.Message;
 import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -15,14 +17,17 @@ import reactor.core.publisher.Mono;
 
 import java.util.Map;
 
+@Tag(name = "OpenAi API 호출", description = "OpenAi Api 호출 관련 API 입니다.")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1")
 public class OpenaiController {
     private final OpenAiService openAiService;
 
-    // RestTemplate을 사용한 OpenAi api 호출
-    // DB 저장 및 ResponseEntity활용한 response 제공 가능
+    @Operation(
+            summary = "레포트 생성",
+            description = " RestTemplate을 사용한 OpenAi api를 호출하여 DB 저장 및 ResponseEntity활용한 response를 return합니다."
+    )
     @PostMapping("/gpt/report/{roomId}")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     public ResponseEntity<Message<AiChatReportCreateResponse>> createReport(@AuthenticationPrincipal MemberLoginActive loginActive, @PathVariable Long roomId, @RequestBody AiChatConversation request) {
