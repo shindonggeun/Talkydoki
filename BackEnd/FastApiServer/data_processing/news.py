@@ -36,7 +36,10 @@ def copy_to_hdfs(local_path, hdfs_path="/input", ec2_ip="3.36.72.23", username="
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(ec2_ip, username=username, key_filename=key_file)
     
-    hadoop_command = f"hdfs dfs -put {local_path} {hdfs_path}"
+    hadoop_command = "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64; " \
+                    "export HADOOP_HOME=/usr/local/hadoop; " \
+                    "export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin; " \
+                    f"hdfs dfs -put {local_path} {hdfs_path}"
     stdin, stdout, stderr = ssh.exec_command(hadoop_command)
     exit_status = stdout.channel.recv_exit_status()  # Blocking call
     ssh.close()
@@ -54,7 +57,10 @@ def generate_output_path(base_path="/output"):
 
 def start_hadoop_streaming(input_path, ec2_ip="3.36.72.23", username="ubuntu", key_file="/app/data/J10C107T.pem"):
     output_path = generate_output_path()
-    hadoop_command = f"hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-*.jar -files /home/ubuntu/data-processing/TF_mapper.py,/home/ubuntu/data-processing/TF_reducer.py -mapper 'python3 /home/ubuntu/data-processing/TF_mapper.py' -reducer 'python3 /home/ubuntu/data-processing/TF_reducer.py' -input {input_path} -output {output_path}"
+    hadoop_command = "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64; " \
+                    "export HADOOP_HOME=/usr/local/hadoop; " \
+                    "export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin; " \
+                    f"hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-*.jar -files /home/ubuntu/data-processing/TF_mapper.py,/home/ubuntu/data-processing/TF_reducer.py -mapper 'python3 /home/ubuntu/data-processing/TF_mapper.py' -reducer 'python3 /home/ubuntu/data-processing/TF_reducer.py' -input {input_path} -output {output_path}"
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
