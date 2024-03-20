@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from models.news import News
 
-import requests, subprocess, os
+import requests, subprocess, os, paramiko
 
 router = APIRouter()
 
@@ -31,28 +31,46 @@ def save_data(db: Session):
             file.write(f"ID\n{news.id}\nTITLE\n{news.title}\nSUMMARY\n{news.summary}\nCONTENT\n{news.content}\n")
     return filename
 
-def copy_to_hdfs(local_path, hdfs_path="/input"):
+def copy_to_hdfs(local_path, hdfs_path="/input", ec2_ip="3.36.72.23", username="ubuntu", key_file="/app/data/J10C107T.pem"):
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(ec2_ip, username=username, key_filename=key_file)
+    
     hadoop_command = f"hdfs dfs -put {local_path} {hdfs_path}"
-    try:
-        subprocess.run(hadoop_command, check=True, shell=True)
+    stdin, stdout, stderr = ssh.exec_command(hadoop_command)
+    exit_status = stdout.channel.recv_exit_status()  # Blocking call
+    ssh.close()
+
+    if exit_status == 0:
+        print("Hadoop command executed successfully")
         return os.path.join(hdfs_path, os.path.basename(local_path))
-    except subprocess.CalledProcessError as e:
-        print(f"Error executing Hadoop Streaming Job : {e}")
+    else:
+        print(f"Error executing Hadoop command: {stderr.read().decode()}")
         return False
 
 def generate_output_path(base_path="/output"):
     timestamp = datetime.now().strftime("%Y%m%d")
     return f"{base_path}/{timestamp}"
 
-def start_hadoop_streaming(input_path):
+def start_hadoop_streaming(input_path, ec2_ip="3.36.72.23", username="ubuntu", key_file="/app/data/J10C107T.pem"):
     output_path = generate_output_path()
     hadoop_command = f"hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-*.jar -files /home/ubuntu/data-processing/TF_mapper.py,/home/ubuntu/data-processing/TF_reducer.py -mapper 'python3 /home/ubuntu/data-processing/TF_mapper.py' -reducer 'python3 /home/ubuntu/data-processing/TF_reducer.py' -input {input_path} -output {output_path}"
-    try:
-        subprocess.run(hadoop_command, check=True, shell=True)
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(ec2_ip, username=username, key_filename=key_file)
+    
+    stdin, stdout, stderr = ssh.exec_command(hadoop_command)
+    exit_status = stdout.channel.recv_exit_status()  # Blocking call
+    ssh.close()
+
+    if exit_status == 0:
+        print("Hadoop Streaming job executed successfully")
         return True
-    except subprocess.CalledProcessError as e:
-        print(f"Error executing Hadoop Streaming Job : {e}")
+    else:
+        print(f"Error executing Hadoop Streaming job: {stderr.read().decode()}")
         return False
+
 
 @router.get("/fetch-news")
 async def fetch_news_to_file(db: Session = Depends(get_db)):
