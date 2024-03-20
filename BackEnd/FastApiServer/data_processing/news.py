@@ -7,6 +7,10 @@ from models.news import News
 
 import requests, subprocess, os
 
+os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64"
+os.environ["HADOOP_HOME"] = "/usr/local/hadoop"
+os.environ["PATH"] = os.environ["PATH"] + ":" + os.environ["HADOOP_HOME"] + "/bin:" + os.environ["HADOOP_HOME"] + "/sbin"
+
 router = APIRouter()
 
 API_URL = "http://j10c107.p.ssafy.io:8080"
