@@ -35,11 +35,7 @@ def save_data(news_data, base_path="/input"):
     return full_path
 
 def copy_to_hdfs(local_path, hdfs_path="/input"):
-    hadoop_home = os.environ.get("HADOOP_HOME")
-    if hadoop_home:
-        os.environ["PATH"] += os.pathsep + os.path.join(hadoop_home, "bin")
- 
-    result = subprocess.run(["hdfs", "dfs", "-put", local_path, hdfs_path], capture_output=True, text=True)
+    result = subprocess.run(["/usr/local/hadoop/bin/hdfs", "dfs", "-put", local_path, hdfs_path], capture_output=True, text=True)
 
     if result.returncode != 0:
         print(f"Error copying file to HDFS: {result.stderr}")
