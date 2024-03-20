@@ -8,6 +8,10 @@ ENV HADOOP_HOME=/usr/local/hadoop
 ENV PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 
 # 필요한 패키지 설치 및 Hadoop 클라이언트 다운로드 및 설치
+RUN apt-get update && apt-get install -y openjdk-8-jre-headless \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN apt-get update && apt-get install -y wget ssh pdsh \
     && wget https://downloads.apache.org/hadoop/common/hadoop-$HADOOP_VERSION/hadoop-$HADOOP_VERSION.tar.gz \
     && tar -xzvf hadoop-$HADOOP_VERSION.tar.gz -C /usr/local/ \
