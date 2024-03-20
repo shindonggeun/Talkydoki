@@ -25,11 +25,12 @@ def get_news(db: Session):
 def save_data(db: Session):
     news_data = get_news(db)
     save_path = '/app/data'
-    filename = f"/home/ubuntu/data-processing/news_data_{datetime.now().strftime('%Y%m%d')}.txt"
+    filename = f"{save_path}/news_data_{datetime.now().strftime('%Y%m%d')}.txt"
+    local_filename = f"/home/ubuntu/data-processing/news_data_{datetime.now().strftime('%Y%m%d')}.txt"
     with open(filename, "w", encoding="utf-8") as file:
         for news in news_data:
             file.write(f"ID\n{news.id}\nTITLE\n{news.title}\nSUMMARY\n{news.summary}\nCONTENT\n{news.content}\n")
-    return filename
+    return local_filename
 
 def copy_to_hdfs(local_path, hdfs_path="/input", ec2_ip="3.36.72.23", username="ubuntu", key_file="/app/data/J10C107T.pem"):
     ssh = paramiko.SSHClient()
