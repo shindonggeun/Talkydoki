@@ -16,26 +16,25 @@ public class AiChatReport {
     @Column(columnDefinition = "INT UNSIGNED")
     private Long id;
 
-    @NonNull
     @OneToOne
-    @JoinColumn
+    @JoinColumn(name = "ai_chat_room_id", nullable = false)
     private AiChatRoom aiChatRoom;
 
-    @NonNull
+    @Column(nullable = false)
     private String conversationSummary;
 
-    @NonNull
+    @Column(nullable = false)
     private Float vocabularyScore;
 
-    @NonNull
+    @Column(nullable = false)
     private Float grammarScore;
 
-    @NonNull
+    @Column(nullable = false)
     private Float wordScore;
 
-    @NonNull
+    @Column(nullable = false)
     private Float fluencyScore;
 
-    @NonNull
+    @Column(nullable = false)
     private Float contextScore;
 }

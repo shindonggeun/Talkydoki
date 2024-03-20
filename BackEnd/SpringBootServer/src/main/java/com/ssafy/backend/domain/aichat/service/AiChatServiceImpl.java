@@ -18,6 +18,7 @@ import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 @Slf4j
 @Service
@@ -78,22 +79,22 @@ public class AiChatServiceImpl implements AiChatService {
 
         Mono<String> gptResponse = openAiService.sendMessage(aiChatMessage);
 
-        gptResponse.subscribe(response -> {
-            //메세지 저장
-            AiChatHistory gptHistory = AiChatHistory.builder()
-                    .aiChatRoom(aiChatRoom)
-                    .sender(AiChatSender.GPT)
-                    .content(response)
-                    .build();
-            aiChatHistoryRepository.save(gptHistory);
+        gptResponse.subscribeOn(Schedulers.boundedElastic())
+                .subscribe(response -> {
+                    // GPT 메시지 저장
+                    AiChatHistory gptHistory = AiChatHistory.builder()
+                            .aiChatRoom(aiChatRoom)
+                            .sender(AiChatSender.GPT)
+                            .content(response)
+                            .build();
+                    Mono.fromCallable(() -> aiChatHistoryRepository.save(gptHistory))
+                            .subscribeOn(Schedulers.boundedElastic())
+                            .subscribe();
 
-            // RabbitMQ로 응답 전송
-            AiChatMessage gptMessage = AiChatMessage.builder()
-                    .sender(AiChatSender.GPT)
-                    .content(response)
-                    .build();
-            rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
-        });
+                    // RabbitMQ로 응답 전송
+                    AiChatMessage gptMessage = new AiChatMessage(AiChatSender.GPT, response);
+                    rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
+                });
 
     }
 }
