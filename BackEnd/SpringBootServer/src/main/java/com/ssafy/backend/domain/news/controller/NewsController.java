@@ -15,9 +15,9 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
 import java.util.Map;
 
-import java.util.List;
 
 @Tag(name = "뉴스", description = "뉴스 관련 API 입니다.")
 @RestController
@@ -46,15 +46,6 @@ public class NewsController {
                                                                               @RequestParam(defaultValue = "11") int limit) {
         SliceResponse<NewsSimplyInfo> newsSimplyInfoList = newsService.getNewsList(categories, lastNewsId, limit);
         return ResponseEntity.ok().body(Message.success(newsSimplyInfoList));
-    }
-
-    @Operation(
-            summary = "사용자 뉴스 추천",
-            description = "사용자에게 맞춤형 뉴스를 추천하는 기능입니다."
-    )
-    @GetMapping("/recommend")
-    public Mono<Map<String, Object>> getNewsRecommendation(@AuthenticationPrincipal MemberLoginActive loginActive) {
-        return newsService.getNewsRecommendation(loginActive.id());
     }
 
     @Operation(
