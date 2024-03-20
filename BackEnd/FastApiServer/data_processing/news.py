@@ -25,8 +25,8 @@ def get_news(db: Session):
 def save_data(db: Session):
     news_data = get_news(db)
     save_path = '/app/data'
-    filename = f"{save_path}/news_data_{datetime.now().strftime('%Y%m%d')}.txt"
-    local_filename = f"/home/ubuntu/data-processing/news_data_{datetime.now().strftime('%Y%m%d')}.txt"
+    filename = f"{save_path}/news_data_{datetime.now().strftime('%Y%m%d_%H%M')}.txt"
+    local_filename = f"/home/ubuntu/data-processing/news_data_{datetime.now().strftime('%Y%m%d_%H%M')}.txt"
     with open(filename, "w", encoding="utf-8") as file:
         for news in news_data:
             file.write(f"ID\n{news.id}\nTITLE\n{news.title}\nSUMMARY\n{news.summary}\nCONTENT\n{news.content}\n")
@@ -73,7 +73,7 @@ def copy_from_hdfs(hdfs_path, local_path, ec2_ip="3.36.72.23", username="ubuntu"
         return False
 
 def generate_output_path(base_path="/output"):
-    timestamp = datetime.now().strftime("%Y%m%d")
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M")
     return f"{base_path}/{timestamp}"
 
 def start_hadoop_streaming(input_path, ec2_ip="3.36.72.23", username="ubuntu", key_file="/app/data/J10C107T.pem"):
@@ -114,16 +114,16 @@ async def fetch_news_to_file(db: Session = Depends(get_db)):
 @router.get("/extract-japanese")
 async def extract_japanese():
     base_path = "/output"
-    today_str = datetime.now().strftime("%Y%m%d")
+    today_str = datetime.now().strftime("%Y%m%d_%H%M")
     hdfs_input_path = os.path.join(base_path, today_str, "part-00000")
-    local_filename = f"./{today_str}_part-00000"
+    local_filename = f"./data-processing/{today_str}_part-00000"
     
     copy_success = copy_from_hdfs(hdfs_input_path, local_filename)
     if not copy_success:
         raise Exception("Failed to copy file from HDFS")
 
     try:
-        with open(hdfs_input_path, "r", encoding="utf-8") as file:
+        with open(local_filename, "r", encoding="utf-8") as file:
             content = file.readlines()
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
@@ -142,7 +142,6 @@ async def extract_japanese():
     
     await upload_keywords()
     return FileResponse(result_filename)
-
 
 @router.get("/upload-keywords")
 async def upload_keywords():
