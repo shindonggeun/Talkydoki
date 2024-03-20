@@ -1,5 +1,5 @@
 import { NegativeTitle } from "@/styles/common/ui/text";
-import TimerCarousel from "@/components/Main/TimerCarousel";
+import TimerCarousel from "@/components/Main/NewsSection/TimerCarousel";
 
 import Image1 from "@/assets/images/sampleimage/img1.jpg";
 import Image2 from "@/assets/images/sampleimage/img2.jpg";

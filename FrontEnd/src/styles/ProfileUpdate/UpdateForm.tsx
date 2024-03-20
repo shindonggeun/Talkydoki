@@ -11,6 +11,16 @@ export const UpdateWrapper = styled(Card)`
   }
 `;
 
+export const UpdateHeader = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+
+  * {
+    margin: 0 1vw;
+  }
+`;
+
 export const UpdateProfileContext = styled.div`
   width: 100%;
   height: 90%;

@@ -1,3 +1,5 @@
+import "regenerator-runtime/runtime";
+
 import { Global } from "@/styles/common/base";
 import { ThemeProvider } from "styled-components";
 import { ThemeProvider as MUIThemeProvider } from "@mui/material";
@@ -8,7 +10,7 @@ import { muiDarkTheme, muiTheme } from "./styles/common/muiTheme";
 import { useIsDark } from "@/stores/displayStore";
 import { useIsModalOn } from "@/stores/modalStore";
 import { useAuthStore } from "@/stores/userStore";
-import "regenerator-runtime/runtime";
+import Protected from "./components/Protect/Protect";
 
 // route 컴포넌트
 import Intro from "@/routes/Intro";
@@ -18,11 +20,10 @@ import Main from "@/routes/Main";
 import SignUp from "@/routes/SignUp";
 import Login from "@/routes/Login";
 import News from "@/routes/News";
-import Protected from "./components/Protect/Protect";
 import AiChatList from "./routes/AiChatList";
 import SocialLoading from "./routes/SocialLoading";
-import MyVoca from "./routes/MyVoca";
 import AiChatRoom from "./routes/AiChatRoom";
+import MyPage from "./routes/MyPage";
 import AiChat from "./routes/AiChat";
 
 // 마이페이지 내부 링크

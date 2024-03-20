@@ -80,6 +80,7 @@ function UpdatePasswordSection({ index, value }: Props) {
           </Button>
         </form>
       </div>
+
       {/* 회원 탈퇴 section */}
       <div className="section quit">
         <div className="title">회원 탈퇴</div>

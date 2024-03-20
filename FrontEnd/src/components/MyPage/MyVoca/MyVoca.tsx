@@ -26,6 +26,7 @@ function MyVoca() {
     <Wrapper>
       <NegativeTitle>나의 단어장</NegativeTitle>
       <VocaContainer>
+        {/* 뜻/단어 보기 toggle버튼 */}
         <div className="options">
           <FormControlLabel
             value={isMeaningOn}
@@ -42,6 +43,7 @@ function MyVoca() {
             onChange={() => setIsReadOn((prev) => !prev)}
           />
         </div>
+        {/* 단어장 리스트 출력 */}
         {data &&
           data.map((each) => (
             <MyVocaCard

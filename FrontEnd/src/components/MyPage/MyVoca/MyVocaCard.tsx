@@ -26,6 +26,7 @@ function MyVocaCard({ voca, isReadOn, isMeaningOn }: Props) {
         }}
       />
 
+      {/* 일본어 */}
       <div className="jpNtype">
         <div
           className="japanese"
@@ -35,6 +36,8 @@ function MyVocaCard({ voca, isReadOn, isMeaningOn }: Props) {
         </div>
         <div className="type">{type}</div>
       </div>
+
+      {/* 발음/의미 */}
       <div className="readNmean">
         <div className={`read ${isReadOn ? undefined : "hide"}`}>
           <div>{japaneseRead} | </div>

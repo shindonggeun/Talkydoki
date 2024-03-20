@@ -8,7 +8,7 @@ import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
 import { JptoKor } from "@/util/language/japanese";
 
-function TodaysVoca() {
+function RandomVoca() {
   const [isAdded, setIsAdded] = useState(false);
   const { data, isLoading } = useGetVoca();
   const { mutate: addVoca } = useAddVoca();
@@ -69,4 +69,4 @@ function TodaysVoca() {
   );
 }
 
-export default TodaysVoca;
+export default RandomVoca;

@@ -109,6 +109,7 @@ function UpdateProfileSection({ index, value, user }: Props) {
         </Button>
         <div className="label">.jpg, .jpeg, .png 확장자만 사용 가능</div>
       </div>
+
       {/* 닉네임 수정칸 */}
       <div className="infoSection">
         <div className="inputGroup">
@@ -146,14 +147,6 @@ function UpdateProfileSection({ index, value, user }: Props) {
             }}
           >
             저장
-          </Button>
-          <Button
-            variant="outlined"
-            color="purple"
-            fullWidth
-            onClick={() => navigate("/mypage")}
-          >
-            취소
           </Button>
         </div>
       </div>

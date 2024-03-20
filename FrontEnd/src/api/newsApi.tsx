@@ -1,50 +1,48 @@
-import { customAxios } from "@/util/auth/customAxios";
 import {
-  keepPreviousData,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+  NewsListInterface,
+  NewsListItemInterface,
+} from "@/interface/NewsInterface";
+import { customAxios } from "@/util/auth/customAxios";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-export const useGetNewsList = (category: string, page: number) => {
-  const cat = category == "" ? null : category;
-  const queryClient = useQueryClient();
-
-  return useQuery({
-    queryKey: ["getNewsList", cat != null ? cat : "all"],
-    queryFn: () => {
-      console.log("실행한당");
-      return customAxios.get("/news/get", {
-        params: {
-          category: cat,
-          page: page,
-          size: 2,
-        },
-      });
+export const useGetNewsList = () => {
+  return useInfiniteQuery({
+    queryKey: ["getNewsList"],
+    queryFn: ({ pageParam }) => {
+      console.log("getNewsList 실행");
+      return customAxios
+        .get("/news/list/get", {
+          params: {
+            categories: null,
+            lastNewsId: pageParam == 0 ? null : pageParam,
+            // limit: 6,
+          },
+        })
+        .then((res) => {
+          if (res.data.dataHeader.successCode == 0) {
+            return res.data.dataBody;
+          } else {
+            return null;
+          }
+        });
     },
-    initialData: queryClient.getQueryData(["getNewsList", cat]),
-    placeholderData: keepPreviousData,
-    select: ({ data }) => data,
-    staleTime: Infinity,
-    gcTime: Infinity,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.hasNext) {
+        const { contents } = lastPage;
+        const lastId = contents[contents.length - 1].newsId;
+        return lastId;
+      } else {
+        return undefined;
+      }
+    },
+    select: ({ pages }) => {
+      const newsList: NewsListItemInterface[] = pages.reduce((arr, now) => {
+        arr = arr.concat(now.contents);
+        return arr;
+      }, []);
+
+      return newsList;
+    },
   });
 };
-
-// export const useGetNewsList = (category?: string) => {
-//   return useQuery({
-//     queryKey: ["getNewsList"],
-//     queryFn: () =>
-//       customAxios.get("/news/get", {
-//         params: {
-//           category: category,
-//           page: 0,
-//           size: 2,
-//         },
-//       }),
-//     select: (res) => {
-//       console.log(res);
-//       return res;
-//     },
-//     staleTime: Infinity,
-//     gcTime: Infinity,
-//   });
-// };
