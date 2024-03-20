@@ -1,19 +1,23 @@
 package com.ssafy.backend.domain.news.controller;
 
-import com.ssafy.backend.domain.news.dto.NewsListInfo;
+import com.ssafy.backend.domain.news.dto.NewsSimplyInfo;
 import com.ssafy.backend.domain.news.dto.NewsPostRequest;
-import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.domain.news.service.NewsService;
 import com.ssafy.backend.global.common.dto.Message;
 import com.ssafy.backend.global.common.dto.SliceResponse;
+import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
+
+import java.util.List;
+import java.util.Map;
+
 
 @Tag(name = "뉴스", description = "뉴스 관련 API 입니다.")
 @RestController
@@ -33,15 +37,23 @@ public class NewsController {
     }
 
     @Operation(
-            summary = "전체 뉴스 리스트 불러오기",
-            description = "전체 뉴스 리스트 정보를 불러오는 기능입니다. 페이지네이션 (offset) 방식이 적용되어 있습니다."
+            summary = "뉴스 목록 가져오기",
+            description = "뉴스 목록을 불러오는 기능입니다. noOffset 방식이 적용되어 있습니다."
     )
     @GetMapping("/list/get")
-    public ResponseEntity<Message<SliceResponse<NewsListInfo>>> getListNews(
-            @RequestParam(required = false) NewsCategory category,
-            Pageable pageable
-    ) {
-        SliceResponse<NewsListInfo> newsListInfo = newsService.getNewsByCategory(category, pageable);
-        return ResponseEntity.ok().body(Message.success(newsListInfo));
+    public ResponseEntity<Message<SliceResponse<NewsSimplyInfo>>> getNewsList(@RequestParam(required = false) List<String> categories,
+                                                                              @RequestParam(required = false) Long lastNewsId,
+                                                                              @RequestParam(defaultValue = "11") int limit) {
+        SliceResponse<NewsSimplyInfo> newsSimplyInfoList = newsService.getNewsList(categories, lastNewsId, limit);
+        return ResponseEntity.ok().body(Message.success(newsSimplyInfoList));
+    }
+
+    @Operation(
+            summary = "사용자 뉴스 추천",
+            description = "사용자에게 맞춤형 뉴스를 추천하는 기능입니다."
+    )
+    @GetMapping("/recommend")
+    public Mono<Map<String, Object>> getNewsRecommendation(@AuthenticationPrincipal MemberLoginActive loginActive) {
+        return newsService.getNewsRecommendation(loginActive.id());
     }
 }
