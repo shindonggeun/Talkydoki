@@ -23,6 +23,21 @@ def get_db():
     finally:
         db.close()
 
+def log_environment_variables():
+    print("Current Environment Variables:")
+    for key, value in os.environ.items():
+        print(f"{key}: {value}")
+
+def check_command_availability(command):
+    path = os.getenv('PATH')
+    for dir_path in path.split(os.pathsep):
+        full_path = os.path.join(dir_path, command)
+        if os.path.exists(full_path) and os.access(full_path, os.X_OK):
+            print(f"{command} is available at {full_path}")
+            return True
+    print(f"{command} is not found in PATH")
+    return False
+
 def get_news(db: Session):
     return db.query(News.id, News.title, News.content, News.summary).all()
 
@@ -63,6 +78,12 @@ def start_hadoop_streaming(input_file):
 
 @router.get("/fetch-news")
 async def fetch_news_to_file(db: Session = Depends(get_db)):
+    log_environment_variables()
+    if not check_command_availability("hdfs"):
+        print("HDFS command is not available. Please check your Hadoop installation and PATH environment variable.")
+    if not check_command_availability("hadoop"):
+        print("Hadoop command is not available. Please check your Hadoop installation and PATH environment variable.")
+    
     news_data = get_news(db)
     input_file = save_data(news_data)
     copy_to_hdfs(input_file)
