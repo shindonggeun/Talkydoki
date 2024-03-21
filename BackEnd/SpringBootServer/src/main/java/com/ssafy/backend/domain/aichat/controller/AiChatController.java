@@ -43,7 +43,8 @@ public class AiChatController {
     }
 
     @PostMapping("/gpt/{roomId}")
-    public Mono<ResponseEntity<Message<Void>>> sendAiChatMessageByGpt(@PathVariable Long roomId, @RequestBody AiChatMessage userMessage) {
+    public Mono<ResponseEntity<Message<Void>>> sendAiChatMessageByGpt(@PathVariable Long roomId,
+                                                                      @RequestBody AiChatMessage userMessage) {
         return aiChatService.sendAiChatMessageByGpt(roomId, userMessage)
                 .thenReturn(ResponseEntity.ok().body(Message.success()));
     }

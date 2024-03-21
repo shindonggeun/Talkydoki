@@ -116,5 +116,5 @@ app:
 
 # gpt-api setting
 openai:
-  key: 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
+  key: ENC(ERakHHzDWQNw7FjB5uddrBvQOp1I3lkdduXwNNo6NEzVAc8j95S2es1zucq2Uvn64XkKemS4SggLxPSAVz/+Hw==)
 
