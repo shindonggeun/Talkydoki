@@ -1,38 +1,34 @@
 import { useGetNewsList } from "@/api/newsApi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Wrapper } from "@/styles/common/ui/container";
-import { newsSplitter, sentenceMaker } from "@/util/language/format";
 import InfiniteObserver from "@/components/ui/InfiniteObserver";
 import { category, categoryInterface } from "@/interface/NewsInterface";
+import NewsItem from "@/components/News/List/NewsItem";
 
 import {
   CategorySection,
   MenuBarSection,
   NewsSection,
 } from "@/styles/News/List/container";
-import { Category, NewsCard } from "@/styles/News/List/ui";
+import { Category } from "@/styles/News/List/ui";
 import { NegativeTitle } from "@/styles/common/ui/text";
 import { FormControlLabel, Switch } from "@mui/material";
 
-import Img1 from "@/assets/images/sampleimage/img1.jpg";
-import Img2 from "@/assets/images/sampleimage/img2.jpg";
-import Img3 from "@/assets/images/sampleimage/img3.jpg";
-
 import CloseIcon from "@mui/icons-material/Close";
-import ThumbnailView from "@/components/ui/ThumbnailView";
 import { useIsDark } from "@/stores/displayStore";
+import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 
 function News() {
   const [isShowKor, setIsShowKor] = useState(true);
   const [selected, setSelected] = useState<categoryInterface[]>([]);
   const [categories, setcategories] = useState(category);
+
   const isDark = useIsDark();
+  const setIsModalOn = useSetISModalOn();
+  const setModalContent = useSetModalContent();
 
   const { data, isLoading, fetchNextPage, isFetching } =
     useGetNewsList(selected);
-
-  // 뉴스 썸네일 받아오는 함수 생길 때까지 임시로 사용하는 배열
-  const newsImgaes = [Img1, Img2, Img3, Img2, Img3, Img2, Img3];
 
   const observerCallback: IntersectionObserverCallback = ([
     { isIntersecting },
@@ -42,7 +38,19 @@ function News() {
     }
   };
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const addCategory = (category: categoryInterface) => {
+    if (selected.length == 3) {
+      setModalContent({
+        message: "카테고리는 3개까지만 선택 가능합니다.",
+        isInfo: true,
+      });
+      setIsModalOn(true);
+      return;
+    }
     setSelected((prev) => [...prev, category]);
     setcategories((prev) => prev.filter((each) => each.id != category.id));
   };
@@ -57,6 +65,8 @@ function News() {
   return (
     <Wrapper>
       <NegativeTitle>뉴스</NegativeTitle>
+
+      {/* 카테고리 */}
       <CategorySection>
         {selected.map((cat) => (
           <Category
@@ -79,6 +89,8 @@ function News() {
           </Category>
         ))}
       </CategorySection>
+
+      {/* 메뉴바 (번역보기) */}
       <MenuBarSection>
         <FormControlLabel
           value={isShowKor}
@@ -88,41 +100,23 @@ function News() {
           onChange={() => setIsShowKor((prev) => !prev)}
         />
       </MenuBarSection>
+
+      {/* 뉴스 리스트 */}
       <NewsSection>
         {data &&
           data.map((news, idx) => {
             return (
-              <NewsCard
-                key={idx}
-                className={`${idx % 2 == 0 ? "left" : "right"}`}
-                $index={idx % 4}
-              >
-                <ThumbnailView
-                  images={newsImgaes.slice(
-                    0,
-                    1 + Math.floor(Math.random() * 5)
-                  )}
-                ></ThumbnailView>
-                {/* <img
-                  className="thumbnail"
-                  src={newsImgaes[Math.floor(Math.random() * 3)]}
-                  alt=""
-                /> */}
-                <div className="titleBox">
-                  <div className="title">
-                    {sentenceMaker(newsSplitter(news.title)[0])}
-                  </div>
-                  <div className="releaseDate">
-                    {news.writeDate.slice(0, 10)}
-                  </div>
-                  <div className={`titleTrans ${isShowKor && `show`}`}>
-                    {news.titleTranslated}
-                  </div>
-                </div>
-              </NewsCard>
+              <NewsItem
+                key={news.newsId}
+                news={news}
+                idx={idx}
+                isShowKor={isShowKor}
+              />
             );
           })}
       </NewsSection>
+
+      {/* 스크롤 옵저버 */}
       <InfiniteObserver
         observerCallback={observerCallback}
         isFetching={isFetching}

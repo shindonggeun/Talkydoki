@@ -9,25 +9,6 @@ export const ProfileSection = styled.section`
   align-items: center;
   padding: 10px;
 
-  .icon {
-    cursor: pointer;
-    margin: 0 5px;
-
-    &:hover {
-      color: var(--yellow-dark);
-    }
-  }
-
-  .logoDiv {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-
-    img.logoImg {
-      width: 50%;
-    }
-  }
-
   .profileDiv {
     display: flex;
     flex-direction: column;
@@ -47,6 +28,26 @@ export const ProfileSection = styled.section`
       font-weight: 500;
       padding: 15px 0;
     }
+  }
+`;
+
+export const SidebarTitleSection = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+
+  .icon {
+    cursor: pointer;
+    margin: 0 5px;
+
+    &:hover {
+      color: var(--yellow-dark);
+    }
+  }
+
+  img.logoImg {
+    width: 50%;
   }
 `;
 

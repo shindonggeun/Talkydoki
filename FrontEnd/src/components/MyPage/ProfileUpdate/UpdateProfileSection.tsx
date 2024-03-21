@@ -22,8 +22,9 @@ function UpdateProfileSection({ index, value, user }: Props) {
   const originalProfImg = getProfileImage(profileImage); // 기존 프로필 사진 주소
   const [newProfThumb, setNewProfThumb] = useState(originalProfImg); // 썸네일용 프로필 사진
   const [newProfImg, setNewProfImg] = useState(originalProfImg); // 변경된 프로필 사진 주소
-  const newProfForm = useRef(new FormData());
   const [newNickname, setNewNickname] = useState(nickname); // 변경된 닉네임
+  const newProfForm = useRef(new FormData());
+
   const setModalContent = useSetModalContent();
   const setIsModalOn = useSetISModalOn();
 
@@ -51,6 +52,24 @@ function UpdateProfileSection({ index, value, user }: Props) {
       });
     }
   }, [newProfImg, isSuccess]);
+
+  const handleSave = () => {
+    setModalContent({
+      message: "프로필을 저장중입니다...",
+      isInfo: true,
+      isReadOnly: true,
+    });
+    setIsModalOn(true);
+
+    if (newProfForm.current.get("file")) {
+      uploadImage(newProfForm.current);
+    } else {
+      updateProfile({
+        nickname: newNickname,
+        profileImage: profileImage,
+      });
+    }
+  };
 
   if (index != value) return <></>;
 
@@ -133,16 +152,7 @@ function UpdateProfileSection({ index, value, user }: Props) {
             variant="contained"
             color="purple"
             fullWidth
-            onClick={() => {
-              if (newProfForm.current.get("file")) {
-                uploadImage(newProfForm.current);
-              } else {
-                updateProfile({
-                  nickname: newNickname,
-                  profileImage: profileImage,
-                });
-              }
-            }}
+            onClick={() => handleSave()}
           >
             저장
           </Button>

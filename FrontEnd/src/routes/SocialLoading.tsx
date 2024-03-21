@@ -1,4 +1,4 @@
-import { finishSocialLogin } from "@/api/memberApi";
+import { useFinishSocialLogin } from "@/api/memberApi";
 import { useEffect } from "react";
 import { useLocation, useParams } from "react-router-dom";
 
@@ -9,7 +9,7 @@ function SocialLoading({}: Props) {
   const queryParams = new URLSearchParams(location.search);
   const code = queryParams.get("code") || "";
 
-  const { mutate: finishSocial } = finishSocialLogin();
+  const { mutate: finishSocial } = useFinishSocialLogin();
 
   useEffect(() => {
     if (provider && code) {

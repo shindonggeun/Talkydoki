@@ -10,7 +10,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   useAuthStore,
   useIsLogin,
@@ -95,11 +95,12 @@ export const useSignup = () => {
 // 회원정보 가져오기
 export const useGetMember = () => {
   const isLogin = useIsLogin();
+  const { pathname } = useLocation();
 
   return useQuery({
     queryKey: ["getMember"],
     queryFn: () => {
-      console.log("getMember 실행");
+      console.log(`${pathname}에서 getMember 실행`);
       return customAxios.get(`/member/get`).then((res) => res.data);
     },
     select: (data) => {
@@ -145,7 +146,7 @@ export const useLogout = () => {
 
 // 소셜 로그인 창 띄우기
 
-export const startSocialLogin = () => {
+export const useSocialLogin = () => {
   return useMutation({
     mutationFn: (payload: string) => customAxios.get(`/oauth/${payload}`),
     onSuccess: (res) => {
@@ -163,7 +164,7 @@ export const startSocialLogin = () => {
 
 // 소셜 로그인
 
-export const finishSocialLogin = () => {
+export const useFinishSocialLogin = () => {
   const setIsLogin = useAuthStore((state) => state.setIsLogin);
   const navigate = useNavigate();
 

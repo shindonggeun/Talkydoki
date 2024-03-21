@@ -7,14 +7,16 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 
 // 뉴스 리스트 get 하는 함수
 export const useGetNewsList = (category: categoryInterface[]) => {
-  const catName = category.map((each) => each.name);
+  const catKeys: { [name: string]: boolean } = {};
+
   const params = new URLSearchParams();
   category.forEach((each) => {
     params.append("categories", each.name);
+    catKeys[each.name] = true;
   });
 
   return useInfiniteQuery({
-    queryKey: ["getNewsList", ...catName],
+    queryKey: ["getNewsList", catKeys],
     queryFn: ({ pageParam }) => {
       console.log("getNewsList 실행");
       if (pageParam != 0) params.append("lastNewsId", pageParam.toString());

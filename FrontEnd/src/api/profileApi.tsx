@@ -17,7 +17,6 @@ export const useUploadImageFile = () => {
           "Content-Type": "multipart/form-data",
         },
       }),
-
     onSuccess: () => console.log("이미지 업로드 완료"),
   });
 };
@@ -26,13 +25,23 @@ export const useUploadImageFile = () => {
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const setModalContent = useSetModalContent();
+  const setIsModalOn = useSetISModalOn();
 
   return useMutation({
     mutationFn: (payload: ProfileUpdateParams) =>
       customAxios.patch("/member/update", payload, {}),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["getMember"] });
+      setModalContent({
+        message: "프로필이 저장되었습니다.",
+        isInfo: true,
+        isReadOnly: true,
+      });
       navigate("/mypage");
+      setTimeout(() => {
+        queryClient.invalidateQueries({ queryKey: ["getMember"] });
+        setIsModalOn(false);
+      }, 800);
     },
   });
 };

@@ -77,6 +77,12 @@ export const ModalCard = styled(Card)`
     }
   }
 
+  @media screen and (max-width: 992px) {
+    .innerText {
+      padding: 45px;
+    }
+  }
+
   /* 팝업 애니메이션 */
   @-webkit-keyframes moveToTop {
     0% {

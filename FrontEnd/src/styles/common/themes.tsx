@@ -27,7 +27,7 @@ export const light = {
   },
   blue: {
     color: "#176CFF",
-    dark: "#2448AB",
+    dark: "#1b4cd3",
     light: "#38A2FF",
   },
   doc: {
@@ -68,9 +68,9 @@ export const dark = {
     light: "#FFE47A",
   },
   blue: {
-    color: "#32c1ff",
-    dark: "#2281d9",
-    light: "#76cfff",
+    color: "#328bff",
+    dark: "#255fff",
+    light: "#76e6ff",
   },
   doc: {
     text: "#f9f6ffee",

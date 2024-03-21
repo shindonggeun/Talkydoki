@@ -7,11 +7,13 @@ interface ModalInterface {
     message: string;
     onSuccess: () => void;
     isInfo: boolean;
+    isReadOnly?: boolean;
   };
   setModalContent: (newContent: {
     message: string;
     onSuccess?: () => void;
     isInfo: boolean;
+    isReadOnly?: boolean;
   }) => void;
 }
 
@@ -22,7 +24,7 @@ const useModalStore = create<ModalInterface>((set) => ({
   // 모달 활성화 토글 (true, false 받음)
   setIsModalOn: (on) => set(() => ({ isModalOn: on })),
 
-  // 모달 내용물 (message: 메세지, onSuccess: 확인 눌렀을 경우 실행할 함수, isInfo: 정보 안내용 팝업인지?)
+  // 모달 내용물 (message: 메세지, onSuccess: 확인 눌렀을 경우 실행할 함수, isInfo: 정보 안내용 팝업인지 여부, isReadOnly: 확인버튼 없애기)
   modalContent: { message: "", onSuccess: () => {}, isInfo: false },
 
   // 모달 내용물 set 함수
@@ -33,6 +35,7 @@ const useModalStore = create<ModalInterface>((set) => ({
         onSuccess:
           newContent.onSuccess != undefined ? newContent.onSuccess : () => {},
         isInfo: newContent.isInfo,
+        isReadOnly: newContent.isReadOnly,
       },
     })),
 }));

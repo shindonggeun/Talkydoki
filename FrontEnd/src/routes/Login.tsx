@@ -1,4 +1,4 @@
-import { useLogin, startSocialLogin } from "@/api/memberApi";
+import { useLogin, useSocialLogin } from "@/api/memberApi";
 import GoogleIcon from "@/assets/icon/google.png";
 import KakaoIcon from "@/assets/icon/kakao.png";
 import NaverIcon from "@/assets/icon/naver.png";
@@ -23,7 +23,7 @@ function Login({}: Props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const loginMutation = useLogin();
-  const { mutate: startSocial } = startSocialLogin();
+  const { mutate: startSocial } = useSocialLogin();
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

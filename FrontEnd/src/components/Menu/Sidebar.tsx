@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import SidebarProfile from "./SidebarProfile";
+import SidebarProfile from "./SidebarItems/SidebarProfile";
 
 import { SidebarWrapper } from "@/styles/common/ui/container";
 import { MenuDivider, SidebarBackground } from "@/styles/Menu/sidebar";
@@ -9,12 +9,12 @@ import {
   useSetIsMobile,
   useSetIsSidebarOpen,
 } from "@/stores/displayStore";
-import Menus from "./Menus";
+import Menus from "./SidebarItems/Menus";
+import SidebarTitle from "./SidebarItems/SidebarTitle";
 
 function Sidebar() {
   const isSidebarOpen = useIsSidebarOpen();
   const setIsSidebarOpen = useSetIsSidebarOpen();
-
   const isMobile = useIsMobile();
   const setIsMobile = useSetIsMobile();
 
@@ -39,6 +39,7 @@ function Sidebar() {
   return (
     <>
       <SidebarWrapper style={isSidebarOpen ? { left: 0 } : { left: "-300px" }}>
+        <SidebarTitle />
         <SidebarProfile />
         <MenuDivider textAlign="left">menu</MenuDivider>
         <Menus />

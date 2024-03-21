@@ -3,9 +3,9 @@ import styled from "styled-components";
 
 // 카테고리 버튼
 export const Category = styled.div<{ $isDark: boolean }>`
-  margin: 1vh 10px;
+  margin: 1vh 5px;
   width: fit-content;
-  padding: 20px 25px;
+  padding: 15px 20px;
   height: 40px;
   background-color: rgb(from var(--grey) r g b / 0.4);
   border-radius: 25px;
@@ -13,6 +13,10 @@ export const Category = styled.div<{ $isDark: boolean }>`
   justify-content: center;
   align-items: center;
   cursor: pointer;
+
+  &:hover {
+    background-color: rgb(from var(--grey) r g b / 0.3);
+  }
 
   /* 선택된 카테고리 */
   &.selected {
@@ -86,8 +90,8 @@ export const NewsCard = styled.div<{ $index: number }>`
 
   &:hover,
   &:active {
-    * {
-      color: var(--blue);
+    .title {
+      color: var(--blue-dark);
     }
   }
 `;

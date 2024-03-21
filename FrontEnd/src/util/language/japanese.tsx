@@ -123,3 +123,32 @@ export const JptoKor = (word: string) => {
 
   return changed.join("");
 };
+
+// 막대기 변환 - 예시: ろーどー -> ろうどう
+const changeStick = (prev: string) => {
+  const aGyou = /[アカガサザタダナハバパマヤラワ]/;
+  const ieGyou = /[イキギシジチヂニヒビピミリエケゲセゼテデネヘベペメレ]/;
+  const uGyou =
+    /[ウクグスズツヅヌフブプムユヨルオコゴソゾトドノホボポモロョュ]/;
+
+  if (aGyou.test(prev)) {
+    return "あ";
+  } else if (ieGyou.test(prev)) {
+    return "い";
+  } else if (uGyou.test(prev)) {
+    return "う";
+  } else {
+    return "";
+  }
+};
+
+// 가타카나 -> 히라가나 변환 함수
+export const KanaToHira = (word: string) => {
+  const jpRegEx = /[ァ-ヴ]/g;
+
+  return word
+    .replace(jpRegEx, (matched) =>
+      String.fromCharCode(matched.charCodeAt(0) - 96)
+    )
+    .replace(/ー/g, (_matched, index) => changeStick(word.charAt(index - 1)));
+};
