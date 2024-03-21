@@ -8,6 +8,7 @@ services:
       dockerfile: Dockerfile
     image: talkydoki_frontend_img
     ports:
+      - "80:80"
       - "443:443"
     volumes:
       - /etc/letsencrypt:/etc/nginx/ssl
