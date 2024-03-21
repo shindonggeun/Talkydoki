@@ -77,36 +77,27 @@ public class AiChatServiceImpl implements AiChatService {
         aiChatHistoryRepository.save(aiChatHistory);
 
         rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, userMessage);
-
-
-
-        Mono<String> gptResponse = openAiService.sendPromptToGpt(userMessage);
-
-        gptResponse.subscribeOn(Schedulers.boundedElastic())
-                .subscribe(response -> {
-                    // GPT 메시지 저장
-                    AiChatHistory gptHistory = AiChatHistory.builder()
-                            .aiChatRoom(aiChatRoom)
-                            .sender(AiChatSender.GPT)
-                            .content(response)
-                            .build();
-                    Mono.fromCallable(() -> aiChatHistoryRepository.save(gptHistory))
-                            .subscribeOn(Schedulers.boundedElastic())
-                            .subscribe();
-
-                    // RabbitMQ로 응답 전송
-                    AiChatMessage gptMessage = new AiChatMessage(AiChatSender.GPT, response);
-                    rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
-                });
-
     }
 
     @Override
-    public void sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage) {
+    public Mono<Void> sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage) {
         // TODO: AI 회화 채팅 커스텀 Exception 처리
         AiChatRoom aiChatRoom = aiChatRoomRepository.findById(roomId).orElseThrow(()
                 -> new RuntimeException("해당 AI 회화 채팅방을 찾을 수 없습니다."));
 
-
+        return openAiService.sendPromptToGpt(userMessage)
+                .flatMap(response -> Mono.fromCallable(() -> {
+                            AiChatHistory aiChatHistory = AiChatHistory.builder()
+                                    .aiChatRoom(aiChatRoom)
+                                    .sender(AiChatSender.GPT)
+                                    .content(response)
+                                    .build();
+                            return aiChatHistoryRepository.save(aiChatHistory);
+                        }).subscribeOn(Schedulers.boundedElastic())
+                        .thenReturn(response))
+                .doOnNext(response -> {
+                    AiChatMessage gptMessage = new AiChatMessage(AiChatSender.GPT, response);
+                    rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
+                }).then();
     }
 }

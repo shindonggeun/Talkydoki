@@ -12,5 +12,6 @@ public interface AiChatService {
     // AI 회화 채팅 메시지 보내기 (사용자 - USER)
     void sendAiChatMessageByUser(Long memberId, Long roomId, AiChatMessage userMessage);
 
-    void sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage);
+    // AI 회화 채팅 메시지 보내기 (AI 회화 채팅봇 - GPT)
+    Mono<Void> sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage);
 }

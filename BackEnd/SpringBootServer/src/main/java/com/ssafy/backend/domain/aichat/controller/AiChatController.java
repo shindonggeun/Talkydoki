@@ -16,6 +16,7 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.security.Principal;
 
@@ -37,8 +38,14 @@ public class AiChatController {
     }
 
     @MessageMapping("/ai/chat/user/{roomId}")
-    public void send(Principal principal, AiChatMessage aiChatMessage, @DestinationVariable Long roomId) {
+    public void sendAiChatMessageByUser(Principal principal, AiChatMessage aiChatMessage, @DestinationVariable Long roomId) {
         aiChatService.sendAiChatMessageByUser(Long.valueOf(principal.getName()), roomId, aiChatMessage);
+    }
+
+    @PostMapping("/gpt/{roomId}")
+    public Mono<ResponseEntity<Message<Void>>> sendAiChatMessageByGpt(@PathVariable Long roomId, @RequestBody AiChatMessage userMessage) {
+        return aiChatService.sendAiChatMessageByGpt(roomId, userMessage)
+                .thenReturn(ResponseEntity.ok().body(Message.success()));
     }
 }
 

@@ -5,7 +5,7 @@ import reactor.core.publisher.Mono;
 
 public interface OpenAiService {
 
-    Mono<String> sendPromptToGpt(AiChatMessage createRequest);
+    Mono<String> sendPromptToGpt(AiChatMessage aiChatMessage);
 
 //    AiChatReportCreateResponse createReport(Long roomId, AiChatConversation aiChatConversation);
 
