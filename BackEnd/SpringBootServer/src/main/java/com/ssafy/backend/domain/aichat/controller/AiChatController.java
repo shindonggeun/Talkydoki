@@ -38,11 +38,13 @@ public class AiChatController {
     }
 
     @MessageMapping("/ai/chat/user/{roomId}")
-    public void sendAiChatMessageByUser(Principal principal, AiChatMessage aiChatMessage, @DestinationVariable Long roomId) {
-        aiChatService.sendAiChatMessageByUser(Long.valueOf(principal.getName()), roomId, aiChatMessage);
+    public void sendAiChatMessageByUser(@AuthenticationPrincipal MemberLoginActive loginActive, AiChatMessage aiChatMessage,
+                                        @DestinationVariable Long roomId) {
+        aiChatService.sendAiChatMessageByUser(loginActive.id(), roomId, aiChatMessage);
     }
 
     @PostMapping("/gpt/{roomId}")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     public Mono<ResponseEntity<Message<Void>>> sendAiChatMessageByGpt(@PathVariable Long roomId,
                                                                       @RequestBody AiChatMessage userMessage) {
         return aiChatService.sendAiChatMessageByGpt(roomId, userMessage)

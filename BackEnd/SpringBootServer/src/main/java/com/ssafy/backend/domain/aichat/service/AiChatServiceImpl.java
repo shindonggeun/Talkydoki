@@ -74,8 +74,6 @@ public class AiChatServiceImpl implements AiChatService {
         AiChatRoom aiChatRoom = aiChatRoomRepository.findById(roomId).orElseThrow(()
                 -> new RuntimeException("해당 AI 회화 채팅방을 찾을 수 없습니다."));
 
-
-
         AiChatHistory aiChatHistory = AiChatHistory.builder()
                 .aiChatRoom(aiChatRoom)
                 .sender(AiChatSender.USER)
