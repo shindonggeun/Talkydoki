@@ -23,6 +23,22 @@ export const Flexbox = styled.div`
   @media screen and (max-width: 992px) {
     height: 85vh;
   }
+  position: relative;
+`;
+
+export const ChatTipContainer = styled.div`
+  width: 60%;
+  left: 20%;
+  position: absolute;
+  top: 68%;
+  /* border: 1px solid; */
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--grey-light);
+  padding: 15px 0;
 `;
 
 export const ChatRoomContainer = styled(Card)`
@@ -54,15 +70,26 @@ export const MainContainer = styled.div`
   padding: 3vw;
   font-size: 0.8125rem;
 
+  .messageContainer {
+    transition: opacity 0.6s ease-in-out, max-height 0.5s ease-in-out;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+  }
+
+  .messageContainer.isVisible {
+    opacity: 1;
+    max-height: 100px;
+  }
+
   .message-item.chatbot {
-    /* border: 1px solid; */
     align-self: flex-start;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: row;
     max-width: calc(60+50px);
-    margin-bottom: 10px;
+    margin-bottom: 30px;
 
     .chatbot-icon-container {
       align-self: self-start;
@@ -77,7 +104,7 @@ export const MainContainer = styled.div`
       max-height: 100%;
     }
     .buttonbox {
-      margin-top: 5px;
+      margin: 5px 0;
       width: 40px;
       display: flex;
       justify-content: space-between;
@@ -89,29 +116,24 @@ export const MainContainer = styled.div`
       padding: 10px;
       background: var(--bg-modal);
       color: var(--text);
-      border-radius: 10px;
       max-width: 100%;
-      border-radius: 5px;
-      box-shadow: 0px 1px 5px 3px var(--shadow);
       align-self: flex-end;
       border-radius: 5px;
       box-shadow: 0px 1px 5px 3px var(--shadow);
     }
   }
-  /* 
 
- 
-  */
-
+  .buttonbox {
+    margin: 5px 0;
+    width: 40px;
+    display: flex;
+    justify-content: space-between;
+  }
   .message-item.self {
     padding: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 30px;
     background: var(--bg-modal);
-    color: var(--text);
-    border-radius: 10px;
     max-width: 60%;
-    border-radius: 5px;
-    box-shadow: 0px 1px 5px 3px var(--shadow);
     background-color: var(--main);
     align-self: flex-end;
     border-radius: 5px;
@@ -120,6 +142,9 @@ export const MainContainer = styled.div`
       color: var(--text-button);
     }
     .buttonbox {
+      color: var(--text-button);
+    }
+    .messageContainer {
       color: var(--text-button);
     }
   }
