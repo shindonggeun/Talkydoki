@@ -9,8 +9,6 @@ services:
     image: talkydoki_frontend_img
     ports:
       - "443:443"
-    volumes:
-      - /etc/letsencrypt/live/j10c107.p.ssafy.io/:/etc/nginx/ssl
     networks:
       - talkydoki_net
 

@@ -22,6 +22,9 @@ RUN npm run build
 # NGINX 이미지 생성
 FROM nginx:latest
 
+# SSL 인증서 파일 복사
+COPY /etc/letsencrypt/live/j10c107.p.ssafy.io/ /etc/nginx/ssl/
+
 # NGINX에서 작업 디렉토리 설정
 WORKDIR /usr/share/nginx/html
 
@@ -33,9 +36,6 @@ COPY --from=build /usr/src/app/dist/ .
 
 # 추가 NGINX 구성 파일 복사
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# SSL 인증서 파일에 대한 권한 설정
-RUN chmod 644 /etc/nginx/ssl/*
 
 # NGINX를 시작
 CMD ["nginx", "-g", "daemon off;"]
