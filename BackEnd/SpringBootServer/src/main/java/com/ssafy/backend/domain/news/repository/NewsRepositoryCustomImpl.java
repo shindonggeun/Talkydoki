@@ -3,6 +3,7 @@ package com.ssafy.backend.domain.news.repository;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.backend.domain.news.dto.NewsInfo;
 import com.ssafy.backend.domain.news.dto.NewsSimplyInfo;
 import com.ssafy.backend.domain.news.entity.QNews;
 import com.ssafy.backend.domain.news.entity.QNewsImage;
@@ -91,5 +92,45 @@ public class NewsRepositoryCustomImpl implements NewsRepositoryCustom {
             contents.remove(contents.size() - 1);
         }
         return hasNext;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public NewsInfo findNewsInfo(Long newsId) {
+        QNews qNews = QNews.news;   // QNews 엔티티의 인스턴스 생성
+        QNewsImage qNewsImage = QNewsImage.newsImage;
+
+        // 뉴스 조회 쿼리 실행
+        NewsInfo newsInfo = queryFactory
+                .select(Projections.bean(
+                                NewsInfo.class,
+                                qNews.id.as("newsId"),
+                                qNews.title,
+                                qNews.titleTranslated,
+                                qNews.category,
+                                qNews.content,
+                                qNews.contentTranslated,
+                                qNews.summary,
+                                qNews.summaryTranslated,
+                                qNews.writeDate,
+                                qNews.srcOrigin
+                ))
+                .from(qNews)
+                .where(qNews.id.eq(newsId))
+                .fetchOne();
+
+        // newsInfo가 null이 아닐 때만 이미지 URL을 조회하고 설정
+        if (newsInfo != null) {
+            List<String> imageUrls = queryFactory
+                    .select(qNewsImage.imageUrl)
+                    .from(qNewsImage)
+                    .where(qNewsImage.news.id.eq(newsId))
+                    .fetch();
+            newsInfo.setNewsImages(imageUrls);
+        }
+
+        return newsInfo;
     }
 }

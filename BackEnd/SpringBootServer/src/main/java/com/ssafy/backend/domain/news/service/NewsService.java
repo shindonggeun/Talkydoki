@@ -1,4 +1,6 @@
 package com.ssafy.backend.domain.news.service;
+import com.ssafy.backend.domain.news.dto.NewsImageInfo;
+import com.ssafy.backend.domain.news.dto.NewsInfo;
 import com.ssafy.backend.domain.news.dto.NewsSimplyInfo;
 import com.ssafy.backend.domain.news.dto.NewsPostRequest;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
@@ -17,7 +19,14 @@ public interface NewsService {
      *
      * @param newsPostRequest 뉴스 데이터
      */
-    void insertNews(NewsPostRequest newsPostRequest);
+    Long insertNews(NewsPostRequest newsPostRequest);
+
+    /**
+     * 뉴스 이미지를 저장합니다.
+     *
+     * @param newsImageInfo 뉴스 이미지 데이터
+     */
+    void insertNewsImage(NewsImageInfo newsImageInfo);
 
     /**
      * 선택적으로 카테고리를 기준으로 뉴스 목록을 조회하고, 페이징 처리를 위한 noOffset 방식을 사용합니다.
@@ -37,4 +46,11 @@ public interface NewsService {
      * @param memberId 사용자 PK
      */
     Mono<Map<String, Object>> getNewsRecommendation(Long memberId);
+
+    /**
+     * 뉴스 디테일 정보를 조회합니다.
+     *
+     * @param newsId) 뉴스 디테일 정보
+     */
+    NewsInfo getNewsInfo(Long newsId);
 }

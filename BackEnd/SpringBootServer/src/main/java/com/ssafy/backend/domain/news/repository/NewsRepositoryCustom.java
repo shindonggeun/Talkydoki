@@ -1,5 +1,6 @@
 package com.ssafy.backend.domain.news.repository;
 
+import com.ssafy.backend.domain.news.dto.NewsInfo;
 import com.ssafy.backend.domain.news.dto.NewsSimplyInfo;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import org.springframework.data.domain.Pageable;
@@ -23,4 +24,12 @@ public interface NewsRepositoryCustom {
      * @return 조회된 뉴스 목록을 담은 Slice 객체.
      */
     Slice<NewsSimplyInfo> findNewsListInfoNoOffset(List<NewsCategory> categories, Long lastNewsId, int limit);
+
+    /**
+     * 뉴스 정보을 조회합니다.
+     *
+     * @param newsId 조회할 뉴스의 아이디
+     * @return 뉴스 정보을 담은 객체.
+     */
+     NewsInfo findNewsInfo(Long newsId);
 }
