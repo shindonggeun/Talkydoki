@@ -34,5 +34,8 @@ COPY --from=build /usr/src/app/dist/ .
 # 추가 NGINX 구성 파일 복사
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
+# SSL 인증서 파일에 대한 권한 설정
+RUN chmod 644 /etc/nginx/ssl/*
+
 # NGINX를 시작
 CMD ["nginx", "-g", "daemon off;"]
