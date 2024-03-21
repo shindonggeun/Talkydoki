@@ -138,10 +138,8 @@ async def data_processing(db: Session = Depends(get_db)):
     local_filename = f"/app/data/{today_str}_part-00000"
     try:
         with open(local_filename, "r", encoding="utf-8") as file:
-            content = []
-            for line in file:
-                process_line(line, db)
-                content.append(line)
+            content = file.readlines()
+
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
     
@@ -180,5 +178,13 @@ async def data_processing(db: Session = Depends(get_db)):
             "failed_keywords": failed_keywords,
             "failed_count": len(failed_keywords)
         }
+    
+    try:
+        with open(local_filename, "r", encoding="utf-8") as file:
+            for line in file:
+                process_line(line, db)
+
+    except FileNotFoundError:
+        raise HTTPException(status_code=404, detail="File not found")
     
     return FileResponse(result_filename)
