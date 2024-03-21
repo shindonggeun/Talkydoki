@@ -16,6 +16,7 @@ function ChatFooter({}: Props) {
   const [message, setMessage] = useState("");
   // 타이머
   const [timer, setTimer] = useState<number | undefined>(undefined);
+  console.log("시각화 확인 콘솔:isRecording", isRecording);
 
   // 스피치 api
   const { transcript, browserSupportsSpeechRecognition, resetTranscript } =
@@ -37,6 +38,7 @@ function ChatFooter({}: Props) {
       const newTimer = setTimeout(() => {
         SpeechRecognition.stopListening();
         resetTranscript();
+        setIsRecording((isRecording) => !isRecording);
       }, 17000);
       setTimer(newTimer);
     }

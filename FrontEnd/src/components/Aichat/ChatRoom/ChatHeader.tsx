@@ -1,13 +1,20 @@
-import { IconButton, Menu, MenuItem } from "@mui/material";
+import { IconButton, Menu, MenuItem, Switch } from "@mui/material";
 import React from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { HeaderContainer } from "@/styles/Aichat/AiChatRoom";
 import { useNavigate } from "react-router-dom";
+import { useAiChatStore } from "@/stores/aichatStore";
 
 type Props = {};
 
 function ChatHeader({}: Props) {
   const navigate = useNavigate();
+
+  // 전역 상태 관리
+  const globalIsTranslate = useAiChatStore((state) => state.globalIsTranslate);
+  const setGlobalIsTranslate = useAiChatStore(
+    (state) => state.setGlobalIsTranslate
+  );
 
   // 번역표시 팁표시 기능 추가 필요
   const options = [
@@ -31,7 +38,7 @@ function ChatHeader({}: Props) {
   const handleOptionClick: (action: (() => void) | undefined) => () => void =
     (action) => () => {
       action?.();
-      setAnchorEl(null);
+      // setAnchorEl(null);
     };
 
   return (
@@ -62,12 +69,35 @@ function ChatHeader({}: Props) {
           },
         }}
       >
-        {options.map((option) => (
+        {options.map((option, index) => (
           <MenuItem
             key={option.label}
             onClick={handleOptionClick(option.action)}
+            component="div"
+            style={{
+              display: "flex",
+              // justifyContent: index === 1 ? "flex-end" : "space-between",
+            }}
           >
-            {option.label}
+            {index === 0 || index === 1 ? (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                {option.label}
+                <Switch
+                  checked={globalIsTranslate}
+                  onChange={() => setGlobalIsTranslate()}
+                  color="primary"
+                />
+              </div>
+            ) : (
+              option.label
+            )}
           </MenuItem>
         ))}
       </Menu>
