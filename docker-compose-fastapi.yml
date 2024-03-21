@@ -7,10 +7,6 @@ services:
       context: ./BackEnd/FastApiServer
       dockerfile: Dockerfile
     image: talkydoki_backend_fastapi_img
-    ports:
-      - "8000:8000"
-    networks:
-      - talkydoki_net
-
-networks:
-  talkydoki_net:
+    network_mode: "host"
+    volumes:
+      - /home/ubuntu/data-processing:/app/data

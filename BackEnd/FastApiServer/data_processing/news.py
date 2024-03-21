@@ -5,11 +5,7 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 from models.news import News
 
-import requests, subprocess, os
-
-os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64"
-os.environ["HADOOP_HOME"] = "/usr/local/hadoop"
-os.environ["PATH"] = os.environ["PATH"] + ":" + os.environ["HADOOP_HOME"] + "/bin:" + os.environ["HADOOP_HOME"] + "/sbin"
+import requests, subprocess, os, paramiko
 
 router = APIRouter()
 
@@ -26,48 +22,88 @@ def get_db():
 def get_news(db: Session):
     return db.query(News.id, News.title, News.content, News.summary).all()
 
-def save_data(news_data, base_path="/home/ubuntu/data-processing"):
-    if not os.path.exists(base_path):
-        os.makedirs(base_path)
-
-    today_str = datetime.now().strftime("%Y%m%d")
-    filename = f"news_data_{today_str}.txt"
-    full_path = os.path.join(base_path, filename)
-    with open(full_path, "w", encoding="utf-8") as file:
+def save_data(db: Session):
+    news_data = get_news(db)
+    save_path = '/app/data'
+    filename = f"{save_path}/news_data_{datetime.now().strftime('%Y%m%d_%H')}.txt"
+    local_filename = f"/home/ubuntu/data-processing/news_data_{datetime.now().strftime('%Y%m%d_%H')}.txt"
+    with open(filename, "w", encoding="utf-8") as file:
         for news in news_data:
             file.write(f"ID\n{news.id}\nTITLE\n{news.title}\nSUMMARY\n{news.summary}\nCONTENT\n{news.content}\n")
-    return full_path
+    return local_filename
 
-def copy_to_hdfs(local_path, hdfs_path="/input"):
-    hadoop_command = f"hdfs dfs -put {local_path} {hdfs_path}"
-    try:
-        subprocess.run(hadoop_command, check=True, shell=True)
+def copy_to_hdfs(local_path, hdfs_path="/input", ec2_ip="3.36.72.23", username="ubuntu", key_file="/app/data/J10C107T.pem"):
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(ec2_ip, username=username, key_filename=key_file)
+
+    hadoop_command = "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64; " \
+                    "export HADOOP_HOME=/usr/local/hadoop; " \
+                    "export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin; " \
+                    f"hdfs dfs -put {local_path} {hdfs_path}"
+    stdin, stdout, stderr = ssh.exec_command(hadoop_command)
+    exit_status = stdout.channel.recv_exit_status()  # Blocking call
+    ssh.close()
+
+    if exit_status == 0:
+        print("Hadoop command executed successfully")
+        return os.path.join(hdfs_path, os.path.basename(local_path))
+    else:
+        print(f"Error executing Hadoop command: {stderr.read().decode()}")
+        return False
+
+def copy_from_hdfs(hdfs_path, local_path, ec2_ip="3.36.72.23", username="ubuntu", key_file="/app/data/J10C107T.pem"):
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(ec2_ip, username=username, key_filename=key_file)
+
+    hadoop_command = "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64; " \
+                     "export HADOOP_HOME=/usr/local/hadoop; " \
+                     "export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin; " \
+                     f"hdfs dfs -copyToLocal {hdfs_path} {local_path}"
+    stdin, stdout, stderr = ssh.exec_command(hadoop_command)
+    exit_status = stdout.channel.recv_exit_status()  # Blocking call
+    ssh.close()
+
+    if exit_status == 0:
+        print("Hadoop command executed successfully")
         return True
-    except subprocess.CalledProcessError as e:
-        print(f"Error executing Hadoop Streaming Job : {e}")
+    else:
+        print(f"Error executing Hadoop command: {stderr.read().decode()}")
         return False
 
 def generate_output_path(base_path="/output"):
-    timestamp = datetime.now().strftime("%Y%m%d")
+    timestamp = datetime.now().strftime("%Y%m%d_%H")
     return f"{base_path}/{timestamp}"
 
-def start_hadoop_streaming(input_file):
+def start_hadoop_streaming(input_path, ec2_ip="3.36.72.23", username="ubuntu", key_file="/app/data/J10C107T.pem"):
     output_path = generate_output_path()
-    hadoop_command = f"hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-*.jar -files /home/ubuntu/data-processing/TF_mapper.py,/home/ubuntu/data-processing/TF_reducer.py -mapper 'python3 /home/ubuntu/data-processing/TF_mapper.py' -reducer 'python3 /home/ubuntu/data-processing/TF_reducer.py' -input {input_file} -output {output_path}"
-    try:
-        subprocess.run(hadoop_command, check=True, shell=True)
+    hadoop_command = "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64; " \
+                    "export HADOOP_HOME=/usr/local/hadoop; " \
+                    "export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin; " \
+                    f"hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-*.jar -files /home/ubuntu/data-processing/TFIDF_mapper.py,/home/ubuntu/data-processing/TFIDF_reducer.py -mapper 'python3 /home/ubuntu/data-processing/TFIDF_mapper.py' -reducer 'python3 /home/ubuntu/data-processing/TFIDF_reducer.py' -input {input_path} -output {output_path}"
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh.connect(ec2_ip, username=username, key_filename=key_file)
+    
+    stdin, stdout, stderr = ssh.exec_command(hadoop_command)
+    exit_status = stdout.channel.recv_exit_status()  # Blocking call
+    ssh.close()
+
+    if exit_status == 0:
+        print("Hadoop Streaming job executed successfully")
         return True
-    except subprocess.CalledProcessError as e:
-        print(f"Error executing Hadoop Streaming Job : {e}")
+    else:
+        print(f"Error executing Hadoop Streaming job: {stderr.read().decode()}")
         return False
+
 
 @router.get("/fetch-news")
 async def fetch_news_to_file(db: Session = Depends(get_db)):
-    news_data = get_news(db)
-    input_file = save_data(news_data)
-    copy_to_hdfs(input_file)
-    hdfs_input_file = "/input/" + os.path.basename(input_file)
-    if start_hadoop_streaming(hdfs_input_file):
+    input_file = save_data(db)
+    hdfs_input_path = copy_to_hdfs(input_file)
+    if start_hadoop_streaming(hdfs_input_path):
         message = "News data fetched and copied to HDFS successfully. Hadoop Streaming job started successfully!"
         await extract_japanese()
     else:
@@ -77,15 +113,17 @@ async def fetch_news_to_file(db: Session = Depends(get_db)):
 
 @router.get("/extract-japanese")
 async def extract_japanese():
-    base_path = "output"
-    today_str = datetime.now().strftime("%Y%m%d")
-    input_path = os.path.join(base_path, today_str, "part-00000")
+    base_path = "/output"
+    today_str = datetime.now().strftime("%Y%m%d_%H")
+    hdfs_input_path = os.path.join(base_path, today_str, "part-00000")
+    local_filename = f"./data-processing/{today_str}_part-00000"
     
-    if not os.path.exists(input_path):
-        raise HTTPException(status_code=404, detail="Result file not found for today.")
+    copy_success = copy_from_hdfs(hdfs_input_path, local_filename)
+    if not copy_success:
+        raise Exception("Failed to copy file from HDFS")
 
     try:
-        with open(input_path, "r", encoding="utf-8") as file:
+        with open(local_filename, "r", encoding="utf-8") as file:
             content = file.readlines()
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
@@ -104,7 +142,6 @@ async def extract_japanese():
     
     await upload_keywords()
     return FileResponse(result_filename)
-
 
 @router.get("/upload-keywords")
 async def upload_keywords():
