@@ -119,34 +119,30 @@ def process_line(line, db: Session):
     db.add(mapping)
     db.commit()
 
-@router.get("/fetch-news")
-async def fetch_news_to_file(db: Session = Depends(get_db)):
+@router.get("/data-processing")
+async def data_processing(db: Session = Depends(get_db)):
+    # News Data를 파일에 저장하고 HDFS로 복사
     input_file = save_data(db)
     hdfs_input_path = copy_to_hdfs(input_file)
-    if start_hadoop_streaming(hdfs_input_path):
-        message = "News data fetched and copied to HDFS successfully. Hadoop Streaming job started successfully!"
-        await extract_japanese()
-    else:
-        message = "News data fetched and copied to HDFS, but failed to start Hadoop Streaming job."
-    
-    return {"message": message}
+    start_hadoop_streaming(hdfs_input_path)
+    if not start_hadoop_streaming(hdfs_input_path):
+        return {"message": "News data fetched and copied to HDFS, but failed to start Hadoop Streaming job."}
 
-@router.get("/extract-japanese")
-async def extract_japanese(db: Session = Depends(get_db)):
+    # HDFS에서 파일을 복사하고 일본어 추출 후 파일 저장
     base_path = "/output"
     today_str = datetime.now().strftime("%Y%m%d_%H")
     hdfs_input_path = os.path.join(base_path, today_str, "part-00000")
     local_filename = f"./data-processing/{today_str}_part-00000"
-    
-    copy_success = copy_from_hdfs(hdfs_input_path, local_filename)
-    if not copy_success:
+    copy_from_hdfs(hdfs_input_path, local_filename)
+    if not copy_from_hdfs(hdfs_input_path, local_filename):
         raise Exception("Failed to copy file from HDFS")
 
     try:
         with open(local_filename, "r", encoding="utf-8") as file:
+            content = []
             for line in file:
                 process_line(line, db)
-            content = file.readlines()
+                content.append(line)
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
     
@@ -162,35 +158,28 @@ async def extract_japanese(db: Session = Depends(get_db)):
         for word in sorted(unique_words):
             file.write(word + "\n")
     
-    await upload_keywords()
-    return FileResponse(result_filename)
-
-@router.get("/upload-keywords")
-async def upload_keywords():
     input_filename = "japanese.txt"
     if not os.path.exists(input_filename):
         raise HTTPException(status_code=404, detail="japanese.txt file not found")
 
-    failed_keywords = []  # 실패한 키워드를 추적하기 위한 리스트
-    try:
-        with open(input_filename, "r", encoding="utf-8") as file:
-            for line in file:
-                japanese = line.strip()
-                keyword_data = {"japanese": japanese}
-                try:
-                    response = requests.post(f'{API_URL}/api/v1/keywords/post', json=keyword_data)
-                    if response.status_code != 200:
-                        failed_keywords.append(japanese)
-                except Exception as e:
+    failed_keywords = []
+    with open(input_filename, "r", encoding="utf-8") as file:
+        for line in file:
+            japanese = line.strip()
+            keyword_data = {"japanese": japanese}
+            try:
+                response = requests.post(f'{API_URL}/api/v1/keywords/post', json=keyword_data)
+                if response.status_code != 200:
                     failed_keywords.append(japanese)
-                    print(f"Error while inserting keyword: {japanese}, Error: {str(e)}")
-                
-        if failed_keywords:
-            return {
-                "message": "Some keywords failed to be inserted.",
-                "failed_keywords": failed_keywords,
-                "failed_count": len(failed_keywords)
-            }
-        return {"message": "All keywords were successfully inserted."}
-    except FileNotFoundError:
-        raise HTTPException(status_code=404, detail="File not found")
+            except Exception as e:
+                failed_keywords.append(japanese)
+                print(f"Error while inserting keyword: {japanese}, Error: {str(e)}")
+            
+    if failed_keywords:
+        return {
+            "message": "Some keywords failed to be inserted.",
+            "failed_keywords": failed_keywords,
+            "failed_count": len(failed_keywords)
+        }
+    
+    return FileResponse(result_filename)
