@@ -3,9 +3,9 @@ from fastapi.responses import FileResponse
 from database import SessionLocal
 from sqlalchemy.orm import Session
 from datetime import datetime
-from models.news import News
+from models.news import News, Keyword, NewsKeywordMapping
 
-import requests, subprocess, os, paramiko
+import requests, os, paramiko
 
 router = APIRouter()
 
@@ -98,6 +98,26 @@ def start_hadoop_streaming(input_path, ec2_ip="3.36.72.23", username="ubuntu", k
         print(f"Error executing Hadoop Streaming job: {stderr.read().decode()}")
         return False
 
+def process_line(line, db: Session):
+    parts = line.split('\t')
+    if len(parts) != 3:
+        raise ValueError("Invalid line format")
+    
+    news_id, japanese_keyword, weight = parts
+    news_id = int(news_id)
+    weight = float(weight)
+
+    news = db.query(News).filter(News.id == news_id).first()
+    if not news:
+        raise HTTPException(status_code=404, detail="News not found")
+    
+    keyword = db.query(Keyword).filter(Keyword.japanese == japanese_keyword).first()
+    if not keyword:
+        raise HTTPException(status_code=404, detail="Keyword not found")
+
+    mapping = NewsKeywordMapping(news_id=news.id, keyword_id=keyword.id, weight=weight)
+    db.add(mapping)
+    db.commit()
 
 @router.get("/fetch-news")
 async def fetch_news_to_file(db: Session = Depends(get_db)):
@@ -112,7 +132,7 @@ async def fetch_news_to_file(db: Session = Depends(get_db)):
     return {"message": message}
 
 @router.get("/extract-japanese")
-async def extract_japanese():
+async def extract_japanese(db: Session = Depends(get_db)):
     base_path = "/output"
     today_str = datetime.now().strftime("%Y%m%d_%H")
     hdfs_input_path = os.path.join(base_path, today_str, "part-00000")
@@ -124,6 +144,8 @@ async def extract_japanese():
 
     try:
         with open(local_filename, "r", encoding="utf-8") as file:
+            for line in file:
+                process_line(line, db)
             content = file.readlines()
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
