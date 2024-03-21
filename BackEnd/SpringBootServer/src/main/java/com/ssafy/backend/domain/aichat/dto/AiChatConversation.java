@@ -1,4 +1,4 @@
-package com.ssafy.backend.global.component.openai.dto;
+package com.ssafy.backend.domain.aichat.dto;
 
 public record AiChatConversation(
         String content

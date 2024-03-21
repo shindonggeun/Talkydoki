@@ -1,5 +1,6 @@
-package com.ssafy.backend.global.component.openai.dto;
+package com.ssafy.backend.domain.aichat.dto;
 
+import com.ssafy.backend.global.component.openai.dto.GptDialogueMessage;
 import lombok.*;
 
 import java.util.ArrayList;
