@@ -135,6 +135,7 @@ async def data_processing(db: Session = Depends(get_db)):
     if not copy_from_hdfs(hdfs_input_path, local_filename):
         raise Exception("Failed to copy file from HDFS")
 
+    local_filename = f"/app/data/{today_str}_part-00000"
     try:
         with open(local_filename, "r", encoding="utf-8") as file:
             content = []
