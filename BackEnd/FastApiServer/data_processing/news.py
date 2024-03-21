@@ -124,7 +124,6 @@ async def data_processing(db: Session = Depends(get_db)):
     # News Data를 파일에 저장하고 HDFS로 복사
     input_file = save_data(db)
     hdfs_input_path = copy_to_hdfs(input_file)
-    start_hadoop_streaming(hdfs_input_path)
     if not start_hadoop_streaming(hdfs_input_path):
         return {"message": "News data fetched and copied to HDFS, but failed to start Hadoop Streaming job."}
 
@@ -133,7 +132,6 @@ async def data_processing(db: Session = Depends(get_db)):
     today_str = datetime.now().strftime("%Y%m%d_%H")
     hdfs_input_path = os.path.join(base_path, today_str, "part-00000")
     local_filename = f"./data-processing/{today_str}_part-00000"
-    copy_from_hdfs(hdfs_input_path, local_filename)
     if not copy_from_hdfs(hdfs_input_path, local_filename):
         raise Exception("Failed to copy file from HDFS")
 
