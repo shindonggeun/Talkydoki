@@ -13,3 +13,6 @@ services:
       - "8000:8000"
     networks:
       - talkydoki_net
+
+networks:
+  talkydoki_net:
