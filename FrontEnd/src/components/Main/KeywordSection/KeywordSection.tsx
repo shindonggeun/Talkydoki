@@ -1,4 +1,4 @@
-import TodaysVoca from "./RandomVoca";
+import RandomVoca from "./RandomVoca";
 import UserKeywordChart from "./UserKeywordChart";
 import { SectionWrapper } from "@/styles/common/ui/container";
 
@@ -7,7 +7,7 @@ function KeywordSection() {
   return (
     <SectionWrapper>
       <UserKeywordChart />
-      <TodaysVoca />
+      <RandomVoca />
     </SectionWrapper>
   );
 }

@@ -8,12 +8,12 @@ export const NegativeTitle = styled.h1`
   background: radial-gradient(ellipse, var(--shadow) 50%, var(--shadow-dark)),
     linear-gradient(to bottom, var(--shadow-dark) 10%, transparent),
     linear-gradient(to top, var(--shadow-dark) 10%, transparent);
+  /* background: ${(props) =>
+    props.theme.mode == "light"
+      ? `radial-gradient(ellipse, var(--shadow) 50%, var(--shadow-dark)),
+    linear-gradient(to bottom, var(--shadow-dark) 10%, transparent),
+    linear-gradient(to top, var(--shadow-dark) 10%, transparent)`
+      : `linear-gradient(to right, rgb(from var(--main) r g b / 0.8), var(--main-dark))`}; */
   background-clip: text;
   font-weight: 900;
-
-  /* 드래그 방지 */
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
 `;

@@ -8,18 +8,14 @@ import { useDisplayAction, useIsDark } from "@/stores/displayStore";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 import { getProfileImage } from "@/util/common/getFullUrl";
 import { useGetMember, useLogout } from "@/api/memberApi";
-import { useQueryClient } from "@tanstack/react-query";
-import { UserInterface } from "@/interface/UserInterface";
 
 function SidebarProfile() {
   const isDark = useIsDark();
   const toggleDarkmode = useDisplayAction();
   const setModalContent = useSetModalContent();
   const setIsModalOn = useSetISModalOn();
-  const queryClient = useQueryClient();
 
-  const { isLoading } = useGetMember();
-  const data = queryClient.getQueryData(["getMember"]) as UserInterface;
+  const { data, isLoading } = useGetMember();
   const { mutate: logout } = useLogout();
 
   // const userInfo = typeof(data) ==

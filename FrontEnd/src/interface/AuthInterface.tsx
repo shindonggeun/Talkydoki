@@ -12,7 +12,26 @@ export interface SignupParams {
   nickname: string;
 }
 
+// 소셜로그인 param
 export interface SocialLoginPayload {
   provider: string;
   code: string;
+}
+
+// 이미지 업로드 인자
+export interface ImageUploadParams {
+  file: File | null;
+  nameFile: string;
+}
+
+// 프로필 수정 Params
+export interface ProfileUpdateParams {
+  profileImage: string | null;
+  nickname: string;
+}
+
+export interface PasswordChangeParams {
+  nowPassword: string;
+  changePassword: string;
+  changePasswordCheck: string;
 }

@@ -1,4 +1,5 @@
 export const light = {
+  mode: "light",
   main: {
     color: "#957DF8",
     dark: "#6744F3",
@@ -40,6 +41,7 @@ export const light = {
 };
 
 export const dark = {
+  mode: "dark",
   main: {
     color: "#957DF8",
     dark: "#6744F3",
@@ -66,9 +68,9 @@ export const dark = {
     light: "#FFE47A",
   },
   blue: {
-    color: "#176CFF",
-    dark: "#2448AB",
-    light: "#38A2FF",
+    color: "#32c1ff",
+    dark: "#2281d9",
+    light: "#76cfff",
   },
   doc: {
     text: "#f9f6ffee",

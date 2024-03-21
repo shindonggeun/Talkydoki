@@ -1,50 +1,55 @@
-import { customAxios } from "@/util/auth/customAxios";
 import {
-  keepPreviousData,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+  NewsListItemInterface,
+  categoryInterface,
+} from "@/interface/NewsInterface";
+import { customAxios } from "@/util/auth/customAxios";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
-export const useGetNewsList = (category: string, page: number) => {
-  const cat = category == "" ? null : category;
-  const queryClient = useQueryClient();
+// 뉴스 리스트 get 하는 함수
+export const useGetNewsList = (category: categoryInterface[]) => {
+  const catName = category.map((each) => each.name);
+  const params = new URLSearchParams();
+  category.forEach((each) => {
+    params.append("categories", each.name);
+  });
 
-  return useQuery({
-    queryKey: ["getNewsList", cat != null ? cat : "all"],
-    queryFn: () => {
-      console.log("실행한당");
-      return customAxios.get("/news/get", {
-        params: {
-          category: cat,
-          page: page,
-          size: 2,
-        },
-      });
+  return useInfiniteQuery({
+    queryKey: ["getNewsList", ...catName],
+    queryFn: ({ pageParam }) => {
+      console.log("getNewsList 실행");
+      if (pageParam != 0) params.append("lastNewsId", pageParam.toString());
+
+      return customAxios
+        .get("/news/list/get", {
+          params: params,
+        })
+        .then((res) => {
+          if (res.data.dataHeader.successCode == 0) {
+            return res.data.dataBody;
+          } else {
+            return null;
+          }
+        });
     },
-    initialData: queryClient.getQueryData(["getNewsList", cat]),
-    placeholderData: keepPreviousData,
-    select: ({ data }) => data,
-    staleTime: Infinity,
-    gcTime: Infinity,
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.hasNext) {
+        const { contents } = lastPage;
+        const lastId = contents[contents.length - 1].newsId;
+        return lastId;
+      } else {
+        return undefined;
+      }
+    },
+    select: ({ pages }) => {
+      const newsList: NewsListItemInterface[] = pages.reduce((arr, now) => {
+        arr = arr.concat(now.contents);
+        return arr;
+      }, []);
+
+      return newsList;
+    },
+    staleTime: 1000 * 60 * 60, // 1시간
+    gcTime: 1000 * 60 * 60, // 1시간
   });
 };
-
-// export const useGetNewsList = (category?: string) => {
-//   return useQuery({
-//     queryKey: ["getNewsList"],
-//     queryFn: () =>
-//       customAxios.get("/news/get", {
-//         params: {
-//           category: category,
-//           page: 0,
-//           size: 2,
-//         },
-//       }),
-//     select: (res) => {
-//       console.log(res);
-//       return res;
-//     },
-//     staleTime: Infinity,
-//     gcTime: Infinity,
-//   });
-// };

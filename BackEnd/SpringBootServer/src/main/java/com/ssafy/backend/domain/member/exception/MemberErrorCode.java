@@ -12,7 +12,8 @@ public enum MemberErrorCode {
     NOT_MATCH_PASSWORD(HttpStatus.BAD_REQUEST, "비밀번호가 일치하지 않습니다."),
     ALREADY_MEMBER_LOGOUT(HttpStatus.BAD_REQUEST, "이미 로그아웃 된 회원입니다."),
     CURRENT_CHANGE_MATCH_PASSWORD(HttpStatus.BAD_REQUEST, "현재 비밀번호가 변경하려는 비밀번호와 같습니다."),
-    PASSWORD_CONFIRMATION_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호 변경과 비밀번호 변경 확인이 같지 않습니다.");
+    PASSWORD_CONFIRMATION_MISMATCH(HttpStatus.BAD_REQUEST, "비밀번호 변경과 비밀번호 변경 확인이 같지 않습니다."),
+    REDIS_NOT_TOKEN(HttpStatus.UNAUTHORIZED, "로그인 시간이 만료되었습니다. 다시 로그인해주세요.");
 
     private final HttpStatus httpStatus;
     private final String errorMessage;

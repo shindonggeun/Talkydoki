@@ -8,12 +8,10 @@ import AddIcon from "@mui/icons-material/Add";
 import CheckIcon from "@mui/icons-material/Check";
 import { JptoKor } from "@/util/language/japanese";
 
-function TodaysVoca() {
+function RandomVoca() {
   const [isAdded, setIsAdded] = useState(false);
   const { data, isLoading } = useGetVoca();
   const { mutate: addVoca } = useAddVoca();
-  const [showKorRead, setShoKorRead] = useState(false);
-  const [showJpRead, setShowJpRead] = useState(false);
 
   if (!data) return <VocaCard></VocaCard>;
   if (isLoading)
@@ -55,18 +53,8 @@ function TodaysVoca() {
         <div className="wordSection">
           <div className="wordJp">{japanese}</div>
           <div className="typeNread">{type}</div>
-          <div
-            className={`typeNread ${showJpRead ? undefined : "hide"}`}
-            onClick={() => setShowJpRead((prev) => !prev)}
-          >
-            {japaneseRead}
-          </div>
-          <div
-            className={`typeNread ${showKorRead ? undefined : "hide"}`}
-            onClick={() => setShoKorRead((prev) => !prev)}
-          >
-            {korRead}
-          </div>
+          <div className={`typeNread`}>{japaneseRead}</div>
+          <div className={`typeNread`}>{korRead}</div>
         </div>
         {/* 뜻 */}
         <div className="meaningSection">
@@ -81,4 +69,4 @@ function TodaysVoca() {
   );
 }
 
-export default TodaysVoca;
+export default RandomVoca;

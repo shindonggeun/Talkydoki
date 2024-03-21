@@ -4,6 +4,7 @@ import com.ssafy.backend.domain.member.dto.*;
 import com.ssafy.backend.domain.member.service.MemberService;
 import com.ssafy.backend.global.common.dto.Message;
 import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
+import com.ssafy.backend.global.component.jwt.service.JwtTokenService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/member")
 public class MemberController {
     private final MemberService memberService;
+    private final JwtTokenService jwtTokenService;
 
     @Operation(
             summary = "회원가입",
@@ -109,5 +111,11 @@ public class MemberController {
                                                               @Valid @RequestBody MemberPasswordChangeRequest passwordChangeRequest) {
         memberService.updatePasswordMember(loginActive.id(), passwordChangeRequest);
         return ResponseEntity.ok().body(Message.success());
+    }
+
+    @PostMapping("/reissue/accessToken/{memberEmail}")
+    public ResponseEntity<Message<String>> reissueAccessToken(@PathVariable String memberEmail) {
+        String reissueAccessToken = jwtTokenService.reissueAccessToken(memberEmail);
+        return ResponseEntity.ok().body(Message.success(reissueAccessToken));
     }
 }

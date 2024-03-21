@@ -4,20 +4,22 @@ import {
 } from "@/interface/VocaInterface";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 import { customAxios } from "@/util/auth/customAxios";
-// import { LastPage } from "@mui/icons-material";
 import {
-  // InvalidateQueryFilters,
+  InfiniteData,
   useInfiniteQuery,
   useMutation,
   useQuery,
-  // useQueryClient,
+  useQueryClient,
 } from "@tanstack/react-query";
 
 // 랜덤단어
 export const useGetVoca = () => {
   return useQuery({
     queryKey: ["getVoca"],
-    queryFn: () => customAxios.get("/vocabulary/daily/get"),
+    queryFn: () => {
+      console.log("getVoca 실행");
+      return customAxios.get("/vocabulary/daily/get");
+    },
     staleTime: Infinity,
     gcTime: Infinity,
     select: ({ data }) => {
@@ -36,6 +38,7 @@ export const useGetVoca = () => {
 export const useAddVoca = () => {
   const setIsModalOn = useSetISModalOn();
   const setModalContent = useSetModalContent();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationKey: ["addVoca"],
@@ -44,14 +47,13 @@ export const useAddVoca = () => {
     onSuccess: ({ data }) => {
       const { dataHeader } = data;
       if (dataHeader.successCode == 0) {
-        return true;
+        queryClient.invalidateQueries({ queryKey: ["getVocaList"] });
       } else {
         setModalContent({
           message: dataHeader.resultMessage,
           isInfo: true,
         });
         setIsModalOn(true);
-        return true;
       }
     },
   });
@@ -61,12 +63,12 @@ export const useMyVoca = () => {
   return useInfiniteQuery({
     queryKey: ["getVocaList"],
     queryFn: ({ pageParam }) => {
-      console.log("단어불러오기");
+      console.log("getVocaList 실행");
       return customAxios
         .get("/vocabulary/personal/list/get", {
           params: {
             page: pageParam,
-            size: 5,
+            size: 10,
           },
         })
         .then((res) => res.data.dataBody);
@@ -94,31 +96,47 @@ export const useMyVoca = () => {
 
 // 단어 삭제
 export const useDeleteMyVoca = () => {
-  // const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (id: number) => {
       return customAxios.delete(`/vocabulary/personal/delete/${id}`);
     },
-    // onMutate: (id: number) => {
-    //   console.log("1");
-    //   queryClient.cancelQueries({ queryKey: ["getVocaList"] });
-    //   console.log("2");
-    //   const previousWords = queryClient.getQueryData(["getVocaList"]);
-    //   console.log("3");
+    onMutate: (vocaId: number) => {
+      queryClient.cancelQueries({ queryKey: ["getVocaList"] });
 
-    //   queryClient.setQueryData(["getVocaList"], (old: VocaInterface[]) => {
-    //     console.log(old);
-    //     return old.filter((each) => each.personalVocabularyId != id);
-    //   });
-    //   console.log("4");
-    //   queryClient.invalidateQueries(["getVocaList"] as InvalidateQueryFilters);
-    //   console.log("5");
-    //   return { previousWords };
-    // },
-    onSuccess: (res) => console.log(res),
-    // onError: (err, id, context) => {
-    //   queryClient.setQueryData(["getVocaList"], context?.previousWords);
-    // },
+      // 이전 데이터 백업
+      const previousWords = queryClient.getQueryData(["getVocaList"]);
+
+      // 낙관적 업데이트
+      queryClient.setQueryData(
+        ["getVocaList"],
+        (
+          old: InfiniteData<{
+            contents: PersonalVocaInterface[];
+            hasNext: boolean;
+          }>
+        ) => {
+          old.pages = old.pages.map((page) => {
+            return {
+              contents: page.contents.filter(
+                (each) => each.personalVocabularyId != vocaId
+              ),
+              hasNext: page.hasNext,
+            };
+          });
+          return old;
+        }
+      );
+
+      return { previousWords };
+    },
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["getVocaList"] });
+      console.log(res);
+    },
+    onError: (_err, _id, context) => {
+      queryClient.setQueryData(["getVocaList"], context?.previousWords);
+    },
   });
 };

@@ -1,3 +1,5 @@
+import "regenerator-runtime/runtime";
+
 import { Global } from "@/styles/common/base";
 import { ThemeProvider } from "styled-components";
 import { ThemeProvider as MUIThemeProvider } from "@mui/material";
@@ -5,23 +7,27 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { Fonts } from "@/styles/common/fonts";
 import { dark, light } from "@/styles/common/themes";
 import { muiDarkTheme, muiTheme } from "./styles/common/muiTheme";
-import { useIsDark } from "./stores/displayStore";
-import { useIsModalOn } from "./stores/modalStore";
-import { useAuthStore } from "./stores/userStore";
+import { useIsDark } from "@/stores/displayStore";
+import { useIsModalOn } from "@/stores/modalStore";
+import { useAuthStore } from "@/stores/userStore";
+import Protected from "./components/Protect/Protect";
 
 // route 컴포넌트
 import Intro from "@/routes/Intro";
-import Menu from "./routes/Menu";
+import Menu from "@/routes/Menu";
 import Modal from "./components/ui/Modal";
-import Main from "./routes/Main";
-import SignUp from "./routes/SignUp";
-import Login from "./routes/Login";
-import News from "./routes/News";
-import Protected from "./components/Protect/Protect";
+import Main from "@/routes/Main";
+import SignUp from "@/routes/SignUp";
+import Login from "@/routes/Login";
+import News from "@/routes/News";
 import AiChatList from "./routes/AiChatList";
 import SocialLoading from "./routes/SocialLoading";
-import MyVoca from "./routes/MyVoca";
 import AiChatRoom from "./routes/AiChatRoom";
+import MyPage from "./routes/MyPage";
+
+// 마이페이지 내부 링크
+import MyVoca from "./components/MyPage/MyVoca/MyVoca";
+import ProfileUpdate from "@/routes/ProfileUpdate";
 
 function App() {
   const isDark = useIsDark();
@@ -45,7 +51,9 @@ function App() {
               <Route path="/news" element={<News />} />
               <Route path="/aichatlist" element={<AiChatList />} />
               <Route path="/aichatroom" element={<AiChatRoom />} />
-              <Route path="/myvoca" element={<MyVoca />} />
+              <Route path="/mypage" element={<MyPage />} />
+              <Route path="/mypage/myvoca" element={<MyVoca />} />
+              <Route path="/mypage/update" element={<ProfileUpdate />} />
               <Route path="/*" element={<Navigate replace to="/main" />} />
             </Routes>
           </>

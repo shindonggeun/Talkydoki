@@ -43,10 +43,10 @@ export const HeaderContainer = styled.div`
 `;
 
 export const MainContainer = styled.div`
-  border-top: 3px solid #dddae1;
-  border-bottom: 3px solid #dddae1;
+  border-top: 3px solid var(--shadow);
+  border-bottom: 3px solid var(--shadow);
   height: 79%;
-  background: rgba(222, 224, 238, 0.25);
+  background: var(--shadow);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -54,40 +54,74 @@ export const MainContainer = styled.div`
   padding: 3vw;
   font-size: 0.8125rem;
 
-  .message-item {
+  .message-item.chatbot {
+    /* border: 1px solid; */
+    align-self: flex-start;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    max-width: calc(60+50px);
+    margin-bottom: 10px;
+
+    .chatbot-icon-container {
+      align-self: self-start;
+      width: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 10px;
+    }
+    .chatbot-icon {
+      max-width: 100%;
+      max-height: 100%;
+    }
+    .buttonbox {
+      margin-top: 5px;
+      width: 40px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .message-item.chat {
+      display: flex;
+      flex-direction: column;
+      width: calc(100%-50px);
+      padding: 10px;
+      background: var(--bg-modal);
+      color: var(--text);
+      border-radius: 10px;
+      max-width: 100%;
+      border-radius: 5px;
+      box-shadow: 0px 1px 5px 3px var(--shadow);
+      align-self: flex-end;
+      border-radius: 5px;
+      box-shadow: 0px 1px 5px 3px var(--shadow);
+    }
+  }
+  /* 
+
+ 
+  */
+
+  .message-item.self {
     padding: 10px;
     margin-bottom: 10px;
-    background: #fff;
+    background: var(--bg-modal);
+    color: var(--text);
     border-radius: 10px;
     max-width: 60%;
-    align-self: flex-start;
     border-radius: 5px;
     box-shadow: 0px 1px 5px 3px var(--shadow);
-  }
-  .message-item.self {
-    background-color: #957df8;
+    background-color: var(--main);
     align-self: flex-end;
     border-radius: 5px;
     box-shadow: 0px 1px 5px 3px var(--shadow);
     .message-text {
-      color: white;
+      color: var(--text-button);
     }
-  }
-  .chatbot-icon-container {
-    width: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .chatbot-icon {
-    max-width: 100%;
-    max-height: 100%;
-  }
-  .buttonbox {
-    margin-top: 5px;
-    width: 40px;
-    display: flex;
-    justify-content: space-between;
+    .buttonbox {
+      color: var(--text-button);
+    }
   }
 `;
 
@@ -119,7 +153,7 @@ export const FooterContainer = styled.div`
     left: 42.5%;
     cursor: pointer;
     @media screen and (max-width: 992px) {
-      left: 40%;
+      left: 38%;
     }
   }
   .micdiv {
