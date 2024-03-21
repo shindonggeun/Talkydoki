@@ -53,7 +53,7 @@ function ThumbnailView({ images }: Props) {
       {/* 아래 점 */}
       {images.length > 1 && (
         <div className="navigator">
-          {[...Array(images.length)].map((each, idx) => (
+          {[...Array(images.length)].map((_each, idx) => (
             <div key={idx} className={`dot ${now === idx && `selected`}`} />
           ))}
         </div>

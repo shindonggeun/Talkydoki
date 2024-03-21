@@ -24,7 +24,6 @@ import AiChatList from "./routes/AiChatList";
 import SocialLoading from "./routes/SocialLoading";
 import AiChatRoom from "./routes/AiChatRoom";
 import MyPage from "./routes/MyPage";
-import AiChat from "./routes/AiChat";
 
 // 마이페이지 내부 링크
 import MyVoca from "./components/MyPage/MyVoca/MyVoca";

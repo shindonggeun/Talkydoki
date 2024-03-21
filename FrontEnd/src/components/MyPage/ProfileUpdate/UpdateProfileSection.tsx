@@ -8,7 +8,6 @@ import { useUpdateProfile, useUploadImageFile } from "@/api/profileApi";
 import { UserInterface } from "@/interface/UserInterface";
 import { isValidImage } from "@/util/common/validator";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
-import { useNavigate } from "react-router-dom";
 
 type Props = {
   children?: React.ReactNode;
@@ -27,7 +26,6 @@ function UpdateProfileSection({ index, value, user }: Props) {
   const [newNickname, setNewNickname] = useState(nickname); // 변경된 닉네임
   const setModalContent = useSetModalContent();
   const setIsModalOn = useSetISModalOn();
-  const navigate = useNavigate();
 
   const { mutate: updateProfile } = useUpdateProfile();
   const {

@@ -2,7 +2,11 @@ import { MainContainer } from "@/styles/Aichat/AiChatRoom";
 import chatbot from "@/assets/images/logo_face.png";
 import TranslateIcon from "@mui/icons-material/Translate";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
-import { PollyClient, SynthesizeSpeechCommand } from "@aws-sdk/client-polly";
+import {
+  PollyClient,
+  SynthesizeSpeechCommand,
+  SynthesizeSpeechCommandInput,
+} from "@aws-sdk/client-polly";
 import env from "@/interface/SttInterface";
 type Props = {};
 
@@ -17,7 +21,7 @@ function ChatMain({}: Props) {
   });
 
   const synthesizeSpeech = async (text: string) => {
-    const params = {
+    const params: SynthesizeSpeechCommandInput = {
       Text: text,
       OutputFormat: "mp3",
       VoiceId: "Takumi",
