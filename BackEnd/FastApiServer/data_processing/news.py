@@ -138,26 +138,17 @@ async def data_processing(db: Session = Depends(get_db)):
     if not os.path.exists(input_filename):
         raise HTTPException(status_code=404, detail="japanese.txt file not found")
 
-    failed_keywords = []
     with open(input_filename, "r", encoding="utf-8") as file:
         for line in file:
             japanese = line.strip()
             keyword_data = {"japanese": japanese}
             try:
                 response = requests.post(f'{API_URL}/api/v1/keywords/post', json=keyword_data)
-                if response.status_code != 200:
-                    failed_keywords.append(japanese)
+                if response.status_code == 201:
+                    print("Data successfully sent and saved")
             except Exception as e:
-                failed_keywords.append(japanese)
                 print(f"Error while inserting keyword: {japanese}, Error: {str(e)}")
             
-    if failed_keywords:
-        return {
-            "message": "Some keywords failed to be inserted.",
-            "failed_keywords": failed_keywords,
-            "failed_count": len(failed_keywords)
-        }
-    
     try:
         with open(local_filename, "r", encoding="utf-8") as file:
             for line in file:
@@ -171,6 +162,8 @@ async def data_processing(db: Session = Depends(get_db)):
                     }
                     try:
                         response = requests.post(f'{API_URL}/api/v1/keywords/weight', json=data)
+                        if response.status_code == 201:
+                            print("Data successfully sent and saved")
                     except:
                         print("Failed to send data")
 

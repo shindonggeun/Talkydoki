@@ -19,5 +19,5 @@ public class KeywordMappingRequest {
     private String japanese;
 
     @NotBlank(message = "가중치는 필수 입력값입니다.")
-    private float weight;
+    private Float weight;
 }
