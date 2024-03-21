@@ -29,6 +29,7 @@ RUN chmod 0644 /etc/cron.d/cronjob
 RUN crontab /etc/cron.d/cronjob
 
 # 스크립트 파일을 컨테이너 내부로 복사
+COPY Url-dev.py .Url.py
 COPY NewsCrawling.py .
 COPY NewsCrawling.sh .
 

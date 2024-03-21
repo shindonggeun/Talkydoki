@@ -1,4 +1,4 @@
-  # 패키지 호출
+# 패키지 호출
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
@@ -12,12 +12,11 @@ import requests
 import sys
 import json
 import warnings
+from Url import API_URL
 warnings.filterwarnings('ignore')
 translator = Translator()
 
 BASE_URL = "https://www3.nhk.or.jp/news"
-# API_URL = "http://192.168.100.137:8080/api/v1/news"
-API_URL = "http://j10c107.p.ssafy.io:8080/api/v1/news"
 
 # 카테고리 정보를 받아오기
 cat_info = json.loads(sys.argv[1])
@@ -54,6 +53,7 @@ def morphological_analysis(text):# MeCab 실행 파일의 경로
     return morphemes
 
 ########## 뉴스 크롤링 ##########
+print("뉴스 크롤링 시작\n")
 # WebDriver를 사용하여 뉴스 카테고리에 접속
 driver.get(f'{BASE_URL}{CAT_URL}')
 
@@ -86,12 +86,14 @@ for news_url in news_urls:
     
     ########### 뉴스 미디어 ###########
     ########### 뉴스 썸네일 ###########
+    news_body_img_urls = []
     try:
         news_thumb = driver.find_element(By.CLASS_NAME, CLASS_NAME_CONTENT_THUMB)
         # img 태그 가져오기
         news_img = news_thumb.find_element(By.TAG_NAME, "img")
         # src 추출
         news_media_url = news_img.get_attribute("src")
+        news_body_img_urls.append(news_media_url)
     except Exception as e:
         pass
 
@@ -116,7 +118,6 @@ for news_url in news_urls:
     ########### 뉴스 본문 ###########
     news_content_bodys = driver.find_elements(By.CLASS_NAME, CLASS_NAME_CONTENT_BODY)
     news_body = ''
-    news_body_img_urls = []
     for news_content_body in news_content_bodys:
         # 뉴스 바디 타이틀
         try:
@@ -160,9 +161,17 @@ for news_url in news_urls:
         "writeDate": news_date,
         "srcOrigin": news_url
     }
-    response = requests.post(f'{API_URL}/post', json=news_data)
+    newsId = requests.post(f'{API_URL}/post', json=news_data).json().get('dataBody')
+    for imageUrl in news_body_img_urls:
+        news_image_data = {
+            "imageUrl": imageUrl,
+            "newsId": newsId
+        }
+        requests.post(f'{API_URL}/images/post', json=news_image_data)
+    
 
 
 
 # 브라우저 닫기
 driver.quit()
+print("뉴스 크롤링 끝\n")
