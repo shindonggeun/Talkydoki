@@ -3,7 +3,7 @@ from fastapi.responses import FileResponse
 from database import SessionLocal
 from sqlalchemy.orm import Session
 from datetime import datetime
-from models.news import News, Keyword, NewsKeywordMapping
+from models.news import News
 
 import requests, os, paramiko
 
@@ -98,27 +98,6 @@ def start_hadoop_streaming(input_path, ec2_ip="3.36.72.23", username="ubuntu", k
         print(f"Error executing Hadoop Streaming job: {stderr.read().decode()}")
         return False
 
-def process_line(line, db: Session):
-    parts = line.split('\t')
-    if len(parts) != 3:
-        raise ValueError("Invalid line format")
-    
-    news_id, japanese_keyword, weight = parts
-    news_id = int(news_id)
-    weight = float(weight)
-
-    news = db.query(News).filter(News.id == news_id).first()
-    if not news:
-        raise HTTPException(status_code=404, detail="News not found")
-    
-    keyword = db.query(Keyword).filter(Keyword.japanese == japanese_keyword).first()
-    if not keyword:
-        raise HTTPException(status_code=404, detail="Keyword not found")
-
-    mapping = NewsKeywordMapping(news_id=news.id, keyword_id=keyword.id, weight=weight)
-    db.add(mapping)
-    db.commit()
-
 @router.get("/data-processing")
 async def data_processing(db: Session = Depends(get_db)):
     # News Data를 파일에 저장하고 HDFS로 복사
@@ -182,7 +161,18 @@ async def data_processing(db: Session = Depends(get_db)):
     try:
         with open(local_filename, "r", encoding="utf-8") as file:
             for line in file:
-                process_line(line, db)
+                parts = line.strip().split("\t")
+                if len(parts) == 3:
+                    news_id, japanese, weight = parts
+                    data = {
+                        "newsId": int(news_id),
+                        "japanese": japanese,
+                        "weight": float(weight)
+                    }
+                    try:
+                        response = requests.post(f'{API_URL}/api/v1/keywords/weight', json=data)
+                    except:
+                        print("Failed to send data")
 
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")

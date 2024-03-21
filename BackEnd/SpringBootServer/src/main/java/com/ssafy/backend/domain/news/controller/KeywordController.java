@@ -1,6 +1,8 @@
 package com.ssafy.backend.domain.news.controller;
 
+import com.ssafy.backend.domain.news.dto.KeywordMappingRequest;
 import com.ssafy.backend.domain.news.dto.KeywordPostRequest;
+import com.ssafy.backend.domain.news.entity.NewsKeywordMapping;
 import com.ssafy.backend.domain.news.service.KeywordService;
 import com.ssafy.backend.global.common.dto.Message;
 import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
@@ -22,10 +24,21 @@ import java.util.Map;
 public class KeywordController {
     private final KeywordService keywordService;
 
-    @Operation(summary = "일본어 키워드 저장", description = "DB에 일본어 키워드를 저장하는 기능입니다.")
+    @Operation(
+            summary = "일본어 키워드 저장",
+            description = "DB에 일본어 키워드를 저장하는 기능입니다.")
     @PostMapping("/post")
     public ResponseEntity<Message<Void>> insertKeyword(@Valid @RequestBody KeywordPostRequest keywordPostRequest) {
         keywordService.insertKeyword(keywordPostRequest);
+        return ResponseEntity.ok().body(Message.success());
+    }
+
+    @Operation(
+            summary = "키워드 가중치 저장",
+            description = "DB에 해당 뉴스 - 단어의 가중치를 저장하는 기능입니다.")
+    @PostMapping("/weight")
+    public ResponseEntity<Message<Void>> insertWeight(@Valid @RequestBody KeywordMappingRequest keywordMappingRequest) {
+        keywordService.insertWeight(keywordMappingRequest);
         return ResponseEntity.ok().body(Message.success());
     }
 
