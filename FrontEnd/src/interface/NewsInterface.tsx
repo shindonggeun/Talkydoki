@@ -5,6 +5,7 @@ export interface NewsListItemInterface {
   category: string;
   writeDate: string;
   srcOrigin: string;
+  newsImages: string[];
 }
 
 export interface categoryInterface {

@@ -1,6 +1,7 @@
 import { useIsMobile } from "@/stores/displayStore";
 import { ThumbnailViewWrapper } from "@/styles/common/ui/thumbnailview";
 import { useEffect, useRef, useState } from "react";
+import Img from "@/assets/images/default_news_image.jpeg";
 
 type Props = {
   images: string[];
@@ -64,8 +65,11 @@ function ThumbnailView({ images }: Props) {
           <img
             key={idx}
             src={each}
-            alt="이미지"
+            alt={`뉴스 이미지 ${idx + 1}`}
             style={{ transform: `translateX(-${100 * now}%)` }}
+            onError={(e) => {
+              e.currentTarget.src = Img;
+            }}
           />
         ))}
       </div>
