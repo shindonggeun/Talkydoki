@@ -4,6 +4,7 @@ import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,4 +17,5 @@ public class NewsSimplyInfo {
     NewsCategory category;
     LocalDateTime writeDate;
     String srcOrigin;
+    List<String> newsImages;
 }

@@ -5,6 +5,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.backend.domain.news.dto.NewsSimplyInfo;
 import com.ssafy.backend.domain.news.entity.QNews;
+import com.ssafy.backend.domain.news.entity.QNewsImage;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -29,6 +30,7 @@ public class NewsRepositoryCustomImpl implements NewsRepositoryCustom {
     @Override
     public Slice<NewsSimplyInfo> findNewsListInfoNoOffset(List<NewsCategory> categories, Long lastNewsId, int limit) {
         QNews qNews = QNews.news;   // QNews 엔티티의 인스턴스 생성
+        QNewsImage qNewsImage = QNewsImage.newsImage;
 
         // 카테고리 조건 설정. 카테고리 목록이 비어있지 않은 경우에만 적용됩니다.
         BooleanExpression categoryCondition = categories != null && !categories.isEmpty() ? qNews.category.in(categories) : null;
@@ -47,10 +49,21 @@ public class NewsRepositoryCustomImpl implements NewsRepositoryCustom {
                         qNews.srcOrigin
                 ))
                 .from(qNews)
-                .where(categoryCondition, lastNewsIdCondition)  // 조건 적용
-                .orderBy(qNews.writeDate.desc(), qNews.id.desc()) // 먼저 writeDate로 내림차순, 같은 날짜면 id로 내림차순
-                .limit(limit + 1)  // 'hasNext' 확인을 위해 'limit + 1'로 설정
+                .where(categoryCondition, lastNewsIdCondition)
+                .orderBy(qNews.writeDate.desc(), qNews.id.desc())
+                .limit(limit + 1)
                 .fetch();
+
+        // 각 뉴스 항목에 대한 이미지 URL 리스트를 가져와서 설정
+        for (NewsSimplyInfo newsItem : newsSimplyInfoList) {
+            List<String> imageUrls = queryFactory
+                    .select(qNewsImage.imageUrl)
+                    .from(qNewsImage)
+                    .where(qNewsImage.news.id.eq(newsItem.getNewsId()))
+                    .fetch();
+            newsItem.setNewsImages(imageUrls); // NewsSimplyInfo 클래스에 setNewsImages 메서드가 있어야 합니다.
+        }
+
 
         // 'hasNext'를 계산하기 위해 리스트의 크기가 'limit'보다 큰지 확인 (다음 페이지 존재 여부 확인)
         boolean hasNext = hasNext(newsSimplyInfoList, limit);

@@ -48,6 +48,9 @@ public class News {
     private String srcOrigin;
 
     @OneToMany(mappedBy = "news", fetch = FetchType.LAZY)
+    private List<NewsImage> newsImages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "news", fetch = FetchType.LAZY)
     private List<NewsKeywordMapping> newsKeywordMappings = new ArrayList<>();
 
     @OneToOne(mappedBy = "news")
