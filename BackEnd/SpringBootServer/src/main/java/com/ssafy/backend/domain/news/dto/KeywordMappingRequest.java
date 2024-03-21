@@ -1,7 +1,5 @@
 package com.ssafy.backend.domain.news.dto;
 
-import com.ssafy.backend.domain.news.entity.Keyword;
-import com.ssafy.backend.domain.news.entity.NewsKeywordMapping;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

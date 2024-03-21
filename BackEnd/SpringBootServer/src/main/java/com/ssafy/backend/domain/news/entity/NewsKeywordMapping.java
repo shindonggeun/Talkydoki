@@ -15,6 +15,7 @@ public class NewsKeywordMapping {
     @Column(columnDefinition = "INT UNSIGNED")
     private Long id;
 
+    @Column(columnDefinition = "DECIMAL(6, 4)")
     private Float weight;
 
     @ManyToOne(fetch = FetchType.LAZY)
