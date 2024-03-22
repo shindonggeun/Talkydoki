@@ -1,5 +1,6 @@
 import { customAxios } from "../util/auth/customAxios";
 import {
+  EmailVerifyPayload,
   LoginParams,
   SignupParams,
   SocialLoginPayload,
@@ -13,6 +14,7 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   useAuthStore,
+  useEmailVerifyStore,
   useIsLogin,
   useSetMemberEmail,
 } from "@/stores/userStore";
@@ -66,6 +68,9 @@ export const useLogin = () => {
 
 // 일반 회원가입
 export const useSignup = () => {
+  const setEmailVerifyStatus = useEmailVerifyStore(
+    (state) => state.setEmailVerifyStatus
+  );
   const navigate = useNavigate();
   const setErrors = useSetSignupErrors();
 
@@ -77,6 +82,7 @@ export const useSignup = () => {
       const { data } = res;
       if (data.dataHeader.successCode === 0) {
         // 성공했을 때 로직 처리
+        setEmailVerifyStatus("none");
         console.log("회원가입 성공!!");
         navigate("/login");
       } else {
@@ -204,6 +210,49 @@ export const useDeleteAccount = () => {
         navigate("/intro");
         setIsModalOn(false);
       }
+    },
+  });
+};
+
+// 이메일인증
+
+export const useEmailSend = () => {
+  return useMutation({
+    mutationFn: (payload: string) => customAxios.post(`/email/send/${payload}`),
+    onSuccess: (res) => {
+      console.log(res);
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
+};
+
+export const userEmailVerify = () => {
+  const setEmailVerifyStatus = useEmailVerifyStore(
+    (state) => state.setEmailVerifyStatus
+  );
+  const setEmailVerifyMessage = useEmailVerifyStore(
+    (state) => state.setEmailVerifyMessage
+  );
+
+  return useMutation({
+    mutationFn: (payload: EmailVerifyPayload) =>
+      customAxios.post(`email/verify/${payload.email}/${payload.code}`),
+    onSuccess: (res) => {
+      console.log(res);
+      if (res.data.dataHeader.successCode === 0) {
+        setEmailVerifyStatus("success");
+        setEmailVerifyMessage("이메일 인증에 성공했습니다.");
+      } else if (res.data.dataHeader.successCode === 1) {
+        setEmailVerifyStatus("error");
+        setEmailVerifyMessage("이메일 인증코드를 잘못 입력하였습니다.");
+      }
+    },
+    onError: (res) => {
+      setEmailVerifyStatus("error");
+      setEmailVerifyMessage("인증 과정 중 오류가 발생했습니다.");
+      console.log("에러:", res);
     },
   });
 };

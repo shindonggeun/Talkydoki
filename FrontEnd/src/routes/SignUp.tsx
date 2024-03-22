@@ -1,4 +1,4 @@
-import { useSignup } from "@/api/memberApi";
+import { useEmailSend, useSignup, userEmailVerify } from "@/api/memberApi";
 import PasswordInput from "@/components/ui/PasswordInput";
 
 import {
@@ -13,13 +13,23 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { isSamePassword, isValidAuth } from "@/util/common/validator";
 import { useSignupErrors } from "@/stores/signUpStore";
+import { useEmailVerifyStore } from "@/stores/userStore";
 
 const SignUp: React.FC = () => {
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [code, setCode] = useState("");
   const [nickname, setNickname] = useState("");
+  const { mutate: emailsend } = useEmailSend();
+  const { mutate: emailcheck } = userEmailVerify();
+  const emailVerifyStatus = useEmailVerifyStore(
+    (state) => state.emailVerifyStatus
+  );
+  const emailVerifyMessage = useEmailVerifyStore(
+    (state) => state.emailVerifyMessage
+  );
 
   const { emailError, nameError, nicknameError, passwordError } =
     useSignupErrors();
@@ -32,6 +42,9 @@ const SignUp: React.FC = () => {
     signup({ name, email, password, nickname });
   };
 
+  const handleEmailCheck = () => {
+    emailcheck({ email, code });
+  };
   return (
     <FlexBox>
       <AuthContainer>
@@ -39,17 +52,51 @@ const SignUp: React.FC = () => {
         <form onSubmit={handleSubmit}>
           {/* 회원가입 폼 */}
           <AuthMain>
-            <TextField
-              label="이메일"
-              variant="outlined"
-              color="purple"
-              name="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              fullWidth
-              error={emailError ? true : false}
-              helperText={emailError ? emailError : null}
-            />
+            <div className="emaildiv">
+              <TextField
+                label="이메일"
+                variant="outlined"
+                color="purple"
+                name="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                fullWidth
+                error={emailError ? true : false}
+                helperText={emailError ? emailError : null}
+              />
+
+              <Button
+                variant="contained"
+                color="purple"
+                style={{ width: "10%", height: "55px", margin: "8px 15px" }}
+                onClick={() => emailsend(email)}
+              >
+                전송
+              </Button>
+            </div>
+            <div className="emaildiv">
+              <TextField
+                label="인증코드"
+                variant="outlined"
+                color="purple"
+                name="code"
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                fullWidth
+                helperText={
+                  emailVerifyStatus !== "none" ? emailVerifyMessage : ""
+                }
+              />
+
+              <Button
+                variant="contained"
+                color="purple"
+                style={{ width: "10%", height: "55px", margin: "8px  15px" }}
+                onClick={() => handleEmailCheck()}
+              >
+                전송
+              </Button>
+            </div>
             <TextField
               label="이름"
               variant="outlined"
@@ -72,40 +119,7 @@ const SignUp: React.FC = () => {
               error={nicknameError ? true : false}
               helperText={nicknameError ? nicknameError : null}
             />
-            {/* 이메일 부분 사용시 주석해제 */}
-            {/* <EmailDiv>
-              <TextField
-                label="이메일"
-                variant="outlined"
-                color="purple"
-                sx={{ width: "70%", backgroundColor: "var(--bg-modal)" }}
-              />
 
-              <Button
-                variant="contained"
-                color="purple"
-                size="small"
-                sx={{ width: "10%", height: "100%" }}
-              >
-                버튼
-              </Button>
-            </EmailDiv>
-            <EmailDiv>
-              <TextField
-                label="인증번호"
-                variant="outlined"
-                color="purple"
-                sx={{ width: "70%", backgroundColor: "var(--bg-modal)" }}
-              />
-              <Button
-                variant="contained"
-                color="purple"
-                size="small"
-                sx={{ height: "100%" }}
-              >
-                버튼
-              </Button>
-            </EmailDiv> */}
             <PasswordInput
               password={password}
               setPassword={setPassword}

@@ -41,3 +41,17 @@ const useEmailStore = create(
 
 export const useMemberEmail = () => useEmailStore((state) => state.email);
 export const useSetMemberEmail = () => useEmailStore((state) => state.setEmail);
+
+interface EmailVerifyStoreInterface {
+  emailVerifyStatus: "none" | "success" | "error";
+  emailVerifyMessage: string;
+  setEmailVerifyStatus: (status: "none" | "success" | "error") => void;
+  setEmailVerifyMessage: (message: string) => void;
+}
+
+export const useEmailVerifyStore = create<EmailVerifyStoreInterface>((set) => ({
+  emailVerifyStatus: "none",
+  emailVerifyMessage: "",
+  setEmailVerifyStatus: (status) => set({ emailVerifyStatus: status }),
+  setEmailVerifyMessage: (message) => set({ emailVerifyMessage: message }),
+}));

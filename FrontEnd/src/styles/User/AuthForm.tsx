@@ -31,6 +31,10 @@ export const AuthMain = styled.div`
   max-height: 45vh;
   overflow-y: auto;
 
+  .emaildiv {
+    display: flex;
+    justify-content: space-between;
+  }
   * {
     margin: 1vh 0;
   }
