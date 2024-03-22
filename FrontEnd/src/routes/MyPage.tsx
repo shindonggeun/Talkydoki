@@ -1,4 +1,11 @@
-import { Wrapper } from "@/styles/common/ui/container";
+import {
+  FooterContainer,
+  HeaderContainer,
+  JandiContainer,
+  MainContainer,
+  MyPageWrapper,
+  ProfileContainer,
+} from "@/styles/User/Mypage";
 import { useNavigate } from "react-router-dom";
 
 type Props = {};
@@ -7,10 +14,21 @@ function MyPage({}: Props) {
   const navigate = useNavigate();
 
   return (
-    <Wrapper>
-      <button onClick={() => navigate("myvoca")}>단어장</button>
-      <button onClick={() => navigate("update")}>프로필 수정</button>
-    </Wrapper>
+    <MyPageWrapper>
+      <ProfileContainer>
+        {" "}
+        <button onClick={() => navigate("update")}>프로필 수정</button>
+      </ProfileContainer>
+      <HeaderContainer> </HeaderContainer>
+
+      <JandiContainer>1</JandiContainer>
+
+      <MainContainer>
+        1<button onClick={() => navigate("myvoca")}>단어장</button>
+      </MainContainer>
+
+      <FooterContainer>1</FooterContainer>
+    </MyPageWrapper>
   );
 }
 
