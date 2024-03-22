@@ -48,7 +48,10 @@ function Menus() {
         <KeyboardArrowRightIcon />
       </MenuItem>
       {/* AI 채팅 */}
-      <MenuItem>
+      <MenuItem
+        onClick={() => menuHandler("/aichatlist")}
+        className={now.startsWith("/aichatlist") ? "selected" : undefined}
+      >
         <div className="label">
           <ForumIcon />
           <div>AI 채팅</div>
