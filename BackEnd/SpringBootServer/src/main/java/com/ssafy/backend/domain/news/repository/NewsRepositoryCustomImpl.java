@@ -2,11 +2,14 @@ package com.ssafy.backend.domain.news.repository;
 
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.backend.domain.news.dto.NewsInfo;
 import com.ssafy.backend.domain.news.dto.NewsSimplyInfo;
+import com.ssafy.backend.domain.news.entity.QKeyword;
 import com.ssafy.backend.domain.news.entity.QNews;
 import com.ssafy.backend.domain.news.entity.QNewsImage;
+import com.ssafy.backend.domain.news.entity.QNewsKeywordMapping;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +17,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -101,6 +105,8 @@ public class NewsRepositoryCustomImpl implements NewsRepositoryCustom {
     public NewsInfo findNewsInfo(Long newsId) {
         QNews qNews = QNews.news;   // QNews 엔티티의 인스턴스 생성
         QNewsImage qNewsImage = QNewsImage.newsImage;
+        QNewsKeywordMapping qNewsKeywordMapping = QNewsKeywordMapping.newsKeywordMapping;
+        QKeyword qKeyword = QKeyword.keyword;
 
         // 뉴스 조회 쿼리 실행
         NewsInfo newsInfo = queryFactory
@@ -121,14 +127,29 @@ public class NewsRepositoryCustomImpl implements NewsRepositoryCustom {
                 .where(qNews.id.eq(newsId))
                 .fetchOne();
 
-        // newsInfo가 null이 아닐 때만 이미지 URL을 조회하고 설정
+        // newsInfo가 null이 아닐 때만
         if (newsInfo != null) {
+            // 이미지 URL을 조회하고 설정
             List<String> imageUrls = queryFactory
                     .select(qNewsImage.imageUrl)
                     .from(qNewsImage)
                     .where(qNewsImage.news.id.eq(newsId))
                     .fetch();
             newsInfo.setNewsImages(imageUrls);
+            // 키워드 조회
+            List<String> newsKeywords = queryFactory
+                    .select(qKeyword.japanese)
+                    .from(qKeyword)
+                    .where(qKeyword.id.in(
+                            JPAExpressions
+                                    .select(qNewsKeywordMapping.keyword.id)
+                                    .from(qNewsKeywordMapping)
+                                    .where(qNewsKeywordMapping.news.id.eq(newsId))
+                    ))
+                    .fetch();
+
+            newsInfo.setNewsKeywords(newsKeywords);
+
         }
 
         return newsInfo;

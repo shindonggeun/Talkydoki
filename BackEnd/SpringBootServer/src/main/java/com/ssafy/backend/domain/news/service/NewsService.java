@@ -52,5 +52,5 @@ public interface NewsService {
      *
      * @param newsId) 뉴스 디테일 정보
      */
-    NewsInfo getNewsInfo(Long newsId);
+    NewsInfo getNewsInfo(Long memberId, Long newsId);
 }

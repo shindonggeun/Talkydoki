@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NewsKeywordHistoryRepository extends JpaRepository<NewsKeywordHistory, Long> {
+    boolean existsByKeywordId(Long keywordId);
+
+    NewsKeywordHistory findByKeywordId(Long keywordId);
 }
