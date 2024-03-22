@@ -51,10 +51,11 @@ public class AiChatController {
                 .thenReturn(ResponseEntity.ok().body(Message.success()));
     }
 
-    @PostMapping("/gpt/setup/{category}")
+    @PostMapping("/gpt/setup/{roomId}/{category}")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    public Mono<ResponseEntity<Message<Void>>> setupAiChatBot(@PathVariable AiChatCategory category) {
-        return aiChatService.setupAiChatBot(category)
+    public Mono<ResponseEntity<Message<Void>>> setupAiChatBot(@PathVariable Long roomId,
+                                                              @PathVariable AiChatCategory category) {
+        return aiChatService.setupAiChatBot(roomId, category)
                 .thenReturn(ResponseEntity.ok().body(Message.success()));
     }
 }

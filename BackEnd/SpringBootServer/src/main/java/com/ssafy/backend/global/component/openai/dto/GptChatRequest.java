@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ssafy.backend.domain.aichat.dto.AiChatMessage;
 import java.util.List;
+import java.util.Map;
 
 /**
  * GPT와의 대화 요청을 나타내는 레코드입니다.
@@ -22,10 +23,11 @@ public record GptChatRequest(
      * @return GptChatRequest 객체
      */
     public static GptChatRequest from(AiChatMessage aiChatMessage) {
+
         return new GptChatRequest(
-                "gpt-3.5-turbo",
+                "gpt-3.5-turbo-1106",
                 List.of(new GptDialogueMessage("user", aiChatMessage.content())),
-                30
+                150
         );
     }
 }
