@@ -2,7 +2,8 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 from sqlalchemy import MetaData
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
 from database import engine, SessionLocal, Base
 from faker import Faker
 
@@ -31,14 +32,20 @@ from data_processing.news import router as news_router
 
 fake = Faker()
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+async_engine = create_async_engine("mysql+pymysql://ssafy:ssafy@j10c107.p.ssafy.io/talkydoki", echo=True)
 
-async def create_dummy_users(db: Session, num_users: int):
+AsyncSessionLocal = sessionmaker(
+    autocommit=False,
+    autoflush=False,
+    bind=async_engine,
+    class_=AsyncSession
+)
+
+async def get_db():
+    async with AsyncSessionLocal() as session:
+        yield session
+
+async def create_dummy_users(db: AsyncSession, num_users: int):
     for _ in range(num_users):
         email = fake.email()
         password = fake.password()
@@ -51,7 +58,7 @@ async def create_dummy_users(db: Session, num_users: int):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    async with SessionLocal() as db:
+    async with AsyncSessionLocal() as db:
         await create_dummy_users(db, 1000)
     yield
 
