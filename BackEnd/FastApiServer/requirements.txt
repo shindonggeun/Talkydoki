@@ -7,6 +7,7 @@ click==8.1.7
 colorama==0.4.6
 cryptography==42.0.5
 exceptiongroup==1.2.0
+Faker==24.3.0
 fastapi==0.110.0
 filelock==3.13.1
 fsspec==2024.3.0
