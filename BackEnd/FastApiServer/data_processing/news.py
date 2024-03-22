@@ -11,7 +11,6 @@ router = APIRouter()
 
 API_URL = "http://j10c107.p.ssafy.io:8080"
 
-# 데이터베이스 세션 생성
 def get_db():
     db = SessionLocal()
     try:
@@ -42,7 +41,7 @@ def copy_to_hdfs(local_path, hdfs_path="/input", ec2_ip="3.36.72.23", username="
                     "export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin; " \
                     f"hdfs dfs -put {local_path} {hdfs_path}"
     stdin, stdout, stderr = ssh.exec_command(hadoop_command)
-    exit_status = stdout.channel.recv_exit_status()  # Blocking call
+    exit_status = stdout.channel.recv_exit_status()
     ssh.close()
 
     if exit_status == 0:
@@ -62,7 +61,7 @@ def copy_from_hdfs(hdfs_path, local_path, ec2_ip="3.36.72.23", username="ubuntu"
                      "export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin; " \
                      f"hdfs dfs -copyToLocal {hdfs_path} {local_path}"
     stdin, stdout, stderr = ssh.exec_command(hadoop_command)
-    exit_status = stdout.channel.recv_exit_status()  # Blocking call
+    exit_status = stdout.channel.recv_exit_status()
     ssh.close()
 
     if exit_status == 0:
@@ -88,7 +87,7 @@ def start_hadoop_streaming(input_path, ec2_ip="3.36.72.23", username="ubuntu", k
     ssh.connect(ec2_ip, username=username, key_filename=key_file)
     
     stdin, stdout, stderr = ssh.exec_command(hadoop_command)
-    exit_status = stdout.channel.recv_exit_status()  # Blocking call
+    exit_status = stdout.channel.recv_exit_status()
     ssh.close()
 
     if exit_status == 0:
@@ -100,13 +99,11 @@ def start_hadoop_streaming(input_path, ec2_ip="3.36.72.23", username="ubuntu", k
 
 @router.get("/data-processing")
 async def data_processing(db: Session = Depends(get_db)):
-    # News Data를 파일에 저장하고 HDFS로 복사
     input_file = save_data(db)
     hdfs_input_path = copy_to_hdfs(input_file)
     if not start_hadoop_streaming(hdfs_input_path):
         return {"message": "News data fetched and copied to HDFS, but failed to start Hadoop Streaming job."}
 
-    # HDFS에서 파일을 복사하고 일본어 추출 후 파일 저장
     base_path = "/output"
     today_str = datetime.now().strftime("%Y%m%d_%H")
     hdfs_input_path = os.path.join(base_path, today_str, "part-00000")
@@ -151,23 +148,34 @@ async def data_processing(db: Session = Depends(get_db)):
             
     try:
         with open(local_filename, "r", encoding="utf-8") as file:
-            for line in file:
-                parts = line.strip().split("\t")
-                if len(parts) == 3:
-                    news_id, japanese, weight = parts
-                    data = {
-                        "newsId": int(news_id),
-                        "japanese": japanese,
-                        "weight": float(weight)
-                    }
-                    try:
-                        response = requests.post(f'{API_URL}/api/v1/keywords/weight', json=data)
-                        if response.status_code == 201:
-                            print("Data successfully sent and saved")
-                    except:
-                        print("Failed to send data")
+            content = file.readlines()
+
+        news_data = {}
+
+        for line in content:
+            parts = line.strip().split("\t")
+            if len(parts) == 3:
+                news_id, japanese, weight = parts
+                if news_id not in news_data:
+                    news_data[news_id] = []
+                news_data[news_id].append((japanese, float(weight)))
+
+        for news_id, words in news_data.items():
+            top_5_words = sorted(words, key=lambda x: x[1], reverse=True)[:5]
+            for japanese, weight in top_5_words:
+                data = {
+                    "newsId": int(news_id),
+                    "japanese": japanese,
+                    "weight": weight
+                }
+                try:
+                    response = requests.post(f'{API_URL}/api/v1/keywords/weight', json=data)
+                    if response.status_code == 201:
+                        print(f"Data successfully sent and saved for news ID {news_id}")
+                except Exception as e:
+                    print(f"Failed to send data for news ID {news_id}, Error: {str(e)}")
 
     except FileNotFoundError:
         raise HTTPException(status_code=404, detail="File not found")
-    
+
     return FileResponse(result_filename)

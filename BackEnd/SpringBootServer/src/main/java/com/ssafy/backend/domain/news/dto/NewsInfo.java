@@ -22,4 +22,5 @@ public class NewsInfo {
     LocalDateTime writeDate;
     String srcOrigin;
     List<String>newsImages;
+    List<String>newsKeywords;
 }

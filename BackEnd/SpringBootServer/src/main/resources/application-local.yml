@@ -37,6 +37,7 @@ spring:
         - 'classpath:/data_vocabulary.sql'
         - 'classpath:/data_news.sql'
         - 'classpath:/data_member.sql'
+        - 'classpath:/data_keyword.sql'
 
   # NoSQL setting
   data:

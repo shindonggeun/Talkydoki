@@ -1,15 +1,22 @@
 package com.ssafy.backend.domain.news.service;
 
-import com.ssafy.backend.domain.news.dto.NewsImageInfo;
-import com.ssafy.backend.domain.news.dto.NewsInfo;
-import com.ssafy.backend.domain.news.dto.NewsSimplyInfo;
-import com.ssafy.backend.domain.news.dto.NewsPostRequest;
+import com.ssafy.backend.domain.member.entity.Member;
+import com.ssafy.backend.domain.member.exception.MemberErrorCode;
+import com.ssafy.backend.domain.member.exception.MemberException;
+import com.ssafy.backend.domain.member.repository.MemberRepository;
+import com.ssafy.backend.domain.news.dto.*;
+import com.ssafy.backend.domain.news.entity.Keyword;
 import com.ssafy.backend.domain.news.entity.News;
 import com.ssafy.backend.domain.news.entity.NewsImage;
+import com.ssafy.backend.domain.news.entity.NewsKeywordHistory;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
+import com.ssafy.backend.domain.news.exception.KeywordErrorCode;
+import com.ssafy.backend.domain.news.exception.KeywordException;
 import com.ssafy.backend.domain.news.exception.NewsErrorCode;
 import com.ssafy.backend.domain.news.exception.NewsException;
+import com.ssafy.backend.domain.news.repository.KeywordRepository;
 import com.ssafy.backend.domain.news.repository.NewsImageRepository;
+import com.ssafy.backend.domain.news.repository.NewsKeywordHistoryRepository;
 import com.ssafy.backend.domain.news.repository.NewsRepository;
 import com.ssafy.backend.global.common.dto.SliceResponse;
 import jakarta.persistence.EntityNotFoundException;
@@ -34,8 +41,11 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class NewsServiceImpl implements NewsService {
 
+    private final MemberRepository memberRepository;
     private final NewsRepository newsRepository;
     private final NewsImageRepository newsImageRepository;
+    private final KeywordRepository keywordRepository;
+    private final NewsKeywordHistoryRepository newsKeywordHistoryRepository;
     private final WebClient webClient;
 
     @Override
@@ -102,8 +112,33 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    @Transactional(readOnly = true)
-    public NewsInfo getNewsInfo(Long newsId) {
-        return newsRepository.findNewsInfo(newsId);
+    public NewsInfo getNewsInfo(Long memberId, Long newsId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(()
+                -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+        NewsInfo newsInfo = newsRepository.findNewsInfo(newsId);
+        if (newsInfo == null) {
+            throw new NewsException(NewsErrorCode.NOT_FOUND_NEWS);
+        }
+
+        for (String newsKeyword : newsInfo.getNewsKeywords()) {
+            Keyword keyword = keywordRepository.findByJapanese(newsKeyword).orElseThrow(()
+                    -> new KeywordException(KeywordErrorCode.NOT_FOUND_KEYWORD));
+            boolean exists = newsKeywordHistoryRepository.existsByKeywordId(keyword.getId());
+            NewsKeywordHistory newsKeywordHistory;
+            if (exists) {
+                newsKeywordHistory = newsKeywordHistoryRepository.findByKeywordId(keyword.getId());
+                newsKeywordHistory.setReadCount(newsKeywordHistory.getReadCount() + 1);
+            }
+            else {
+                newsKeywordHistory = NewsKeywordHistory.builder()
+                        .member(member)
+                        .keyword(keyword)
+                        .readCount(1)
+                        .build();
+            }
+            newsKeywordHistoryRepository.save(newsKeywordHistory);
+        }
+        return newsInfo;
     }
 }

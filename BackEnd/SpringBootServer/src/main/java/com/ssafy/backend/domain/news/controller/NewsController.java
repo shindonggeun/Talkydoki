@@ -13,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
@@ -74,8 +75,9 @@ public class NewsController {
             description = "뉴스 디테일 조회하는 기능입니다."
     )
     @GetMapping("/get/{newsId}")
-    public ResponseEntity<Message<NewsInfo>> getNewsInfo(@PathVariable Long newsId) {
-        NewsInfo newsInfo = newsService.getNewsInfo(newsId);
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<NewsInfo>> getNewsInfo(@AuthenticationPrincipal MemberLoginActive loginActive, @PathVariable Long newsId) {
+        NewsInfo newsInfo = newsService.getNewsInfo(loginActive.id(), newsId);
         return ResponseEntity.ok().body(Message.success(newsInfo));
     }
 }

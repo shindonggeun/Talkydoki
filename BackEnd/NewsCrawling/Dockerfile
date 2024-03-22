@@ -5,8 +5,9 @@ FROM python:3
 WORKDIR /usr/src/app
 
 # 필요한 경우 requirements.txt 파일을 사용하여 패키지를 설치합니다.
-COPY requirements.txt ./
+COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install selenium
 
 # MeCab 및 관련 패키지 설치
 RUN apt-get update && apt-get -q -y install file mecab libmecab-dev mecab-ipadic-utf8 git curl python3-mecab
@@ -29,12 +30,14 @@ RUN chmod 0644 /etc/cron.d/cronjob
 RUN crontab /etc/cron.d/cronjob
 
 # 스크립트 파일을 컨테이너 내부로 복사
-COPY Url-dev.py .Url.py
+COPY Url-dev.py ./Url.py
+COPY GetHadoop.py .
 COPY NewsCrawling.py .
 COPY NewsCrawling.sh .
 
 # 스크립트 실행 권한 부여
-RUN chmod +x NewsCrawling.sh
+RUN chmod +x /usr/src/app/NewsCrawling.sh
+
 
 # 크론 작업 실행 명령어를 추가합니다.
 CMD ["cron", "-f"]
