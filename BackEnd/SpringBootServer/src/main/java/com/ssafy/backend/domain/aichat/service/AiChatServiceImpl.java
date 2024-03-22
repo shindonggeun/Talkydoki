@@ -95,7 +95,7 @@ public class AiChatServiceImpl implements AiChatService {
                         .orElseThrow(() -> new RuntimeException("해당 AI 회화 채팅방을 찾을 수 없습니다.")))
                 .subscribeOn(Schedulers.boundedElastic()) // 블로킹 호출을 별도의 스레드에서 처리
                 .flatMap(aiChatRoom -> openAiService.sendPromptToGpt(userMessage) // AI 채팅봇으로부터 응답 받기
-                        .onErrorMap(exception -> new RuntimeException("GPT 관련 오류입니다.")) // 오류 처리
+                        .onErrorMap(exception -> new RuntimeException(exception.getMessage())) // 오류 처리
                         .flatMap(response -> { // 응답을 기반으로 채팅 히스토리 생성 및 저장
                             AiChatHistory aiChatHistory = AiChatHistory.builder()
                                     .aiChatRoom(aiChatRoom)

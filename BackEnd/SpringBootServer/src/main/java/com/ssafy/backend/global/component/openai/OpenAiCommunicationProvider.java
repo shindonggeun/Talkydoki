@@ -1,22 +1,20 @@
-package com.ssafy.backend.global.component.openai.service;
+package com.ssafy.backend.global.component.openai;
 
 import com.ssafy.backend.domain.aichat.dto.AiChatMessage;
 import com.ssafy.backend.global.component.openai.dto.GptChatCompletionResponse;
 import com.ssafy.backend.global.component.openai.dto.GptChatRequest;
-import com.ssafy.backend.global.component.openai.dto.GptSetupRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-@Service
+@Component
 @RequiredArgsConstructor
-public class OpenAiServiceImpl implements OpenAiService {
+public class OpenAiCommunicationProvider {
 
-    private final WebClient webClient;  // 외부 API 호출을 위한 Spring WebFlux WebClient
+    private final WebClient webClient;
 
-    @Override
-    public Mono<String> sendPromptToGpt(AiChatMessage aiChatMessage){
+    public Mono<String> sendPromptToGpt(AiChatMessage aiChatMessage) {
         GptChatRequest gptChatRequest = GptChatRequest.from(aiChatMessage);
 
         return webClient.post()
@@ -26,6 +24,4 @@ public class OpenAiServiceImpl implements OpenAiService {
                 .bodyToMono(GptChatCompletionResponse.class)
                 .map(response -> response.choices().get(0).message().content());
     }
-
 }
-

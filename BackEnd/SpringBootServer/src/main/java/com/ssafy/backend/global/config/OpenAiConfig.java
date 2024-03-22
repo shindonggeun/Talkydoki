@@ -17,7 +17,7 @@ public class OpenAiConfig {
     public WebClient openAiWebClient() {
         // WebClient 인스턴스를 생성하고 설정합니다.
         return WebClient.builder()
-                .baseUrl("https://api.openai.com/v1/chat")
+                .baseUrl("https://api.openai.com/v1")
                 .defaultHeader("Authorization", "Bearer " + openAiKey)
                 .build();
     }

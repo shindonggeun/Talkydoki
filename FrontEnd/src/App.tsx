@@ -31,6 +31,7 @@ import MyVoca from "./components/MyPage/MyVoca/MyVoca";
 import ProfileUpdate from "@/routes/ProfileUpdate";
 import NewsDetail from "./routes/NewsDetail";
 
+
 function App() {
   const isDark = useIsDark();
   const isModalOn = useIsModalOn();
