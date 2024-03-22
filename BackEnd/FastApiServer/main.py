@@ -32,7 +32,7 @@ from data_processing.news import router as news_router
 
 fake = Faker()
 
-async_engine = create_async_engine("mysql+pymysql://ssafy:ssafy@j10c107.p.ssafy.io/talkydoki", echo=True)
+async_engine = create_async_engine("mysql+aiomysql://ssafy:ssafy@j10c107.p.ssafy.io/talkydoki", echo=True)
 
 AsyncSessionLocal = sessionmaker(
     autocommit=False,
