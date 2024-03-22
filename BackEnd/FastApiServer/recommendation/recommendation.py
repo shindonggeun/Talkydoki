@@ -74,7 +74,10 @@ async def news_recommend(member_id: str):
     user_data = data_storage.cosine_sim_df.loc[member_id].sort_values(ascending=False)
     recommendations = user_data.index.values.tolist()[:3]
 
-    return {"memberId": member_id, "recommendations": recommendations}
+    return {
+        "memberId": member_id, 
+        "recommendations": recommendations
+        }
 
 class MatrixFactorization(nn.Module):
     def __init__(self, num_users, num_items, latent_dim, dropout_rate=0.8, l2=0.01):
@@ -169,4 +172,7 @@ async def word_recommend(member_id: str):
     recommended_item_index = untrained_item_indices[torch.argmax(predictions).item()]
     recommended_item_name = list(dataset.items.keys())[list(dataset.items.values()).index(recommended_item_index)]
     
-    return {"memberId": member_id, "recommended_item": recommended_item_name}
+    return {
+        "memberId": member_id, 
+        "recommended_item": recommended_item_name
+        }
