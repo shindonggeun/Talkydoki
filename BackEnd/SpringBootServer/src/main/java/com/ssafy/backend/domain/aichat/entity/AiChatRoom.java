@@ -18,8 +18,6 @@ public class AiChatRoom {
     @Column(columnDefinition = "INT UNSIGNED")
     private Long id;
 
-
-    @NonNull
 //    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ManyToOne
     @JoinColumn
@@ -29,4 +27,6 @@ public class AiChatRoom {
     @Column(nullable = false)
     private AiChatCategory category;
 
+    @Column(nullable = false)
+    private String threadId;
 }

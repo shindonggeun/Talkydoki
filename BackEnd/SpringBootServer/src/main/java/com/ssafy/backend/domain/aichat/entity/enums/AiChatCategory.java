@@ -13,7 +13,9 @@ public enum AiChatCategory {
     BUSINESS("비즈니스"),
     GLOBAL("세계"),
     SPORTS("스포츠"),
-    LIFE("생활");
+    LIFE("생활"),
+    HAMBURGER_ORDER("햄버거 주문"),
+    FRIEND_WITH_CONVERSATION("친구와의 대화");
 
     private final String koreanName;
 

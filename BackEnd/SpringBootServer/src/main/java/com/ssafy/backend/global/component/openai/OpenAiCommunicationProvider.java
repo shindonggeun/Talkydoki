@@ -5,6 +5,7 @@ import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
 import com.ssafy.backend.global.component.openai.dto.GptChatCompletionResponse;
 import com.ssafy.backend.global.component.openai.dto.GptChatRequest;
 import com.ssafy.backend.global.component.openai.dto.GptSetupRequest;
+import com.ssafy.backend.global.component.openai.dto.GptThreadResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -24,6 +25,15 @@ public class OpenAiCommunicationProvider {
     public Mono<String> setupPromptToGpt(AiChatCategory aiChatCategory) {
         GptSetupRequest gptSetupRequest = GptSetupRequest.from(aiChatCategory);
         return sendRequestToGpt(gptSetupRequest);
+    }
+
+    public GptThreadResponse createThread() {
+        return webClient.post()
+                .uri("/threads") // Make sure to use the correct endpoint URL
+                .header("OpenAI-Beta", "assistants=v1")
+                .retrieve()
+                .bodyToMono(GptThreadResponse.class)
+                .block();
     }
 
     private <T> Mono<String> sendRequestToGpt(T requestBody) {

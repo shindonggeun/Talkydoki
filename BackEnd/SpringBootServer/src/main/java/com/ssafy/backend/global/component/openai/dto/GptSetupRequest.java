@@ -27,7 +27,7 @@ public record GptSetupRequest(
      */
     public static GptSetupRequest from(AiChatCategory category) {
         String jsonString = "{"
-                + "\"conversation_${주고받은 순서}\": {"
+                + "\"conversation_${번호}\": {"
                 + "    \"gpt_japanese\": \"${너의 대답 (일본어)}\","
                 + "    \"gpt_korean\": \"${너의 대답 한국어 번역}\","
                 + "    \"user_tip_japanese\": \"${사용자의 모범 답변 (일본어)}。\""

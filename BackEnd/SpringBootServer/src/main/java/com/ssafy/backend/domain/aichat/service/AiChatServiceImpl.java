@@ -16,6 +16,7 @@ import com.ssafy.backend.domain.member.exception.MemberException;
 import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.global.component.openai.OpenAiCommunicationProvider;
 import com.ssafy.backend.global.component.openai.dto.Conversation;
+import com.ssafy.backend.global.component.openai.dto.GptThreadResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.TopicExchange;
@@ -23,6 +24,7 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+
 
 /**
  * AI 채팅 관련 기능을 구현하는 서비스 클래스.
@@ -47,12 +49,15 @@ public class AiChatServiceImpl implements AiChatService {
      */
     @Override
     public AiChatRoomCreateResponse creatAiChatRoom(Long memberId, AiChatCategory category) {
-        Member member = memberRepository.findById(memberId).orElseThrow(()
-        -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+        GptThreadResponse threadResponse = openAiCommunicationProvider.createThread();
 
         AiChatRoom aiChatRoom = AiChatRoom.builder()
                 .member(member)
                 .category(category)
+                .threadId(threadResponse.id())
                 .build();
 
         AiChatRoom room = aiChatRoomRepository.save(aiChatRoom);
@@ -140,7 +145,6 @@ public class AiChatServiceImpl implements AiChatService {
                     Conversation conversation = parseGetResponse(response);
 
                     // DB에 GPT 일본어 응답값 저장
-
 
                 })
                 .then(); // 작업 완료 시 Mono<Void> 반환
