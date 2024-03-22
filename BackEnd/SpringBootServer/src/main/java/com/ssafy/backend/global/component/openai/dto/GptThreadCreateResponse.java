@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Map;
 
-public record GptThreadResponse(
+public record GptThreadCreateResponse(
         String id,
         String object,
         @JsonProperty("created_at") int createdAt,

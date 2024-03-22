@@ -16,7 +16,7 @@ import com.ssafy.backend.domain.member.exception.MemberException;
 import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.global.component.openai.OpenAiCommunicationProvider;
 import com.ssafy.backend.global.component.openai.dto.Conversation;
-import com.ssafy.backend.global.component.openai.dto.GptThreadResponse;
+import com.ssafy.backend.global.component.openai.dto.GptThreadCreateResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.TopicExchange;
@@ -52,7 +52,7 @@ public class AiChatServiceImpl implements AiChatService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
-        GptThreadResponse threadResponse = openAiCommunicationProvider.createThread();
+        GptThreadCreateResponse threadResponse = openAiCommunicationProvider.createThread();
 
         AiChatRoom aiChatRoom = AiChatRoom.builder()
                 .member(member)

@@ -2,10 +2,7 @@ package com.ssafy.backend.global.component.openai;
 
 import com.ssafy.backend.domain.aichat.dto.AiChatMessage;
 import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
-import com.ssafy.backend.global.component.openai.dto.GptChatCompletionResponse;
-import com.ssafy.backend.global.component.openai.dto.GptChatRequest;
-import com.ssafy.backend.global.component.openai.dto.GptSetupRequest;
-import com.ssafy.backend.global.component.openai.dto.GptThreadResponse;
+import com.ssafy.backend.global.component.openai.dto.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -27,12 +24,12 @@ public class OpenAiCommunicationProvider {
         return sendRequestToGpt(gptSetupRequest);
     }
 
-    public GptThreadResponse createThread() {
+    public GptThreadCreateResponse createThread() {
         return webClient.post()
                 .uri("/threads") // Make sure to use the correct endpoint URL
                 .header("OpenAI-Beta", "assistants=v1")
                 .retrieve()
-                .bodyToMono(GptThreadResponse.class)
+                .bodyToMono(GptThreadCreateResponse.class)
                 .block();
     }
 
@@ -43,5 +40,17 @@ public class OpenAiCommunicationProvider {
                 .retrieve()
                 .bodyToMono(GptChatCompletionResponse.class)
                 .map(response -> response.choices().get(0).message().content());
+    }
+
+    private GptThreadMessageResponse sendMessageToThread(String threadId) {
+        return webClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/threads/{threadId}/messages")
+                        .build(threadId))
+                .header("Content-Type", "application/json")
+                .header("OpenAI-Beta", "assistants=v1")
+                .retrieve()
+                .bodyToMono(GptThreadMessageResponse.class)
+                .block();
     }
 }
