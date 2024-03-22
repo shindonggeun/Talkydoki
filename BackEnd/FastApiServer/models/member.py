@@ -8,7 +8,7 @@ class MemberRole(PyEnum):
     ADMIN = "ADMIN"
 
 class Member(Base):
-    __tablename__ = "members"
+    __tablename__ = "member"
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String(255), unique=True, index=True, nullable=False)
     password = Column(String(255), nullable=False)

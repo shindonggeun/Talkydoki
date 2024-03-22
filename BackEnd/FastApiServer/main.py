@@ -54,7 +54,7 @@ async def create_dummy_users(db: AsyncSession, num_users: int):
 
         db_user = Member(email=email, password=password, name=name, nickname=nickname)
         db.add(db_user)
-    db.commit()
+    await db.commit()
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
