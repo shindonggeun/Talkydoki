@@ -13,13 +13,19 @@ export const WordItem = styled.div`
   .read,
   .readKor {
     font-size: 10pt;
-    display: none;
-    /* opacity: 0; */
-    color: var(--main);
+    opacity: 0;
+    color: var(--yellow-dark);
 
     &.show {
+      opacity: 1;
+    }
+  }
+
+  .readKor {
+    display: none;
+    color: var(--grey);
+    &.show {
       display: block;
-      /* opacity: 1; */
     }
   }
 

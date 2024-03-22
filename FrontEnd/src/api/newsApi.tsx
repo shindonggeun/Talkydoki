@@ -2,8 +2,20 @@ import {
   NewsListItemInterface,
   categoryInterface,
   newsInterface,
+  splittedNewsInterface,
 } from "@/interface/NewsInterface";
 import { customAxios } from "@/util/auth/customAxios";
+import {
+  newsSplitter,
+  sentenceMaker,
+  transSplitter,
+} from "@/util/language/format";
+import {
+  PollyClient,
+  SynthesizeSpeechCommand,
+  SynthesizeSpeechCommandInput,
+} from "@aws-sdk/client-polly";
+import { AudioFile } from "@mui/icons-material";
 import {
   useInfiniteQuery,
   useQuery,
@@ -69,7 +81,26 @@ export const useGetArticle = (newsId: number) => {
     queryFn: () => customAxios.get(`/news/get/${newsId}`),
     select: ({ data }) => {
       if (data.dataHeader.successCode == 0) {
-        return data.dataBody as newsInterface;
+        const news = data.dataBody as newsInterface;
+        // 뉴스 변환
+        const newNews = {
+          newsId: news.newsId,
+          title: newsSplitter(news.title)[0],
+          titleTranslated: transSplitter(news.titleTranslated)[0],
+          category: news.category,
+          content: newsSplitter(news.content),
+          contentTranslated: transSplitter(news.contentTranslated),
+          summary: newsSplitter(news.summary),
+          summaryTranslated: transSplitter(news.summaryTranslated),
+          writeDate: news.writeDate,
+          srcOrigin: news.srcOrigin,
+          newsImages: news.newsImages,
+          fullTitle: sentenceMaker(newsSplitter(news.title)[0]),
+          fullNews: newsSplitter(news.content).map((each) =>
+            sentenceMaker(each)
+          ),
+        };
+        return newNews as splittedNewsInterface;
       }
     },
     staleTime: Infinity,

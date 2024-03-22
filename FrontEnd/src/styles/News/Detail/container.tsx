@@ -16,9 +16,25 @@ export const NewsWrapper = styled(Wrapper)`
   }
 `;
 
+export const SummaryWrapper = styled.div`
+  margin: 1vh 1vw;
+  padding: 3vh 3vw;
+  border: 1px solid var(--main);
+
+  div {
+    margin: 2vh 0;
+    opacity: 0.5;
+  }
+
+  .jp {
+    opacity: 1;
+  }
+`;
+
 export const NewsArticleWrapper = styled(Card)`
   width: calc(100% - 300px);
   margin: 1vh 1vw;
+  padding: 3vh 3.5vw 10vh 3.5vw;
 
   .info {
     font-size: 10pt;
@@ -34,10 +50,9 @@ export const NewsWidget = styled(Card)`
 export const WordContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
+  margin: 3vh 0;
 
   &.isTitle {
-    margin: 2vh 0;
-
     div.read,
     div.readKor {
       font-size: 12pt;
@@ -48,9 +63,38 @@ export const WordContainer = styled.div`
       font-weight: 900;
     }
   }
+
+  &.playing {
+    .japanese {
+      color: var(--main);
+      font-weight: 600;
+    }
+  }
 `;
 
 export const ArticleContainer = styled.div`
   width: 100%;
   padding: 5vh 2vw;
+
+  .translation {
+    background-color: var(--bg);
+    color: ${(props) =>
+      props.theme.mode == "light" ? "var(--grey-dark)" : "var(--grey-light)"};
+    height: fit-content;
+    margin: 2vh 1vw;
+    padding: 20px;
+    overflow: hidden;
+    display: none;
+
+    &.show {
+      display: block;
+    }
+  }
+`;
+
+export const ButtonContainer = styled.div`
+  position: fixed;
+  bottom: 50px;
+  left: calc(50% - 200px);
+  z-index: 10;
 `;

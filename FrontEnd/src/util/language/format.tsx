@@ -15,17 +15,15 @@ export const newsSplitter = (line: string) => {
       },
       [[]]
     );
-  return splittedNews;
+  if (splittedNews.length > 1) {
+    return splittedNews.slice(0, splittedNews.length - 1);
+  } else {
+    return splittedNews;
+  }
 };
 
 export const transSplitter = (trans: string) => {
-  const splitted = trans.split(/\n\n/g).reduce((arr: string[], now) => {
-    const newArr: string[] = arr;
-    const line = now.split(/./g);
-    newArr.concat(line);
-    return newArr;
-  }, []);
-
+  const splitted = trans.split(/\n\n/g);
   return splitted;
 };
 

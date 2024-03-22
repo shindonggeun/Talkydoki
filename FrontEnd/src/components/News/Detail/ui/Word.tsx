@@ -1,6 +1,5 @@
 import { WordItem } from "@/styles/News/Detail/ui";
 import { JptoKor, KanaToHira } from "@/util/language/japanese";
-import React from "react";
 
 type Props = {
   word: string[];
@@ -9,13 +8,15 @@ type Props = {
 };
 
 function Word({ word, isReadOn, isReadKrOn }: Props) {
+  const read = KanaToHira(word[1] ? word[1] : word[0]);
+  const japanese = word[0];
+  const readKor = JptoKor(read);
+
   return (
     <WordItem>
-      <div className={`read ${isReadOn && "show"}`}>{KanaToHira(word[1])}</div>
-      <div className="japanese">{word[0]}</div>
-      <div className={`readKor ${isReadKrOn && "show"}`}>
-        {JptoKor(KanaToHira(word[1]))}
-      </div>
+      <div className={`read ${isReadOn && "show"}`}>{read}</div>
+      <div className="japanese">{japanese}</div>
+      <div className={`readKor ${isReadKrOn && "show"}`}>{readKor}</div>
     </WordItem>
   );
 }

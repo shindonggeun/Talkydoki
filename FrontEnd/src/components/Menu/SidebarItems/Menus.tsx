@@ -39,7 +39,7 @@ function Menus() {
       {/* 뉴스 */}
       <MenuItem
         onClick={() => menuHandler("/news")}
-        className={now == "/news" ? "selected" : undefined}
+        className={now.startsWith("/news") ? "selected" : undefined}
       >
         <div className="label">
           <ArticleIcon />

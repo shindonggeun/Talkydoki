@@ -28,6 +28,22 @@ export interface newsInterface {
   newsImages: string[];
 }
 
+export interface splittedNewsInterface {
+  newsId: number;
+  title: string[][];
+  titleTranslated: string;
+  category: string;
+  content: string[][][];
+  contentTranslated: string[];
+  summary: string[][][];
+  summaryTranslated: string[];
+  writeDate: string;
+  srcOrigin: string;
+  newsImages: string[];
+  fullTitle: string;
+  fullNews: string[];
+}
+
 export const category: categoryInterface[] = [
   { id: 1, name: "SOCIETY", korName: "사회" },
   { id: 2, name: "WEATHER_DISASTER", korName: "날씨/재해" },

@@ -1,77 +1,110 @@
-import { newsInterface } from "@/interface/NewsInterface";
 import {
   ArticleContainer,
+  SummaryWrapper,
   WordContainer,
 } from "@/styles/News/Detail/container";
-import { newsSplitter, transSplitter } from "@/util/language/format";
-import { ToggleButtonGroup, ToggleButton } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Word from "./ui/Word";
+import { useGetWholeTTS } from "@/api/ttsApi";
+import { useQueryClient } from "@tanstack/react-query";
+import { useButtonActions, useButtonStates } from "@/stores/newsStore";
+import NewsButton from "./ui/NewsButton";
+import { Divider } from "@mui/material";
 
 type Props = {
-  news: newsInterface;
+  newsId: number;
+  news: string[][][];
+  korNews: string[];
+  summary: string[][][];
+  korSummary: string[];
+  fullNews: string[];
 };
 
-function ArticleRead({ news }: Props) {
-  const [options, setOptions] = useState<string[]>([]);
-  const [isTransOn, setIsTransOn] = useState(false);
-  const [isReadOn, setIssReadOn] = useState(false);
-  const [isReadKrOn, setIsReadKrOn] = useState(false);
+function ArticleRead({
+  newsId,
+  news,
+  korNews,
+  summary,
+  korSummary,
+  fullNews,
+}: Props) {
+  const [nowPlaying, setNowPlaying] = useState(0);
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const { isPlaying, isReadKrOn, isReadOn, isTransOn } = useButtonStates();
+  const { setIsPlaying } = useButtonActions();
 
-  const NewsContents = newsSplitter(news.content);
-  const KorContents = transSplitter(news.contentTranslated);
+  const TTSList = useGetWholeTTS(newsId, fullNews);
+  const queryClient = useQueryClient();
+  console.log(TTSList);
 
   useEffect(() => {
-    setOptions(() => {
-      const arr = [];
-      isTransOn && arr.push("trans");
-      isReadOn && arr.push("read");
-      isReadKrOn && arr.push("readkr");
-      return arr;
-    });
-  }, [isTransOn, isReadKrOn, isReadOn]);
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (!isPlaying) {
+      audio.pause();
+      return;
+    }
+    const audioUrl = queryClient.getQueryData([
+      "getVoice",
+      newsId,
+      nowPlaying,
+    ]) as string;
+    if (audioUrl == undefined) return;
+    console.log("변경됨");
+    audio.src = audioUrl;
+    audio.play();
+  }, [nowPlaying, isPlaying]);
 
   return (
     <div>
-      <div style={{ display: "flex", justifyContent: "center" }}>
-        <ToggleButtonGroup value={options} color="purple" exclusive>
-          <ToggleButton
-            onClick={() => setIsTransOn((prev) => !prev)}
-            value="trans"
-          >
-            번역 보기
-          </ToggleButton>
-          <ToggleButton
-            onClick={() => setIssReadOn((prev) => !prev)}
-            value="read"
-          >
-            발음 보기(일)
-          </ToggleButton>
-          <ToggleButton
-            onClick={() => setIsReadKrOn((prev) => !prev)}
-            value="readkr"
-          >
-            발음 보기(한)
-          </ToggleButton>
-        </ToggleButtonGroup>
-      </div>
+      <NewsButton />
+      <SummaryWrapper>
+        <div>요약</div>
+        <Divider />
+        {summary.map((line, idx) => (
+          <div key={idx} className="jp">
+            {line.map((each, idx) => (
+              <span key={idx}>{each[0]}</span>
+            ))}
+          </div>
+        ))}
+        <div className="kor">{korSummary}</div>
+      </SummaryWrapper>
       <ArticleContainer>
-        {NewsContents.map((news, idx) => (
+        {news.map((line, idx) => (
           <div key={idx}>
-            <WordContainer>
-              {news.map((line, idx) => (
+            <WordContainer
+              className={isPlaying && nowPlaying == idx ? "playing" : undefined}
+            >
+              {line.map((each, idx) => (
                 <Word
                   key={idx}
-                  word={line}
+                  word={each}
                   isReadOn={isReadOn}
                   isReadKrOn={isReadKrOn}
                 />
               ))}
             </WordContainer>
-            <div>{KorContents[idx]}</div>
+            <div className={`${isTransOn && "show"} translation`}>
+              {korNews[idx]}
+            </div>
           </div>
         ))}
       </ArticleContainer>
+      <audio
+        ref={audioRef}
+        onEnded={() => {
+          if (nowPlaying == fullNews.length - 1) {
+            setIsPlaying(false);
+          }
+          console.log("끝");
+          setTimeout(() => {
+            setNowPlaying((prev) =>
+              prev + 1 < fullNews.length ? prev + 1 : 0
+            );
+          }, 1000);
+        }}
+      />
     </div>
   );
 }
