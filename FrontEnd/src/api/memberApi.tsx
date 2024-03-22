@@ -200,12 +200,7 @@ export const useDeleteAccount = () => {
       if (data.dataHeader.successCode == 0) {
         logout();
         // 관련된 쿼리 제거
-        queryClient.removeQueries([
-          "getMemeber", // 프로필 정보
-          "getNewsList", // 뉴스 리스트
-          "getVocaList", // 사용자 단어 리스트
-          "getVoca", // 오늘의 단어
-        ] as QueryFilters);
+        queryClient.clear();
         navigate("/intro");
         setIsModalOn(false);
       }

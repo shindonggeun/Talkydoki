@@ -14,6 +14,20 @@ export interface categoryInterface {
   korName: string;
 }
 
+export interface newsInterface {
+  newsId: number;
+  title: string;
+  titleTranslated: string;
+  category: string;
+  content: string;
+  contentTranslated: string;
+  summary: string;
+  summaryTranslated: string;
+  writeDate: string;
+  srcOrigin: string;
+  newsImages: string[];
+}
+
 export const category: categoryInterface[] = [
   { id: 1, name: "SOCIETY", korName: "사회" },
   { id: 2, name: "WEATHER_DISASTER", korName: "날씨/재해" },

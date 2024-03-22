@@ -1,3 +1,4 @@
+import React from "react";
 import { ProfileSection } from "@/styles/Menu/sidebar";
 import { getProfileImage } from "@/util/common/getFullUrl";
 import { useGetMember } from "@/api/memberApi";
@@ -24,4 +25,4 @@ function SidebarProfile() {
   );
 }
 
-export default SidebarProfile;
+export default React.memo(SidebarProfile);

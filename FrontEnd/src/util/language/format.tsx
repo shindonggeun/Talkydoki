@@ -18,6 +18,17 @@ export const newsSplitter = (line: string) => {
   return splittedNews;
 };
 
+export const transSplitter = (trans: string) => {
+  const splitted = trans.split(/\n\n/g).reduce((arr: string[], now) => {
+    const newArr: string[] = arr;
+    const line = now.split(/./g);
+    newArr.concat(line);
+    return newArr;
+  }, []);
+
+  return splitted;
+};
+
 // 배열을 넣으면 문장으로 변환
 export const sentenceMaker = (line: string[][]) => {
   const sentence = line.reduce((sen, now) => {

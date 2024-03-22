@@ -1,9 +1,14 @@
 import {
   NewsListItemInterface,
   categoryInterface,
+  newsInterface,
 } from "@/interface/NewsInterface";
 import { customAxios } from "@/util/auth/customAxios";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 // 뉴스 리스트 get 하는 함수
 export const useGetNewsList = (category: categoryInterface[]) => {
@@ -51,7 +56,23 @@ export const useGetNewsList = (category: categoryInterface[]) => {
 
       return newsList;
     },
+
     staleTime: 1000 * 60 * 60, // 1시간
     gcTime: 1000 * 60 * 60, // 1시간
+  });
+};
+
+// 단일 뉴스 조회
+export const useGetArticle = (newsId: number) => {
+  return useQuery({
+    queryKey: ["getArticle", newsId],
+    queryFn: () => customAxios.get(`/news/get/${newsId}`),
+    select: ({ data }) => {
+      if (data.dataHeader.successCode == 0) {
+        return data.dataBody as newsInterface;
+      }
+    },
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };

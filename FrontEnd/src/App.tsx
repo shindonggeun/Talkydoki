@@ -28,6 +28,7 @@ import MyPage from "./routes/MyPage";
 // 마이페이지 내부 링크
 import MyVoca from "./components/MyPage/MyVoca/MyVoca";
 import ProfileUpdate from "@/routes/ProfileUpdate";
+import NewsDetail from "./routes/NewsDetail";
 
 function App() {
   const isDark = useIsDark();
@@ -49,6 +50,7 @@ function App() {
               <Route path="/" element={<Navigate replace to="/main" />} />
               <Route path="/main" element={<Main />} />
               <Route path="/news" element={<News />} />
+              <Route path="/news/detail" element={<NewsDetail />} />
               <Route path="/aichatlist" element={<AiChatList />} />
               <Route path="/aichatroom" element={<AiChatRoom />} />
               <Route path="/mypage" element={<MyPage />} />

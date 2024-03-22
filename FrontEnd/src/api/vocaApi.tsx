@@ -131,9 +131,10 @@ export const useDeleteMyVoca = () => {
 
       return { previousWords };
     },
-    onSuccess: (res) => {
-      queryClient.invalidateQueries({ queryKey: ["getVocaList"] });
-      console.log(res);
+    onSuccess: ({ data }) => {
+      if (data.dataHeader.successCode == 0) {
+        queryClient.invalidateQueries({ queryKey: ["getVocaList"] });
+      }
     },
     onError: (_err, _id, context) => {
       queryClient.setQueryData(["getVocaList"], context?.previousWords);

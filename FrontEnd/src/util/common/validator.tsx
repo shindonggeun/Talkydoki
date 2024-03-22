@@ -40,6 +40,7 @@ export const isValidPWChange = (
   password1: string,
   password2: string
 ) => {
+  console.log("실행");
   const pwCheck =
     /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,16}$/;
   if (oldpassword.length == 0) return false;

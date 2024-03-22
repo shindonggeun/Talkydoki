@@ -1,4 +1,5 @@
-import { MenuItem } from "@/styles/Menu/sidebar";
+import React from "react";
+import { MenuDivider, MenuItem } from "@/styles/Menu/sidebar";
 import HomeIcon from "@mui/icons-material/Home";
 import ArticleIcon from "@mui/icons-material/Article";
 import ForumIcon from "@mui/icons-material/Forum";
@@ -22,6 +23,8 @@ function Menus() {
 
   return (
     <div>
+      <MenuDivider textAlign="left">menu</MenuDivider>
+
       {/* 홈 */}
       <MenuItem
         onClick={() => menuHandler("/main")}
@@ -67,4 +70,4 @@ function Menus() {
   );
 }
 
-export default Menus;
+export default React.memo(Menus);

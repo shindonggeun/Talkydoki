@@ -31,17 +31,22 @@ export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: (payload: ProfileUpdateParams) =>
       customAxios.patch("/member/update", payload, {}),
-    onSuccess: () => {
-      setModalContent({
-        message: "프로필이 저장되었습니다.",
-        isInfo: true,
-        isReadOnly: true,
-      });
-      navigate("/mypage");
-      setTimeout(() => {
-        queryClient.invalidateQueries({ queryKey: ["getMember"] });
+    onSuccess: ({ data }) => {
+      if (data.dataHeader.successCode == 0) {
+        setModalContent({
+          message: "프로필이 저장되었습니다.",
+          isInfo: true,
+          isReadOnly: true,
+        });
+        navigate("/mypage");
+        setTimeout(() => {
+          queryClient.invalidateQueries({ queryKey: ["getMember"] });
+          setIsModalOn(false);
+        }, 800);
+      } else {
+        console.log(data.dataHeader.resultMessage);
         setIsModalOn(false);
-      }, 800);
+      }
     },
   });
 };

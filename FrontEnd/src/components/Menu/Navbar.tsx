@@ -1,3 +1,4 @@
+import React from "react";
 import { NavbarWrapper } from "@/styles/common/ui/container";
 import { Inner } from "@/styles/Menu/navbar";
 import Logo from "@/assets/images/logo_face2.png";
@@ -22,4 +23,4 @@ function Navbar() {
   );
 }
 
-export default Navbar;
+export default React.memo(Navbar);

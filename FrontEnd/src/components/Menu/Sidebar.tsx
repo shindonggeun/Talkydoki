@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import SidebarProfile from "./SidebarItems/SidebarProfile";
 
 import { SidebarWrapper } from "@/styles/common/ui/container";
@@ -41,7 +41,6 @@ function Sidebar() {
       <SidebarWrapper style={isSidebarOpen ? { left: 0 } : { left: "-300px" }}>
         <SidebarTitle />
         <SidebarProfile />
-        <MenuDivider textAlign="left">menu</MenuDivider>
         <Menus />
       </SidebarWrapper>
       {isMobile && isSidebarOpen ? (
