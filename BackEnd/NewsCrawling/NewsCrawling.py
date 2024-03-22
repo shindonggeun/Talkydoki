@@ -53,7 +53,7 @@ def morphological_analysis(text):# MeCab 실행 파일의 경로
     return morphemes
 
 ########## 뉴스 크롤링 ##########
-print("뉴스 크롤링 시작\n")
+print(f"{CAT_NAME} : 크롤링 시작\n")
 # WebDriver를 사용하여 뉴스 카테고리에 접속
 driver.get(f'{BASE_URL}{CAT_URL}')
 
@@ -174,4 +174,4 @@ for news_url in news_urls:
 
 # 브라우저 닫기
 driver.quit()
-print("뉴스 크롤링 끝\n")
+print(f"{CAT_NAME} : 크롤링 끝\n")
