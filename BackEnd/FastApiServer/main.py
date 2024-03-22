@@ -30,39 +30,39 @@ from data_processing.news import router as news_router
 #     # 지정된 테이블만 삭제
 #     metadata.drop_all(engine, tables=[Vocabulary.__table__])
 
-fake = Faker()
+# fake = Faker()
 
-async_engine = create_async_engine("mysql+aiomysql://ssafy:ssafy@j10c107.p.ssafy.io/talkydoki", echo=True)
+# async_engine = create_async_engine("mysql+aiomysql://ssafy:ssafy@j10c107.p.ssafy.io/talkydoki", echo=True)
 
-AsyncSessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=async_engine,
-    class_=AsyncSession
-)
+# AsyncSessionLocal = sessionmaker(
+#     autocommit=False,
+#     autoflush=False,
+#     bind=async_engine,
+#     class_=AsyncSession
+# )
 
-async def get_db():
-    async with AsyncSessionLocal() as session:
-        yield session
+# async def get_db():
+#     async with AsyncSessionLocal() as session:
+#         yield session
 
-async def create_dummy_users(db: AsyncSession, num_users: int):
-    for _ in range(num_users):
-        email = fake.email()
-        password = fake.password()
-        name = fake.name()
-        nickname = fake.user_name()
+# async def create_dummy_users(db: AsyncSession, num_users: int):
+#     for _ in range(num_users):
+#         email = fake.email()
+#         password = fake.password()
+#         name = fake.name()
+#         nickname = fake.user_name()
 
-        db_user = Member(email=email, password=password, name=name, nickname=nickname)
-        db.add(db_user)
-    await db.commit()
+#         db_user = Member(email=email, password=password, name=name, nickname=nickname)
+#         db.add(db_user)
+#     await db.commit()
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    async with AsyncSessionLocal() as db:
-        await create_dummy_users(db, 1000)
-    yield
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     async with AsyncSessionLocal() as db:
+#         await create_dummy_users(db, 1000)
+#     yield
 
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 app.include_router(news_router)
 app.include_router(vocabulary_router)
