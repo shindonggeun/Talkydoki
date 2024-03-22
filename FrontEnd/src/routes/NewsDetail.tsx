@@ -8,6 +8,8 @@ import {
 import ArticleRead from "@/components/News/Detail/ArticleRead";
 import SideWidget from "@/components/News/Detail/SideWidget";
 import TitleSection from "@/components/News/Detail/TitleSection";
+import WordSearch from "@/components/News/Detail/ui/WordSearch";
+import { useIsSearchOn } from "@/stores/newsStore";
 
 type Props = {};
 
@@ -21,6 +23,7 @@ function NewsDetail({}: Props) {
 
   return (
     <NewsWrapper>
+      <WordSearch />
       <NewsArticleWrapper>
         <TitleSection
           title={data.fullTitle}

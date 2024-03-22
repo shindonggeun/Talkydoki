@@ -37,3 +37,25 @@ export const useButtonStates = () =>
 
 export const useButtonActions = () =>
   useNewsButtonStore((state) => state.actions);
+
+// 단어 검색
+
+interface WordSearchInterface {
+  word: { word: string; read: string; x: number; y: number };
+  setWord: (by: { word: string; read: string; x: number; y: number }) => void;
+  isSearchOn: boolean;
+  setIsSearchOn: (by: boolean) => void;
+}
+
+const useSearchStore = create<WordSearchInterface>((set) => ({
+  word: { word: "", read: "", x: 0, y: 0 },
+  setWord: (by) => set(() => ({ word: by })),
+  isSearchOn: false,
+  setIsSearchOn: (by) => set(() => ({ isSearchOn: by })),
+}));
+
+export const useSearchWord = () => useSearchStore((state) => state.word);
+export const useSetSearchWord = () => useSearchStore((state) => state.setWord);
+export const useIsSearchOn = () => useSearchStore((state) => state.isSearchOn);
+export const useSetIsSearchOn = () =>
+  useSearchStore((state) => state.setIsSearchOn);

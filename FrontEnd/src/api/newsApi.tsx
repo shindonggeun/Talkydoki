@@ -4,6 +4,7 @@ import {
   newsInterface,
   splittedNewsInterface,
 } from "@/interface/NewsInterface";
+import { useIsSearchOn } from "@/stores/newsStore";
 import { customAxios } from "@/util/auth/customAxios";
 import {
   newsSplitter,
@@ -93,6 +94,25 @@ export const useGetArticle = (newsId: number) => {
         return newNews as splittedNewsInterface;
       }
     },
+    staleTime: Infinity,
+    gcTime: Infinity,
+  });
+};
+
+export const useSearchWordApi = (word: string) => {
+  const isSearchOn = useIsSearchOn();
+
+  return useQuery({
+    queryKey: ["serchWord", word],
+    queryFn: () => customAxios.get(`/vocabulary/search/${word}`),
+    select: ({ data }) => {
+      if (data.dataHeader.successCode == 0) {
+        return data.dataBody;
+      } else {
+        return "nodata";
+      }
+    },
+    enabled: isSearchOn,
     staleTime: Infinity,
     gcTime: Infinity,
   });

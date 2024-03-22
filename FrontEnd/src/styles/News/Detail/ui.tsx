@@ -30,6 +30,16 @@ export const WordItem = styled.div`
 
   .japanese {
     font-size: 14pt;
+
+    &.meaning {
+      cursor: pointer;
+      &:hover {
+        background-color: ${(props) =>
+          props.theme.mode == "light"
+            ? "var(--main-light)"
+            : "var(--main-dark)"};
+      }
+    }
   }
 `;
 

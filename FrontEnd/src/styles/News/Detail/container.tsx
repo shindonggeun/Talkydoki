@@ -97,3 +97,18 @@ export const ButtonContainer = styled.div`
   left: calc(50% - 200px);
   z-index: 10;
 `;
+
+export const WordSearchWrapper = styled.div`
+  width: 400px;
+  /* height: 300px; */
+  background-color: var(--bg-modal);
+  border: 1px solid var(--grey);
+  position: fixed;
+  z-index: 9;
+  padding: 2vh 2vw;
+
+  .jp {
+    font-size: 36pt;
+    font-weight: 900;
+  }
+`;
