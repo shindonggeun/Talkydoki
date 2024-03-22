@@ -35,4 +35,12 @@ public interface AiChatService {
      * @return 작업 완료를 나타내는 Mono<Void> 객체.
      */
     Mono<Void> sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage);
+
+    /**
+     * 카테고리에 맞게 AI 채팅봇(GPT)에 세팅하고 결과를 처리합니다..
+     *
+     * @param category 대화 설정을 원하는 카테고리
+     * @return Mono<Void> 설정 후 작업 완료를 나타내는 Reactive 타입
+     */
+    Mono<Void> setupAiChatBot(AiChatCategory category);
 }

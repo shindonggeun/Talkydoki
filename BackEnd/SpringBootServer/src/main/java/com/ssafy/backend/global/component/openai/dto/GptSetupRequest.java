@@ -1,17 +1,23 @@
 package com.ssafy.backend.global.component.openai.dto;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * GPT와의 대화 요청을 나타내는 레코드입니다.
  * 이 레코드는 GPT 모델에 전송될 메시지와 관련 설정을 포함합니다.
  */
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public record GptSetupRequest(
         String model,
         List<GptDialogueMessage> messages,
-        int maxTokens
+        int maxTokens,
+        int temperature,
+        Map<String ,String> responseFormat
 ) {
     /**
      * 특정 카테고리에 맞는 GPT 대화 설정을 생성합니다.
@@ -20,25 +26,37 @@ public record GptSetupRequest(
      * @return GptSetupRequest GPT 설정 요청 객체
      */
     public static GptSetupRequest from(AiChatCategory category) {
+        String jsonString = "{"
+                + "\"conversation_${주고받은 순서}\": {"
+                + "    \"GPT\": \"${너의 대답}\","
+                + "    \"USER\": \"${사용자의 모범 답변}。\""
+                + "  }"
+                + "}";
+
         // 카테고리에 따른 대화 설정 로직 구현
-        String systemMessage = "당신은 일본어 회화 전문 강사입니다.\n" +
-                "제공되는 대화를 일본어로 상황에 맞게 계속 이어나가 주세요. 전체 대화를 이해하고, " +
-                "마지막 사용자의 응답에 반드시 일본어로 답해주세요.\n" +
-                "답변은 당신의 대답, 그리고 당신의 대답에 대한 상대방의 예상 반응을 제시해주면 됩니다.\n" +
-                "주제는 " + category.getKoreanName() + " 입니다.\n" +
-                "표현 형식 다음과 같습니다. 반드시 다음 양식에 맞게 답변을 생성해주세요.\n" +
-                "[양식] : '\"GPT':<당신의 대답>\n'USER':<사용자의 모범 답변>\n\n" +
-                "이제 대화 내용을 제공해 드리겠습니다.";
+        String systemMessage = "이제부터 GPT 너는 일본어 회화 전문 강사야.\n" +
+                "해당 회화 주제에 맞는 것에 따라 그 주제에 맞는 회화 답변을 반드시 먼저 일본어로 해줘.\n" +
+                "제공되는 대화를 반드시 일본어로 상황에 맞게 계속 이어나가 줘. 전체 대화를 이해하고, " +
+                "사용자의 응답에 반드시 일본어로 답해줘.\n" +
+                "답변은 너의 대답, 그리고 너의 응답에 대한 상대방의 예상 답변을 제시해주면 돼.\n" +
+                "주제는 " + category.getKoreanName() + " 이거야.\n" +
+                "표현 형식 다음과 같아. 반드시 다음 양식에 맞게 회화 답변을 생성해줘.\n" +
+                jsonString +
+                "이런식으로 JSON format으로 data 전송해줘";
 
         // 카테고리에 따른 대화 설정 로직 구현
         List<GptDialogueMessage> messages = List.of(
                 new GptDialogueMessage("system", systemMessage)
         );
 
+        Map<String, String> responseFormat = Map.of("type", "json_object"); // JSON 형식을 지정
+
         return new GptSetupRequest(
-                "gpt-3.5-turbo",
+                "gpt-3.5-turbo-1106",
                 messages,
-                100
+                300,
+                1,
+                responseFormat
         );
     }
 }

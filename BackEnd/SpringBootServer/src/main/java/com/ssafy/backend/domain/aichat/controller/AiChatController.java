@@ -50,6 +50,13 @@ public class AiChatController {
         return aiChatService.sendAiChatMessageByGpt(roomId, userMessage)
                 .thenReturn(ResponseEntity.ok().body(Message.success()));
     }
+
+    @PostMapping("/gpt/setup/{category}")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public Mono<ResponseEntity<Message<Void>>> setupAiChatBot(@PathVariable AiChatCategory category) {
+        return aiChatService.setupAiChatBot(category)
+                .thenReturn(ResponseEntity.ok().body(Message.success()));
+    }
 }
 
 

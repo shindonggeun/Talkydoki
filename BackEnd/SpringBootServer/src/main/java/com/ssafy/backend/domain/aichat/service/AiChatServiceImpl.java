@@ -12,7 +12,7 @@ import com.ssafy.backend.domain.member.entity.Member;
 import com.ssafy.backend.domain.member.exception.MemberErrorCode;
 import com.ssafy.backend.domain.member.exception.MemberException;
 import com.ssafy.backend.domain.member.repository.MemberRepository;
-import com.ssafy.backend.global.component.openai.service.OpenAiService;
+import com.ssafy.backend.global.component.openai.OpenAiCommunicationProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.TopicExchange;
@@ -36,7 +36,7 @@ public class AiChatServiceImpl implements AiChatService {
     private final RabbitTemplate rabbitTemplate;
     private final TopicExchange topicExchange;
 
-    private final OpenAiService openAiService;
+    private final OpenAiCommunicationProvider openAiCommunicationProvider;
 
 
     /**
@@ -94,7 +94,7 @@ public class AiChatServiceImpl implements AiChatService {
         return Mono.fromCallable(() -> aiChatRoomRepository.findById(roomId)
                         .orElseThrow(() -> new RuntimeException("해당 AI 회화 채팅방을 찾을 수 없습니다.")))
                 .subscribeOn(Schedulers.boundedElastic()) // 블로킹 호출을 별도의 스레드에서 처리
-                .flatMap(aiChatRoom -> openAiService.sendPromptToGpt(userMessage) // AI 채팅봇으로부터 응답 받기
+                .flatMap(aiChatRoom -> openAiCommunicationProvider.sendPromptToGpt(userMessage) // AI 채팅봇으로부터 응답 받기
                         .onErrorMap(exception -> new RuntimeException(exception.getMessage())) // 오류 처리
                         .flatMap(response -> { // 응답을 기반으로 채팅 히스토리 생성 및 저장
                             AiChatHistory aiChatHistory = AiChatHistory.builder()
@@ -111,5 +111,17 @@ public class AiChatServiceImpl implements AiChatService {
                             rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
                         })
                 ).then(); // 작업 완료 시 Mono<Void> 반환
+    }
+
+    @Override
+    public Mono<Void> setupAiChatBot(AiChatCategory category) {
+        // OpenAiCommunicationProvider 컴포넌트의 setupPromptToGpt 메서드를 호출하여 GPT-3 설정 수행
+        return openAiCommunicationProvider.setupPromptToGpt(category)
+                .onErrorMap(exception -> new RuntimeException(exception.getMessage()))
+                .doOnSuccess(response -> {
+                    log.info("GPT 대화 세팅 완료: {}", response);
+                    log.info("GPT 대화 타입: {}", response.getClass());
+                })
+                .then(); // 작업 완료 시 Mono<Void> 반환
     }
 }
