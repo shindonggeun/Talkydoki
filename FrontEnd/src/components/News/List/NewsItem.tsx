@@ -4,8 +4,6 @@ import ThumbnailView from "@/components/ui/ThumbnailView";
 import { sentenceMaker, newsSplitter } from "@/util/language/format";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { usePefetchArticle } from "@/api/newsApi";
-import { useEffect } from "react";
 import { customAxios } from "@/util/auth/customAxios";
 
 type Props = {

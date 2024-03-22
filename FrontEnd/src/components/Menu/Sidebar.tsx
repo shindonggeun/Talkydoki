@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import SidebarProfile from "./SidebarItems/SidebarProfile";
 
 import { SidebarWrapper } from "@/styles/common/ui/container";
-import { MenuDivider, SidebarBackground } from "@/styles/Menu/sidebar";
+import { SidebarBackground } from "@/styles/Menu/sidebar";
 import {
   useIsMobile,
   useIsSidebarOpen,

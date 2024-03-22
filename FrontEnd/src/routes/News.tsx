@@ -17,7 +17,6 @@ import { FormControlLabel, Switch } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useIsDark } from "@/stores/displayStore";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
-import { useNavigate } from "react-router-dom";
 
 function News() {
   const [isShowKor, setIsShowKor] = useState(true);

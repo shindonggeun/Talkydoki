@@ -1,7 +1,6 @@
 import { Card } from "@/styles/common/ui/card";
 import { Wrapper } from "@/styles/common/ui/container";
 import styled from "styled-components";
-import { WordItem } from "./ui";
 
 export const NewsWrapper = styled(Wrapper)`
   display: flex;

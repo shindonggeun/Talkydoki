@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+// import { useState } from "react";
 import { useGetArticle } from "@/api/newsApi";
 import { useLocation } from "react-router-dom";
 import {
@@ -8,18 +8,13 @@ import {
 import ArticleRead from "@/components/News/Detail/ArticleRead";
 import SideWidget from "@/components/News/Detail/SideWidget";
 import TitleSection from "@/components/News/Detail/TitleSection";
-import {
-  newsSplitter,
-  sentenceMaker,
-  transSplitter,
-} from "@/util/language/format";
 
 type Props = {};
 
 function NewsDetail({}: Props) {
   const { state } = useLocation();
   const newsId = state.newsId;
-  const [isReadMode, setIsReadMode] = useState(true);
+  // const [isReadMode, setIsReadMode] = useState(true);
   const { data, isFetching } = useGetArticle(newsId);
 
   if (isFetching || !data) return <></>;

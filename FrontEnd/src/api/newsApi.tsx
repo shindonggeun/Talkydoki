@@ -10,17 +10,7 @@ import {
   sentenceMaker,
   transSplitter,
 } from "@/util/language/format";
-import {
-  PollyClient,
-  SynthesizeSpeechCommand,
-  SynthesizeSpeechCommandInput,
-} from "@aws-sdk/client-polly";
-import { AudioFile } from "@mui/icons-material";
-import {
-  useInfiniteQuery,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 
 // 뉴스 리스트 get 하는 함수
 export const useGetNewsList = (category: categoryInterface[]) => {

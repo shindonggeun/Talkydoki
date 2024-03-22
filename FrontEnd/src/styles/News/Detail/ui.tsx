@@ -1,4 +1,3 @@
-import { ThumbnailViewWrapper } from "@/styles/common/ui/thumbnailview";
 import styled from "styled-components";
 
 export const WordItem = styled.div`

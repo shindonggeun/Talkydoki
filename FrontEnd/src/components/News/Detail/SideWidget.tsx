@@ -1,4 +1,3 @@
-import React from "react";
 import { NewsWidget } from "@/styles/News/Detail/container";
 
 type Props = {};
