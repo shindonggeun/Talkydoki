@@ -26,21 +26,6 @@ export const Flexbox = styled.div`
   position: relative;
 `;
 
-export const ChatTipContainer = styled.div`
-  width: 60%;
-  left: 20%;
-  position: absolute;
-  top: 68%;
-  /* border: 1px solid; */
-  border-radius: 5px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: var(--grey-light);
-  padding: 15px 0;
-`;
-
 export const ChatRoomContainer = styled(Card)`
   width: 100%;
   height: 98%;
@@ -200,6 +185,56 @@ export const FooterContainer = styled.div`
     }
     &.recording {
       animation: ${pulse} 1.5s infinite;
+    }
+  }
+`;
+
+export const ChatTipContainer = styled.div`
+  position: absolute;
+  width: 60%;
+  left: 20%;
+  top: 68%;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--grey-light);
+  padding: 15px 30px;
+
+  .message {
+    align-self: flex-start;
+    font-size: 15px;
+    margin-bottom: 5px;
+  }
+  .message-record {
+    align-self: flex-start;
+    font-family: "ScoreDream";
+    font-weight: 500;
+    font-size: 15px;
+    margin-bottom: 5px;
+    @media screen and (max-width: 992px) {
+      font-size: 12px;
+    }
+  }
+  .message-suggest {
+    font-family: "ScoreDream";
+    font-family: "Mplus";
+    align-self: flex-start;
+    color: var(--blue);
+    font-size: 12px;
+    font-weight: 700;
+    @media screen and (max-width: 992px) {
+      font-size: 9px;
+    }
+  }
+  .message-text {
+    font-family: "Mplus";
+    align-self: flex-start;
+    color: var(--grey-dark);
+    font-size: 14px;
+    @media screen and (max-width: 992px) {
+      font-size: 11px;
     }
   }
 `;

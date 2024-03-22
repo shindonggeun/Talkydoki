@@ -15,6 +15,8 @@ function ChatHeader({}: Props) {
   const setGlobalIsTranslate = useAiChatStore(
     (state) => state.setGlobalIsTranslate
   );
+  const globalIsTip = useAiChatStore((state) => state.globalIsTip);
+  const setGlobalIsTip = useAiChatStore((state) => state.setGlobalIstip);
 
   // 번역표시 팁표시 기능 추가 필요
   const options = [
@@ -79,7 +81,7 @@ function ChatHeader({}: Props) {
               // justifyContent: index === 1 ? "flex-end" : "space-between",
             }}
           >
-            {index === 0 || index === 1 ? (
+            {index === 0 && (
               <div
                 style={{
                   width: "100%",
@@ -95,9 +97,25 @@ function ChatHeader({}: Props) {
                   color="primary"
                 />
               </div>
-            ) : (
-              option.label
             )}
+            {index === 1 && (
+              <div
+                style={{
+                  width: "100%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                {option.label}
+                <Switch
+                  checked={globalIsTip}
+                  onChange={() => setGlobalIsTip()}
+                  color="primary"
+                />
+              </div>
+            )}
+            {index === 2 && option.label}
           </MenuItem>
         ))}
       </Menu>
