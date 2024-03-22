@@ -15,3 +15,4 @@ class Member(Base):
     name = Column(String(255), nullable=False)
     nickname = Column(String(255), nullable=False)
     role = Column(Enum(MemberRole), default=MemberRole.USER, nullable=False)
+    news_keyword_histories = relationship("NewsKeywordHistory", back_populates="member")
