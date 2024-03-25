@@ -18,3 +18,4 @@ class News(Base):
     src_origin = Column(String(255), nullable=False)
     news_images = relationship("NewsImage", back_populates="news")
     news_keyword_mappings = relationship("NewsKeywordMapping", back_populates="news")
+    news_shadowing = relationship("NewsShadowing", back_populates="news")

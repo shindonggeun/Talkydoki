@@ -7,6 +7,7 @@ from models.news import News
 from models.keyword import Keyword
 from models.news_keyword_mapping import NewsKeywordMapping
 from models.news_keyword_history import NewsKeywordHistory
+from models.news_shadowing import NewsShadowing
 from models.news_image import NewsImage
 from sklearn.metrics.pairwise import cosine_similarity
 from datetime import datetime, timedelta
@@ -110,14 +111,14 @@ class DataStorage:
             for word_id in preferred_words:
                 if word_id not in excluded_words:
                     self.user_word_df.at[user, word_id] = np.random.randint(5, 11)  # 높은 학습
-                    # self.save_news_keyword_history(user, word_id, self.user_word_df.at[user, word_id])
+                    self.save_news_keyword_history(user, word_id, self.user_word_df.at[user, word_id])
                 else:
                     self.user_word_df.at[user, word_id] = 0
 
             for word_id in non_preferred_words:
                 count = np.random.randint(0, 5)  # 비선호 단어에 대해 낮은 학습 횟수
                 self.user_word_df.at[user, word_id] = count
-                # self.save_news_keyword_history(user, word_id, count)
+                self.save_news_keyword_history(user, word_id, count)
         
         self.user_word_df_norm = (self.user_word_df - self.user_word_df.min()) / (self.user_word_df.max() - self.user_word_df.min())
         self.article_word_df_norm = (self.article_word_df - self.article_word_df.min()) / (self.article_word_df.max() - self.article_word_df.min())
@@ -146,13 +147,10 @@ class DataStorage:
 data_storage = DataStorage()
 
 def get_news_data(news_id):
-    # 뉴스 ID를 기반으로 뉴스 객체를 조회합니다.
     news = data_storage.session.query(News).filter(News.id == news_id).first()
     if news:
-        # 뉴스 이미지 URL을 리스트로 추출합니다.
         images_urls = [image.image_url for image in news.news_images]
         keyword_list = [keyword.keyword.japanese for keyword in news.news_keyword_mappings]
-        # 뉴스 데이터와 함께 이미지 URL을 딕셔너리 형태로 반환합니다.
         return {
             "id": news.id,
             "title": news.title,
@@ -172,12 +170,21 @@ def get_news_data(news_id):
 
 @router.get("/recommend/news/{member_id}")
 async def news_recommend(member_id: int):
+    shadowed_news_ids = data_storage.session.query(NewsShadowing.news_id).filter(NewsShadowing.member_id == member_id).all()
+    shadowed_news_ids = [news_id[0] for news_id in shadowed_news_ids] 
+    
     if member_id not in data_storage.users:
         recommendations_id = data_storage.get_most_recommended_articles()
     else:
         user_data = data_storage.cosine_sim_df.loc[member_id].sort_values(ascending=False)
-        recommendations_id = user_data.index.values.tolist()[:3]
-    
+        recommendations_id = []
+        for news_id_str in user_data.index.values.tolist():
+            news_id = int(news_id_str.split('기사')[-1])
+            if news_id not in shadowed_news_ids:
+                recommendations_id.append(news_id_str)
+                if len(recommendations_id) == 3:
+                    break
+
     recommendations = [get_news_data(int(news_id.split('기사')[-1])) for news_id in recommendations_id]
 
     return {
