@@ -1,5 +1,4 @@
 import { SignupParams } from "@/interface/AuthInterface";
-import { useEmailVerifyStore } from "@/stores/userStore";
 
 // 비밀번호==비밀번호 확인
 export const isSamePassword = (password: string, password2: string) => {

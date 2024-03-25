@@ -1,7 +1,4 @@
-import {
-  NewsListItemInterface,
-  newsInterface,
-} from "@/interface/NewsInterface";
+import { newsInterface } from "@/interface/NewsInterface";
 import { TimerCarouselWrapper, MainCarouselItem } from "@/styles/Main/carousel";
 import { newsSplitter, sentenceMaker } from "@/util/language/format";
 import { useEffect, useState } from "react";

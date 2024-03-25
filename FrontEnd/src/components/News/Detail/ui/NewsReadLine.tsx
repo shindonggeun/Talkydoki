@@ -4,7 +4,6 @@ import { useQueryClient } from "@tanstack/react-query";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import PauseCircleIcon from "@mui/icons-material/PauseCircle";
 import SpeechBox from "./SpeechBox";
-import { KanaToHira } from "@/util/language/japanese";
 
 type Props = {
   news: string[][];
