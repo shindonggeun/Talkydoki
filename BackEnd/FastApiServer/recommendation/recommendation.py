@@ -1,7 +1,6 @@
 from fastapi import HTTPException, APIRouter
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.exc import IntegrityError
 from models.member import Member
 from models.news import News
 from models.keyword import Keyword
@@ -48,6 +47,7 @@ class DataStorage:
         keywords = self.session.query(Keyword).all()
         # mappings = self.session.query(NewsKeywordMapping).all()
         mappings = self.session.query(NewsKeywordMapping).join(NewsKeywordMapping.news).filter(News.write_date >= five_days_ago_kst).all()
+        histories = self.session.query(NewsKeywordHistory).all()
 
         categories = ['SOCIETY', 'BUSINESS', 'POLITICS', 'SCIENCE_CULTURE', 'INTERNATIONAL', 'SPORTS', 'LIFE', 'WEATHER_DISASTER']
         category_kr = ['사회', '경제', '정치', '과학', '국제', '스포츠', '생활', '재난/날씨']
@@ -111,32 +111,26 @@ class DataStorage:
             for word_id in preferred_words:
                 if word_id not in excluded_words:
                     self.user_word_df.at[user, word_id] = np.random.randint(5, 11)  # 높은 학습
-                    self.save_news_keyword_history(user, word_id, self.user_word_df.at[user, word_id])
                 else:
                     self.user_word_df.at[user, word_id] = 0
 
             for word_id in non_preferred_words:
                 count = np.random.randint(0, 5)  # 비선호 단어에 대해 낮은 학습 횟수
                 self.user_word_df.at[user, word_id] = count
-                self.save_news_keyword_history(user, word_id, count)
         
+        for history in histories:
+            member_id = history.member_id
+            keyword_id = history.keyword_id
+            read_count = history.read_count
+
+            if member_id in self.user_word_df.index and keyword_id in self.user_word_df.columns:
+                self.user_word_df.at[member_id, keyword_id] += read_count
+
         self.user_word_df_norm = (self.user_word_df - self.user_word_df.min()) / (self.user_word_df.max() - self.user_word_df.min())
         self.article_word_df_norm = (self.article_word_df - self.article_word_df.min()) / (self.article_word_df.max() - self.article_word_df.min())
 
         self.cosine_sim = cosine_similarity(self.user_word_df_norm.fillna(0), self.article_word_df_norm.fillna(0))
         self.cosine_sim_df = pd.DataFrame(self.cosine_sim, columns=self.articles, index=self.users)
-
-    def save_news_keyword_history(self, user_id, keyword_id, read_count):
-        try:
-            history = NewsKeywordHistory(member_id=user_id, keyword_id=keyword_id, read_count=read_count)
-            self.session.add(history)
-            self.session.commit()
-        except IntegrityError:
-            self.session.rollback()
-            print("중복된 값이 존재하여 추가하지 않습니다.")
-        except Exception as e:
-            self.session.rollback()
-            raise e
         
     def get_most_recommended_articles(self, num_recommendations=3):
         all_recommendations = self.cosine_sim_df.apply(lambda row: row.sort_values(ascending=False).index.values.tolist()[:num_recommendations], axis=1).explode()
