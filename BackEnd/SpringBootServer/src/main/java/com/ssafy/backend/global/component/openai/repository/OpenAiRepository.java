@@ -53,7 +53,7 @@ public class OpenAiRepository {
     public Mono<List<GptDialogueMessage>> findAiChatHistory(Long roomId) {
         // 레디스 템플릿의 range 메서드는 범위를 지정하여 리스트에서 요소들을 가져옵니다.
         // 여기서는 0부터 -1까지 지정하여 전체 리스트를 가져옵니다.
-        List<Object> historyObjects = redisTemplate.opsForList().range(AI_CHAT_HISTORY_KEY_PREFIX, 0, -1);
+        List<Object> historyObjects = redisTemplate.opsForList().range(AI_CHAT_HISTORY_KEY_PREFIX + roomId, 0, -1);
         if (historyObjects == null) {
             return Mono.empty();
         }
