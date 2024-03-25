@@ -39,11 +39,13 @@ class DataStorage:
         three_days_ago_kst = now_kst - timedelta(days=3)
         
         # 한국 시간 기준 3일 이내의 뉴스 데이터만 쿼리
-        articles = self.session.query(News).filter(News.write_date >= three_days_ago_kst).all()
+        # articles = self.session.query(News).filter(News.write_date >= three_days_ago_kst).all()
         
+        articles = self.session.query(News).all()
         users = self.session.query(Member).all()
         keywords = self.session.query(Keyword).all()
-        mappings = self.session.query(NewsKeywordMapping).join(NewsKeywordMapping.news).filter(News.write_date >= three_days_ago_kst).all()
+        mappings = self.session.query(NewsKeywordMapping).all()
+        # mappings = self.session.query(NewsKeywordMapping).join(NewsKeywordMapping.news).filter(News.write_date >= three_days_ago_kst).all()
 
         categories = ['SOCIETY', 'BUSINESS', 'POLITICS', 'SCIENCE_CULTURE', 'INTERNATIONAL', 'SPORTS', 'LIFE', 'WEATHER_DISASTER']
         category_kr = ['사회', '경제', '정치', '과학', '국제', '스포츠', '생활', '재난/날씨']
@@ -62,13 +64,12 @@ class DataStorage:
 
         article_word_data = {}
         for mapping in mappings:
-            if mapping.news.writeDate >= three_days_ago_kst:
-                article_key = f"{category_map[mapping.news.category]}기사{mapping.news.id}"
-                word_id = mapping.keyword.id
-                if article_key in article_word_data:
-                    article_word_data[article_key][word_id] = mapping.weight
-                else:
-                    article_word_data[article_key] = {word_id: mapping.weight}
+            article_key = f"{category_map[mapping.news.category]}기사{mapping.news.id}"
+            word_id = mapping.keyword.id
+            if article_key in article_word_data:
+                article_word_data[article_key][word_id] = mapping.weight
+            else:
+                article_word_data[article_key] = {word_id: mapping.weight}
 
         self.article_word_df = pd.DataFrame(0, index=self.articles, columns=self.words.keys())
         self.user_word_df = pd.DataFrame(0, index=self.users, columns=self.words.keys())
@@ -121,9 +122,6 @@ class DataStorage:
         
         self.user_word_df_norm = (self.user_word_df - self.user_word_df.min()) / (self.user_word_df.max() - self.user_word_df.min())
         self.article_word_df_norm = (self.article_word_df - self.article_word_df.min()) / (self.article_word_df.max() - self.article_word_df.min())
-        print(self.user_word_df)
-        print(self.article_word_df)
-
 
         self.cosine_sim = cosine_similarity(self.user_word_df_norm.fillna(0), self.article_word_df_norm.fillna(0))
         self.cosine_sim_df = pd.DataFrame(self.cosine_sim, columns=self.articles, index=self.users)
