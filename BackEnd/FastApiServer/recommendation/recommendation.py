@@ -7,6 +7,7 @@ from models.news import News
 from models.keyword import Keyword
 from models.news_keyword_mapping import NewsKeywordMapping
 from models.news_keyword_history import NewsKeywordHistory
+from models.news_image import NewsImage
 from sklearn.metrics.pairwise import cosine_similarity
 from datetime import datetime, timedelta
 from collections import Counter
