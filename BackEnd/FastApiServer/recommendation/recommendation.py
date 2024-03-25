@@ -37,16 +37,16 @@ class DataStorage:
     def load_data(self):
         kst = pytz.timezone('Asia/Seoul')
         now_kst = datetime.now(kst)
-        three_days_ago_kst = now_kst - timedelta(days=3)
+        five_days_ago_kst = now_kst - timedelta(days=5)
         
         # 한국 시간 기준 3일 이내의 뉴스 데이터만 쿼리
-        # articles = self.session.query(News).filter(News.write_date >= three_days_ago_kst).all()
+        articles = self.session.query(News).filter(News.write_date >= five_days_ago_kst).all()
         
-        articles = self.session.query(News).all()
+        # articles = self.session.query(News).all()
         users = self.session.query(Member).all()
         keywords = self.session.query(Keyword).all()
-        mappings = self.session.query(NewsKeywordMapping).all()
-        # mappings = self.session.query(NewsKeywordMapping).join(NewsKeywordMapping.news).filter(News.write_date >= three_days_ago_kst).all()
+        # mappings = self.session.query(NewsKeywordMapping).all()
+        mappings = self.session.query(NewsKeywordMapping).join(NewsKeywordMapping.news).filter(News.write_date >= five_days_ago_kst).all()
 
         categories = ['SOCIETY', 'BUSINESS', 'POLITICS', 'SCIENCE_CULTURE', 'INTERNATIONAL', 'SPORTS', 'LIFE', 'WEATHER_DISASTER']
         category_kr = ['사회', '경제', '정치', '과학', '국제', '스포츠', '생활', '재난/날씨']
@@ -74,8 +74,6 @@ class DataStorage:
 
         self.article_word_df = pd.DataFrame(0, index=self.articles, columns=self.words.keys())
         self.user_word_df = pd.DataFrame(0, index=self.users, columns=self.words.keys())
-        self.article_word_df.to_csv("article_word_df.csv", encoding="utf-8-sig")
-        self.user_word_df.to_csv("user_word_df.csv", encoding="utf-8-sig")
 
         for article, word_ids in article_word_data.items():
             for word_id, weight in word_ids.items():
@@ -126,6 +124,9 @@ class DataStorage:
 
         self.cosine_sim = cosine_similarity(self.user_word_df_norm.fillna(0), self.article_word_df_norm.fillna(0))
         self.cosine_sim_df = pd.DataFrame(self.cosine_sim, columns=self.articles, index=self.users)
+
+        self.article_word_df.to_csv("article_word_df.csv", encoding="utf-8-sig")
+        self.user_word_df.to_csv("user_word_df.csv", encoding="utf-8-sig")
 
     def save_news_keyword_history(self, user_id, keyword_id, read_count):
         try:
