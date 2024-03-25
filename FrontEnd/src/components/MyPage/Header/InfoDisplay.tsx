@@ -1,5 +1,3 @@
-import React from "react";
-
 type Props = { label: string; count: string };
 
 function InfoDisplay({ label, count }: Props) {

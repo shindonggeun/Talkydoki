@@ -26,7 +26,7 @@ function Jandi() {
             return `color-github-${value.count}`;
           }}
           // showWeekdayLabels={true}
-          onClick={(value) => alert(`Clicked on ${value.date}`)}
+          //   onClick={(value) => alert(`Clicked on ${value.date}`)}
         />
       </JandiCard>
     </div>
