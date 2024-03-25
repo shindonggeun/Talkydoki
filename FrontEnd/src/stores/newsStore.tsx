@@ -1,15 +1,17 @@
 import { create } from "zustand";
 
 interface NewsButtonProps {
-  isPlaying: boolean;
-  isTransOn: boolean;
-  isReadOn: boolean;
-  isReadKrOn: boolean;
+  isPlaying: boolean; // 재생 중 여부
+  isTransOn: boolean; // 번역 켰는 지
+  isReadOn: boolean; // 발음(일) 켰는 지
+  isReadKrOn: boolean; // 발음(한) 켰는 지
+  isTTSReady: boolean; // TTS 로딩 완료 여부
   actions: {
     setIsPlaying: (by: boolean) => void;
     setIsTransOn: (by: boolean) => void;
     setIsReadOn: (by: boolean) => void;
     setIsReadKrOn: (by: boolean) => void;
+    setIsTTSReady: (by: boolean) => void;
   };
 }
 
@@ -19,11 +21,13 @@ const useNewsButtonStore = create<NewsButtonProps>((set) => ({
   isTransOn: false,
   isReadOn: false,
   isReadKrOn: false,
+  isTTSReady: false,
   actions: {
     setIsPlaying: (by) => set(() => ({ isPlaying: by })),
     setIsTransOn: (by) => set(() => ({ isTransOn: by })),
     setIsReadOn: (by) => set(() => ({ isReadOn: by })),
     setIsReadKrOn: (by) => set(() => ({ isReadKrOn: by })),
+    setIsTTSReady: (by) => set(() => ({ isTTSReady: by })),
   },
 }));
 
@@ -33,6 +37,7 @@ export const useButtonStates = () =>
     isTransOn: state.isTransOn,
     isReadOn: state.isReadOn,
     isReadKrOn: state.isReadKrOn,
+    isTTSReady: state.isTTSReady,
   }));
 
 export const useButtonActions = () =>
@@ -51,7 +56,10 @@ const useSearchStore = create<WordSearchInterface>((set) => ({
   word: { word: "", read: "", x: 0, y: 0 },
   setWord: (by) => set(() => ({ word: by })),
   isSearchOn: false,
-  setIsSearchOn: (by) => set(() => ({ isSearchOn: by })),
+  setIsSearchOn: (by) => {
+    console.log(by);
+    return set(() => ({ isSearchOn: by }));
+  },
 }));
 
 export const useSearchWord = () => useSearchStore((state) => state.word);

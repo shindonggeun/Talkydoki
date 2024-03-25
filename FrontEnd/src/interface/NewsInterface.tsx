@@ -22,6 +22,7 @@ export interface newsInterface {
   content: string;
   contentTranslated: string;
   summary: string;
+  newsKeywords: string[];
   summaryTranslated: string;
   writeDate: string;
   srcOrigin: string;
@@ -35,6 +36,7 @@ export interface splittedNewsInterface {
   category: string;
   content: string[][][];
   contentTranslated: string[];
+  newsKeywords: { [keyword: string]: number };
   summary: string[][][];
   summaryTranslated: string[];
   writeDate: string;

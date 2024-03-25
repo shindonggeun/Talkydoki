@@ -48,6 +48,7 @@ const fetchTTS = async (text: string) => {
   });
 };
 
+// 뉴스 전체 TTS 한 번에 불러오기
 export const useGetWholeTTS = (newsId: number, textList: string[]) => {
   return useQueries({
     queries: textList.map((text, idx) => ({
@@ -62,6 +63,7 @@ export const useGetWholeTTS = (newsId: number, textList: string[]) => {
   });
 };
 
+// TTS 개별 호출
 export const useGetTTS = (newsid: number, index: number, text: string) => {
   return useQuery({
     queryKey: ["getVoice", newsid, index],

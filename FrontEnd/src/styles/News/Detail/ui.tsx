@@ -13,7 +13,8 @@ export const WordItem = styled.div`
   .readKor {
     font-size: 10pt;
     opacity: 0;
-    color: var(--yellow-dark);
+    color: ${(props) =>
+      props.theme.mode == "light" ? "var(--blue-dark)" : "var(--yellow-dark)"};
 
     &.show {
       opacity: 1;
@@ -46,4 +47,17 @@ export const WordItem = styled.div`
 export const NewsTitle = styled.h1`
   font-size: 18pt;
   font-weight: 900;
+`;
+
+export const KeywordItem = styled.div`
+  padding: 5px 10px;
+  font-size: 10pt;
+  width: fit-content;
+  margin: 5px;
+  border: 1px solid var(--grey);
+  border-radius: 25px;
+
+  span {
+    color: var(--main);
+  }
 `;

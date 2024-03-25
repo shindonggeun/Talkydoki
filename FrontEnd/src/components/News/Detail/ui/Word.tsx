@@ -1,6 +1,5 @@
 import { WordItem } from "@/styles/News/Detail/ui";
 import { JptoKor, KanaToHira } from "@/util/language/japanese";
-import WordSearch from "./WordSearch";
 import { useSetIsSearchOn, useSetSearchWord } from "@/stores/newsStore";
 
 type Props = {
@@ -31,7 +30,6 @@ function Word({ word, isReadOn, isReadKrOn }: Props) {
     if (!hasMeaning(word[4])) return;
     setSearchWord({ word: word[3], read, x: e.clientX, y: e.clientY });
     setIsSearchOn(true);
-    // console.log(e);
   };
 
   return (
@@ -39,7 +37,7 @@ function Word({ word, isReadOn, isReadKrOn }: Props) {
       <div className={`read ${isReadOn && "show"}`}>{read}</div>
       <div
         className={`japanese ${hasMeaning(word[4]) && "meaning"}`}
-        onClick={searchHandler}
+        onMouseUp={searchHandler}
       >
         {japanese}
       </div>

@@ -1,6 +1,5 @@
 import {
   ArticleContainer,
-  SummaryWrapper,
   WordContainer,
 } from "@/styles/News/Detail/container";
 import { useEffect, useRef, useState } from "react";
@@ -9,34 +8,36 @@ import { useGetWholeTTS } from "@/api/ttsApi";
 import { useQueryClient } from "@tanstack/react-query";
 import { useButtonActions, useButtonStates } from "@/stores/newsStore";
 import NewsButton from "./ui/NewsButton";
-import { Divider } from "@mui/material";
 
 type Props = {
   newsId: number;
   news: string[][][];
   korNews: string[];
-  summary: string[][][];
-  korSummary: string[];
   fullNews: string[];
 };
 
-function ArticleRead({
-  newsId,
-  news,
-  korNews,
-  summary,
-  korSummary,
-  fullNews,
-}: Props) {
+function ArticleRead({ newsId, news, korNews, fullNews }: Props) {
   const [nowPlaying, setNowPlaying] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const { isPlaying, isReadKrOn, isReadOn, isTransOn } = useButtonStates();
-  const { setIsPlaying } = useButtonActions();
+  const { setIsPlaying, setIsTTSReady } = useButtonActions();
 
   const TTSList = useGetWholeTTS(newsId, fullNews);
   const queryClient = useQueryClient();
-  console.log(TTSList);
 
+  // TTS 로딩 완료 되면 ready
+  useEffect(() => {
+    if (TTSList.indexOf(undefined) == -1) {
+      setIsTTSReady(true);
+    }
+  }, [TTSList]);
+
+  // 페이지 떠나면 TTS Ready 해제
+  useEffect(() => {
+    return () => setIsTTSReady(false);
+  }, []);
+
+  // TTS 재생 Hook
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
@@ -58,18 +59,7 @@ function ArticleRead({
   return (
     <div>
       <NewsButton />
-      <SummaryWrapper>
-        <div>요약</div>
-        <Divider />
-        {summary.map((line, idx) => (
-          <div key={idx} className="jp">
-            {line.map((each, idx) => (
-              <span key={idx}>{each[0]}</span>
-            ))}
-          </div>
-        ))}
-        <div className="kor">{korSummary}</div>
-      </SummaryWrapper>
+      {/* 뉴스 기사 section */}
       <ArticleContainer>
         {news.map((line, idx) => (
           <div key={idx}>
@@ -91,6 +81,7 @@ function ArticleRead({
           </div>
         ))}
       </ArticleContainer>
+      {/* 오디오 */}
       <audio
         ref={audioRef}
         onEnded={() => {

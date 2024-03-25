@@ -9,15 +9,22 @@ import ArticleRead from "@/components/News/Detail/ArticleRead";
 import SideWidget from "@/components/News/Detail/SideWidget";
 import TitleSection from "@/components/News/Detail/TitleSection";
 import WordSearch from "@/components/News/Detail/ui/WordSearch";
-import { useIsSearchOn } from "@/stores/newsStore";
+import { useEffect, useState } from "react";
+import ArticleSpeak from "@/components/News/Detail/ArticleSpeak";
+import { useButtonActions, useButtonStates } from "@/stores/newsStore";
 
 type Props = {};
 
 function NewsDetail({}: Props) {
   const { state } = useLocation();
   const newsId = state.newsId;
-  // const [isReadMode, setIsReadMode] = useState(true);
+  const [isReadMode, setIsReadMode] = useState(true);
   const { data, isFetching } = useGetArticle(newsId);
+  const { setIsPlaying } = useButtonActions();
+
+  useEffect(() => {
+    setIsPlaying(false);
+  }, [isReadMode]);
 
   if (isFetching || !data) return <></>;
 
@@ -30,17 +37,29 @@ function NewsDetail({}: Props) {
           url={data.srcOrigin}
           date={data.writeDate}
           images={data.newsImages}
-        />
-        <ArticleRead
-          newsId={newsId}
-          news={data.content}
-          korNews={data.contentTranslated}
           summary={data.summary}
           korSummary={data.summaryTranslated}
-          fullNews={data.fullNews}
         />
+        {isReadMode ? (
+          <ArticleRead
+            newsId={newsId}
+            news={data.content}
+            korNews={data.contentTranslated}
+            fullNews={data.fullNews}
+          />
+        ) : (
+          <ArticleSpeak
+            newsId={newsId}
+            news={data.content}
+            fullNews={data.fullNews}
+          />
+        )}
       </NewsArticleWrapper>
-      <SideWidget />
+      <SideWidget
+        keywords={data.newsKeywords}
+        isReadMode={isReadMode}
+        setIsReadMode={setIsReadMode}
+      />
     </NewsWrapper>
   );
 }

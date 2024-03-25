@@ -73,6 +73,13 @@ export const useGetArticle = (newsId: number) => {
     select: ({ data }) => {
       if (data.dataHeader.successCode == 0) {
         const news = data.dataBody as newsInterface;
+        const keywords: { [keyword: string]: number } = {};
+
+        news.newsKeywords.forEach((each) => {
+          const regex = new RegExp(`${each}`, "g");
+          keywords[each] = news.content.match(regex)?.length || 0;
+        });
+
         // 뉴스 변환
         const newNews = {
           newsId: news.newsId,
@@ -86,6 +93,7 @@ export const useGetArticle = (newsId: number) => {
           writeDate: news.writeDate,
           srcOrigin: news.srcOrigin,
           newsImages: news.newsImages,
+          newsKeywords: keywords,
           fullTitle: sentenceMaker(newsSplitter(news.title)[0]),
           fullNews: newsSplitter(news.content).map((each) =>
             sentenceMaker(each)
@@ -99,6 +107,7 @@ export const useGetArticle = (newsId: number) => {
   });
 };
 
+// 단어 검색 API
 export const useSearchWordApi = (word: string) => {
   const isSearchOn = useIsSearchOn();
 
