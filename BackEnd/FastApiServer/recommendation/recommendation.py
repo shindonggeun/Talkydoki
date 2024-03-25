@@ -125,9 +125,6 @@ class DataStorage:
         self.cosine_sim = cosine_similarity(self.user_word_df_norm.fillna(0), self.article_word_df_norm.fillna(0))
         self.cosine_sim_df = pd.DataFrame(self.cosine_sim, columns=self.articles, index=self.users)
 
-        self.article_word_df.to_csv("article_word_df.csv", encoding="utf-8-sig")
-        self.user_word_df.to_csv("user_word_df.csv", encoding="utf-8-sig")
-
     def save_news_keyword_history(self, user_id, keyword_id, read_count):
         try:
             history = NewsKeywordHistory(member_id=user_id, keyword_id=keyword_id, read_count=read_count)
