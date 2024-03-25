@@ -26,14 +26,12 @@ public record GptSetupRequest(
      * @return GptSetupRequest GPT 설정 요청 객체
      */
     public static GptSetupRequest from(AiChatCategory category) {
-        String jsonString = "{"
-                + "\"conversation\": {"
-                + "    \"gpt_japanese\": \"${너의 대답 (일본어)}\","
-                + "    \"gpt_korean\": \"${너의 대답 한국어 번역}\","
-                + "    \"user_tip_japanese\": \"${사용자의 모범 답변 (일본어)}。\""
-                + "    \"user_tip_korean\": \"${사용자의 모범 답변 한국어 번역}。\""
-                + "  }"
-                + "}";
+        String jsonString = """
+                {"conversation": {    "gpt_japanese": "${너의 대답 (일본어)}",
+                    "gpt_korean": "${너의 대답 한국어 번역}",
+                    "user_tip_japanese": "${사용자의 모범 답변 (일본어)}",
+                    "user_tip_korean": "${사용자의 모범 답변 한국어 번역}"
+                  }}""";
 
         // 카테고리에 따른 대화 설정 로직 구현
         String systemMessage = "이제부터 GPT 너는 일본어 회화 전문 강사야.\n" +
@@ -43,10 +41,12 @@ public record GptSetupRequest(
                 "사용자의 응답에 반드시 일본어로 답해줘.\n" +
                 "답변은 너의 대답, 그리고 너의 응답에 대한 상대방의 모범 답변을 제시해주면 돼.\n" +
                 "그리고 너의 대답 및 상대방의 모범 답변을 반드시 1마디씩만 생성해주면 좋겠어. 너무 길게 답변하지 말았으면 해.\n" +
+                "또, 내가 최근에 했던 대화 내역도 같이 보내줄거거든?? (없으면 시스템 메시지에 같이 보내지는 않음), 최근에 한 대화 내역 토대로" +
+                "했던 내용이 또 나오면 안돼. 이걸 잘 지켜서 꼭 내 요구사항에 맞게 응답해줘.\n" +
                 "주제는 " + category.getKoreanName() + " 이거야.\n" +
                 "표현 형식 다음과 같아. 반드시 다음 양식에 맞게 회화 답변을 생성해줘.\n" +
                 jsonString +
-                "이런식으로 JSON format으로 data 전송해줘";    // JSON format 필수로 있어야함
+                "이런식으로 무조건 `JSON format`으로 data 전송해줘.";    // JSON format 필수로 있어야함
 
         // 카테고리에 따른 대화 설정 로직 구현
         List<GptDialogueMessage> messages = List.of(
