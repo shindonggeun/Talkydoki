@@ -7,6 +7,7 @@ import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
 import com.ssafy.backend.domain.aichat.service.AiChatService;
 import com.ssafy.backend.global.common.dto.Message;
 import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
+import com.ssafy.backend.global.component.openai.dto.Conversation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
-
-import java.security.Principal;
 
 @Tag(name = "Ai Chatting", description = "AiChatting 관련 API 입니다.")
 @Slf4j
@@ -53,10 +52,10 @@ public class AiChatController {
 
     @PostMapping("/gpt/setup/{roomId}/{category}")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    public Mono<ResponseEntity<Message<Void>>> setupAiChatBot(@PathVariable Long roomId,
-                                                              @PathVariable AiChatCategory category) {
+    public Mono<ResponseEntity<Message<Conversation>>> setupAiChatBot(@PathVariable Long roomId,
+                                                                      @PathVariable AiChatCategory category) {
         return aiChatService.setupAiChatBot(roomId, category)
-                .thenReturn(ResponseEntity.ok().body(Message.success()));
+                .map(conversation -> ResponseEntity.ok(Message.success(conversation)));
     }
 }
 

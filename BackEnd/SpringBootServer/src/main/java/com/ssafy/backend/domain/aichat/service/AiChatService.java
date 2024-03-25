@@ -2,6 +2,7 @@ package com.ssafy.backend.domain.aichat.service;
 
 import com.ssafy.backend.domain.aichat.dto.*;
 import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
+import com.ssafy.backend.global.component.openai.dto.Conversation;
 import reactor.core.publisher.Mono;
 
 /**
@@ -37,11 +38,11 @@ public interface AiChatService {
     Mono<Void> sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage);
 
     /**
-     * 카테고리에 맞게 AI 채팅봇(GPT)에 세팅하고 결과를 처리합니다..
+     * 주어진 AI 회화 채팅방의 ID와 카테고리에 따라 AI 채팅봇을 설정합니다.
      *
-     * @param roomId 채팅방의 ID.
-     * @param category 대화 설정을 원하는 카테고리
-     * @return Mono<Void> 설정 후 작업 완료를 나타내는 Reactive 타입
+     * @param roomId 채팅방의 ID
+     * @param category 채팅방에서 사용될 대화의 카테고리
+     * @return 설정된 대화 내용을 담은 Mono<Conversation> 객체
      */
-    Mono<Void> setupAiChatBot(Long roomId, AiChatCategory category);
+    Mono<Conversation> setupAiChatBot(Long roomId, AiChatCategory category);
 }

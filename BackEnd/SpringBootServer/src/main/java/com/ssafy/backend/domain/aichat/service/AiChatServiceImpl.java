@@ -15,8 +15,7 @@ import com.ssafy.backend.domain.member.exception.MemberErrorCode;
 import com.ssafy.backend.domain.member.exception.MemberException;
 import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.global.component.openai.OpenAiCommunicationProvider;
-import com.ssafy.backend.global.component.openai.dto.Conversation;
-import com.ssafy.backend.global.component.openai.dto.GptThreadCreateResponse;
+import com.ssafy.backend.global.component.openai.dto.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.TopicExchange;
@@ -24,6 +23,8 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+
+import java.util.List;
 
 
 /**
@@ -52,12 +53,11 @@ public class AiChatServiceImpl implements AiChatService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
-        GptThreadCreateResponse threadResponse = openAiCommunicationProvider.createThread();
+//        GptThreadCreateResponse threadResponse = openAiCommunicationProvider.createThread();
 
         AiChatRoom aiChatRoom = AiChatRoom.builder()
                 .member(member)
                 .category(category)
-                .threadId(threadResponse.id())
                 .build();
 
         AiChatRoom room = aiChatRoomRepository.save(aiChatRoom);
@@ -124,30 +124,51 @@ public class AiChatServiceImpl implements AiChatService {
     @Override
     public Mono<Void> sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage) {
         // 채팅방 조회 및 AI 응답 처리
-        return Mono.fromCallable(() -> aiChatRoomRepository.findById(roomId)
-                        .orElseThrow(() -> new RuntimeException("해당 AI 회화 채팅방을 찾을 수 없습니다.")))
-                .subscribeOn(Schedulers.boundedElastic()) // 블로킹 호출을 별도의 스레드에서 처리
-                .flatMap(aiChatRoom -> openAiCommunicationProvider.sendPromptToGpt(userMessage) // AI 채팅봇으로부터 응답 받기
-                        .onErrorMap(exception -> new RuntimeException(exception.getMessage())) // 오류 처리
-                        .doOnSuccess(response -> {
-                            log.info("GPT 대화 온거 확인: {}", response);
-                        })
-                ).then(); // 작업 완료 시 Mono<Void> 반환
+//        return Mono.fromCallable(() -> aiChatRoomRepository.findById(roomId)
+//                        .orElseThrow(() -> new RuntimeException("해당 AI 회화 채팅방을 찾을 수 없습니다.")))
+//                .subscribeOn(Schedulers.boundedElastic()) // 블로킹 호출을 별도의 스레드에서 처리
+//                .flatMap(aiChatRoom -> {
+//                    // TODO: 대화 내역 가져오는거 Redis 이용해서 캐싱작업하기 (DB에 접근하지 말고)
+//                    List<GptDialogueMessage> conversationHistory;// 대화 내역을 가져오는 로직 구현
+//
+//
+//                    GptChatRequest gptChatRequest = GptChatRequest.from(userMessage, conversationHistory);
+//
+//                    return openAiCommunicationProvider.sendPromptToGpt(gptChatRequest)
+//                            .onErrorMap(exception -> new RuntimeException(exception.getMessage())) // 오류 처리
+//                            .doOnSuccess(response -> {
+//                                log.info("GPT 대화 온거 확인: {}", response);
+//                                // 여기에서 DB 업데이트 등의 추가 로직 구현
+//                            });
+//                }).then(); // 작업 완료 시 Mono<Void> 반환
+
+        return null;
     }
 
     @Override
-    public Mono<Void> setupAiChatBot(Long roomId, AiChatCategory category) {
-        // OpenAiCommunicationProvider 컴포넌트의 setupPromptToGpt 메서드를 호출하여 GPT-3 설정 수행
-        return openAiCommunicationProvider.setupPromptToGpt(category)
-                .onErrorMap(exception -> new RuntimeException(exception.getMessage()))
-                .doOnSuccess(response -> {
-                    log.info("GPT 대화 세팅 완료: {}", response);
-                    Conversation conversation = parseGetResponse(response);
+    public Mono<Conversation> setupAiChatBot(Long roomId, AiChatCategory category) {
+        // 채팅방 정보와 GPT 설정을 병렬로 실행
+        return Mono.fromCallable(() -> aiChatRoomRepository.findById(roomId)
+                        .orElseThrow(() -> new RuntimeException("해당 AI 회화 채팅방을 찾을 수 없습니다.")))
+                .subscribeOn(Schedulers.boundedElastic())
+                .zipWith(openAiCommunicationProvider.setupPromptToGpt(category)
+                                .onErrorMap(exception -> new RuntimeException("GPT 설정 실패: " + exception.getMessage())),
+                        (aiChatRoom, setupResponse) -> {
+                            // 설정된 대화 정보 로깅
+                            log.info("GPT 대화 세팅 완료: {}", setupResponse);
+                            // 설정된 대화 정보를 기반으로 Conversation 객체 생성
+                            Conversation conversation = parseGetResponse(setupResponse);
 
-                    // DB에 GPT 일본어 응답값 저장
-
-                })
-                .then(); // 작업 완료 시 Mono<Void> 반환
+                            // 생성된 대화 정보를 DB에 저장
+                            AiChatHistory aiChatHistory = AiChatHistory.builder()
+                                    .aiChatRoom(aiChatRoom)
+                                    .sender(AiChatSender.GPT)
+                                    .content(conversation.gptJapaneseResponse())
+                                    .build();
+                            aiChatHistoryRepository.save(aiChatHistory);
+                            return conversation;
+                        })
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
     private Conversation parseGetResponse(String jsonString) {
