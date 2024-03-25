@@ -16,7 +16,7 @@ import com.ssafy.backend.domain.member.exception.MemberException;
 import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.global.component.openai.OpenAiCommunicationProvider;
 import com.ssafy.backend.global.component.openai.dto.*;
-import com.ssafy.backend.global.component.openai.repository.OpenAiSetupRepository;
+import com.ssafy.backend.global.component.openai.repository.OpenAiRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.TopicExchange;
@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -44,7 +45,7 @@ public class AiChatServiceImpl implements AiChatService {
     private final TopicExchange topicExchange;
 
     private final OpenAiCommunicationProvider openAiCommunicationProvider;
-    private final OpenAiSetupRepository openAiSetupRepository;
+    private final OpenAiRepository openAiRepository;
 
 
     /**
@@ -92,6 +93,9 @@ public class AiChatServiceImpl implements AiChatService {
 
         aiChatHistoryRepository.save(aiChatHistory);
 
+        // 사용자 메시지를 Redis에 저장
+        openAiRepository.saveAiChatHistory(roomId, List.of(new GptDialogueMessage("user", userMessage.content())));
+
         rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, userMessage);
     }
 
@@ -100,38 +104,35 @@ public class AiChatServiceImpl implements AiChatService {
      */
     @Override
     public Mono<Void> sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage) {
-        // 채팅방 조회 및 AI 응답 처리
-//        return Mono.fromCallable(() -> aiChatRoomRepository.findById(roomId)
-//                        .orElseThrow(() -> new RuntimeException("해당 AI 회화 채팅방을 찾을 수 없습니다.")))
-//                .subscribeOn(Schedulers.boundedElastic()) // 블로킹 호출을 별도의 스레드에서 처리
-//                .flatMap(aiChatRoom -> {
-//                    // TODO: 대화 내역 가져오는거 Redis 이용해서 캐싱작업하기 (DB에 접근하지 말고)
-//                    List<GptDialogueMessage> conversationHistory;// 대화 내역을 가져오는 로직 구현
-//
-//
-//                    GptChatRequest gptChatRequest = GptChatRequest.from(userMessage, conversationHistory);
-//
-//                    return openAiCommunicationProvider.sendPromptToGpt(gptChatRequest)
-//                            .onErrorMap(exception -> new RuntimeException(exception.getMessage())) // 오류 처리
-//                            .doOnSuccess(response -> {
-//                                log.info("GPT 대화 온거 확인: {}", response);
-//                                // 여기에서 DB 업데이트 등의 추가 로직 구현
-//                            });
-//                }).then(); // 작업 완료 시 Mono<Void> 반환
+        return openAiRepository.findOpenAiSetup(roomId)
+                .switchIfEmpty(Mono.error(new RuntimeException("GPT 채팅방 설정을 찾을 수 없습니다.")))
+                .flatMap(setupRequest ->
+                        // Redis에서 최근 대화 내역 가져오기
+                        openAiRepository.findAiChatHistory(roomId)
+                                .flatMap(historyMessages -> {
+                                    List<GptDialogueMessage> messages = new ArrayList<>(setupRequest.messages());
+                                    if (!historyMessages.isEmpty()) {
+                                        // 최근 대화 내역 추가
+                                        messages.addAll(historyMessages);
+                                    }
 
-        return openAiSetupRepository.find(roomId)
-                .switchIfEmpty(Mono.error(new RuntimeException("GPT 채팅방 설정을 찾을 수 없습니다."))) // 여기로 이동
-                .flatMap(setupRequest -> {
-                    GptChatRequest gptChatRequest = GptChatRequest.from(userMessage, setupRequest.messages());
-                    return openAiCommunicationProvider.sendPromptToGpt(gptChatRequest)
-                            .doOnSuccess(response -> {
-                                log.info("GPT 대화 응답: {}", response);
-                                Conversation conversation = parseGetResponse(response);
-                                
-                                // 대화 운거 return 해주기
-                            })
-                            .then(); // setupRequest가 있을 경우만 실행
-                })
+                                    // 최근 대화 내역을 포함하여 GPT 요청 생성
+                                    GptChatRequest gptChatRequest = GptChatRequest.from(userMessage, messages);
+
+                                    return openAiCommunicationProvider.sendPromptToGpt(gptChatRequest)
+                                            .doOnSuccess(response -> {
+                                                log.info("GPT 대화 응답: {}", response);
+                                                Conversation conversation = parseGetResponse(response);
+
+                                                // GPT 응답을 Redis에 저장
+                                                openAiRepository.saveAiChatHistory(roomId, List.of(
+                                                        new GptDialogueMessage("assistant", conversation.gptJapaneseResponse()),
+                                                        new GptDialogueMessage("assistant", conversation.gptKoreanResponse())
+                                                ));
+                                            })
+                                            .then(); // setupRequest가 있을 경우만 실행
+                                })
+                )
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
@@ -159,7 +160,7 @@ public class AiChatServiceImpl implements AiChatService {
 
                             // Redis에 GptSetupRequest 저장
                             GptSetupRequest setupRequest = GptSetupRequest.from(category);
-                            openAiSetupRepository.save(roomId, setupRequest);
+                            openAiRepository.save(roomId, setupRequest);
 
                             AiChatMessage gptMessage = AiChatMessage.builder()
                                     .sender(AiChatSender.GPT)
@@ -174,8 +175,17 @@ public class AiChatServiceImpl implements AiChatService {
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-    private Conversation parseGetResponse(String jsonString) {
+    private Conversation parseGetResponse(String responseString) {
         try {
+            // JSON 데이터가 시작되는 인덱스를 찾습니다.
+            int jsonStartIndex = responseString.indexOf("{");
+            if (jsonStartIndex == -1) {
+                throw new RuntimeException("유효한 JSON 시작 부분을 찾을 수 없습니다.");
+            }
+
+            // JSON 시작 부분부터 문자열을 잘라냅니다.
+            String jsonString = responseString.substring(jsonStartIndex);
+
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(jsonString);
             // "conversation" 객체를 직접 찾습니다.
