@@ -16,6 +16,7 @@ import com.ssafy.backend.domain.member.exception.MemberException;
 import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.global.component.openai.OpenAiCommunicationProvider;
 import com.ssafy.backend.global.component.openai.dto.*;
+import com.ssafy.backend.global.component.openai.repository.OpenAiSetupRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.TopicExchange;
@@ -43,6 +44,7 @@ public class AiChatServiceImpl implements AiChatService {
     private final TopicExchange topicExchange;
 
     private final OpenAiCommunicationProvider openAiCommunicationProvider;
+    private final OpenAiSetupRepository openAiSetupRepository;
 
 
     /**
@@ -166,6 +168,19 @@ public class AiChatServiceImpl implements AiChatService {
                                     .content(conversation.gptJapaneseResponse())
                                     .build();
                             aiChatHistoryRepository.save(aiChatHistory);
+
+                            // Redis에 GptSetupRequest 저장
+                            GptSetupRequest setupRequest = GptSetupRequest.from(category);
+                            openAiSetupRepository.save(roomId, setupRequest);
+
+                            AiChatMessage gptMessage = AiChatMessage.builder()
+                                    .sender(AiChatSender.GPT)
+                                    .content(conversation.gptJapaneseResponse())
+                                    .build();
+
+                            // 메시지 브로커에 전달
+                            rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
+
                             return conversation;
                         })
                 .subscribeOn(Schedulers.boundedElastic());
