@@ -153,15 +153,21 @@ def get_news_data(news_id):
     if news:
         # 뉴스 이미지 URL을 리스트로 추출합니다.
         images_urls = [image.image_url for image in news.news_images]
+        keyword_list = [keyword.keyword.japanese for keyword in news.news_keyword_mappings]
         # 뉴스 데이터와 함께 이미지 URL을 딕셔너리 형태로 반환합니다.
         return {
             "id": news.id,
             "title": news.title,
+            "titleTranslated": news.title_translated,
             "category": news.category,
-            "write_date": news.write_date.isoformat(),
             "content": news.content,
+            "contentTranslated": news.content_translated,
             "summary": news.summary,
-            "images_urls": images_urls
+            "summaryTranslated" : news.summary_translated,
+            "write_date": news.write_date.isoformat(),
+            "srcOrigin": news.src_origin,
+            "newsImages": images_urls,
+            "newsKeywords": keyword_list
         }
     else:
         return None
