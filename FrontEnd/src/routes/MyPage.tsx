@@ -1,10 +1,15 @@
+import Bage from "@/components/MyPage/Header/Bage";
+import MyAmount from "@/components/MyPage/Header/MyAmount";
+import Jandi from "@/components/MyPage/Jandi/Jandi";
+import NewsReport from "@/components/MyPage/Main/NewsReport";
+import VocaReport from "@/components/MyPage/Main/VocaReport";
 import {
-  FooterContainer,
-  HeaderContainer,
-  JandiContainer,
-  MainContainer,
+  FooterSection,
+  HeaderSection,
+  JandiSection,
+  MainSection,
   MyPageWrapper,
-  ProfileContainer,
+  ProfileSection,
 } from "@/styles/User/Mypage";
 import { BlueButton } from "@/styles/common/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -16,7 +21,7 @@ function MyPage({}: Props) {
 
   return (
     <MyPageWrapper>
-      <ProfileContainer>
+      <ProfileSection>
         {" "}
         <BlueButton
           width="95px"
@@ -25,22 +30,22 @@ function MyPage({}: Props) {
         >
           프로필 수정
         </BlueButton>
-      </ProfileContainer>
-      <HeaderContainer> </HeaderContainer>
+      </ProfileSection>
+      <HeaderSection>
+        <MyAmount />
+        <Bage />
+      </HeaderSection>
 
-      <JandiContainer>1</JandiContainer>
+      <JandiSection>
+        <Jandi></Jandi>
+      </JandiSection>
 
-      <MainContainer>
-        <BlueButton
-          width="95px"
-          height="33px"
-          onClick={() => navigate("myvoca")}
-        >
-          단어장
-        </BlueButton>
-      </MainContainer>
+      <MainSection>
+        <NewsReport />
+        {/* <VocaReport onClick={() => navigate("myvoca")} /> */}
+      </MainSection>
 
-      <FooterContainer>1</FooterContainer>
+      <FooterSection>1</FooterSection>
     </MyPageWrapper>
   );
 }
