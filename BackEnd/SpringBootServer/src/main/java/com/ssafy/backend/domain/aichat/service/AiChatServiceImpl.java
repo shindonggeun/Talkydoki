@@ -98,31 +98,6 @@ public class AiChatServiceImpl implements AiChatService {
     /**
      * {@inheritDoc}
      */
-//    @Override
-//    public Mono<Void> sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage) {
-//        // 채팅방 조회 및 AI 응답 처리
-//        return Mono.fromCallable(() -> aiChatRoomRepository.findById(roomId)
-//                        .orElseThrow(() -> new RuntimeException("해당 AI 회화 채팅방을 찾을 수 없습니다.")))
-//                .subscribeOn(Schedulers.boundedElastic()) // 블로킹 호출을 별도의 스레드에서 처리
-//                .flatMap(aiChatRoom -> openAiCommunicationProvider.sendPromptToGpt(userMessage) // AI 채팅봇으로부터 응답 받기
-//                        .onErrorMap(exception -> new RuntimeException(exception.getMessage())) // 오류 처리
-//                        .flatMap(response -> { // 응답을 기반으로 채팅 히스토리 생성 및 저장
-//                            AiChatHistory aiChatHistory = AiChatHistory.builder()
-//                                    .aiChatRoom(aiChatRoom)
-//                                    .sender(AiChatSender.GPT)
-//                                    .content(response)
-//                                    .build();
-//                            return Mono.fromCallable(() -> aiChatHistoryRepository.save(aiChatHistory))
-//                                    .subscribeOn(Schedulers.boundedElastic())
-//                                    .thenReturn(response);
-//                        })
-//                        .doOnNext(response -> { // AI 응답 메시지를 RabbitMQ를 통해 채팅방으로 전송
-//                            AiChatMessage gptMessage = new AiChatMessage(AiChatSender.GPT, response);
-//                            rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
-//                        })
-//                ).then(); // 작업 완료 시 Mono<Void> 반환
-//    }
-
     @Override
     public Mono<Void> sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage) {
         // 채팅방 조회 및 AI 응답 처리
@@ -144,7 +119,20 @@ public class AiChatServiceImpl implements AiChatService {
 //                            });
 //                }).then(); // 작업 완료 시 Mono<Void> 반환
 
-        return null;
+        return openAiSetupRepository.find(roomId)
+                .switchIfEmpty(Mono.error(new RuntimeException("GPT 채팅방 설정을 찾을 수 없습니다."))) // 여기로 이동
+                .flatMap(setupRequest -> {
+                    GptChatRequest gptChatRequest = GptChatRequest.from(userMessage, setupRequest.messages());
+                    return openAiCommunicationProvider.sendPromptToGpt(gptChatRequest)
+                            .doOnSuccess(response -> {
+                                log.info("GPT 대화 응답: {}", response);
+                                Conversation conversation = parseGetResponse(response);
+                                
+                                // 대화 운거 return 해주기
+                            })
+                            .then(); // setupRequest가 있을 경우만 실행
+                })
+                .subscribeOn(Schedulers.boundedElastic());
     }
 
     @Override
@@ -190,8 +178,13 @@ public class AiChatServiceImpl implements AiChatService {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(jsonString);
-            // 예시에서는 "conversation_1"을 사용했지만, 실제 응답 구조에 맞춰 조정 필요
-            JsonNode conversationNode = root.get("conversation_1");
+            // "conversation" 객체를 직접 찾습니다.
+            // 만약 응답에 "conversation" 외의 다른 데이터가 포함되어 있고, 그 부분을 무시하고자 할 때 사용합니다.
+            JsonNode conversationNode = root.path("conversation");
+            if (conversationNode.isMissingNode()) {
+                throw new RuntimeException("Conversation 객체를 찾을 수 없습니다. (즉, GPT 응답 고장난 경우)");
+            }
+
             Conversation conversation = mapper.treeToValue(conversationNode, Conversation.class);
             log.info("gpt 답변 일본어 파싱한 것: {}", conversation.gptJapaneseResponse());
             log.info("gpt 답변 한국어 파싱한 것: {}", conversation.gptKoreanResponse());
@@ -199,7 +192,7 @@ public class AiChatServiceImpl implements AiChatService {
             log.info("user 모범 답변 한국어 파싱한 것: {}", conversation.userKoreanResponse());
             return conversation;
         } catch (Exception e) {
-            throw new RuntimeException("파싱 예외 발생");
+            throw new RuntimeException("파싱 예외 발생", e);
         }
     }
 }

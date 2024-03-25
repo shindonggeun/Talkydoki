@@ -29,7 +29,7 @@ public record GptChatRequest(
         return new GptChatRequest(
                 "gpt-3.5-turbo-1106",
                 updatedMessages,
-                300
+                500
         );
     }
 }

@@ -27,7 +27,7 @@ public record GptSetupRequest(
      */
     public static GptSetupRequest from(AiChatCategory category) {
         String jsonString = "{"
-                + "\"conversation_${번호}\": {"
+                + "\"conversation\": {"
                 + "    \"gpt_japanese\": \"${너의 대답 (일본어)}\","
                 + "    \"gpt_korean\": \"${너의 대답 한국어 번역}\","
                 + "    \"user_tip_japanese\": \"${사용자의 모범 답변 (일본어)}。\""
@@ -38,9 +38,11 @@ public record GptSetupRequest(
         // 카테고리에 따른 대화 설정 로직 구현
         String systemMessage = "이제부터 GPT 너는 일본어 회화 전문 강사야.\n" +
                 "해당 회화 주제에 맞는 것에 따라 그 주제에 맞는 회화 답변을 반드시 먼저 일본어로 해줘.\n" +
+                "회화 난이도는 초보자 ~ 초중급자 난이도로 설정해줘.\n" +
                 "제공되는 대화를 반드시 일본어로 상황에 맞게 계속 이어나가 줘. 전체 대화를 이해하고, " +
                 "사용자의 응답에 반드시 일본어로 답해줘.\n" +
                 "답변은 너의 대답, 그리고 너의 응답에 대한 상대방의 모범 답변을 제시해주면 돼.\n" +
+                "그리고 너의 대답 및 상대방의 모범 답변을 반드시 1마디씩만 생성해주면 좋겠어. 너무 길게 답변하지 말았으면 해.\n" +
                 "주제는 " + category.getKoreanName() + " 이거야.\n" +
                 "표현 형식 다음과 같아. 반드시 다음 양식에 맞게 회화 답변을 생성해줘.\n" +
                 jsonString +
@@ -57,7 +59,7 @@ public record GptSetupRequest(
                 "gpt-3.5-turbo-1106",
                 messages,
                 300,
-                0.7,
+                1.0,
                 responseFormat
         );
     }

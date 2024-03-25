@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
 import com.ssafy.backend.global.component.openai.dto.GptSetupRequest;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -34,14 +35,8 @@ public class OpenAiSetupRepository {
         redisTemplate.expire(key, EXPIRES_MIN, TimeUnit.MINUTES);
     }
 
-    /**
-     * 주어진 roomId에 해당하는 GptSetupRequest를 조회합니다.
-     *
-     * @param roomId 채팅방 ID, 조회할 키를 결정하는 데 사용됩니다.
-     * @return Optional<GptSetupRequest> 조회된 GptSetupRequest. 설정이 존재하지 않을 경우 Optional.empty() 반환.
-     */
-    public Optional<GptSetupRequest> find(Long roomId) {
-        GptSetupRequest setupRequest = (GptSetupRequest) redisTemplate.opsForValue().get(KEY_PREFIX + roomId);
-        return Optional.ofNullable(setupRequest);
+    // Mono로 변경
+    public Mono<GptSetupRequest> find(Long roomId) {
+        return Mono.justOrEmpty((GptSetupRequest) redisTemplate.opsForValue().get(KEY_PREFIX + roomId));
     }
 }
