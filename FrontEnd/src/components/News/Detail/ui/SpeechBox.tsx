@@ -1,5 +1,5 @@
 import { SpeechContainer } from "@/styles/News/Detail/container";
-import React, { useEffect, useState } from "react";
+import { useEffect } from "react";
 import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
 import SpeechRecognition, {

@@ -8,7 +8,7 @@ type Props = {
   fullNews: string[];
 };
 
-function ArticleSpeak({ newsId, news, fullNews }: Props) {
+function ArticleSpeak({ newsId, news }: Props) {
   const [now, setNow] = useState<number | null>(null);
 
   return (

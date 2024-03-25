@@ -11,7 +11,7 @@ import TitleSection from "@/components/News/Detail/TitleSection";
 import WordSearch from "@/components/News/Detail/ui/WordSearch";
 import { useEffect, useState } from "react";
 import ArticleSpeak from "@/components/News/Detail/ArticleSpeak";
-import { useButtonActions, useButtonStates } from "@/stores/newsStore";
+import { useButtonActions } from "@/stores/newsStore";
 
 type Props = {};
 
