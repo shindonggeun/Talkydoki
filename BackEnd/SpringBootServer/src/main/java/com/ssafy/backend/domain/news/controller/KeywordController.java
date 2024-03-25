@@ -41,13 +41,4 @@ public class KeywordController {
         keywordService.insertWeight(keywordMappingRequest);
         return ResponseEntity.ok().body(Message.success());
     }
-
-    @Operation(
-            summary = "사용자 단어 추천",
-            description = "사용자에게 맞춤형 단어를 추천하는 기능입니다."
-    )
-    @GetMapping("/recommend")
-    public Mono<Map<String, Object>> getWordRecommendation(@AuthenticationPrincipal MemberLoginActive loginActive) {
-        return keywordService.getWordRecommendation(loginActive.id());
-    }
 }
