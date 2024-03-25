@@ -126,3 +126,16 @@ export const useSearchWordApi = (word: string) => {
     gcTime: Infinity,
   });
 };
+
+// 메인화면 뉴스 추천
+export const useRecommendNews = () => {
+  return useQuery({
+    queryKey: ["recommandNews"],
+    queryFn: () => customAxios.get("news/recommend"),
+    select: ({ data }) => {
+      return data.recommendations as newsInterface[];
+    },
+    staleTime: 1000 * 60 * 60, // 1시간
+    gcTime: 1000 * 60 * 60, // 1시간
+  });
+};

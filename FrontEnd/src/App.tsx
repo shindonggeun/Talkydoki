@@ -3,7 +3,7 @@ import "regenerator-runtime/runtime";
 import { Global } from "@/styles/common/base";
 import { ThemeProvider } from "styled-components";
 import { ThemeProvider as MUIThemeProvider } from "@mui/material";
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { Fonts } from "@/styles/common/fonts";
 import { dark, light } from "@/styles/common/themes";
 import { muiDarkTheme, muiTheme } from "./styles/common/muiTheme";
@@ -30,6 +30,7 @@ import AiChatReport from "./routes/AiChatReport";
 import MyVoca from "./components/MyPage/MyVoca/MyVoca";
 import ProfileUpdate from "@/routes/ProfileUpdate";
 import NewsDetail from "./routes/NewsDetail";
+import { useEffect } from "react";
 
 function App() {
   const isDark = useIsDark();

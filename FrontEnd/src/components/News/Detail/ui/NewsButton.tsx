@@ -40,7 +40,7 @@ function NewsButton() {
     <ButtonContainer
       style={{
         left: isMobile ? `calc(50% - 158px)` : `calc(50% - 200px)`,
-        opacity: isScrolling ? "0.6" : "1",
+        opacity: isScrolling ? "0.5" : "1",
       }}
       onMouseOver={() => setIsScrolling(false)}
     >

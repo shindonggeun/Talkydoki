@@ -34,9 +34,17 @@ export const AuthMain = styled.div`
   .emaildiv {
     display: flex;
     justify-content: space-between;
+    /* align-items: center; */
   }
   * {
     margin: 1vh 0;
+  }
+
+  .button {
+    margin-top: 1vh;
+    width: fit-content;
+    margin-left: 1vw;
+    height: 56px;
   }
 
   @media screen and (max-width: 992px) {

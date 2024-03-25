@@ -4,6 +4,7 @@ import { Divider } from "@mui/material";
 
 type Props = {
   title: string;
+  kortitle: string;
   url: string;
   date: string;
   images: string[];
@@ -16,12 +17,14 @@ function TitleSection({
   url,
   date,
   images,
+  kortitle,
   summary,
   korSummary,
 }: Props) {
   return (
     <>
-      <h1 style={{ fontWeight: 900 }}>{title}</h1>
+      <div className="jpTitle">{title}</div>
+      <div className="koTitle">{kortitle}</div>
       <div className="info">작성일: {date.slice(0, 10)}</div>
       <div className="info">url: {url}</div>
       <Divider sx={{ margin: "2vh 0" }} />

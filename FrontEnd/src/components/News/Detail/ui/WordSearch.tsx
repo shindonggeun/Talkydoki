@@ -27,8 +27,8 @@ function WordSearch() {
   });
 
   // 스크롤 시 검색창 꺼짐
-  const moveHandler = () => {
-    if (isSearchOn) {
+  const moveHandler = (e: WheelEvent) => {
+    if (isSearchOn && e.deltaY != 0) {
       setIsSearchOn(false);
     }
   };
@@ -38,7 +38,7 @@ function WordSearch() {
     if (!searchRef.current) return;
     if (!isSearchOn) return;
     const target = e.target as HTMLElement;
-    if (!target.classList.contains("searchBox")) {
+    if (!searchRef.current.contains(target)) {
       setIsSearchOn(false);
     }
   };
@@ -46,11 +46,11 @@ function WordSearch() {
   // 스크롤하거나 다른 곳 클릭할 시 꺼짐
   useEffect(() => {
     if (!isSearchOn) return;
-    window.addEventListener("scroll", moveHandler);
+    window.addEventListener("wheel", moveHandler);
     window.addEventListener("mousedown", clickHandler);
 
     return () => {
-      window.removeEventListener("scroll", moveHandler);
+      window.removeEventListener("wheel", moveHandler);
       window.removeEventListener("mousedown", clickHandler);
     };
   }, [isSearchOn]);
@@ -87,10 +87,8 @@ function WordSearch() {
   useEffect(() => {
     if (!data) return;
     if (data == "nodata") {
-      console.log("데이터없음");
       setWord({ japanese: searchWord.word, japaneseRead: searchWord.read });
     } else {
-      console.log(data);
       setWord({ ...data });
     }
   }, [data, searchWord]);
@@ -99,17 +97,16 @@ function WordSearch() {
   return (
     <WordSearchWrapper
       ref={searchRef}
-      className="searchBox"
       style={{ top: `${xy.y}px`, left: `${xy.x}px` }}
     >
       {isFetching && <CircularProgress color="purple" />}
       {data && (
-        <div className="searchBox">
-          <div className="header searchBox">
-            <div className="jp searchBox">{word.japanese}</div>
+        <div>
+          <div className="header ">
+            <div className="jp ">{word.japanese}</div>
             {word.id && (
               <StarIcon
-                className="searchBox addIcon"
+                className=" addIcon"
                 onClick={() => {
                   if (word.id != undefined) {
                     return addVoca(word.id);
@@ -119,12 +116,10 @@ function WordSearch() {
               />
             )}
           </div>
-          <div className="searchBox">{word.japaneseRead}</div>
+          <div>{word.japaneseRead}</div>
           {word.korean &&
             splitMeaning(word.korean).map((each, idx) => (
-              <div className="searchBox" key={idx}>
-                {each}
-              </div>
+              <div key={idx}>{each}</div>
             ))}
         </div>
       )}

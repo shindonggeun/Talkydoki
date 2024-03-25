@@ -1,4 +1,4 @@
-import { useEmailSend, useSignup, userEmailVerify } from "@/api/memberApi";
+import { useEmailSend, useEmailVerify, useSignup } from "@/api/memberApi";
 import PasswordInput from "@/components/ui/PasswordInput";
 
 import {
@@ -13,7 +13,11 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { isSamePassword, isValidAuth } from "@/util/common/validator";
 import { useSignupErrors } from "@/stores/signUpStore";
-import { useEmailVerifyStore } from "@/stores/userStore";
+import {
+  useEmailVerifyActions,
+  useEmailVerifyMessage,
+  useEmailVerifyStatus,
+} from "@/stores/userStore";
 
 const SignUp: React.FC = () => {
   const [password, setPassword] = useState("");
@@ -22,15 +26,14 @@ const SignUp: React.FC = () => {
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [nickname, setNickname] = useState("");
+
   const { mutate: emailsend } = useEmailSend();
-  const { mutate: emailcheck } = userEmailVerify();
+  const { mutate: emailcheck } = useEmailVerify();
   const [sendCheck, setSendCheck] = useState(false);
-  const emailVerifyStatus = useEmailVerifyStore(
-    (state) => state.emailVerifyStatus
-  );
-  const emailVerifyMessage = useEmailVerifyStore(
-    (state) => state.emailVerifyMessage
-  );
+
+  const { setEmailVerifyStatus } = useEmailVerifyActions();
+  const emailVerifyStatus = useEmailVerifyStatus();
+  const emailVerifyMessage = useEmailVerifyMessage();
 
   const { emailError, nameError, nicknameError, passwordError } =
     useSignupErrors();
@@ -64,8 +67,12 @@ const SignUp: React.FC = () => {
                 color="purple"
                 name="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                className="textField"
                 fullWidth
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setEmailVerifyStatus("none");
+                }}
                 error={emailError ? true : false}
                 helperText={
                   emailError
@@ -75,14 +82,13 @@ const SignUp: React.FC = () => {
                     : null
                 }
               />
-
               <Button
                 variant="contained"
                 color="purple"
-                style={{ width: "10%", height: "55px", margin: "8px 15px" }}
+                className="button"
                 onClick={() => handleEmailSend(email)}
               >
-                전송
+                인증코드 전송
               </Button>
             </div>
             <div className="emaildiv">
@@ -91,9 +97,10 @@ const SignUp: React.FC = () => {
                 variant="outlined"
                 color="purple"
                 name="code"
+                fullWidth
+                className="textField"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                fullWidth
                 helperText={
                   emailVerifyStatus !== "none" ? emailVerifyMessage : ""
                 }
@@ -102,10 +109,10 @@ const SignUp: React.FC = () => {
               <Button
                 variant="contained"
                 color="purple"
-                style={{ width: "10%", height: "55px", margin: "8px  15px" }}
+                className="button"
                 onClick={() => handleEmailCheck()}
               >
-                전송
+                확인
               </Button>
             </div>
             <TextField
@@ -159,7 +166,11 @@ const SignUp: React.FC = () => {
             color="purple"
             fullWidth
             disabled={
-              !isValidAuth({ name, nickname, password, email }, passwordConfirm)
+              !isValidAuth(
+                { name, nickname, password, email },
+                passwordConfirm,
+                emailVerifyStatus
+              )
             }
           >
             회원가입

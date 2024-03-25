@@ -14,7 +14,7 @@ export const WordItem = styled.div`
     font-size: 10pt;
     opacity: 0;
     color: ${(props) =>
-      props.theme.mode == "light" ? "var(--blue-dark)" : "var(--yellow-dark)"};
+      props.theme.mode == "light" ? "var(--blue)" : "var(--yellow-dark)"};
 
     &.show {
       opacity: 1;

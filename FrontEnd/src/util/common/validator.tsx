@@ -12,11 +12,12 @@ export const isSamePassword = (password: string, password2: string) => {
 };
 
 // 회원가입 유효성 검사 함수
-export const isValidAuth = (form: SignupParams, password2: string) => {
+export const isValidAuth = (
+  form: SignupParams,
+  password2: string,
+  emailVerifyStatus: string
+) => {
   const { email, name, nickname, password } = form;
-  const emailVerifyStatus = useEmailVerifyStore(
-    (state) => state.emailVerifyStatus
-  );
   // 인증 받은 이메일 조건
   if (emailVerifyStatus !== "success") return false;
 

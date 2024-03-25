@@ -53,14 +53,12 @@ export const MainCarouselItem = styled(CarouselItem)`
     }
 
     .koTitle {
-      word-break: keep-all;
       font-size: 16pt;
     }
 
     .jpTitle {
       font-size: 32pt;
       font-weight: 700;
-      word-break: keep-all;
     }
   }
 

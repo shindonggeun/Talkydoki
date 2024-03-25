@@ -35,6 +35,17 @@ export const NewsArticleWrapper = styled(Card)`
   margin: 1vh 1vw;
   padding: 3vh 3.5vw 10vh 3.5vw;
 
+  .koTitle {
+    margin-bottom: 3vh;
+    font-size: 14pt;
+  }
+
+  .jpTitle {
+    font-size: 21pt;
+    font-weight: 900;
+    margin: 2vh 0;
+  }
+
   .info {
     font-size: 10pt;
     opacity: 0.8;
@@ -60,7 +71,7 @@ export const NewsWidget = styled(Card)`
     padding: 2vh 0;
     margin-bottom: 2vh;
     flex-wrap: wrap;
-    justify-content: space-evenly;
+    justify-content: start;
   }
 
   @media screen and (max-width: 992px) {
@@ -128,6 +139,7 @@ export const WordSearchWrapper = styled.div`
   z-index: 9;
   padding: 2vh 2vw;
   border-top: 8px solid var(--main);
+  box-shadow: 0 0 10px 5px var(--shadow);
 
   .header {
     display: flex;
@@ -151,19 +163,21 @@ export const WordSearchWrapper = styled.div`
 `;
 
 export const ReadLineContainer = styled(WordContainer)`
-  padding: 2vh 1vw;
+  padding: 2vh 2vw;
   cursor: pointer;
   font-size: 14pt;
 
   .newscontent {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    padding: 1vh 1vw;
 
     .playIcon {
-      font-size: 40pt;
+      font-size: 24pt;
       cursor: pointer;
       opacity: 0.8;
-      margin-right: 1vw;
+      margin: 1vh 1vw;
+      margin-right: 2vw;
       display: none;
 
       &:hover {
@@ -191,7 +205,8 @@ export const ReadLineContainer = styled(WordContainer)`
     }
     .playIcon,
     .jp {
-      color: var(--main-dark);
+      color: ${(props) =>
+        props.theme.mode == "light" ? "var(--main-dark)" : "var(--main-light)"};
     }
   }
 `;

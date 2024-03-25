@@ -34,6 +34,7 @@ function NewsDetail({}: Props) {
       <NewsArticleWrapper>
         <TitleSection
           title={data.fullTitle}
+          kortitle={data.titleTranslated}
           url={data.srcOrigin}
           date={data.writeDate}
           images={data.newsImages}

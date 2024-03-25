@@ -14,8 +14,9 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   useAuthStore,
-  useEmailVerifyStore,
+  useEmailVerifyActions,
   useIsLogin,
+  useSetIsLogin,
   useSetMemberEmail,
 } from "@/stores/userStore";
 
@@ -68,9 +69,7 @@ export const useLogin = () => {
 
 // 일반 회원가입
 export const useSignup = () => {
-  const setEmailVerifyStatus = useEmailVerifyStore(
-    (state) => state.setEmailVerifyStatus
-  );
+  const { setEmailVerifyStatus } = useEmailVerifyActions();
   const navigate = useNavigate();
   const setErrors = useSetSignupErrors();
 
@@ -130,7 +129,7 @@ export const useGetMember = () => {
 // 로그아웃 구현하기
 export const useLogout = () => {
   const navigate = useNavigate();
-  const setIsLogin = useAuthStore((state) => state.setIsLogin);
+  const setIsLogin = useSetIsLogin();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -140,8 +139,10 @@ export const useLogout = () => {
       const response = res.data;
       if (response.dataHeader.successCode === 0) {
         queryClient.removeQueries(["getMember"] as QueryFilters);
-        navigate("/intro");
         setIsLogin(false);
+        setTimeout(() => {
+          navigate("/intro");
+        }, 0);
       } else {
         console.log("로그아웃실패");
       }
@@ -228,13 +229,9 @@ export const useEmailSend = () => {
   });
 };
 
-export const userEmailVerify = () => {
-  const setEmailVerifyStatus = useEmailVerifyStore(
-    (state) => state.setEmailVerifyStatus
-  );
-  const setEmailVerifyMessage = useEmailVerifyStore(
-    (state) => state.setEmailVerifyMessage
-  );
+export const useEmailVerify = () => {
+  const { setEmailVerifyMessage, setEmailVerifyStatus } =
+    useEmailVerifyActions();
 
   return useMutation({
     mutationFn: (payload: EmailVerifyPayload) =>

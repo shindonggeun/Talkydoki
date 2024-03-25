@@ -7,8 +7,6 @@ type Props = {
 };
 
 function WidgetGraph({ keyword }: Props) {
-  console.log(Object.keys(keyword));
-
   const chartData: { series: ApexOptions["series"]; options: ApexOptions } = {
     series: Object.values(keyword),
     options: {
@@ -25,11 +23,19 @@ function WidgetGraph({ keyword }: Props) {
         radialBar: {
           dataLabels: {
             name: {
-              fontSize: "22px",
+              fontSize: "14px",
             },
             value: {
-              fontSize: "16px",
+              show: false,
+              fontSize: "12px",
             },
+          },
+          track: {
+            opacity: 0.7,
+          },
+          hollow: {
+            margin: 0,
+            size: "20px",
           },
         },
       },

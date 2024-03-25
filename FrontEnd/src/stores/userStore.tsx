@@ -45,13 +45,24 @@ export const useSetMemberEmail = () => useEmailStore((state) => state.setEmail);
 interface EmailVerifyStoreInterface {
   emailVerifyStatus: "none" | "success" | "error";
   emailVerifyMessage: string;
-  setEmailVerifyStatus: (status: "none" | "success" | "error") => void;
-  setEmailVerifyMessage: (message: string) => void;
+  actions: {
+    setEmailVerifyStatus: (status: "none" | "success" | "error") => void;
+    setEmailVerifyMessage: (message: string) => void;
+  };
 }
 
-export const useEmailVerifyStore = create<EmailVerifyStoreInterface>((set) => ({
+const useEmailVerifyStore = create<EmailVerifyStoreInterface>((set) => ({
   emailVerifyStatus: "none",
   emailVerifyMessage: "",
-  setEmailVerifyStatus: (status) => set({ emailVerifyStatus: status }),
-  setEmailVerifyMessage: (message) => set({ emailVerifyMessage: message }),
+  actions: {
+    setEmailVerifyStatus: (status) => set({ emailVerifyStatus: status }),
+    setEmailVerifyMessage: (message) => set({ emailVerifyMessage: message }),
+  },
 }));
+
+export const useEmailVerifyStatus = () =>
+  useEmailVerifyStore((state) => state.emailVerifyStatus);
+export const useEmailVerifyMessage = () =>
+  useEmailVerifyStore((state) => state.emailVerifyMessage);
+export const useEmailVerifyActions = () =>
+  useEmailVerifyStore((state) => state.actions);

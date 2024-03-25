@@ -15,6 +15,7 @@ export interface categoryInterface {
 }
 
 export interface newsInterface {
+  id?: number;
   newsId: number;
   title: string;
   titleTranslated: string;

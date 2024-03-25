@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import PauseCircleIcon from "@mui/icons-material/PauseCircle";
 import SpeechBox from "./SpeechBox";
+import { KanaToHira } from "@/util/language/japanese";
 
 type Props = {
   news: string[][];
@@ -18,6 +19,7 @@ function NewsReadLine({ news, now, setNow, idx, newsId }: Props) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
 
+  // 오디오 세팅
   useEffect(() => {
     if (now != idx) return;
     if (!audioRef.current) return;
@@ -38,6 +40,7 @@ function NewsReadLine({ news, now, setNow, idx, newsId }: Props) {
   return (
     <ReadLineContainer className={idx == now ? "selected" : undefined}>
       <div className="newscontent">
+        {/* 재생버튼 */}
         {isPlaying ? (
           <PauseCircleIcon
             onClick={() => setIsPlaying((prev) => !prev)}
@@ -50,6 +53,7 @@ function NewsReadLine({ news, now, setNow, idx, newsId }: Props) {
           />
         )}
         <audio ref={audioRef} onEnded={() => setIsPlaying(false)} />
+        {/* 뉴스 본문 */}
         <div
           onClick={() => {
             if (idx != now) {
@@ -64,6 +68,7 @@ function NewsReadLine({ news, now, setNow, idx, newsId }: Props) {
           ))}
         </div>
       </div>
+      {/* STT */}
       {idx == now && <SpeechBox />}
     </ReadLineContainer>
   );
