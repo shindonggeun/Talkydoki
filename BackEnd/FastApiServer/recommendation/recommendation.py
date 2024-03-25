@@ -146,13 +146,34 @@ class DataStorage:
 
 data_storage = DataStorage()
 
+def get_news_data(news_id):
+    # 뉴스 ID를 기반으로 뉴스 객체를 조회합니다.
+    news = data_storage.session.query(News).filter(News.id == news_id).first()
+    if news:
+        # 뉴스 이미지 URL을 리스트로 추출합니다.
+        images_urls = [image.image_url for image in news.news_images]
+        # 뉴스 데이터와 함께 이미지 URL을 딕셔너리 형태로 반환합니다.
+        return {
+            "id": news.id,
+            "title": news.title,
+            "category": news.category,
+            "write_date": news.write_date.isoformat(),
+            "content": news.content,
+            "summary": news.summary,
+            "images_urls": images_urls
+        }
+    else:
+        return None
+
 @router.get("/recommend/news/{member_id}")
 async def news_recommend(member_id: int):
     if member_id not in data_storage.users:
-        recommendations = data_storage.get_most_recommended_articles()
+        recommendations_id = data_storage.get_most_recommended_articles()
     else:
         user_data = data_storage.cosine_sim_df.loc[member_id].sort_values(ascending=False)
-        recommendations = user_data.index.values.tolist()[:3]
+        recommendations_id = user_data.index.values.tolist()[:3]
+    
+    recommendations = [get_news_data(int(news_id.split('기사')[-1])) for news_id in recommendations_id]
 
     return {
         "memberId": member_id, 

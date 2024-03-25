@@ -12,4 +12,5 @@ class News(Base):
     content = Column(Text, nullable=False)
     summary = Column(Text, nullable=False)
     write_date = Column(DateTime, nullable=False)
+    news_images = relationship("NewsImage", back_populates="news")
     news_keyword_mappings = relationship("NewsKeywordMapping", back_populates="news")
