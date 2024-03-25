@@ -24,6 +24,7 @@ const SignUp: React.FC = () => {
   const [nickname, setNickname] = useState("");
   const { mutate: emailsend } = useEmailSend();
   const { mutate: emailcheck } = userEmailVerify();
+  const [sendCheck, setSendCheck] = useState(false);
   const emailVerifyStatus = useEmailVerifyStore(
     (state) => state.emailVerifyStatus
   );
@@ -42,6 +43,10 @@ const SignUp: React.FC = () => {
     signup({ name, email, password, nickname });
   };
 
+  const handleEmailSend = (email: string) => {
+    emailsend(email);
+    setSendCheck(true);
+  };
   const handleEmailCheck = () => {
     emailcheck({ email, code });
   };
@@ -62,14 +67,20 @@ const SignUp: React.FC = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 fullWidth
                 error={emailError ? true : false}
-                helperText={emailError ? emailError : null}
+                helperText={
+                  emailError
+                    ? emailError
+                    : sendCheck
+                    ? "인증번호 전송완료"
+                    : null
+                }
               />
 
               <Button
                 variant="contained"
                 color="purple"
                 style={{ width: "10%", height: "55px", margin: "8px 15px" }}
-                onClick={() => emailsend(email)}
+                onClick={() => handleEmailSend(email)}
               >
                 전송
               </Button>
