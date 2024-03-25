@@ -7,12 +7,16 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from googletrans import Translator
+from datetime import datetime
 import MeCab
 import requests
 import sys
 import json
 import warnings
-from Url import API_URL
+import os
+import time
+sys.path.append('/usr/src/app')
+from Url import NEWS_API_URL, DUPLICATENEWS_PATH
 warnings.filterwarnings('ignore')
 translator = Translator()
 
@@ -161,13 +165,22 @@ for news_url in news_urls:
         "writeDate": news_date,
         "srcOrigin": news_url
     }
-    newsId = requests.post(f'{API_URL}/post', json=news_data).json().get('dataBody')
+    newsId = requests.post(f'{NEWS_API_URL}/post', json=news_data).json().get('dataBody')
     for imageUrl in news_body_img_urls:
         news_image_data = {
             "imageUrl": imageUrl,
             "newsId": newsId
         }
-        requests.post(f'{API_URL}/images/post', json=news_image_data)
+        requests.post(f'{NEWS_API_URL}/images/post', json=news_image_data)
+    
+    
+    news_datetime = datetime.strptime(news_date.split(" ")[0], '%Y年%m月%d日')
+    newsdate = news_datetime.strftime('%Y%m%d')
+    filename = f"{DUPLICATENEWS_PATH}/news_data_{newsdate}.txt"
+    # 폴더가 없는 경우 폴더를 생성
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    with open(filename, "w", encoding="utf-8") as file:
+        file.write(f"ID\n{newsId}\nTITLE\n{news_title_output}\nSUMMARY\n{news_summary_output}\nCONTENT\n{news_body_output}\n")
     
 
 

@@ -13,6 +13,8 @@ RUN pip3 install selenium
 RUN apt-get update && apt-get -q -y install file mecab libmecab-dev mecab-ipadic-utf8 git curl python3-mecab
 RUN pip3 install mecab-python3
 RUN pip3 install unidic-lite
+RUN pip3 install paramiko
+RUN pip3 install pytz
 
 # Chrome 및 ChromeDriver 설치
 RUN apt-get update && apt-get install -y wget
@@ -29,14 +31,11 @@ COPY crontab /etc/cron.d/cronjob
 RUN chmod 0644 /etc/cron.d/cronjob
 RUN crontab /etc/cron.d/cronjob
 
-# 스크립트 파일을 컨테이너 내부로 복사
-COPY Url-dev.py ./Url.py
-COPY GetHadoop.py .
-COPY NewsCrawling.py .
-COPY NewsCrawling.sh .
+# 모든 파일을 컨테이너 내부로 복사
+COPY . .
 
 # 스크립트 실행 권한 부여
-RUN chmod +x /usr/src/app/NewsCrawling.sh
+RUN chmod +x /usr/src/app/DataProcessing.sh
 
 
 # 크론 작업 실행 명령어를 추가합니다.
