@@ -187,6 +187,13 @@ export const FooterContainer = styled.div`
       animation: ${pulse} 1.5s infinite;
     }
   }
+
+  .reportdiv {
+    font-family: "Mplus";
+    font-weight: 700;
+    position: absolute;
+    right: 2%;
+  }
 `;
 
 export const ChatTipContainer = styled.div`
@@ -218,7 +225,6 @@ export const ChatTipContainer = styled.div`
     }
   }
   .message-suggest {
-    font-family: "ScoreDream";
     font-family: "Mplus";
     align-self: flex-start;
     color: var(--blue);
