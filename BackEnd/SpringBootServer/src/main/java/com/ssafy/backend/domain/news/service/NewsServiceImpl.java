@@ -144,10 +144,19 @@ public class NewsServiceImpl implements NewsService {
         int maxLength = Math.max(shadowingRequest.original().length(), shadowingRequest.userText().length());
         double similarity = 1 - (double) distance / maxLength;
 
-        NewsShadowing newsShadowing = newsShadowingRepository.findById(newsId).orElseThrow(()
-                -> new NewsException(NewsErrorCode.NOT_FOUND_NEWS));
+        News news = newsRepository.findById(newsId).orElseThrow(()
+                -> new KeywordException(KeywordErrorCode.NOT_FOUND_KEYWORD));
+        Member member = memberRepository.findById(memberId).orElseThrow(()
+                -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+        NewsShadowing newsShadowing = NewsShadowing.builder()
+                .news(news)
+                .member(member)
+                .build();
+        newsShadowing = newsShadowingRepository.save(newsShadowing);
+
         ShadowingEvaluation shadowingEvaluation = ShadowingEvaluation.builder()
-                .score((int) (similarity * 100))
+                .score((int) Math.round(similarity * 100))
                 .newsShadowing(newsShadowing)
                 .build();
         shadowingEvaluationRepository.save(shadowingEvaluation);
