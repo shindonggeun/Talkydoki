@@ -44,10 +44,10 @@ public class AiChatController {
 
     @PostMapping("/gpt/{roomId}")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    public Mono<ResponseEntity<Message<Void>>> sendAiChatMessageByGpt(@PathVariable Long roomId,
+    public Mono<ResponseEntity<Message<Conversation>>> sendAiChatMessageByGpt(@PathVariable Long roomId,
                                                                       @RequestBody AiChatMessage userMessage) {
         return aiChatService.sendAiChatMessageByGpt(roomId, userMessage)
-                .thenReturn(ResponseEntity.ok().body(Message.success()));
+                .map(conversation -> ResponseEntity.ok(Message.success(conversation)));
     }
 
     @PostMapping("/gpt/setup/{roomId}/{category}")

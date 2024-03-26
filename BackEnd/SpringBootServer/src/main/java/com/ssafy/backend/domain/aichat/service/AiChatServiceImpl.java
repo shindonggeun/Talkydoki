@@ -101,7 +101,7 @@ public class AiChatServiceImpl implements AiChatService {
      * {@inheritDoc}
      */
     @Override
-    public Mono<Void> sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage) {
+    public Mono<Conversation> sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage) {
         return openAiRepository.findOpenAiSetup(roomId)
                 .switchIfEmpty(Mono.error(new RuntimeException("GPT 채팅방 설정을 찾을 수 없습니다.")))
                 .flatMap(setupRequest ->
@@ -109,7 +109,6 @@ public class AiChatServiceImpl implements AiChatService {
                         openAiRepository.findAiChatHistory(roomId)
                                 .flatMap(historyMessages -> {
                                     List<GptDialogueMessage> messages = new ArrayList<>(setupRequest.messages());
-
                                     if (!historyMessages.isEmpty()) {
                                         // 최근 대화 내역 추가
                                         messages.addAll(historyMessages);
@@ -117,15 +116,12 @@ public class AiChatServiceImpl implements AiChatService {
 
                                     // 이제 'messages' 리스트는 첫 번째 시스템 프롬프트와 마지막으로 사용자의 최근 메시지를 포함합니다.
                                     GptChatRequest gptChatRequest = new GptChatRequest("gpt-3.5-turbo-1106", messages, 500);
-
-
                                     log.info("gpt한테 prompt 보낼 메시지(유저가 보냄):  {}", gptChatRequest);
 
                                     return openAiCommunicationProvider.sendPromptToGpt(gptChatRequest)
-                                            .doOnSuccess(response -> {
-                                                log.info("GPT 대화 응답: {}", response);
-                                                Conversation conversation = parseGetResponse(response);
-
+                                            .flatMap(response -> {
+                                                log.info("GPT 응답값: {}", response);
+                                               Conversation conversation = parseGetResponse(response);
                                                 // GPT 응답을 Redis에 저장
                                                 openAiRepository.saveAiChatHistory(roomId, List.of(
                                                         new GptDialogueMessage("user", userMessage.content()),  // 이부분 나중에 삭제해야함
@@ -134,8 +130,9 @@ public class AiChatServiceImpl implements AiChatService {
 
                                                 // GPT 일본어 응답 rabbitmq 통해서 전달
                                                 rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, conversation.gptJapaneseResponse());
-                                            })
-                                            .then(); // setupRequest가 있을 경우만 실행
+
+                                               return Mono.just(conversation);
+                                            });
                                 })
                 )
                 .subscribeOn(Schedulers.boundedElastic());
