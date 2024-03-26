@@ -65,6 +65,10 @@ dependencies {
 	// Java Mail Sender (Google Email - Gmail)
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 
+    // Apache Commons Lang
+	implementation 'org.apache.commons:commons-lang3:3.14.0'
+	implementation 'org.apache.commons:commons-text:1.9'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'

@@ -19,7 +19,6 @@ import com.ssafy.backend.domain.news.repository.NewsImageRepository;
 import com.ssafy.backend.domain.news.repository.NewsKeywordHistoryRepository;
 import com.ssafy.backend.domain.news.repository.NewsRepository;
 import com.ssafy.backend.global.common.dto.SliceResponse;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -28,7 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -140,5 +139,15 @@ public class NewsServiceImpl implements NewsService {
             newsKeywordHistoryRepository.save(newsKeywordHistory);
         }
         return newsInfo;
+    }
+
+    @Override
+    public ShadowingResponse calculateSimilarity(ShadowingRequest shadowingRequest, Long memberId, Long newsId) {
+        LevenshteinDistance levenshteinDistance = new LevenshteinDistance();
+        int distance = levenshteinDistance.apply(shadowingRequest.original(), shadowingRequest.userText());
+        int maxLength = Math.max(shadowingRequest.original().length(), shadowingRequest.userText().length());
+        double similarity = 1 - (double) distance / maxLength;
+
+        return new ShadowingResponse(similarity);
     }
 }
