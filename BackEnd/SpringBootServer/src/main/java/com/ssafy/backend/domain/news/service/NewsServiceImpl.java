@@ -146,7 +146,7 @@ public class NewsServiceImpl implements NewsService {
         double similarity = 1 - (double) distance / maxLength;
 
         News news = newsRepository.findById(newsId).orElseThrow(()
-                -> new KeywordException(KeywordErrorCode.NOT_FOUND_KEYWORD));
+                -> new NewsException(NewsErrorCode.NOT_FOUND_NEWS));
         Member member = memberRepository.findById(memberId).orElseThrow(()
                 -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
