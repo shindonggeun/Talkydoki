@@ -26,9 +26,9 @@ public class AiChatReportCreateApiRequest {
 
     public static AiChatReportCreateApiRequest convertRequest(List<AiChatHistory> conversation){
 
-        String jsonString = "{\n  \"conversationSummary\" : \"대화 내용 요약\",\n  \"vocabularyScore\" : 어휘력 점수,\n  \"wordScore\" : 단어 점수,\n  \"fluencyScore\" : 유창성 점수,\n  \"grammarScore\" : 문법 점수,\n  \"contextScore\" : 문맥 이해 점수\n  \"feedbacks\" : {\n  {\n  \"id\" : <message의 content의 괄호 안의 'id'>\n \"content\" : \"피드백 내용\"\n} }\n"
+        String jsonString = "{\n  \"conversationSummary\" : \"대화 내용 요약\",\n  \"vocabularyScore\" : 어휘력 점수,\n  \"wordScore\" : 단어 점수,\n  \"fluencyScore\" : 유창성 점수,\n  \"grammarScore\" : 문법 점수,\n  \"contextScore\" : 문맥 이해 점수\n  \"feedbacks\" : {\n  {\n  \"chatId\" : <message의 content의 괄호 안의 'id'>\n \"content\" : \"피드백 내용\"\n} }\n"
                 + "feedbacks은 'role'이 'user'인 메세지의 응답에 대한 피드백 내용을 담은 객체 형식입니다. 'role'이 'user'인 각각의 메세지마다 해당 메시지의 id는 (메세지의 괄호안에 제시됨) \"id\", 피드백 내용은 \"content\" 로 하여 위의 형식처럼 Java의 리스트 형식처럼 만들어 주세요.\n"
-                + "예를 들어 \"{'user', '(id: 2)일본어 대답'}\", \"{'user', '(id:4)일본어 대답'}\" 형식의 코드로 들어온 'role'이 'user'인 메세지에 대해 각 메세지에 대한 피드백을 ```\n{\n {\n  \"id\" : 2,\n  content : \"피드백 내용\"\n  }, {\n \"id\" : 4,\n  content : \"피드백 내용\"\n  }\n}\n```\n이 형식으로 표현하면 됩니다. 무조건이요. 예외는 없습니다.";
+                + "예를 들어 \"{'user', '(id: 2)일본어 대답'}\", \"{'user', '(id:4)일본어 대답'}\" 형식의 코드로 들어온 'role'이 'user'인 메세지에 대해 각 메세지에 대한 피드백을 ```\n{\n {\n  \"chatId\" : 2,\n  content : \"피드백 내용\"\n  }, {\n \"chatId\" : 4,\n  content : \"피드백 내용\"\n  }\n}\n```\n이 형식으로 표현하면 됩니다. 무조건이요. 예외는 없습니다.";
 
         String systemMessage
                 = "당신은 평생 일본에서 산 원어민 일본어 전문 강사입니다. 이 강사님은 점수를 후하게 주는 편은 아닙니다.(10년 경력)\n"

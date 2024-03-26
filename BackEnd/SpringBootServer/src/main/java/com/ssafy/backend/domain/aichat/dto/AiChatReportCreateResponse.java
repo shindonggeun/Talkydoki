@@ -9,6 +9,6 @@ import java.util.List;
 @Builder
 public record AiChatReportCreateResponse(
         AiChatReportInfo aiChatReportInfo,
-        List<AiChatHistory> aiChatHistories
+        List<AiChatFeedbackInfo> aiChatFeedbackInfos
 ) {
 }

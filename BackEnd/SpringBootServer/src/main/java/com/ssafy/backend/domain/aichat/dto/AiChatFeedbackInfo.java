@@ -5,7 +5,8 @@ import com.ssafy.backend.domain.aichat.entity.AiChatHistory;
 public record AiChatFeedbackInfo(
         Integer id,
         Long roomId,
-        AiChatHistory aiChatHistory,
+        Long chatId,
+        String myAnswer,
         String content
 
 ) {

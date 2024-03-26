@@ -2,6 +2,7 @@ package com.ssafy.backend.domain.aichat.controller;
 
 
 import com.ssafy.backend.domain.aichat.dto.AiChatMessage;
+import com.ssafy.backend.domain.aichat.dto.AiChatReportCreateResponse;
 import com.ssafy.backend.domain.aichat.dto.AiChatRoomCreateResponse;
 import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
 import com.ssafy.backend.domain.aichat.service.AiChatService;
@@ -56,6 +57,14 @@ public class AiChatController {
                                                                       @PathVariable AiChatCategory category) {
         return aiChatService.setupAiChatBot(roomId, category)
                 .map(conversation -> ResponseEntity.ok(Message.success(conversation)));
+    }
+
+    @PostMapping("/gpt/{roomId}/report")
+    public Mono<ResponseEntity<Message<AiChatReportCreateResponse>>> createReportByGPT(@PathVariable Long roomId){
+        return aiChatService.createReport(roomId)
+                .flatMap(aiChatReportCreateResponseMono -> aiChatReportCreateResponseMono.map(aiChatReportCreateResponse ->
+                        ResponseEntity.ok(Message.success(aiChatReportCreateResponse)))
+                        .defaultIfEmpty(ResponseEntity.notFound().build()));
     }
 }
 

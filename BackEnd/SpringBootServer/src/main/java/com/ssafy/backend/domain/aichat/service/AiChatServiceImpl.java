@@ -202,6 +202,7 @@ public class AiChatServiceImpl implements AiChatService {
                 .flatMap(response -> {
                     String content = response.choices().get(0).message().content();
 
+                    log.info("GPT 레포트 결과!!!!: {}", content);
                     return Mono.fromCallable(() -> objectMapper.readValue(content, AiChatReportCreateRequest.class)) // 여기 List<FeedbackInfo> 땜시 에러 날지도
                             .subscribeOn(Schedulers.boundedElastic())
                             .flatMap(res -> Mono.fromCallable(() -> openAiCommunicationProvider.saveReport(roomId,res)));

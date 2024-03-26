@@ -3,6 +3,7 @@ package com.ssafy.backend.domain.aichat.service;
 import com.ssafy.backend.domain.aichat.dto.*;
 import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
 import com.ssafy.backend.global.component.openai.dto.Conversation;
+import jakarta.transaction.Transactional;
 import reactor.core.publisher.Mono;
 
 /**
@@ -46,5 +47,6 @@ public interface AiChatService {
      */
     Mono<Conversation> setupAiChatBot(Long roomId, AiChatCategory category);
 
+    @Transactional
     Mono<Mono<AiChatReportCreateResponse>> createReport(Long roomId);
 }

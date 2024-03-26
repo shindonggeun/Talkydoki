@@ -1,5 +1,6 @@
 package com.ssafy.backend.global.component.openai;
 
+import com.ssafy.backend.domain.aichat.dto.AiChatFeedbackInfo;
 import com.ssafy.backend.domain.aichat.dto.AiChatReportCreateRequest;
 import com.ssafy.backend.domain.aichat.dto.AiChatReportCreateResponse;
 import com.ssafy.backend.domain.aichat.dto.AiChatReportInfo;
@@ -12,6 +13,7 @@ import com.ssafy.backend.domain.aichat.repository.AiChatHistoryRepository;
 import com.ssafy.backend.domain.aichat.repository.AiChatReportRepository;
 import com.ssafy.backend.domain.aichat.repository.AiChatRoomRepository;
 import com.ssafy.backend.global.component.openai.dto.*;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -49,6 +51,8 @@ public class OpenAiCommunicationProvider {
                 .map(response -> response.choices().get(0).message().content());
     }
 
+    @Transactional
+
     public Mono<AiChatReportCreateResponse> saveReport(Long roomId, AiChatReportCreateRequest reportRequest) {
         return getAiChatReportCreateResponseMono(roomId, reportRequest, aiChatRoomRepository, aiChatReportRepository, aiChatHistoryRepository, aiChatFeedbackRepository);
     }
@@ -77,13 +81,21 @@ public class OpenAiCommunicationProvider {
                                                 AiChatFeedback aiChatFeedback = AiChatFeedback.builder()
                                                         .aiChatRoom(aiChatRoom)
                                                         .aiChatHistory(aiChatHistory)
+                                                        .content(feedback.content())
                                                         .build();
-                                                return aiChatFeedbackRepository.save(aiChatFeedback);
+                                                aiChatFeedbackRepository.save(aiChatFeedback);
+                                                return new AiChatFeedbackInfo(
+                                                        aiChatFeedback.getId(),
+                                                        roomId,
+                                                        aiChatHistory.getId(),
+                                                        aiChatHistory.getContent(),
+                                                        feedback.content()
+                                                );
                                             }).subscribeOn(Schedulers.boundedElastic())
-                                    ).then(Mono.fromCallable(() -> aiChatHistoryRepository.findByAiChatRoomId(roomId))
-                                            .subscribeOn(Schedulers.boundedElastic())
-                                            .flatMap(aiChatHistories ->
-                                                    Mono.just(new AiChatReportCreateResponse(
+                                    ).collectList()
+                                            .flatMap(aiChatFeedbackInfos ->
+                                                    Mono.just(
+                                                            new AiChatReportCreateResponse(
                                                             new AiChatReportInfo(
                                                                     savedReport.getId(),
                                                                     roomId,
@@ -93,12 +105,10 @@ public class OpenAiCommunicationProvider {
                                                                     savedReport.getWordScore(),
                                                                     savedReport.getFluencyScore(),
                                                                     savedReport.getContextScore()),
-                                                            aiChatHistories)
-                                                    )
-                                            )
-                                    )
+                                                            aiChatFeedbackInfos
+                                                    ))
 
-                            );
+                                            ));
                 });
     }
 }
