@@ -5,19 +5,13 @@ import com.ssafy.backend.domain.member.exception.MemberErrorCode;
 import com.ssafy.backend.domain.member.exception.MemberException;
 import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.domain.news.dto.*;
-import com.ssafy.backend.domain.news.entity.Keyword;
-import com.ssafy.backend.domain.news.entity.News;
-import com.ssafy.backend.domain.news.entity.NewsImage;
-import com.ssafy.backend.domain.news.entity.NewsKeywordHistory;
+import com.ssafy.backend.domain.news.entity.*;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.domain.news.exception.KeywordErrorCode;
 import com.ssafy.backend.domain.news.exception.KeywordException;
 import com.ssafy.backend.domain.news.exception.NewsErrorCode;
 import com.ssafy.backend.domain.news.exception.NewsException;
-import com.ssafy.backend.domain.news.repository.KeywordRepository;
-import com.ssafy.backend.domain.news.repository.NewsImageRepository;
-import com.ssafy.backend.domain.news.repository.NewsKeywordHistoryRepository;
-import com.ssafy.backend.domain.news.repository.NewsRepository;
+import com.ssafy.backend.domain.news.repository.*;
 import com.ssafy.backend.global.common.dto.SliceResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +39,8 @@ public class NewsServiceImpl implements NewsService {
     private final NewsImageRepository newsImageRepository;
     private final KeywordRepository keywordRepository;
     private final NewsKeywordHistoryRepository newsKeywordHistoryRepository;
+    private final NewsShadowingRepository newsShadowingRepository;
+    private final ShadowingEvaluationRepository shadowingEvaluationRepository;
     private final WebClient webClient;
 
     @Override
@@ -147,6 +143,14 @@ public class NewsServiceImpl implements NewsService {
         int distance = levenshteinDistance.apply(shadowingRequest.original(), shadowingRequest.userText());
         int maxLength = Math.max(shadowingRequest.original().length(), shadowingRequest.userText().length());
         double similarity = 1 - (double) distance / maxLength;
+
+        NewsShadowing newsShadowing = newsShadowingRepository.findById(newsId).orElseThrow(()
+                -> new NewsException(NewsErrorCode.NOT_FOUND_NEWS));
+        ShadowingEvaluation shadowingEvaluation = ShadowingEvaluation.builder()
+                .score((int) (similarity * 100))
+                .newsShadowing(newsShadowing)
+                .build();
+        shadowingEvaluationRepository.save(shadowingEvaluation);
 
         return new ShadowingResponse(similarity);
     }
