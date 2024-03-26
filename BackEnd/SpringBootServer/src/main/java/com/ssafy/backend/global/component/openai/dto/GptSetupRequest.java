@@ -70,7 +70,7 @@ public record GptSetupRequest(
                 "gpt-3.5-turbo-1106",
                 messages,
                 300,
-                1.0,
+                0.7,
                 responseFormat
         );
     }

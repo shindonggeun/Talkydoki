@@ -118,8 +118,6 @@ public class AiChatServiceImpl implements AiChatService {
                                     // 이제 'messages' 리스트는 첫 번째 시스템 프롬프트와 마지막으로 사용자의 최근 메시지를 포함합니다.
                                     GptChatRequest gptChatRequest = new GptChatRequest("gpt-3.5-turbo-1106", messages, 500);
 
-                                    // 최근 대화 내역을 포함하여 GPT 요청 생성
-//                                    GptChatRequest gptChatRequest = GptChatRequest.from(userMessage, messages);
 
                                     log.info("gpt한테 prompt 보낼 메시지(유저가 보냄):  {}", gptChatRequest);
 
@@ -132,8 +130,10 @@ public class AiChatServiceImpl implements AiChatService {
                                                 openAiRepository.saveAiChatHistory(roomId, List.of(
                                                         new GptDialogueMessage("user", userMessage.content()),  // 이부분 나중에 삭제해야함
                                                         new GptDialogueMessage("assistant", response)
-
                                                 ));
+
+                                                // GPT 일본어 응답 rabbitmq 통해서 전달
+                                                rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, conversation.gptJapaneseResponse());
                                             })
                                             .then(); // setupRequest가 있을 경우만 실행
                                 })
@@ -188,23 +188,11 @@ public class AiChatServiceImpl implements AiChatService {
 
     private Conversation parseGetResponse(String responseString) {
         try {
-            // JSON 데이터가 시작되는 인덱스를 찾습니다.
-//            int jsonStartIndex = responseString.indexOf("{");
-//            if (jsonStartIndex == -1) {
-//                throw new RuntimeException("유효한 JSON 시작 부분을 찾을 수 없습니다.");
-//            }
-//
-//            // JSON 시작 부분부터 문자열을 잘라냅니다.
-//            String jsonString = responseString.substring(jsonStartIndex);
-
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(responseString);
             // "conversation" 객체를 직접 찾습니다.
             // 만약 응답에 "conversation" 외의 다른 데이터가 포함되어 있고, 그 부분을 무시하고자 할 때 사용합니다.
             JsonNode conversationNode = root.path("conversation");
-            if (conversationNode.isMissingNode()) {
-                throw new RuntimeException("Conversation 객체를 찾을 수 없습니다. (즉, GPT 응답 고장난 경우)");
-            }
 
             Conversation conversation = mapper.treeToValue(conversationNode, Conversation.class);
             log.info("gpt 답변 일본어 파싱한 것: {}", conversation.gptJapaneseResponse());
@@ -213,6 +201,8 @@ public class AiChatServiceImpl implements AiChatService {
             log.info("user 모범 답변 한국어 파싱한 것: {}", conversation.userKoreanResponse());
             return conversation;
         } catch (Exception e) {
+            // TODO: 파싱 예외 발생했다는건 대화가 주제에 안맞거나 종료되었다는 의미 (JSON 형태로 안오거나 conversation 객체에 감싸서 안왔다는 의미)
+            log.info("exception 터지는지 확인하기");
             throw new RuntimeException("파싱 예외 발생", e);
         }
     }
