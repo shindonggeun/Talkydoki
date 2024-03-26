@@ -27,6 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -149,11 +150,12 @@ public class NewsServiceImpl implements NewsService {
         Member member = memberRepository.findById(memberId).orElseThrow(()
                 -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
-        NewsShadowing newsShadowing = NewsShadowing.builder()
+        Optional<NewsShadowing> existingNewsShadowing = newsShadowingRepository.findByNewsIdAndMemberId(newsId, memberId);
+
+        NewsShadowing newsShadowing = existingNewsShadowing.orElseGet(() -> newsShadowingRepository.save(NewsShadowing.builder()
                 .news(news)
                 .member(member)
-                .build();
-        newsShadowing = newsShadowingRepository.save(newsShadowing);
+                .build()));
 
         ShadowingEvaluation shadowingEvaluation = ShadowingEvaluation.builder()
                 .score((int) Math.round(similarity * 100))
