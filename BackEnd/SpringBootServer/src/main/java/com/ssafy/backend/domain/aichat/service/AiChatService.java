@@ -45,4 +45,6 @@ public interface AiChatService {
      * @return 설정된 대화 내용을 담은 Mono<Conversation> 객체
      */
     Mono<Conversation> setupAiChatBot(Long roomId, AiChatCategory category);
+
+    Mono<Mono<AiChatReportCreateResponse>> createReport(Long roomId);
 }

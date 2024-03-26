@@ -3,6 +3,8 @@ package com.ssafy.backend.domain.aichat.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.backend.domain.aichat.dto.AiChatMessage;
+import com.ssafy.backend.domain.aichat.dto.AiChatReportCreateRequest;
+import com.ssafy.backend.domain.aichat.dto.AiChatReportCreateResponse;
 import com.ssafy.backend.domain.aichat.dto.AiChatRoomCreateResponse;
 import com.ssafy.backend.domain.aichat.entity.AiChatHistory;
 import com.ssafy.backend.domain.aichat.entity.AiChatRoom;
@@ -22,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.TopicExchange;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -46,6 +49,9 @@ public class AiChatServiceImpl implements AiChatService {
 
     private final OpenAiCommunicationProvider openAiCommunicationProvider;
     private final OpenAiRepository openAiRepository;
+
+    private final WebClient webClient;
+    private final ObjectMapper objectMapper;
 
 
     /**
@@ -181,6 +187,25 @@ public class AiChatServiceImpl implements AiChatService {
                             return conversation;
                         })
                 .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    @Override
+    public Mono<Mono<AiChatReportCreateResponse>> createReport(Long roomId) {
+        return Mono.fromCallable(() -> aiChatHistoryRepository.findByAiChatRoomId(roomId))
+                .subscribeOn(Schedulers.boundedElastic())
+                .map(AiChatReportCreateApiRequest::convertRequest)
+                .flatMap(request -> webClient.post()
+                        .uri("/chat/completions")
+                        .bodyValue(request)
+                        .retrieve()
+                        .bodyToMono(GptChatCompletionResponse.class))
+                .flatMap(response -> {
+                    String content = response.choices().get(0).message().content();
+
+                    return Mono.fromCallable(() -> objectMapper.readValue(content, AiChatReportCreateRequest.class)) // 여기 List<FeedbackInfo> 땜시 에러 날지도
+                            .subscribeOn(Schedulers.boundedElastic())
+                            .flatMap(res -> Mono.fromCallable(() -> openAiCommunicationProvider.saveReport(roomId,res)));
+                });
     }
 
     private Conversation parseGetResponse(String responseString) {
