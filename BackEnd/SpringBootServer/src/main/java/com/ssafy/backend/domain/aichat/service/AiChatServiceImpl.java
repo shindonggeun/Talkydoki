@@ -56,8 +56,6 @@ public class AiChatServiceImpl implements AiChatService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
-//        GptThreadCreateResponse threadResponse = openAiCommunicationProvider.createThread();
-
         AiChatRoom aiChatRoom = AiChatRoom.builder()
                 .member(member)
                 .category(category)
@@ -111,13 +109,19 @@ public class AiChatServiceImpl implements AiChatService {
                         openAiRepository.findAiChatHistory(roomId)
                                 .flatMap(historyMessages -> {
                                     List<GptDialogueMessage> messages = new ArrayList<>(setupRequest.messages());
+
                                     if (!historyMessages.isEmpty()) {
                                         // 최근 대화 내역 추가
                                         messages.addAll(historyMessages);
                                     }
 
+                                    // 이제 'messages' 리스트는 첫 번째 시스템 프롬프트와 마지막으로 사용자의 최근 메시지를 포함합니다.
+                                    GptChatRequest gptChatRequest = new GptChatRequest("gpt-3.5-turbo-1106", messages, 500);
+
                                     // 최근 대화 내역을 포함하여 GPT 요청 생성
-                                    GptChatRequest gptChatRequest = GptChatRequest.from(userMessage, messages);
+//                                    GptChatRequest gptChatRequest = GptChatRequest.from(userMessage, messages);
+
+                                    log.info("gpt한테 prompt 보낼 메시지(유저가 보냄):  {}", gptChatRequest);
 
                                     return openAiCommunicationProvider.sendPromptToGpt(gptChatRequest)
                                             .doOnSuccess(response -> {
@@ -126,8 +130,9 @@ public class AiChatServiceImpl implements AiChatService {
 
                                                 // GPT 응답을 Redis에 저장
                                                 openAiRepository.saveAiChatHistory(roomId, List.of(
-                                                        new GptDialogueMessage("assistant", conversation.gptJapaneseResponse()),
-                                                        new GptDialogueMessage("assistant", conversation.gptKoreanResponse())
+                                                        new GptDialogueMessage("user", userMessage.content()),  // 이부분 나중에 삭제해야함
+                                                        new GptDialogueMessage("assistant", response)
+
                                                 ));
                                             })
                                             .then(); // setupRequest가 있을 경우만 실행
@@ -158,9 +163,15 @@ public class AiChatServiceImpl implements AiChatService {
                                     .build();
                             aiChatHistoryRepository.save(aiChatHistory);
 
-                            // Redis에 GptSetupRequest 저장
                             GptSetupRequest setupRequest = GptSetupRequest.from(category);
-                            openAiRepository.save(roomId, setupRequest);
+
+                            // Redis에 GPT 세팅한 프롬포트 저장
+                            openAiRepository.saveOpenAiSetup(roomId, setupRequest);
+
+                            // Redis에 GPT 응답 메시지 저장
+                            openAiRepository.saveAiChatHistory(roomId, List.of(
+                                    new GptDialogueMessage("assistant", setupResponse)
+                            ));
 
                             AiChatMessage gptMessage = AiChatMessage.builder()
                                     .sender(AiChatSender.GPT)
@@ -178,16 +189,16 @@ public class AiChatServiceImpl implements AiChatService {
     private Conversation parseGetResponse(String responseString) {
         try {
             // JSON 데이터가 시작되는 인덱스를 찾습니다.
-            int jsonStartIndex = responseString.indexOf("{");
-            if (jsonStartIndex == -1) {
-                throw new RuntimeException("유효한 JSON 시작 부분을 찾을 수 없습니다.");
-            }
-
-            // JSON 시작 부분부터 문자열을 잘라냅니다.
-            String jsonString = responseString.substring(jsonStartIndex);
+//            int jsonStartIndex = responseString.indexOf("{");
+//            if (jsonStartIndex == -1) {
+//                throw new RuntimeException("유효한 JSON 시작 부분을 찾을 수 없습니다.");
+//            }
+//
+//            // JSON 시작 부분부터 문자열을 잘라냅니다.
+//            String jsonString = responseString.substring(jsonStartIndex);
 
             ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(jsonString);
+            JsonNode root = mapper.readTree(responseString);
             // "conversation" 객체를 직접 찾습니다.
             // 만약 응답에 "conversation" 외의 다른 데이터가 포함되어 있고, 그 부분을 무시하고자 할 때 사용합니다.
             JsonNode conversationNode = root.path("conversation");

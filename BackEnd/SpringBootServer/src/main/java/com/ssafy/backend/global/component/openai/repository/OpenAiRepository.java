@@ -22,9 +22,7 @@ public class OpenAiRepository {
 
     private final RedisTemplate<String, Object> redisTemplate;
     private static final String OPEN_AI_SETUP_KEY_PREFIX = "openAiSetup::";
-
     private static final String AI_CHAT_HISTORY_KEY_PREFIX = "aiChatHistory::";
-
     private static final int EXPIRES_MIN = 30;	// 해당 채팅 제한시간 30분
 
     /**
@@ -33,7 +31,7 @@ public class OpenAiRepository {
      * @param roomId 채팅방 ID, Redis에 저장될 키의 일부로 사용됩니다.
      * @param setupRequest GptSetupRequest 객체, Redis에 값으로 저장됩니다.
      */
-    public void save(Long roomId, GptSetupRequest setupRequest) {
+    public void saveOpenAiSetup(Long roomId, GptSetupRequest setupRequest) {
         String key = OPEN_AI_SETUP_KEY_PREFIX + roomId;
         redisTemplate.opsForValue().set(key, setupRequest);
         redisTemplate.expire(key, EXPIRES_MIN, TimeUnit.MINUTES);
@@ -46,24 +44,25 @@ public class OpenAiRepository {
 
     public void saveAiChatHistory(Long roomId, List<GptDialogueMessage> messages) {
         String key = AI_CHAT_HISTORY_KEY_PREFIX + roomId;
-        redisTemplate.opsForList().rightPushAll(key, messages);
-        redisTemplate.expire(AI_CHAT_HISTORY_KEY_PREFIX, EXPIRES_MIN, TimeUnit.MINUTES);
+        // List의 각 요소를 Redis 리스트에 저장
+        messages.forEach(message -> redisTemplate.opsForList().rightPush(key, message));
+        redisTemplate.expire(key, EXPIRES_MIN, TimeUnit.MINUTES);
     }
 
     public Mono<List<GptDialogueMessage>> findAiChatHistory(Long roomId) {
-        // 레디스 템플릿의 range 메서드는 범위를 지정하여 리스트에서 요소들을 가져옵니다.
-        // 여기서는 0부터 -1까지 지정하여 전체 리스트를 가져옵니다.
-        List<Object> historyObjects = redisTemplate.opsForList().range(AI_CHAT_HISTORY_KEY_PREFIX + roomId, 0, -1);
+        String key = AI_CHAT_HISTORY_KEY_PREFIX + roomId;
+        // Redis에서 리스트의 모든 요소를 조회
+        List<Object> historyObjects = redisTemplate.opsForList().range(key, 0, -1);
         if (historyObjects == null) {
             return Mono.empty();
         }
-        // 안전한 타입 변환 수행
+        // 조회된 요소들을 GptDialogueMessage로 변환
         List<GptDialogueMessage> history = historyObjects.stream()
-                .filter(GptDialogueMessage.class::isInstance)
-                .map(GptDialogueMessage.class::cast)
+                .filter(obj -> obj instanceof GptDialogueMessage)
+                .map(obj -> (GptDialogueMessage) obj)
                 .collect(Collectors.toList());
 
-        return Mono.justOrEmpty(history);
+        return Mono.just(history);
     }
 
 }
