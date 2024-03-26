@@ -10,11 +10,11 @@ from googletrans import Translator
 from datetime import datetime
 import MeCab
 import requests
-import sys
 import json
 import warnings
 import os
-import time
+import json
+import sys
 sys.path.append('/usr/src/app')
 from Url import NEWS_API_URL, DUPLICATENEWS_PATH
 warnings.filterwarnings('ignore')
@@ -166,21 +166,34 @@ for news_url in news_urls:
         "srcOrigin": news_url
     }
     newsId = requests.post(f'{NEWS_API_URL}/post', json=news_data).json().get('dataBody')
-    for imageUrl in news_body_img_urls:
-        news_image_data = {
-            "imageUrl": imageUrl,
-            "newsId": newsId
+    if newsId is not None:
+        for imageUrl in news_body_img_urls:
+            news_image_data = {
+                "imageUrl": imageUrl,
+                "newsId": newsId
+            }
+            requests.post(f'{NEWS_API_URL}/images/post', json=news_image_data)
+        
+        
+        news_datetime = datetime.strptime(news_date.split(" ")[0], '%Y年%m月%d日')
+        newsdate = news_datetime.strftime('%Y%m%d')
+        filename = f"{DUPLICATENEWS_PATH}/news_data_{newsdate}.json"
+        # 기존의 JSON 파일 불러오기
+        existing_news_data = []
+        if os.path.exists(filename):
+            with open(filename, "r", encoding="utf-8") as file:
+                existing_news_data = json.load(file)
+        news_hadoop_data = {
+            "newsId": newsId,
+            "title": news_title_output,
+            "content": news_body_output,
+            "summary": news_summary_output
         }
-        requests.post(f'{NEWS_API_URL}/images/post', json=news_image_data)
-    
-    
-    news_datetime = datetime.strptime(news_date.split(" ")[0], '%Y年%m月%d日')
-    newsdate = news_datetime.strftime('%Y%m%d')
-    filename = f"{DUPLICATENEWS_PATH}/news_data_{newsdate}.txt"
-    # 폴더가 없는 경우 폴더를 생성
-    os.makedirs(os.path.dirname(filename), exist_ok=True)
-    with open(filename, "w", encoding="utf-8") as file:
-        file.write(f"ID\n{newsId}\nTITLE\n{news_title_output}\nSUMMARY\n{news_summary_output}\nCONTENT\n{news_body_output}\n")
+        existing_news_data.append(news_hadoop_data)
+        # 폴더가 없는 경우 폴더를 생성
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        with open(filename, "w", encoding="utf-8") as file:
+            json.dump(existing_news_data, file, ensure_ascii=False, indent=4)
     
 
 

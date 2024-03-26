@@ -1,7 +1,7 @@
 NEWS_API_URL = "http://j10c107.p.ssafy.io:8080/api/v1/news"
 KEYWORDS_API_URL = "http://j10c107.p.ssafy.io:8080/api/v1/keywords"
 DUPLICATENEWS_PATH = "/usr/src/app/NewsCrawling/DuplicateNews"
-DAYS_NEWS_PATH = "/usr/src/app/DaysNews"
+DAYS_NEWS_PATH = "/usr/src/app/Hadoop/data/DaysNews"
 TF_IDF_BASE_NAME = "TF-IDF.txt"
 LOCAL_INPUT_PATH = f"/home/ubuntu/newsData/Input/{TF_IDF_BASE_NAME}"
 LOCAL_OUTPUT_PATH = f"/home/ubuntu/newsData/Output/{TF_IDF_BASE_NAME}"

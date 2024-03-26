@@ -15,12 +15,12 @@ def make_input_data():
     # 파일들을 읽어들이고 내용을 리스트에 추가
     for i in range((end_date - start_date).days + 1):
         current_date = start_date + timedelta(days=i)
-        file_path = os.path.join(DAYS_NEWS_PATH, f"news_data_{current_date.strftime('%Y%m%d')}.txt")
+        file_path = os.path.join(DAYS_NEWS_PATH, f"news_data_{current_date.strftime('%Y%m%d')}.json")
         if os.path.exists(file_path):
             with open(file_path, "r", encoding="utf-8") as file:
                 file_contents.append(file.read())
         else:
-            print(f"Warning: File not found for date {current_date}")
+            print(f"Warning: File not found for date {current_date.strftime('%Y%m%d')}")
 
     # 폴더가 없는 경우 폴더를 생성
     os.makedirs(os.path.dirname(DOCKER_INPUT_PATH), exist_ok=True)
@@ -35,10 +35,13 @@ def copy_to_hdfs():
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(EC2_IP, username=USER_NAME, key_filename=KEY_FILE_URL)
 
-    hadoop_command = "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64; " \
-                    "export HADOOP_HOME=/usr/local/hadoop; " \
-                    "export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin; " \
-                    f"hdfs dfs -put {LOCAL_INPUT_PATH} {hdfs_path}"
+    hadoop_command = f'''
+        export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64; 
+        export HADOOP_HOME=/usr/local/hadoop; 
+        export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin; 
+        hdfs dfs -put -f {LOCAL_INPUT_PATH} {hdfs_path}
+    '''
+
     stdin, stdout, stderr = ssh.exec_command(hadoop_command)
     exit_status = stdout.channel.recv_exit_status()
     ssh.close()
@@ -59,10 +62,13 @@ def copy_from_hdfs():
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(EC2_IP, username=USER_NAME, key_filename=KEY_FILE_URL)
 
-    hadoop_command = "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64; " \
-                     "export HADOOP_HOME=/usr/local/hadoop; " \
-                     "export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin; " \
-                     f"hdfs dfs -copyToLocal {hdfs_path} {LOCAL_OUTPUT_PATH}"
+    hadoop_command = f'''
+        export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64; 
+        export HADOOP_HOME=/usr/local/hadoop; 
+        export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin; 
+        hdfs dfs -copyToLocal -f {hdfs_path} {LOCAL_OUTPUT_PATH}
+    '''
+
     stdin, stdout, stderr = ssh.exec_command(hadoop_command)
     exit_status = stdout.channel.recv_exit_status()
     ssh.close()
@@ -78,18 +84,19 @@ def copy_from_hdfs():
 def start_hadoop_streaming():
     input_path = f"/input/{TF_IDF_BASE_NAME}"
     output_path = f"/output/{TF_IDF_BASE_NAME}"
-    map_reduce_path = "/home/ubuntu/newsData/Hadoop"
-    hadoop_command = "export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64; " \
-                    "export HADOOP_HOME=/usr/local/hadoop; " \
-                    "export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin; " \
-                    f'''
-                        hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-*.jar \
-                        -files {map_reduce_path}/TFIDF_mapper.py,{map_reduce_path}/TFIDF_reducer.py \
-                        -mapper 'python3 {map_reduce_path}/TFIDF_mapper.py' \
-                        -reducer 'python3 {map_reduce_path}/TFIDF_reducer.py' \ 
-                        -input {input_path} \
-                        -output {output_path}
-                    '''
+    map_reduce_path = "/home/ubuntu/newsData"
+    hadoop_command = f'''
+        export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64; 
+        export HADOOP_HOME=/usr/local/hadoop; 
+        export PATH=$PATH:$HADOOP_HOME/bin:$HADOOP_HOME/sbin; 
+        hadoop fs -rm -r {output_path};
+        hadoop jar /usr/local/hadoop/share/hadoop/tools/lib/hadoop-streaming-*.jar \
+        -files {map_reduce_path}/TFIDF_mapper.py,{map_reduce_path}/TFIDF_reducer.py \
+        -mapper 'python3 {map_reduce_path}/TFIDF_mapper.py' \
+        -reducer 'python3 {map_reduce_path}/TFIDF_reducer.py' \
+        -input {input_path} \
+        -output {output_path}
+    '''
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
