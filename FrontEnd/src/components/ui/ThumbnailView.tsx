@@ -5,11 +5,12 @@ import Img from "@/assets/images/default_news_image.jpeg";
 
 type Props = {
   images: string[];
+  isThumb: boolean;
 };
 
 // 마우스를 움직이면 이미지가 넘어가는 컨테이너
 
-function ThumbnailView({ images }: Props) {
+function ThumbnailView({ images, isThumb }: Props) {
   const [now, setNow] = useState(0);
   const thumbnailRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
@@ -49,6 +50,7 @@ function ThumbnailView({ images }: Props) {
     <ThumbnailViewWrapper
       $length={images.length}
       $isMobile={isMobile}
+      $isThumb={isThumb}
       ref={thumbnailRef}
     >
       {/* 아래 점 */}

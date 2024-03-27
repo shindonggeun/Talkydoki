@@ -1,5 +1,5 @@
 server:
-  base-url: https://j10c107.p.ssafy.io
+  base-url: j10c107.p.ssafy.io
 
 spring:
   servlet:
@@ -13,7 +13,7 @@ spring:
     defer-datasource-initialization: true
     generate-ddl: true
     hibernate:
-      ddl-auto: create-drop                # ddl 자동 작성 여부
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true             # 하이버네이트가 실행한 SQL을 출력할 때 보기 좋게 정렬
@@ -25,7 +25,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver  # DB 드라이버
-    url: jdbc:mysql://j10c107.p.ssafy.io:3306/talkydoki?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true       # 데이터베이스 URL
+    url: jdbc:mysql://${server.base-url}:3306/talkydoki?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true       # 데이터베이스 URL
     username: ENC(f0r0VaK09iSvSITZnTanow==)                     # 데이터베이스 계정명
     password: ENC(pcq3fN0xzVJNEAPYy/U+mQ==)                     # 데이터베이스 계정 비밀번호
 
@@ -69,8 +69,8 @@ spring:
 
 # jwt setting
 jwt:
-  accessKey: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
-  refreshKey: TestRefreshKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
+  accessKey: ENC(V6FVgNoVoFGu9ToZlWzl8KKTUVlltnkhjOb7CsXowIwd5dzgdrmQY54fs81dt4b8k5cg7+etY5Zt1kyJq2XduisXKYMBkhtlNixuHGN8PY4RYeYPSsjdA/e8CkJfFcQoDMs6p63E6B4AXsB4pCwXNq6GK3FChCBHu+ZtwhcS2uvKEBHWZca1D/KZeIvuYBZFu74gDtLXECHQBfUBgGWGqQ==)
+  refreshKey: ENC(Ddc9rzvz2gZKRrXxLIROCjj9UJEEmARcByz/2wruK1XhxOW+lwpKdx6f6p71R1SZoNo/A5cbavkpizUt6q7xLTE4jsR1HuzeaLqX9uWuIUcAahCk2iycqN8zetYc+VO1BAGCo8qqJuQ1AnIod/IHd8VQ5l0jLDT0PLz/ifZR/Etcpq7YCqddGhkxfJljkwPGu475yl770UmpZcG4llPR2g==)
   accessExpiration: PT60M  # 60분 (PT60M)
   refreshExpiration: PT10080M  # 10080분 (7일) (PT10080M)
 
@@ -84,8 +84,8 @@ logging:
 # OAUTH2.0 Setting
 oauth:
   kakao:
-    client-id: d8f7a03a9f71c950eb689b75d7e13911 # REST API 키
-    client-secret: DoDeccr2fHvdeN9ZrVc0zfitpw9mQDaX # 보안 -> Client Secret 키
+    client-id: ENC(BWjHj+A/SJQBzhtK+vutMYiLyOsKAo2lQwFqW2PqRPDxuWfF6Ncx+Qq5piFGk1SY)   # REST API 키
+    client-secret: ENC(U2L8zI42xYdW0BrMSGzgJYk5Q+lkgUx2ZowRtdJ1yPTjq+l0VevuR0r9ucPc6ZrL)  # 보안 -> Client Secret 키
     redirect-uri: ${server.base-url}/member/loading/kakao
     scope:
       - profile_nickname
@@ -94,8 +94,8 @@ oauth:
       - name
 
   naver:
-    client-id: 6kxAAj5SSmXzQlEXkOao
-    client-secret: fzufMaJYRE
+    client-id: ENC(fgllU6jmkfqSW5Lbet7BdnTta/ycQfTAwj3mVFHrkko=)
+    client-secret: ENC(MNZuMPNyaH+s/6Fx8gOKJ2bKC+7tFMMu)
     redirect_uri: ${server.base-url}/member/loading/naver
     scope:
       - nickname
@@ -104,8 +104,8 @@ oauth:
       - profile_image
 
   google:
-    client_id: ENC(ZXiW2x7m3ZOFSOf6IuL3U/irYjoZ5AK6yifN+wMCXwg6+iqc4Em6HivS2fJTIpgd8leqY7oMR4/Jmic1tr9M2q9TqUc/C3b2orCAvbbyeHlFF9HQ/wXr2g==)
-    client_secret: ENC(UpM1KN7rqMsnufSgnq6hrAWacgpL+2Xeu/f/fyYwCCQ9hFHoQ7gQRIMZpX2EMTpZ)
+    client_id: ENC(QKPQqGiQ64z9Aqor6E4+iqkn9coyITJcZJpnGofHf1rweieZI2PYBd80sfG4sRzJqgkMFqumuuvlHgCXoIZ5n7Ax2Wen8jYzt/9T2WmQ1LfQEdmdhLxaSg==)
+    client_secret: ENC(9s47E9126PeDwGGEQ3CEOxgisyvSvZEF8rGmM6ylTJ3YyAAJ4ES/lRkULyEamSgc)
     redirect_uri: ${server.base-url}/member/loading/google
     scope:
       - profile
@@ -118,4 +118,4 @@ app:
 
 # gpt-api setting
 openai:
-  key: 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
+  key: ENC(QrUxpVFQUVlQx9zGMdFKUh4+HMsOPwGBmyzriWx3o/UydA9H7vqDwqmH2hq82b5S9H7tuV+/SFYyxiXOWFI7+A==)

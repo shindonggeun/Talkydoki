@@ -7,6 +7,8 @@ import MicIcon from "@mui/icons-material/Mic";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import { BlueButton } from "@/styles/common/ui/button";
+import { useNavigate } from "react-router-dom";
 
 type Props = {};
 
@@ -17,6 +19,10 @@ function ChatFooter({}: Props) {
   // 타이머
   const [timer, setTimer] = useState<number | undefined>(undefined);
   console.log("시각화 확인 콘솔:isRecording", isRecording);
+  const navigate = useNavigate();
+  const handlGoReport = () => {
+    navigate("/aichatreport");
+  };
 
   // 스피치 api
   const { transcript, browserSupportsSpeechRecognition, resetTranscript } =
@@ -72,14 +78,19 @@ function ChatFooter({}: Props) {
           </div>
         )}
         {/* api 연결 후 삭제예정 */}
-        <div>변환음성{transcript}</div>
+        <div>{transcript}</div>
 
-        <div>저장 메세지{message}</div>
+        <div>{message}</div>
         <div
           className={`micdiv ${isRecording ? "recording" : ""}`}
           onClick={toggleRecording}
         >
           <MicIcon style={{ fontSize: "2.5rem", color: "#FFFFFF" }} />
+        </div>
+        <div className="reportdiv">
+          <BlueButton width="95px" height="33px" onClick={handlGoReport}>
+            리포트 작성
+          </BlueButton>
         </div>
       </FooterContainer>
     </>

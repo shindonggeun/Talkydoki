@@ -23,6 +23,12 @@ declare module "@mui/material" {
   interface TabsPropsIndicatorColorOverrides {
     purple: true;
   }
+  interface ToggleButtonGroupPropsColorOverrides {
+    purple: true;
+  }
+  interface ButtonGroupPropsColorOverrides {
+    purple: true;
+  }
 }
 
 declare module "@mui/material/styles" {

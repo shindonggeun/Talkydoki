@@ -15,3 +15,11 @@ export interface PersonalVocaInterface {
   korean: string;
   type: string;
 }
+
+export interface WordSearchInterface {
+  id?: number;
+  japanese: string;
+  japaneseRead: string;
+  korean?: string;
+  type?: string;
+}

@@ -11,8 +11,14 @@ export const isSamePassword = (password: string, password2: string) => {
 };
 
 // 회원가입 유효성 검사 함수
-export const isValidAuth = (form: SignupParams, password2: string) => {
+export const isValidAuth = (
+  form: SignupParams,
+  password2: string,
+  emailVerifyStatus: string
+) => {
   const { email, name, nickname, password } = form;
+  // 인증 받은 이메일 조건
+  if (emailVerifyStatus !== "success") return false;
 
   // 이메일 및 비밀번호 확인 정규식
   const emailCheck = /^[a-zA-Z0-9+-/_.]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/;
@@ -30,7 +36,6 @@ export const isValidAuth = (form: SignupParams, password2: string) => {
   // 비밀번호 및 이메일 형식 안맞으면 false
   if (!emailCheck.test(email)) return false;
   if (!pwCheck.test(password)) return false;
-
   return true;
 };
 

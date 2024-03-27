@@ -5,21 +5,14 @@ import com.ssafy.backend.domain.member.exception.MemberErrorCode;
 import com.ssafy.backend.domain.member.exception.MemberException;
 import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.domain.news.dto.*;
-import com.ssafy.backend.domain.news.entity.Keyword;
-import com.ssafy.backend.domain.news.entity.News;
-import com.ssafy.backend.domain.news.entity.NewsImage;
-import com.ssafy.backend.domain.news.entity.NewsKeywordHistory;
+import com.ssafy.backend.domain.news.entity.*;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.domain.news.exception.KeywordErrorCode;
 import com.ssafy.backend.domain.news.exception.KeywordException;
 import com.ssafy.backend.domain.news.exception.NewsErrorCode;
 import com.ssafy.backend.domain.news.exception.NewsException;
-import com.ssafy.backend.domain.news.repository.KeywordRepository;
-import com.ssafy.backend.domain.news.repository.NewsImageRepository;
-import com.ssafy.backend.domain.news.repository.NewsKeywordHistoryRepository;
-import com.ssafy.backend.domain.news.repository.NewsRepository;
+import com.ssafy.backend.domain.news.repository.*;
 import com.ssafy.backend.global.common.dto.SliceResponse;
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.ParameterizedTypeReference;
@@ -28,12 +21,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -46,6 +40,8 @@ public class NewsServiceImpl implements NewsService {
     private final NewsImageRepository newsImageRepository;
     private final KeywordRepository keywordRepository;
     private final NewsKeywordHistoryRepository newsKeywordHistoryRepository;
+    private final NewsShadowingRepository newsShadowingRepository;
+    private final ShadowingEvaluationRepository shadowingEvaluationRepository;
     private final WebClient webClient;
 
     @Override
@@ -106,7 +102,7 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public Mono<Map<String, Object>> getNewsRecommendation(Long memberId) {
         return webClient.get()
-                .uri("http://j10c107a.p.ssafy.io:8000/recommend/new/{userId}", memberId)
+                .uri("http://j10c107a.p.ssafy.io:8000/recommend/news/{userId}", memberId)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {});
     }
@@ -140,5 +136,33 @@ public class NewsServiceImpl implements NewsService {
             newsKeywordHistoryRepository.save(newsKeywordHistory);
         }
         return newsInfo;
+    }
+
+    @Override
+    public ShadowingResponse calculateSimilarity(ShadowingRequest shadowingRequest, Long memberId, Long newsId) {
+        LevenshteinDistance levenshteinDistance = new LevenshteinDistance();
+        int distance = levenshteinDistance.apply(shadowingRequest.original(), shadowingRequest.userText());
+        int maxLength = Math.max(shadowingRequest.original().length(), shadowingRequest.userText().length());
+        double similarity = Math.round((1 - (double) distance / maxLength) * 10) / 2.0;
+
+        News news = newsRepository.findById(newsId).orElseThrow(()
+                -> new NewsException(NewsErrorCode.NOT_FOUND_NEWS));
+        Member member = memberRepository.findById(memberId).orElseThrow(()
+                -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+        Optional<NewsShadowing> existingNewsShadowing = newsShadowingRepository.findByNewsIdAndMemberId(newsId, memberId);
+
+        NewsShadowing newsShadowing = existingNewsShadowing.orElseGet(() -> newsShadowingRepository.save(NewsShadowing.builder()
+                .news(news)
+                .member(member)
+                .build()));
+
+        ShadowingEvaluation shadowingEvaluation = ShadowingEvaluation.builder()
+                .score(similarity)
+                .newsShadowing(newsShadowing)
+                .build();
+        shadowingEvaluationRepository.save(shadowingEvaluation);
+
+        return new ShadowingResponse(similarity);
     }
 }

@@ -1,16 +1,21 @@
+import { newsInterface } from "@/interface/NewsInterface";
 import { TimerCarouselWrapper, MainCarouselItem } from "@/styles/Main/carousel";
+import { newsSplitter, sentenceMaker } from "@/util/language/format";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   width: number; // 캐러셀 넓이, %단위 (Wrapper 기준)
   height: number; // 캐러셀 높이, %단위 (Warpper 기준)
-  news: { img: string; title: string; kortitle: string }[]; // 뉴스 배열(임시)
+  news: newsInterface[]; // 뉴스 배열(임시)
 };
 
 function TimerCarousel({ width, height, news }: Props) {
   const [now, setNow] = useState(0);
   const [timer, setTimer] = useState(0);
   const [nextTime, setNextTime] = useState(1);
+  const navigate = useNavigate();
+  // console.log(news);
 
   // 5초마다 한 번씩 캐러셀 넘어감
   useEffect(() => {
@@ -80,11 +85,18 @@ function TimerCarousel({ width, height, news }: Props) {
             key={idx}
             $width={width}
             $height={height}
-            $bgImg={each.img}
+            $bgImg={each.newsImages[0]}
+            onClick={() => {
+              console.log(each.newsId);
+              navigate(`/news/detail`, { state: { newsId: each.id } });
+            }}
           >
             <div className="titleBox">
-              <div className="koTitle">{each.kortitle}</div>
-              <div className="jpTitle"> {each.title}</div>
+              <div className="koTitle">{each.titleTranslated}</div>
+              <div className="jpTitle">
+                {" "}
+                {sentenceMaker(newsSplitter(each.title)[0])}
+              </div>
             </div>
           </MainCarouselItem>
         ))}

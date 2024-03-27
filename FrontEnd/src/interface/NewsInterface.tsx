@@ -14,6 +14,45 @@ export interface categoryInterface {
   korName: string;
 }
 
+export interface newsInterface {
+  id?: number;
+  newsId: number;
+  title: string;
+  titleTranslated: string;
+  category: string;
+  content: string;
+  contentTranslated: string;
+  summary: string;
+  newsKeywords: string[];
+  summaryTranslated: string;
+  writeDate: string;
+  srcOrigin: string;
+  newsImages: string[];
+}
+
+export interface splittedNewsInterface {
+  newsId: number;
+  title: string[][];
+  titleTranslated: string;
+  category: string;
+  content: string[][][];
+  contentTranslated: string[];
+  newsKeywords: { [keyword: string]: number };
+  summary: string[][][];
+  summaryTranslated: string[];
+  writeDate: string;
+  srcOrigin: string;
+  newsImages: string[];
+  fullTitle: string;
+  fullNews: string[];
+}
+
+export interface shadowingParams {
+  newsId: number;
+  original: string;
+  userText: string;
+}
+
 export const category: categoryInterface[] = [
   { id: 1, name: "SOCIETY", korName: "사회" },
   { id: 2, name: "WEATHER_DISASTER", korName: "날씨/재해" },

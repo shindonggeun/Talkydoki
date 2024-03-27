@@ -26,7 +26,6 @@ for line in sys.stdin:
 
     word_count_per_document[document_id][word] += count
 
-    # 현재 문서에서 처음 등장한 단어에 대해서만 DF 업데이트
     if word not in words_in_current_document:
         if word not in document_frequency:
             document_frequency[word] = 0
@@ -37,6 +36,6 @@ for document_id in word_count_per_document:
     total_words_in_document = sum(word_count_per_document[document_id].values())
     for word in word_count_per_document[document_id]:
         tf = word_count_per_document[document_id][word] / total_words_in_document
-        idf = math.log((total_documents + 1) / (document_frequency[word] + 1))  # 스무딩 처리
+        idf = math.log((total_documents + 1) / (document_frequency[word] + 1))
         tf_idf = tf * idf
         print(f"{document_id}\t{word}\t{tf_idf:.6f}")

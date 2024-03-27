@@ -1,4 +1,5 @@
-import { MenuItem } from "@/styles/Menu/sidebar";
+import React from "react";
+import { MenuDivider, MenuItem } from "@/styles/Menu/sidebar";
 import HomeIcon from "@mui/icons-material/Home";
 import ArticleIcon from "@mui/icons-material/Article";
 import ForumIcon from "@mui/icons-material/Forum";
@@ -22,6 +23,8 @@ function Menus() {
 
   return (
     <div>
+      <MenuDivider textAlign="left">menu</MenuDivider>
+
       {/* 홈 */}
       <MenuItem
         onClick={() => menuHandler("/main")}
@@ -36,7 +39,7 @@ function Menus() {
       {/* 뉴스 */}
       <MenuItem
         onClick={() => menuHandler("/news")}
-        className={now == "/news" ? "selected" : undefined}
+        className={now.startsWith("/news") ? "selected" : undefined}
       >
         <div className="label">
           <ArticleIcon />
@@ -45,7 +48,10 @@ function Menus() {
         <KeyboardArrowRightIcon />
       </MenuItem>
       {/* AI 채팅 */}
-      <MenuItem>
+      <MenuItem
+        onClick={() => menuHandler("/aichatlist")}
+        className={now.startsWith("/aichatlist") ? "selected" : undefined}
+      >
         <div className="label">
           <ForumIcon />
           <div>AI 채팅</div>
@@ -67,4 +73,4 @@ function Menus() {
   );
 }
 
-export default Menus;
+export default React.memo(Menus);

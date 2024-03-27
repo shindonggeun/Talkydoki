@@ -1,178 +1,180 @@
 from fastapi import HTTPException, APIRouter
+
+from apscheduler.schedulers.background import BackgroundScheduler
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from models.member import Member
+from models.news import News
+from models.keyword import Keyword
+from models.news_keyword_mapping import NewsKeywordMapping
+from models.news_keyword_history import NewsKeywordHistory
+from models.news_shadowing import NewsShadowing
+from models.news_image import NewsImage
+
 from sklearn.metrics.pairwise import cosine_similarity
+from datetime import datetime, timedelta
+from collections import Counter
 
 import numpy as np
 import pandas as pd
-
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-from torch.utils.data import Dataset
-from pydantic import BaseModel
+import pytz
 
 router = APIRouter()
 
 class DataStorage:
-    def __init__(self):
-        self.users = [str(i) for i in range(1, 1001)]
-        self.categories = ['사회', '경제', '정치', '과학', '문화']
-        self.articles = [f"{category}기사{i}" for category in self.categories for i in range(1, 201)]
-        self.words = [f"{category}_{i}" for category in self.categories for i in range(1, 201)]
+    def __init__(self, database_url="mysql+pymysql://ssafy:ssafy@j10c107.p.ssafy.io/talkydoki"):
+        self.engine = create_engine(database_url)
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
+        self.load_data()
 
-        self.article_word_df = pd.DataFrame(data=np.zeros((1000, 1000), dtype=int), index=self.articles, columns=self.words)
-        self.user_word_df = pd.DataFrame(data=np.zeros((1000, 1000), dtype=int), index=self.users, columns=self.words)
-        self.user_preferences = [category for category in self.categories for _ in range(200)]
-        self.article_categories = [category for category in self.categories for _ in range(200)]
+    def load_data(self):
+        kst = pytz.timezone('Asia/Seoul')
+        now_kst = datetime.now(kst)
+        five_days_ago_kst = now_kst - timedelta(days=5)
+        
+        articles = self.session.query(News).filter(News.write_date >= five_days_ago_kst).all()
+        users = self.session.query(Member).all()
+        keywords = self.session.query(Keyword).all()
+        mappings = self.session.query(NewsKeywordMapping).join(NewsKeywordMapping.news).filter(News.write_date >= five_days_ago_kst).all()
+        histories = self.session.query(NewsKeywordHistory).all()
 
-        self.initialize_dataframes()
+        categories = ['SOCIETY', 'BUSINESS', 'POLITICS', 'SCIENCE_CULTURE', 'INTERNATIONAL', 'SPORTS', 'LIFE', 'WEATHER_DISASTER']
+        category_kr = ['사회', '경제', '정치', '과학', '국제', '스포츠', '생활', '재난/날씨']
+        category_map = dict(zip(categories, category_kr))
+        self.categories = categories
 
-    def initialize_dataframes(self):
-        for i, user in enumerate(self.users):
-            preferred_category = self.user_preferences[i]
-            preferred_words = [word for word in self.words if preferred_category in word]
-            non_preferred_words = [word for word in self.words if preferred_category not in word]
+        self.users = [user.id for user in users]
+        self.articles = [f"{category_map[article.category]}기사{article.id}" for article in articles]
+        self.words = {keyword.id: {'word': keyword.japanese, 'categories': []} for keyword in keywords}
 
-            num_to_exclude = int(len(preferred_words) * np.random.uniform(0.1, 0.15))
+        for mapping in mappings:
+            if mapping.keyword.id in self.words:
+                news_category = category_map[mapping.news.category]
+                if news_category not in self.words[mapping.keyword.id]['categories']:
+                    self.words[mapping.keyword.id]['categories'].append(news_category)
+
+        article_word_data = {}
+        for mapping in mappings:
+            article_key = f"{category_map[mapping.news.category]}기사{mapping.news.id}"
+            word_id = mapping.keyword.id
+            if article_key in article_word_data:
+                article_word_data[article_key][word_id] = mapping.weight
+            else:
+                article_word_data[article_key] = {word_id: mapping.weight}
+
+        self.article_word_df = pd.DataFrame(0, index=self.articles, columns=self.words.keys())
+        self.user_word_df = pd.DataFrame(0, index=self.users, columns=self.words.keys())
+
+        for article, word_ids in article_word_data.items():
+            for word_id, weight in word_ids.items():
+                if word_id in self.article_word_df.columns:
+                    self.article_word_df.at[article, word_id] = weight
+
+        individual_preferences = {
+            1: '사회',
+            2: '경제',
+            3: '정치',
+            4: '과학',
+            5: '국제',
+            6: '스포츠'
+        }
+        
+        for user in self.users:
+            if user in individual_preferences:
+                preferred_category = individual_preferences[user]
+            else:
+                preferred_category_index = (user - len(individual_preferences) - 1) % len(self.categories)
+                preferred_category = self.categories[preferred_category_index]
+                preferred_category = category_map[preferred_category]
+            
+            preferred_words = [word_id for word_id, info in self.words.items() if preferred_category in info['categories']]
+            non_preferred_words = [word_id for word_id, info in self.words.items() if preferred_category not in info['categories']]
+            num_to_exclude = int(len(preferred_words) * 0.15)
             excluded_words = np.random.choice(preferred_words, size=num_to_exclude, replace=False)
 
-            for word in preferred_words:
-                if word not in excluded_words:
-                    self.user_word_df.at[user, word] = np.random.randint(5, 11)
+            for word_id in preferred_words:
+                if word_id not in excluded_words:
+                    self.user_word_df.at[user, word_id] = np.random.randint(5, 11)
                 else:
-                    self.user_word_df.at[user, word] = 0
+                    self.user_word_df.at[user, word_id] = 0
 
-            for word in non_preferred_words:
-                self.user_word_df.at[user, word] = np.random.randint(0, 5)
+            for word_id in non_preferred_words:
+                count = np.random.randint(0, 5)
+                self.user_word_df.at[user, word_id] = count
+        
+        for history in histories:
+            member_id = history.member_id
+            keyword_id = history.keyword_id
+            read_count = history.read_count
 
-        for i, article in enumerate(self.article_word_df.index):
-            category = self.article_categories[i]
-            category_words = [word for word in self.article_word_df.columns if category in word]
-            non_category_words = [word for word in self.article_word_df.columns if category not in word]
-
-            num_to_exclude = int(len(category_words) * np.random.uniform(0.1, 0.15))
-            excluded_words = np.random.choice(category_words, size=num_to_exclude, replace=False)
-
-            for word in category_words:
-                if word not in excluded_words:
-                    self.article_word_df.at[article, word] = np.random.uniform(0.5, 1)
-                else:
-                    self.article_word_df.at[article, word] = 0
-
-            for word in non_category_words:
-                self.article_word_df.at[article, word] = np.random.uniform(0, 0.5)
+            if member_id in self.user_word_df.index and keyword_id in self.user_word_df.columns:
+                self.user_word_df.at[member_id, keyword_id] += read_count
 
         self.user_word_df_norm = (self.user_word_df - self.user_word_df.min()) / (self.user_word_df.max() - self.user_word_df.min())
         self.article_word_df_norm = (self.article_word_df - self.article_word_df.min()) / (self.article_word_df.max() - self.article_word_df.min())
 
-        self.cosine_sim = cosine_similarity(self.user_word_df_norm, self.article_word_df)
+        self.cosine_sim = cosine_similarity(self.user_word_df_norm.fillna(0), self.article_word_df_norm.fillna(0))
         self.cosine_sim_df = pd.DataFrame(self.cosine_sim, columns=self.articles, index=self.users)
+        
+    def get_most_recommended_articles(self, num_recommendations=3):
+        all_recommendations = self.cosine_sim_df.apply(lambda row: row.sort_values(ascending=False).index.values.tolist()[:num_recommendations], axis=1).explode()
+        most_common_recommendations = Counter(all_recommendations).most_common(num_recommendations)
+        recommendations = [rec[0] for rec in most_common_recommendations]
+        return recommendations
+
+data_storage = DataStorage()
+
+scheduler = BackgroundScheduler()
+
+scheduler.add_job(data_storage.load_data, 'interval', minutes=10)
+
+scheduler.start()
+
+def get_news_data(news_id):
+    news = data_storage.session.query(News).filter(News.id == news_id).first()
+    if news:
+        images_urls = [image.image_url for image in news.news_images]
+        keyword_list = [keyword.keyword.japanese for keyword in news.news_keyword_mappings]
+        return {
+            "id": news.id,
+            "title": news.title,
+            "titleTranslated": news.title_translated,
+            "category": news.category,
+            "content": news.content,
+            "contentTranslated": news.content_translated,
+            "summary": news.summary,
+            "summaryTranslated" : news.summary_translated,
+            "write_date": news.write_date.isoformat(),
+            "srcOrigin": news.src_origin,
+            "newsImages": images_urls,
+            "newsKeywords": keyword_list
+        }
+    else:
+        return None
 
 @router.get("/recommend/news/{member_id}")
-async def news_recommend(member_id: str):
+async def news_recommend(member_id: int):
+    shadowed_news_ids = data_storage.session.query(NewsShadowing.news_id).filter(NewsShadowing.member_id == member_id).all()
+    shadowed_news_ids = [news_id[0] for news_id in shadowed_news_ids] 
+    
     if member_id not in data_storage.users:
-        raise HTTPException(status_code=404, detail="User not found")
-    user_data = data_storage.cosine_sim_df.loc[member_id].sort_values(ascending=False)
-    recommendations = user_data.index.values.tolist()[:3]
+        recommendations_id = data_storage.get_most_recommended_articles()
+    else:
+        user_data = data_storage.cosine_sim_df.loc[member_id].sort_values(ascending=False)
+        recommendations_id = []
+        for news_id_str in user_data.index.values.tolist():
+            news_id = int(news_id_str.split('기사')[-1])
+            if news_id not in shadowed_news_ids:
+                recommendations_id.append(news_id_str)
+                if len(recommendations_id) == 3:
+                    break
+
+    recommendations = [get_news_data(int(news_id.split('기사')[-1])) for news_id in recommendations_id]
 
     return {
         "memberId": member_id, 
         "recommendations": recommendations
-        }
-
-class MatrixFactorization(nn.Module):
-    def __init__(self, num_users, num_items, latent_dim, dropout_rate=0.8, l2=0.01):
-        super(MatrixFactorization, self).__init__()
-        self.user_embedding = nn.Embedding(num_users, latent_dim)
-        self.item_embedding = nn.Embedding(num_items, latent_dim)
-        self.user_bias = nn.Embedding(num_users, 1)
-        self.item_bias = nn.Embedding(num_items, 1)
-        self.dropout = nn.Dropout(dropout_rate)
-        self.l2 = l2
-
-        nn.init.normal_(self.user_embedding.weight, mean=0.0, std=0.01)
-        nn.init.normal_(self.item_embedding.weight, mean=0.0, std=0.01)
-        nn.init.zeros_(self.user_bias.weight)
-        nn.init.zeros_(self.item_bias.weight)
-
-    def forward(self, user_indices, item_indices):
-        user_latent = self.dropout(self.user_embedding(user_indices))
-        item_latent = self.dropout(self.item_embedding(item_indices))
-        user_bias = self.user_bias(user_indices).squeeze()
-        item_bias = self.item_bias(item_indices).squeeze()
-
-        prediction = torch.sum(user_latent * item_latent, dim=1) + user_bias + item_bias
-        return prediction
-
-    def loss(self, prediction, target):
-        return F.mse_loss(prediction, target)
-
-# 데이터셋 클래스 정의
-class UserWordDataset(Dataset):
-    def __init__(self, data):
-        self.users = {user: idx for idx, user in enumerate(data.index)}
-        self.items = {item: idx for idx, item in enumerate(data.columns)}
-        self.ratings = data.values.flatten().astype(np.float32)
-
-        user_indices = [self.users[user] for user in data.index.repeat(len(data.columns))]
-        item_indices = [self.items[item] for item in np.tile(data.columns, len(data.index))]
-
-        self.user_indices = np.array(user_indices)
-        self.item_indices = np.array(item_indices)
-
-    def __len__(self):
-        return len(self.ratings)
-
-    def __getitem__(self, idx):
-        user = torch.tensor(self.user_indices[idx], dtype=torch.long)
-        item = torch.tensor(self.item_indices[idx], dtype=torch.long)
-        rating = torch.tensor(self.ratings[idx], dtype=torch.float)
-        return user, item, rating
-
-# 모델과 데이터셋을 로드하는 함수
-def load_model_and_dataset(user_word_df):
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model_path = 'best_model.pth'
-    model_checkpoint = torch.load(model_path, map_location=device)
-    
-    num_users, num_items = len(user_word_df.index), len(user_word_df.columns)
-    model = MatrixFactorization(num_users, num_items, latent_dim=270, dropout_rate=0.8)
-    model.load_state_dict(model_checkpoint['model_state_dict'])
-    model.to(device)
-    model.eval()
-
-    dataset = UserWordDataset(user_word_df)
-    
-    return model, dataset, device
-
-data_storage = DataStorage()
-model, dataset, device = load_model_and_dataset(data_storage.user_word_df)
-
-class UserRecommendationRequest(BaseModel):
-    user_index: int
-
-@router.get("/recommend/word/{member_id}")
-async def word_recommend(member_id: str):
-    if member_id not in data_storage.users:
-        raise HTTPException(status_code=404, detail="User not found")
-    
-    user_index = data_storage.users.index(member_id)
-    
-    untrained_item_indices = []
-    untrained_item_names = data_storage.user_word_df.iloc[user_index][data_storage.user_word_df.iloc[user_index] == 0].index.tolist()
-    for item_name in untrained_item_names:
-        item_index = dataset.items[item_name]
-        untrained_item_indices.append(item_index)
-    
-    if not untrained_item_indices:
-        return {"message": "No items to recommend for this user."}
-    
-    untrained_item_indices_tensor = torch.tensor(untrained_item_indices, dtype=torch.long, device=device)
-    predictions = model(torch.tensor([user_index] * len(untrained_item_indices), device=device), untrained_item_indices_tensor)
-    
-    recommended_item_index = untrained_item_indices[torch.argmax(predictions).item()]
-    recommended_item_name = list(dataset.items.keys())[list(dataset.items.values()).index(recommended_item_index)]
-    
-    return {
-        "memberId": member_id, 
-        "recommended_item": recommended_item_name
-        }
+    }

@@ -4,8 +4,11 @@ import styled from "styled-components";
 export const ThumbnailViewWrapper = styled.div<{
   $length: number;
   $isMobile: boolean;
+  $isThumb: boolean;
 }>`
-  width: 100%;
+  /* width: 100%; */
+  height: ${(props) => !props.$isThumb && `50vh`};
+  margin: ${(props) => !props.$isThumb && `3vh 1vw`};
   min-height: 35vh;
   border-radius: 5px;
   overflow: hidden;
@@ -44,13 +47,13 @@ export const ThumbnailViewWrapper = styled.div<{
       height: 100%;
       width: 100%;
       object-fit: cover;
-      filter: brightness(0.8);
+      filter: ${(props) => props.$isThumb && ` brightness(0.8)`};
     }
   }
 
   &:hover {
     & img {
-      filter: brightness(1);
+      filter: ${(props) => props.$isThumb && ` brightness(1)`};
     }
   }
 `;

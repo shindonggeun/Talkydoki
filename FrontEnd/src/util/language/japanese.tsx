@@ -107,7 +107,7 @@ export const JptoKor = (word: string) => {
 
   for (let i = 0; i < word.length; i++) {
     const letter = word.charAt(i);
-    if (underRegex.test(letter)) {
+    if (underRegex.test(letter) && changed.length > 0) {
       let replaced: string = "";
       replaced = mergeKor(letter, changed[changed.length - 1]);
       changed.pop();

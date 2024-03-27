@@ -1,3 +1,4 @@
+import React from "react";
 import Logo from "@/assets/images/logo_text_light.png";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
@@ -45,4 +46,4 @@ function SidebarTitle({}: Props) {
   );
 }
 
-export default SidebarTitle;
+export default React.memo(SidebarTitle);

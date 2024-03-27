@@ -1,8 +1,5 @@
 package com.ssafy.backend.domain.news.service;
-import com.ssafy.backend.domain.news.dto.NewsImageInfo;
-import com.ssafy.backend.domain.news.dto.NewsInfo;
-import com.ssafy.backend.domain.news.dto.NewsSimplyInfo;
-import com.ssafy.backend.domain.news.dto.NewsPostRequest;
+import com.ssafy.backend.domain.news.dto.*;
 import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.global.common.dto.SliceResponse;
 import org.springframework.data.domain.Pageable;
@@ -50,7 +47,16 @@ public interface NewsService {
     /**
      * 뉴스 디테일 정보를 조회합니다.
      *
-     * @param newsId) 뉴스 디테일 정보
+     * @param newsId 뉴스 디테일 정보
      */
     NewsInfo getNewsInfo(Long memberId, Long newsId);
+
+    /**
+     * 쉐도잉 정보를 받아 유사도를 계산한 후, 정확도를 반환합니다.
+     *
+     * @param shadowingRequest 뉴스 원본 문장 + 사용자 STT 문장 데이터
+     * @param memberId 사용자 ID
+     * @param newsId 뉴스 ID
+     */
+    ShadowingResponse calculateSimilarity(ShadowingRequest shadowingRequest, Long memberId, Long newsId);
 }

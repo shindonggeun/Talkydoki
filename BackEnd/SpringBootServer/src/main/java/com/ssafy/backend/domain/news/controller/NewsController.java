@@ -1,9 +1,6 @@
 package com.ssafy.backend.domain.news.controller;
 
-import com.ssafy.backend.domain.news.dto.NewsImageInfo;
-import com.ssafy.backend.domain.news.dto.NewsInfo;
-import com.ssafy.backend.domain.news.dto.NewsSimplyInfo;
-import com.ssafy.backend.domain.news.dto.NewsPostRequest;
+import com.ssafy.backend.domain.news.dto.*;
 import com.ssafy.backend.domain.news.service.NewsService;
 import com.ssafy.backend.global.common.dto.Message;
 import com.ssafy.backend.global.common.dto.SliceResponse;
@@ -79,5 +76,16 @@ public class NewsController {
     public ResponseEntity<Message<NewsInfo>> getNewsInfo(@AuthenticationPrincipal MemberLoginActive loginActive, @PathVariable Long newsId) {
         NewsInfo newsInfo = newsService.getNewsInfo(loginActive.id(), newsId);
         return ResponseEntity.ok().body(Message.success(newsInfo));
+    }
+
+    @Operation(
+            summary = "뉴스 쉐도잉",
+            description = "뉴스 쉐도잉 텍스트를 받아 정확도를 반환해주는 기능입니다."
+    )
+    @PostMapping("/shadowing/{newsId}")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<ShadowingResponse>> calculateSimilarity(@AuthenticationPrincipal MemberLoginActive loginActive, @PathVariable Long newsId, @RequestBody ShadowingRequest shadowingRequest) {
+        ShadowingResponse response = newsService.calculateSimilarity(shadowingRequest, loginActive.id(), newsId);
+        return ResponseEntity.ok().body(Message.success(response));
     }
 }

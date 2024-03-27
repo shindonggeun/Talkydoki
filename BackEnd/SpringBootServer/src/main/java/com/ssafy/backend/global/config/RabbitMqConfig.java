@@ -17,7 +17,10 @@ import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
+/**
+ * RabbitMQ 설정을 위한 클래스입니다.
+ * @EnableRabbit 애너테이션을 통해 Spring RabbitMQ 지원을 활성화합니다.
+ */
 @EnableRabbit
 @Configuration
 @RequiredArgsConstructor
@@ -30,12 +33,19 @@ public class RabbitMqConfig {
     // Topic Exchange에 맞는 라우팅 키 지정
     private static final String ROUTING_KEY = "room.*";
 
-    // 기본 토픽 익스체인지
+    /**
+     * 기본 토픽 익스체인지를 정의합니다.
+     * @return TopicExchange 객체
+     */
     @Bean
     public TopicExchange topicExchange() {
         return new TopicExchange(TOPIC_EXCHANGE_NAME);
     }
 
+    /**
+     * Topic Exchange와 큐를 바인딩합니다.
+     * @return Binding 객체
+     */
     @Bean
     public Binding binding() {
         return BindingBuilder
@@ -44,7 +54,10 @@ public class RabbitMqConfig {
                 .with(ROUTING_KEY);
     }
 
-
+    /**
+     * RabbitTemplate을 설정합니다. 메시지 변환기를 JsonMessageConverter로 지정합니다.
+     * @return RabbitTemplate 객체
+     */
     @Bean
     public RabbitTemplate rabbitTemplate() {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory());
@@ -53,6 +66,10 @@ public class RabbitMqConfig {
         return rabbitTemplate;
     }
 
+    /**
+     * 메시지 리스너 컨테이너를 설정합니다. 연결 팩토리를 설정합니다.
+     * @return SimpleMessageListenerContainer 객체
+     */
     @Bean
     public SimpleMessageListenerContainer container() {
         SimpleMessageListenerContainer container = new SimpleMessageListenerContainer();
@@ -60,6 +77,10 @@ public class RabbitMqConfig {
         return container;
     }
 
+    /**
+     * RabbitMQ 서버에 대한 연결을 생성하는 ConnectionFactory를 정의합니다.
+     * @return ConnectionFactory 객체
+     */
     @Bean
     public ConnectionFactory connectionFactory() {
         CachingConnectionFactory factory = new CachingConnectionFactory();
@@ -69,6 +90,11 @@ public class RabbitMqConfig {
         return factory;
     }
 
+    /**
+     * JSON 메시지 변환을 위한 Jackson2JsonMessageConverter를 설정합니다.
+     * 날짜와 시간을 타임스탬프로 변환하는 설정 포함.
+     * @return Jackson2JsonMessageConverter 객체
+     */
     @Bean
     public Jackson2JsonMessageConverter jsonMessageConverter() {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -78,10 +104,13 @@ public class RabbitMqConfig {
         return new Jackson2JsonMessageConverter(objectMapper);
     }
 
+    /**
+     * Java 8 날짜와 시간 API 지원을 위한 JavaTimeModule을 반환합니다.
+     * @return JavaTimeModule 객체
+     */
     @Bean
     public JavaTimeModule dateTimeModule() {
         return new JavaTimeModule();
     }
 
 }
-

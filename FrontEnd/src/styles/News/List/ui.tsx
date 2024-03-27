@@ -91,7 +91,10 @@ export const NewsCard = styled.div<{ $index: number }>`
   &:hover,
   &:active {
     .title {
-      color: var(--blue-dark);
+      color: ${(props) =>
+        props.theme.mode == "light"
+          ? "var(--main-dark)"
+          : "var(--yellow-dark)"};
     }
   }
 `;

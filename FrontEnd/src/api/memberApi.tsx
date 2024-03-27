@@ -1,5 +1,6 @@
 import { customAxios } from "../util/auth/customAxios";
 import {
+  EmailVerifyPayload,
   LoginParams,
   SignupParams,
   SocialLoginPayload,
@@ -13,7 +14,9 @@ import {
 import { useLocation, useNavigate } from "react-router-dom";
 import {
   useAuthStore,
+  useEmailVerifyActions,
   useIsLogin,
+  useSetIsLogin,
   useSetMemberEmail,
 } from "@/stores/userStore";
 
@@ -66,6 +69,7 @@ export const useLogin = () => {
 
 // 일반 회원가입
 export const useSignup = () => {
+  const { setEmailVerifyStatus } = useEmailVerifyActions();
   const navigate = useNavigate();
   const setErrors = useSetSignupErrors();
 
@@ -77,6 +81,7 @@ export const useSignup = () => {
       const { data } = res;
       if (data.dataHeader.successCode === 0) {
         // 성공했을 때 로직 처리
+        setEmailVerifyStatus("none");
         console.log("회원가입 성공!!");
         navigate("/login");
       } else {
@@ -124,7 +129,7 @@ export const useGetMember = () => {
 // 로그아웃 구현하기
 export const useLogout = () => {
   const navigate = useNavigate();
-  const setIsLogin = useAuthStore((state) => state.setIsLogin);
+  const setIsLogin = useSetIsLogin();
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -134,8 +139,10 @@ export const useLogout = () => {
       const response = res.data;
       if (response.dataHeader.successCode === 0) {
         queryClient.removeQueries(["getMember"] as QueryFilters);
-        navigate("/intro");
         setIsLogin(false);
+        setTimeout(() => {
+          navigate("/intro");
+        }, 0);
       } else {
         console.log("로그아웃실패");
       }
@@ -200,15 +207,49 @@ export const useDeleteAccount = () => {
       if (data.dataHeader.successCode == 0) {
         logout();
         // 관련된 쿼리 제거
-        queryClient.removeQueries([
-          "getMemeber", // 프로필 정보
-          "getNewsList", // 뉴스 리스트
-          "getVocaList", // 사용자 단어 리스트
-          "getVoca", // 오늘의 단어
-        ] as QueryFilters);
+        queryClient.clear();
         navigate("/intro");
         setIsModalOn(false);
       }
+    },
+  });
+};
+
+// 이메일인증
+
+export const useEmailSend = () => {
+  return useMutation({
+    mutationFn: (payload: string) => customAxios.post(`/email/send/${payload}`),
+    onSuccess: (res) => {
+      console.log(res);
+    },
+    onError: (err) => {
+      console.log(err);
+    },
+  });
+};
+
+export const useEmailVerify = () => {
+  const { setEmailVerifyMessage, setEmailVerifyStatus } =
+    useEmailVerifyActions();
+
+  return useMutation({
+    mutationFn: (payload: EmailVerifyPayload) =>
+      customAxios.post(`email/verify/${payload.email}/${payload.code}`),
+    onSuccess: (res) => {
+      console.log(res);
+      if (res.data.dataHeader.successCode === 0) {
+        setEmailVerifyStatus("success");
+        setEmailVerifyMessage("이메일 인증에 성공했습니다.");
+      } else if (res.data.dataHeader.successCode === 1) {
+        setEmailVerifyStatus("error");
+        setEmailVerifyMessage("이메일 인증코드를 잘못 입력하였습니다.");
+      }
+    },
+    onError: (res) => {
+      setEmailVerifyStatus("error");
+      setEmailVerifyMessage("인증 과정 중 오류가 발생했습니다.");
+      console.log("에러:", res);
     },
   });
 };

@@ -35,3 +35,9 @@ export interface PasswordChangeParams {
   changePassword: string;
   changePasswordCheck: string;
 }
+
+// 이메일 인증 Params
+export interface EmailVerifyPayload {
+  email: string;
+  code: string;
+}
