@@ -47,4 +47,11 @@ public interface MemberService {
     void updateProfileImageAndNickNameMember(Long memberId, MemberUpdateRequest updateRequest);
 
     void updatePasswordMember(Long memberId, MemberPasswordChangeRequest passwordChangeRequest);
+
+    /**
+     * 마이 페이지 조회에 필요한 정보를 처리합니다.
+     *
+     * @param memberId 회원 ID
+     */
+    MemberPage getMyPageData(Long memberId);
 }
