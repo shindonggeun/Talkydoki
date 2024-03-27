@@ -27,8 +27,10 @@ public class AiChatReportCreateApiRequest {
     public static AiChatReportCreateApiRequest convertRequest(List<AiChatHistory> conversation){
 
         String jsonString = "{\n  \"conversationSummary\" : \"대화 내용 요약\",\n  \"vocabularyScore\" : 어휘력 점수,\n  \"wordScore\" : 단어 점수,\n  \"fluencyScore\" : 유창성 점수,\n  \"grammarScore\" : 문법 점수,\n  \"contextScore\" : 문맥 이해 점수\n  \"feedbacks\" : {\n  {\n  \"chatId\" : <message의 content의 괄호 안의 'id'>\n \"content\" : \"피드백 내용\"\n} }\n"
-                + "feedbacks은 'role'이 'user'인 메세지의 응답에 대한 피드백 내용을 담은 객체 형식입니다. 'role'이 'user'인 각각의 메세지마다 해당 메시지의 id는 (메세지의 괄호안에 제시됨) \"id\", 피드백 내용은 \"content\" 로 하여 위의 형식처럼 Java의 리스트 형식처럼 만들어 주세요.\n"
-                + "예를 들어 \"{'user', '(id: 2)일본어 대답'}\", \"{'user', '(id:4)일본어 대답'}\" 형식의 코드로 들어온 'role'이 'user'인 메세지에 대해 각 메세지에 대한 피드백을 ```\n{\n {\n  \"chatId\" : 2,\n  content : \"피드백 내용\"\n  }, {\n \"chatId\" : 4,\n  content : \"피드백 내용\"\n  }\n}\n```\n이 형식으로 표현하면 됩니다. 무조건이요. 예외는 없습니다.";
+                + "feedbacks은 'role'이 'user'인 메세지의 응답에 대한 피드백 내용을 담은 객체 형식입니다. 'role'이 'user'인 각각의 메세지마다 해당 메시지의 chatId는 (메세지의 괄호안에 제시됨) \"chatId\", 피드백 내용은 \"content\" 로 하여 위의 형식처럼 Java의 리스트 형식처럼 만들어 주세요.\n"
+                + "예를 들어 \"{'user', '(ChatId: 2)일본어 대답'}\", \"{'user', '(ChatId:4)일본어 대답'}\" 형식의 코드로 들어온 'role'이 'user'인 메세지에 대해 각 메세지에 대한 피드백을 ```\n{\n {\n  \"chatId\" : 2,\n  content : \"피드백 내용\"\n  }, {\n \"chatId\" : 4,\n  content : \"피드백 내용\"\n  }\n}\n```\n이 형식으로 표현하면 됩니다. 무조건이요. 예외는 없습니다.\n"
+                +"\"feedbacks\" 내의 \"content\"의 내용에 대해서 설명 드리겠습니다. 메세지의 내용에 부족한 점이 있다면 더 적절한 일본어 답변과 한국어로 번역된 글을 같이 제공해주시고 설명(설명은 한국어로)을 부탁드려요.\n"
+                +"다시 한 번 강조하지만 정해직 타입의 양식을 명확히 지켜서 생성하셔야 합니다. 그렇지 않으면 당신은 큰 위험에 처할 것 입니다.";
 
         String systemMessage
                 = "당신은 평생 일본에서 산 원어민 일본어 전문 강사입니다. 이 강사님은 점수를 후하게 주는 편은 아닙니다.(10년 경력)\n"
@@ -67,7 +69,7 @@ public class AiChatReportCreateApiRequest {
         return AiChatReportCreateApiRequest.builder()
                 .model("gpt-3.5-turbo")
                 .messages(messages)
-                .max_tokens(400)
+                .max_tokens(1000)
                 .build();
     }
 

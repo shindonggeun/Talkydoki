@@ -50,7 +50,7 @@ public interface AiChatService {
     Mono<Conversation> setupAiChatBot(Long roomId, AiChatCategory category);
 
     @Transactional
-    Mono<Void> createReport(Long roomId);
+    Mono<Long> createReport(Long roomId);
 
     List<AiChatAndFeedbackInfo> getAiChatFeedbackInfo();
 

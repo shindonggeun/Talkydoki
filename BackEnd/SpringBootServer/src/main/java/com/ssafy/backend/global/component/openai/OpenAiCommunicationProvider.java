@@ -46,12 +46,49 @@ public class OpenAiCommunicationProvider {
                 .map(response -> response.choices().get(0).message().content());
     }
 
+//    @Transactional
+//    public Mono<Void> saveReport(Long roomId, AiChatReportCreateRequest reportRequest) {
+//        return getAiChatReportCreateResponseMono(roomId, reportRequest, aiChatRoomRepository, aiChatReportRepository, aiChatHistoryRepository, aiChatFeedbackRepository);
+//    }
     @Transactional
-    public Mono<Void> saveReport(Long roomId, AiChatReportCreateRequest reportRequest) {
+    public Mono<Long> saveReport(Long roomId, AiChatReportCreateRequest reportRequest) {
         return getAiChatReportCreateResponseMono(roomId, reportRequest, aiChatRoomRepository, aiChatReportRepository, aiChatHistoryRepository, aiChatFeedbackRepository);
     }
 
-    public Mono<Void> getAiChatReportCreateResponseMono(Long roomId, AiChatReportCreateRequest reportRequest, AiChatRoomRepository aiChatRoomRepository, AiChatReportRepository aiChatReportRepository, AiChatHistoryRepository aiChatHistoryRepository, AiChatFeedbackRepository aiChatFeedbackRepository) {
+
+    //    public Mono<Void> getAiChatReportCreateResponseMono(Long roomId, AiChatReportCreateRequest reportRequest, AiChatRoomRepository aiChatRoomRepository, AiChatReportRepository aiChatReportRepository, AiChatHistoryRepository aiChatHistoryRepository, AiChatFeedbackRepository aiChatFeedbackRepository) {
+//        return Mono.fromCallable(() -> aiChatRoomRepository.findById(roomId).orElseThrow(() -> new RuntimeException("Can't find the aiChatRoom with id: " + roomId)))
+//                .subscribeOn(Schedulers.boundedElastic())
+//                .flatMap(aiChatRoom -> {
+//                    AiChatReport report = AiChatReport.builder()
+//                            .aiChatRoom(aiChatRoom)
+//                            .conversationSummary(reportRequest.conversationSummary())
+//                            .vocabularyScore(reportRequest.vocabularyScore())
+//                            .wordScore(reportRequest.wordScore())
+//                            .grammarScore(reportRequest.grammarScore())
+//                            .fluencyScore(reportRequest.fluencyScore())
+//                            .contextScore(reportRequest.contextScore())
+//                            .build();
+//
+//                    return Mono.fromCallable(() -> aiChatReportRepository.save(report))
+//                            .subscribeOn(Schedulers.boundedElastic())
+//                            .thenMany(Flux.fromIterable(reportRequest.feedbacks())
+//                                    .publishOn(Schedulers.boundedElastic()) // 각 피드백 처리를 별도의 스레드에서 수행
+//                                    .flatMap(feedback ->
+//                                            Mono.fromCallable(() -> {
+//                                                AiChatHistory aiChatHistory = aiChatHistoryRepository.findById(feedback.chatId())
+//                                                        .orElseThrow(() -> new RuntimeException("Can't find the chat"));
+//                                                AiChatFeedback aiChatFeedback = AiChatFeedback.builder()
+////                                                        .aiChatRoom(aiChatRoom)
+//                                                        .aiChatHistory(aiChatHistory)
+//                                                        .content(feedback.content())
+//                                                        .build();
+//                                                return aiChatFeedbackRepository.save(aiChatFeedback);
+//                                            }).subscribeOn(Schedulers.boundedElastic())
+//                                    )).then();
+//                });
+//    }
+    public Mono<Long> getAiChatReportCreateResponseMono(Long roomId, AiChatReportCreateRequest reportRequest, AiChatRoomRepository aiChatRoomRepository, AiChatReportRepository aiChatReportRepository, AiChatHistoryRepository aiChatHistoryRepository, AiChatFeedbackRepository aiChatFeedbackRepository) {
         return Mono.fromCallable(() -> aiChatRoomRepository.findById(roomId).orElseThrow(() -> new RuntimeException("Can't find the aiChatRoom with id: " + roomId)))
                 .subscribeOn(Schedulers.boundedElastic())
                 .flatMap(aiChatRoom -> {
@@ -67,21 +104,22 @@ public class OpenAiCommunicationProvider {
 
                     return Mono.fromCallable(() -> aiChatReportRepository.save(report))
                             .subscribeOn(Schedulers.boundedElastic())
-                            .thenMany(Flux.fromIterable(reportRequest.feedbacks())
-                                    .publishOn(Schedulers.boundedElastic()) // 각 피드백 처리를 별도의 스레드에서 수행
+                            .flatMap(savedReport -> Flux.fromIterable(reportRequest.feedbacks())
+                                    .publishOn(Schedulers.boundedElastic())
                                     .flatMap(feedback ->
                                             Mono.fromCallable(() -> {
                                                 AiChatHistory aiChatHistory = aiChatHistoryRepository.findById(feedback.chatId())
                                                         .orElseThrow(() -> new RuntimeException("Can't find the chat"));
                                                 AiChatFeedback aiChatFeedback = AiChatFeedback.builder()
-//                                                        .aiChatRoom(aiChatRoom)
                                                         .aiChatHistory(aiChatHistory)
                                                         .content(feedback.content())
                                                         .build();
-                                                return aiChatFeedbackRepository.save(aiChatFeedback);
-                                            }).subscribeOn(Schedulers.boundedElastic())
-                                    )).then();
+                                                aiChatFeedbackRepository.save(aiChatFeedback);
+                                                return aiChatFeedback;
+                                            }).subscribeOn(Schedulers.boundedElastic()))
+                                    .then(Mono.just(savedReport.getId())));
                 });
     }
+
 }
 

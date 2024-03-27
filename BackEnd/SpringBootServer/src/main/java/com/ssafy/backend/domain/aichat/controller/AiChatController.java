@@ -6,6 +6,7 @@ import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
 import com.ssafy.backend.domain.aichat.service.AiChatService;
 import com.ssafy.backend.global.common.dto.Message;
 import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
+import com.ssafy.backend.global.component.openai.dto.AiChatReportCreateApiResponse;
 import com.ssafy.backend.global.component.openai.dto.Conversation;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -64,11 +65,17 @@ public class AiChatController {
                 .map(conversation -> ResponseEntity.ok().body(Message.success(conversation)));
     }
 
+//    @PostMapping("/gpt/{roomId}/report")
+//    public Mono<ResponseEntity<Message<Void>>> createReportByGPT(@PathVariable Long roomId) {
+//        return aiChatService.createReport(roomId)
+//                .then(Mono.just(ResponseEntity.ok().body(Message.success())));
+//    }
     @PostMapping("/gpt/{roomId}/report")
-    public Mono<ResponseEntity<Message<Void>>> createReportByGPT(@PathVariable Long roomId) {
+    public Mono<ResponseEntity<Message<AiChatReportCreateApiResponse>>> createReportByGPT(@PathVariable Long roomId) {
         return aiChatService.createReport(roomId)
-                .then(Mono.just(ResponseEntity.ok().body(Message.success())));
+                .map(reportId -> ResponseEntity.ok().body(Message.success(new AiChatReportCreateApiResponse(reportId))));
     }
+
 
 }
 
