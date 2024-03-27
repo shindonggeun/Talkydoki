@@ -1,94 +1,45 @@
-import { ApexOptions } from "apexcharts";
+import { reportDetailInterface } from "@/interface/AiChatReportInterface";
 import ReactApexChart from "react-apexcharts";
-import { useTheme } from "styled-components";
 
-function ChatReportChart() {
-  const theme = useTheme();
-  const chartData: {
-    series: ApexOptions["series"];
-    options: ApexOptions;
-  } = {
-    series: [
-      {
-        data: [
-          {
-            x: "New Delhi",
-            y: 218,
-          },
-          {
-            x: "Kolkata",
-            y: 149,
-          },
-          {
-            x: "Mumbai",
-            y: 184,
-          },
-          {
-            x: "Ahmedabad",
-            y: 55,
-          },
-          {
-            x: "Bangaluru",
-            y: 84,
-          },
-          {
-            x: "Pune",
-            y: 31,
-          },
-          {
-            x: "Chennai",
-            y: 70,
-          },
-          {
-            x: "Jaipur",
-            y: 30,
-          },
-          {
-            x: "Surat",
-            y: 44,
-          },
-          {
-            x: "Hyderabad",
-            y: 68,
-          },
-        ],
-      },
-    ],
-    options: {
-      chart: {
-        type: "polarArea",
-      },
-      colors: [theme.main.color],
-      stroke: {
-        colors: [theme.doc.backgroundModal],
-      },
-      fill: {
-        opacity: 0.8,
-      },
-      responsive: [
-        {
-          breakpoint: 480,
-          options: {
-            chart: {
-              width: 200,
-            },
-            legend: {
-              position: "bottom",
-            },
-          },
-        },
-      ],
+function ChatReportChart({
+  reportDetail,
+}: {
+  reportDetail: reportDetailInterface;
+}) {
+  const scoreName = ["어휘력", "문법", "단어", "문맥 이해도", "유창성"];
+  const scoresArray = [
+    reportDetail.vocabularyScore,
+    reportDetail.grammarScore,
+    reportDetail.wordScore,
+    reportDetail.FluencyScore,
+    reportDetail.ContextScore,
+  ];
+  const options = {
+    chart: {
+      type: "polarArea",
+    },
+    stroke: {
+      show: false,
+    },
+    labels: scoreName,
+    legend: {
+      show: false, // 범례 숨기기
+    },
+    grid: {
+      show: false, // 차트의 격자 무늬 숨기기
     },
   };
 
   return (
-    <ReactApexChart
-      series={chartData.series}
-      options={chartData.options}
-      type="polarArea"
-      width={"100%"}
-      height={"90%"}
-    />
+    <div style={{ width: "100%", height: "100%" }}>
+      <ReactApexChart
+        options={options}
+        series={scoresArray}
+        type="polarArea"
+        width={"100%"}
+        height={"100%"}
+      />
+    </div>
   );
 }
 

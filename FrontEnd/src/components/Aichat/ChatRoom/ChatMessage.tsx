@@ -1,5 +1,6 @@
 import TranslateIcon from "@mui/icons-material/Translate";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
+import SmartToyOutlinedIcon from "@mui/icons-material/SmartToyOutlined";
 import {
   PollyClient,
   SynthesizeSpeechCommand,
@@ -9,11 +10,13 @@ import env from "@/interface/SttInterface";
 import { useEffect, useState } from "react";
 import { useAiChatStore } from "@/stores/aichatStore";
 
-type Props = { japanese: string; text: string };
+type Props = { japanese: string; text?: string; feadback?: string | null };
 
-function ChatMessage({ japanese, text }: Props) {
+function ChatMessage({ japanese, text, feadback }: Props) {
   const globalIsTranslate = useAiChatStore((state) => state.globalIsTranslate);
+  const globalIsFeadback = useAiChatStore((state) => state.globalIsFeadback);
   const [isTranslate, setTranslate] = useState<boolean>(globalIsTranslate);
+  const [isFeadback, setFeadback] = useState<boolean>(globalIsFeadback);
   console.log("isTranslate", isTranslate);
 
   useEffect(() => {
@@ -73,14 +76,25 @@ function ChatMessage({ japanese, text }: Props) {
           style={{ fontSize: "17px", cursor: "pointer" }}
           onClick={() => synthesizeSpeech(japanese)}
         />
-        <TranslateIcon
-          style={{ fontSize: "17px", cursor: "pointer" }}
-          onClick={() => setTranslate(!isTranslate)}
-        />
+        {text && (
+          <TranslateIcon
+            style={{ fontSize: "17px", cursor: "pointer" }}
+            onClick={() => setTranslate(!isTranslate)}
+          />
+        )}
+        {feadback && (
+          <SmartToyOutlinedIcon
+            style={{ fontSize: "17px", cursor: "pointer" }}
+            onClick={() => setFeadback(!isFeadback)}
+          />
+        )}
       </div>
 
       <div className={`messageContainer ${isTranslate ? "isVisible" : ""}`}>
         {text}
+      </div>
+      <div className={`messageContainer ${isFeadback ? "" : "isVisible"}`}>
+        {feadback}
       </div>
     </>
   );
