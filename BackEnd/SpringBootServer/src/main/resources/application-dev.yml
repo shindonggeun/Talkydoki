@@ -94,8 +94,8 @@ oauth:
       - name
 
   naver:
-    client-id: ENC(dytjeITYKvUB8SBdi9cckDtVm)
-    client-secret: ENC(m/+G81vtACLW6ZBVHmEKxwTLD70oi7XM)
+    client-id: ENC(yyBV/ueEBgJtvkDlLenjkPwTcYy1AYXQuIDYlVxrVZE=)
+    client-secret: ENC(4zsZi9kyz8gJf75VByLo4PtdGuq9iqfS)
     redirect_uri: ${server.base-url}/member/loading/naver
     scope:
       - nickname
