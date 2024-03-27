@@ -2,15 +2,13 @@ package com.ssafy.backend.domain.aichat.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ssafy.backend.domain.aichat.dto.AiChatMessage;
-import com.ssafy.backend.domain.aichat.dto.AiChatReportCreateRequest;
-import com.ssafy.backend.domain.aichat.dto.AiChatReportCreateResponse;
-import com.ssafy.backend.domain.aichat.dto.AiChatRoomCreateResponse;
-import com.ssafy.backend.domain.aichat.entity.AiChatHistory;
-import com.ssafy.backend.domain.aichat.entity.AiChatRoom;
+import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.backend.domain.aichat.dto.*;
+import com.ssafy.backend.domain.aichat.entity.*;
 import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
 import com.ssafy.backend.domain.aichat.entity.enums.AiChatSender;
 import com.ssafy.backend.domain.aichat.repository.AiChatHistoryRepository;
+import com.ssafy.backend.domain.aichat.repository.AiChatReportRepository;
 import com.ssafy.backend.domain.aichat.repository.AiChatRoomRepository;
 import com.ssafy.backend.domain.member.entity.Member;
 import com.ssafy.backend.domain.member.exception.MemberErrorCode;
@@ -30,6 +28,8 @@ import reactor.core.scheduler.Schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 /**
@@ -43,6 +43,7 @@ public class AiChatServiceImpl implements AiChatService {
     private final AiChatHistoryRepository aiChatHistoryRepository;
     private final MemberRepository memberRepository;
     private final AiChatRoomRepository aiChatRoomRepository;
+    private final AiChatReportRepository aiChatReportRepository;
 
     private final RabbitTemplate rabbitTemplate;
     private final TopicExchange topicExchange;
@@ -53,6 +54,7 @@ public class AiChatServiceImpl implements AiChatService {
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
 
+    private final JPAQueryFactory jpaQueryFactory;
 
     /**
      * {@inheritDoc}
@@ -225,6 +227,55 @@ public class AiChatServiceImpl implements AiChatService {
                     return Mono.fromCallable(() -> objectMapper.readValue(content, AiChatReportCreateRequest.class))
                             .flatMap(res -> openAiCommunicationProvider.saveReport(roomId, res));
                 });
+    }
+
+    @Override
+    public List<AiChatAndFeedbackInfo> getAiChatFeedbackInfo() {
+        QAiChatHistory qAiChatHistory = QAiChatHistory.aiChatHistory;
+        QAiChatFeedback qAiChatFeedback = QAiChatFeedback.aiChatFeedback;
+
+        return jpaQueryFactory
+                .select(
+                        qAiChatFeedback.id,
+                        qAiChatHistory.id, // 이 부분은 chatId를 나타내며, AiChatHistory의 ID를 참조합니다.
+                        qAiChatHistory.content, // myAnswer에 해당
+                        qAiChatFeedback.content // content에 해당
+                )
+                .from(qAiChatHistory)
+                .leftJoin(qAiChatFeedback).on(qAiChatHistory.id.eq(qAiChatFeedback.aiChatHistory.id))
+                .fetch()
+                .stream()
+                .map(tuple -> new AiChatAndFeedbackInfo(
+                        tuple.get(qAiChatHistory.id),
+                        tuple.get(qAiChatHistory.content),
+                        tuple.get(qAiChatFeedback.content)
+                ))
+                .toList();
+    }
+
+    @Override
+    public FullReportInfo getReportDetail(Long reportId) {
+        AiChatReport aiChatReport = aiChatReportRepository.findById(reportId).orElseThrow(() -> new RuntimeException("Can't find the report withd id: " + reportId));
+
+        List<AiChatAndFeedbackInfo> aiChatAndFeedbackInfos = this.getAiChatFeedbackInfo();
+
+        return new FullReportInfo(AiChatReport.dto(aiChatReport), aiChatAndFeedbackInfos) ;
+    }
+
+    @Override
+    public List<AiChatReportInfo> getUserReports(Long memberId) {
+        List<AiChatRoom> aiChatRooms = aiChatRoomRepository.findByMemberId(memberId);
+
+        // 각 AiChatRoom에 대한 AiChatReport를 조회하고, AiChatReportInfo로 변환하여 수집
+        return aiChatRooms.stream()
+                .map(aiChatRoom -> {
+                    // AiChatRoom ID를 사용하여 각 AiChatRoom에 대응하는 AiChatReport를 조회
+                    AiChatReport aiChatReport = aiChatReportRepository.findByAiChatRoomId(aiChatRoom.getId());
+                    // AiChatReport가 존재하고, 해당 AiChatRoom의 category 정보를 사용하여 AiChatReportInfo 생성
+                    return (aiChatReport != null) ? new AiChatReportInfo(aiChatReport.getId(), aiChatRoom.getCategory()) : null;
+                })
+                .filter(Objects::nonNull) // null인 결과 제거
+                .collect(Collectors.toList());
     }
 
 

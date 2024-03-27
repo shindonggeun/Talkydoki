@@ -1,14 +1,13 @@
 package com.ssafy.backend.domain.aichat.controller;
 
 
-import com.ssafy.backend.domain.aichat.dto.AiChatMessage;
-import com.ssafy.backend.domain.aichat.dto.AiChatReportCreateResponse;
-import com.ssafy.backend.domain.aichat.dto.AiChatRoomCreateResponse;
+import com.ssafy.backend.domain.aichat.dto.*;
 import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
 import com.ssafy.backend.domain.aichat.service.AiChatService;
 import com.ssafy.backend.global.common.dto.Message;
 import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
 import com.ssafy.backend.global.component.openai.dto.Conversation;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +23,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.util.List;
 
 @Tag(name = "Ai Chatting", description = "AiChatting 관련 API 입니다.")
 @Slf4j
@@ -72,11 +72,7 @@ public class AiChatController {
 //                        .defaultIfEmpty(ResponseEntity.notFound().build()));
 //    }
 
-    @PostMapping("/gpt/{roomId}/report")
-    public Mono<ResponseEntity<Message<Void>>> createReportByGPT(@PathVariable Long roomId) {
-        return aiChatService.createReport(roomId)
-                .then(Mono.just(ResponseEntity.ok(Message.success(null))));
-    }
+
 
 }
 

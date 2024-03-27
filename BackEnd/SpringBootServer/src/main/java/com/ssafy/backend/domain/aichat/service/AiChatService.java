@@ -6,6 +6,8 @@ import com.ssafy.backend.global.component.openai.dto.Conversation;
 import jakarta.transaction.Transactional;
 import reactor.core.publisher.Mono;
 
+import java.util.List;
+
 /**
  * AI 채팅 관련 서비스 인터페이스
  */
@@ -49,4 +51,10 @@ public interface AiChatService {
 
     @Transactional
     Mono<Void> createReport(Long roomId);
+
+    List<AiChatAndFeedbackInfo> getAiChatFeedbackInfo();
+
+    FullReportInfo getReportDetail(Long reportId);
+
+   List<AiChatReportInfo> getUserReports(Long memberId);
 }
