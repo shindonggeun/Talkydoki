@@ -143,7 +143,7 @@ public class NewsServiceImpl implements NewsService {
         LevenshteinDistance levenshteinDistance = new LevenshteinDistance();
         int distance = levenshteinDistance.apply(shadowingRequest.original(), shadowingRequest.userText());
         int maxLength = Math.max(shadowingRequest.original().length(), shadowingRequest.userText().length());
-        float similarity = Math.round((1 - (float) distance / maxLength) * 10 / 2.0);
+        double similarity = Math.round((1 - (double) distance / maxLength) * 10) / 2.0;
 
         News news = newsRepository.findById(newsId).orElseThrow(()
                 -> new NewsException(NewsErrorCode.NOT_FOUND_NEWS));

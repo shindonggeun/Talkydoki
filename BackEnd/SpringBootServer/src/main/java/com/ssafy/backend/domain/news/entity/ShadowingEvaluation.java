@@ -16,7 +16,7 @@ public class ShadowingEvaluation {
     private Long id;
 
     @Column(nullable = false)
-    private Float score;
+    private Double score;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "news_shadowing_id")
