@@ -28,7 +28,6 @@ class DataStorage:
         self.engine = create_engine(database_url)
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
-        self.last_update_time = datetime.min
         self.load_data()
 
     def load_data(self):
