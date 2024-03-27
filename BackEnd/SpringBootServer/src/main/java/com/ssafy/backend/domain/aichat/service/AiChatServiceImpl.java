@@ -94,13 +94,13 @@ public class AiChatServiceImpl implements AiChatService {
         AiChatHistory aiChatHistory = AiChatHistory.builder()
                 .aiChatRoom(aiChatRoom)
                 .sender(AiChatSender.USER)
-                .content(userMessage.content())
+                .content(userMessage.japanese())
                 .build();
 
         aiChatHistoryRepository.save(aiChatHistory);
 
         // 사용자 메시지를 Redis에 저장
-        openAiRepository.saveAiChatHistory(roomId, List.of(new GptDialogueMessage("user", userMessage.content())));
+        openAiRepository.saveAiChatHistory(roomId, List.of(new GptDialogueMessage("user", userMessage.japanese())));
 
         rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, userMessage);
     }
@@ -131,13 +131,16 @@ public class AiChatServiceImpl implements AiChatService {
                                                 log.info("GPT 응답값: {}", response);
                                                Conversation conversation = parseGetResponse(response);
                                                 // GPT 응답을 Redis에 저장
-                                                openAiRepository.saveAiChatHistory(roomId, List.of(
-                                                        new GptDialogueMessage("user", userMessage.content()),  // 이부분 나중에 삭제해야함
-                                                        new GptDialogueMessage("assistant", response)
-                                                ));
+                                                openAiRepository.saveAiChatHistory(roomId, List.of(new GptDialogueMessage("assistant", response)));
+
+                                                AiChatMessage gptMessage = AiChatMessage.builder()
+                                                        .sender(AiChatSender.GPT)
+                                                        .japanese(conversation.gptJapaneseResponse())
+                                                        .korean(conversation.gptKoreanResponse())
+                                                        .build();
 
                                                 // GPT 일본어 응답 rabbitmq 통해서 전달
-                                                rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, conversation.gptJapaneseResponse());
+                                                rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
 
                                                return Mono.just(conversation);
                                             });
@@ -180,7 +183,8 @@ public class AiChatServiceImpl implements AiChatService {
 
                             AiChatMessage gptMessage = AiChatMessage.builder()
                                     .sender(AiChatSender.GPT)
-                                    .content(conversation.gptJapaneseResponse())
+                                    .japanese(conversation.gptJapaneseResponse())
+                                    .korean(conversation.gptKoreanResponse())
                                     .build();
 
                             // 메시지 브로커에 전달
@@ -190,26 +194,6 @@ public class AiChatServiceImpl implements AiChatService {
                         })
                 .subscribeOn(Schedulers.boundedElastic());
     }
-
-//    @Override
-//    public Mono<Mono<AiChatReportCreateResponse>> createReport(Long roomId) {
-//        return Mono.fromCallable(() -> aiChatHistoryRepository.findByAiChatRoomId(roomId))
-//                .subscribeOn(Schedulers.boundedElastic())
-//                .map(AiChatReportCreateApiRequest::convertRequest)
-//                .flatMap(request -> webClient.post()
-//                        .uri("/chat/completions")
-//                        .bodyValue(request)
-//                        .retrieve()
-//                        .bodyToMono(GptChatCompletionResponse.class))
-//                .flatMap(response -> {
-//                    String content = response.choices().get(0).message().content();
-//
-//                    log.info("GPT 레포트 결과!!!!: {}", content);
-//                    return Mono.fromCallable(() -> objectMapper.readValue(content, AiChatReportCreateRequest.class)) // 여기 List<FeedbackInfo> 땜시 에러 날지도
-//                            .subscribeOn(Schedulers.boundedElastic())
-//                            .flatMap(res -> Mono.fromCallable(() -> openAiCommunicationProvider.saveReport(roomId,res)));
-//                });
-//    }
 
     @Override
     public Mono<Void> createReport(Long roomId) {

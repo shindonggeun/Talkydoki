@@ -7,6 +7,7 @@ import lombok.Builder;
 @Builder
 public record AiChatMessage(
     AiChatSender sender,
-    String content
+    String japanese,
+    String korean
 ) {
 }
