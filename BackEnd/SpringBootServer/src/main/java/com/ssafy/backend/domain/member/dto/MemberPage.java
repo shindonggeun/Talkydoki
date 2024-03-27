@@ -10,7 +10,7 @@ import java.util.List;
 public record MemberPage(
         Long totalShaded,
         Long totalTalked,
-        List<UserScoreDate> userScoresByDate,
-        List<AverageScoreDate> averageScoreByDate
+        List<UserScoreDate> userScore,
+        List<AverageScoreDate> averageScore
 ) {
 }
