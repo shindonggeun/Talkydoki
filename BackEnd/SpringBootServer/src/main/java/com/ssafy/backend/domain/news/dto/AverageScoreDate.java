@@ -2,8 +2,8 @@ package com.ssafy.backend.domain.news.dto;
 
 import lombok.Builder;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Builder
-public record AverageScoreDate(Double averageScore, LocalDate date) {
+public record AverageScoreDate(Double averageScore, LocalDateTime date) {
 }

@@ -17,7 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -137,17 +137,18 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberPage getMyPageData(Long memberId) {
+        LocalDateTime endDate = LocalDateTime.now();
+        LocalDateTime startDate = endDate.minusDays(7);
+
         Long totalShaded = shadowingEvaluationRepository.countByMemberId(memberId);
         Long totalTalked = aiChatRoomRepository.countByMemberId(memberId);
 
-        List<UserScoreDate> userScoresByDate = shadowingEvaluationRepository.findScoresAndDatesByMemberId(memberId).stream()
-                .map(obj -> new UserScoreDate((Double) obj[0], (LocalDate) obj[1]))
+        List<UserScoreDate> userScoresByDate = shadowingEvaluationRepository.findScoresAndDatesByMemberId(memberId, startDate, endDate).stream()
+                .map(obj -> new UserScoreDate((Double) obj[0], (LocalDateTime) obj[1]))
                 .toList();
 
-        LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusDays(7);
         List<AverageScoreDate> averageScoresByDate = shadowingEvaluationRepository.findAverageScoresByDateForAllUsers(startDate, endDate).stream()
-                .map(obj -> new AverageScoreDate((Double) obj[0], (LocalDate) obj[1]))
+                .map(obj -> new AverageScoreDate((Double) obj[0], (LocalDateTime) obj[1]))
                 .toList();
 
         return new MemberPage(totalShaded, totalTalked, userScoresByDate, averageScoresByDate);
