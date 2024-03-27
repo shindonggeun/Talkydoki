@@ -35,13 +35,9 @@ class DataStorage:
         now_kst = datetime.now(kst)
         five_days_ago_kst = now_kst - timedelta(days=5)
         
-        # 한국 시간 기준 3일 이내의 뉴스 데이터만 쿼리
         articles = self.session.query(News).filter(News.write_date >= five_days_ago_kst).all()
-        
-        # articles = self.session.query(News).all()
         users = self.session.query(Member).all()
         keywords = self.session.query(Keyword).all()
-        # mappings = self.session.query(NewsKeywordMapping).all()
         mappings = self.session.query(NewsKeywordMapping).join(NewsKeywordMapping.news).filter(News.write_date >= five_days_ago_kst).all()
         histories = self.session.query(NewsKeywordHistory).all()
 
@@ -90,28 +86,23 @@ class DataStorage:
             if user in individual_preferences:
                 preferred_category = individual_preferences[user]
             else:
-                # 나머지 유저들에 대한 선호 카테고리 설정
                 preferred_category_index = (user - len(individual_preferences) - 1) % len(self.categories)
                 preferred_category = self.categories[preferred_category_index]
                 preferred_category = category_map[preferred_category]
             
-            # 선호하는 카테고리의 키워드 ID와 비선호 카테고리의 키워드 ID를 분류
             preferred_words = [word_id for word_id, info in self.words.items() if preferred_category in info['categories']]
             non_preferred_words = [word_id for word_id, info in self.words.items() if preferred_category not in info['categories']]
-
-            # 선호 단어 중 일부는 학습되지 않도록 설정
             num_to_exclude = int(len(preferred_words) * 0.15)
             excluded_words = np.random.choice(preferred_words, size=num_to_exclude, replace=False)
 
-            # 선호하는 카테고리의 키워드에 대한 학습 횟수 설정
             for word_id in preferred_words:
                 if word_id not in excluded_words:
-                    self.user_word_df.at[user, word_id] = np.random.randint(5, 11)  # 높은 학습
+                    self.user_word_df.at[user, word_id] = np.random.randint(5, 11)
                 else:
                     self.user_word_df.at[user, word_id] = 0
 
             for word_id in non_preferred_words:
-                count = np.random.randint(0, 5)  # 비선호 단어에 대해 낮은 학습 횟수
+                count = np.random.randint(0, 5)
                 self.user_word_df.at[user, word_id] = count
         
         for history in histories:
