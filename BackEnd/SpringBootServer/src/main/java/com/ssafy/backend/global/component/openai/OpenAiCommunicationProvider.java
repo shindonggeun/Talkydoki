@@ -45,7 +45,7 @@ public class OpenAiCommunicationProvider {
                 .bodyToMono(GptChatCompletionResponse.class)
                 .map(response -> response.choices().get(0).message().content());
     }
-    
+
     @Transactional
     public Mono<Void> saveReport(Long roomId, AiChatReportCreateRequest reportRequest) {
         return getAiChatReportCreateResponseMono(roomId, reportRequest, aiChatRoomRepository, aiChatReportRepository, aiChatHistoryRepository, aiChatFeedbackRepository);
@@ -83,10 +83,5 @@ public class OpenAiCommunicationProvider {
                                     )).then();
                 });
     }
-
-
-
-
-
 }
 
