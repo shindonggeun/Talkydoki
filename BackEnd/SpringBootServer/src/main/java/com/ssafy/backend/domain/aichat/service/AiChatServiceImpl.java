@@ -222,8 +222,9 @@ public class AiChatServiceImpl implements AiChatService {
                 .select(
                         qAiChatFeedback.id,
                         qAiChatHistory.id, // 이 부분은 chatId를 나타내며, AiChatHistory의 ID를 참조합니다.
-                        qAiChatHistory.content, // myAnswer에 해당
-                        qAiChatFeedback.content // content에 해당
+                        qAiChatHistory.sender, // sender에 해당
+                        qAiChatHistory.content, // message에 해당
+                        qAiChatFeedback.content // feedback에 해당
                 )
                 .from(qAiChatHistory)
                 .leftJoin(qAiChatFeedback).on(qAiChatHistory.id.eq(qAiChatFeedback.aiChatHistory.id))
@@ -231,6 +232,7 @@ public class AiChatServiceImpl implements AiChatService {
                 .stream()
                 .map(tuple -> new AiChatAndFeedbackInfo(
                         tuple.get(qAiChatHistory.id),
+                        tuple.get(qAiChatHistory.sender),
                         tuple.get(qAiChatHistory.content),
                         tuple.get(qAiChatFeedback.content)
                 ))

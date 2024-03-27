@@ -36,7 +36,7 @@ public class AiChatReportController {
             description = "유저의 레포트들을 조회하는 기능입니다."
     )
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    @GetMapping("/")
+    @GetMapping("")
     public ResponseEntity<Message<List<AiChatReportInfo>>> getUserReports(@AuthenticationPrincipal MemberLoginActive loginActive){
 
         List<AiChatReportInfo> aiChatReports = aiChatService.getUserReports(loginActive.id());
