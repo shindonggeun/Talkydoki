@@ -9,8 +9,8 @@ import java.util.List;
 
 public interface ShadowingEvaluationRepository extends JpaRepository<ShadowingEvaluation, Long> {
     // 해당 유저의 날짜 별 쉐도잉 점수 조회
-    @Query("SELECT se.score, se.newsShadowing.createdAt FROM ShadowingEvaluation se WHERE se.newsShadowing.member.id = :memberId AND se.newsShadowing.createdAt BETWEEN :startDate AND :endDate")
-    List<Object[]> findScoresAndDatesByMemberId(Long memberId, LocalDateTime startDate, LocalDateTime endDate);
+    @Query("SELECT AVG(se.score), se.newsShadowing.createdAt FROM ShadowingEvaluation se WHERE se.newsShadowing.member.id = :memberId AND se.newsShadowing.createdAt BETWEEN :startDate AND :endDate GROUP BY se.newsShadowing.createdAt")
+    List<Object[]> findAverageScoresByDateForMember(Long memberId, LocalDateTime startDate, LocalDateTime endDate);
     // 전체 유저의 날짜 별 쉐도잉 평균 점수 조회
     @Query("SELECT AVG(se.score), se.newsShadowing.createdAt FROM ShadowingEvaluation se WHERE se.newsShadowing.createdAt BETWEEN :startDate AND :endDate GROUP BY se.newsShadowing.createdAt")
     List<Object[]> findAverageScoresByDateForAllUsers(LocalDateTime startDate, LocalDateTime endDate);

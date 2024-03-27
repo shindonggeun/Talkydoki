@@ -143,7 +143,7 @@ public class MemberServiceImpl implements MemberService {
         Long totalShaded = shadowingEvaluationRepository.countByMemberId(memberId);
         Long totalTalked = aiChatRoomRepository.countByMemberId(memberId);
 
-        List<UserScoreDate> userScoresByDate = shadowingEvaluationRepository.findScoresAndDatesByMemberId(memberId, startDate, endDate).stream()
+        List<UserScoreDate> userScoresByDate = shadowingEvaluationRepository.findAverageScoresByDateForMember(memberId, startDate, endDate).stream()
                 .map(obj -> new UserScoreDate((Double) obj[0], (LocalDateTime) obj[1]))
                 .toList();
 
