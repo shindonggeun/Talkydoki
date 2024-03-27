@@ -53,7 +53,7 @@ public class AiChatController {
     public Mono<ResponseEntity<Message<Conversation>>> sendAiChatMessageByGpt(@PathVariable Long roomId,
                                                                       @RequestBody AiChatMessage userMessage) {
         return aiChatService.sendAiChatMessageByGpt(roomId, userMessage)
-                .map(conversation -> ResponseEntity.ok(Message.success(conversation)));
+                .map(conversation -> ResponseEntity.ok().body(Message.success(conversation)));
     }
 
     @PostMapping("/gpt/setup/{roomId}/{category}")
@@ -61,21 +61,13 @@ public class AiChatController {
     public Mono<ResponseEntity<Message<Conversation>>> setupAiChatBot(@PathVariable Long roomId,
                                                                       @PathVariable AiChatCategory category) {
         return aiChatService.setupAiChatBot(roomId, category)
-                .map(conversation -> ResponseEntity.ok(Message.success(conversation)));
+                .map(conversation -> ResponseEntity.ok().body(Message.success(conversation)));
     }
-
-//    @PostMapping("/gpt/{roomId}/report")
-//    public Mono<ResponseEntity<Message<AiChatReportCreateResponse>>> createReportByGPT(@PathVariable Long roomId){
-//        return aiChatService.createReport(roomId)
-//                .flatMap(aiChatReportCreateResponseMono -> aiChatReportCreateResponseMono.map(aiChatReportCreateResponse ->
-//                        ResponseEntity.ok(Message.success(aiChatReportCreateResponse)))
-//                        .defaultIfEmpty(ResponseEntity.notFound().build()));
-//    }
 
     @PostMapping("/gpt/{roomId}/report")
     public Mono<ResponseEntity<Message<Void>>> createReportByGPT(@PathVariable Long roomId) {
         return aiChatService.createReport(roomId)
-                .then(Mono.just(ResponseEntity.ok(Message.success(null))));
+                .then(Mono.just(ResponseEntity.ok().body(Message.success())));
     }
 
 }
