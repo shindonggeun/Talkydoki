@@ -1,5 +1,5 @@
 server:
-  base-url: https://j10c107.p.ssafy.io
+  base-url: j10c107.p.ssafy.io
 
 spring:
   servlet:
@@ -13,7 +13,7 @@ spring:
     defer-datasource-initialization: true
     generate-ddl: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     properties:
       hibernate:
         format_sql: true             # 하이버네이트가 실행한 SQL을 출력할 때 보기 좋게 정렬
@@ -25,7 +25,7 @@ spring:
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver  # DB 드라이버
-    url: jdbc:mysql://j10c107.p.ssafy.io:3306/talkydoki?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true       # 데이터베이스 URL
+    url: jdbc:mysql://${server.base-url}:3306/talkydoki?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true       # 데이터베이스 URL
     username: ENC(f0r0VaK09iSvSITZnTanow==)                     # 데이터베이스 계정명
     password: ENC(pcq3fN0xzVJNEAPYy/U+mQ==)                     # 데이터베이스 계정 비밀번호
 
@@ -94,8 +94,8 @@ oauth:
       - name
 
   naver:
-    client-id: ENC(yyBV/ueEBgJtvkDlLenjkPwTcYy1AYXQuIDYlVxrVZE=)
-    client-secret: ENC(4zsZi9kyz8gJf75VByLo4PtdGuq9iqfS)
+    client-id: ENC(fgllU6jmkfqSW5Lbet7BdnTta/ycQfTAwj3mVFHrkko=)
+    client-secret: ENC(MNZuMPNyaH+s/6Fx8gOKJ2bKC+7tFMMu)
     redirect_uri: ${server.base-url}/member/loading/naver
     scope:
       - nickname
@@ -104,8 +104,8 @@ oauth:
       - profile_image
 
   google:
-    client_id: ENC(ZXiW2x7m3ZOFSOf6IuL3U/irYjoZ5AK6yifN+wMCXwg6+iqc4Em6HivS2fJTIpgd8leqY7oMR4/Jmic1tr9M2q9TqUc/C3b2orCAvbbyeHlFF9HQ/wXr2g==)
-    client_secret: ENC(UpM1KN7rqMsnufSgnq6hrAWacgpL+2Xeu/f/fyYwCCQ9hFHoQ7gQRIMZpX2EMTpZ)
+    client_id: ENC(QKPQqGiQ64z9Aqor6E4+iqkn9coyITJcZJpnGofHf1rweieZI2PYBd80sfG4sRzJqgkMFqumuuvlHgCXoIZ5n7Ax2Wen8jYzt/9T2WmQ1LfQEdmdhLxaSg==)
+    client_secret: ENC(9s47E9126PeDwGGEQ3CEOxgisyvSvZEF8rGmM6ylTJ3YyAAJ4ES/lRkULyEamSgc)
     redirect_uri: ${server.base-url}/member/loading/google
     scope:
       - profile
