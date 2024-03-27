@@ -23,6 +23,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.net.URI;
+import java.security.Principal;
 import java.util.List;
 
 @Tag(name = "Ai Chatting", description = "AiChatting 관련 API 입니다.")
@@ -43,9 +44,9 @@ public class AiChatController {
     }
 
     @MessageMapping("/ai/chat/user/{roomId}")
-    public void sendAiChatMessageByUser(@AuthenticationPrincipal MemberLoginActive loginActive, AiChatMessage aiChatMessage,
+    public void sendAiChatMessageByUser(Principal principal, AiChatMessage aiChatMessage,
                                         @DestinationVariable Long roomId) {
-        aiChatService.sendAiChatMessageByUser(loginActive.id(), roomId, aiChatMessage);
+        aiChatService.sendAiChatMessageByUser(Long.valueOf(principal.getName()), roomId, aiChatMessage);
     }
 
     @PostMapping("/gpt/{roomId}")
