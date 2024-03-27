@@ -8,7 +8,6 @@ import com.ssafy.backend.domain.member.exception.MemberException;
 import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.domain.news.dto.AverageScoreDate;
 import com.ssafy.backend.domain.news.dto.UserScoreDate;
-import com.ssafy.backend.domain.news.repository.NewsShadowingRepository;
 import com.ssafy.backend.domain.news.repository.ShadowingEvaluationRepository;
 import com.ssafy.backend.global.component.jwt.repository.RefreshTokenRepository;
 import com.ssafy.backend.global.component.jwt.service.JwtTokenService;
@@ -31,7 +30,6 @@ public class MemberServiceImpl implements MemberService {
     private final JwtTokenService jwtTokenService;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final NewsShadowingRepository newsShadowingRepository;
     private final ShadowingEvaluationRepository shadowingEvaluationRepository;
     private final AiChatRoomRepository aiChatRoomRepository;
 
@@ -139,7 +137,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public MemberPage getMyPageData(Long memberId) {
-        Long totalShaded = newsShadowingRepository.countByMemberId(memberId);
+        Long totalShaded = shadowingEvaluationRepository.countByMemberId(memberId);
         Long totalTalked = aiChatRoomRepository.countByMemberId(memberId);
 
         List<UserScoreDate> userScoresByDate = shadowingEvaluationRepository.findScoresAndDatesByMemberId(memberId).stream()

@@ -7,6 +7,4 @@ import java.util.Optional;
 
 public interface NewsShadowingRepository extends JpaRepository<NewsShadowing, Long> {
     Optional<NewsShadowing> findByNewsIdAndMemberId(Long newsId, Long memberId);
-
-    Long countByMemberId(Long memberId);
 }

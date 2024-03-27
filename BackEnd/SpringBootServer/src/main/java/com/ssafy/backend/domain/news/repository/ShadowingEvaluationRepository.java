@@ -14,4 +14,7 @@ public interface ShadowingEvaluationRepository extends JpaRepository<ShadowingEv
     // 전체 유저의 날짜 별 쉐도잉 평균 점수 조회
     @Query("SELECT AVG(se.score), se.newsShadowing.createdAt FROM ShadowingEvaluation se WHERE se.newsShadowing.createdAt BETWEEN :startDate AND :endDate GROUP BY se.newsShadowing.createdAt")
     List<Object[]> findAverageScoresByDateForAllUsers(LocalDate startDate, LocalDate endDate);
+    // 특정 사용자의 쉐도잉 평가 총 횟수를 조회하는 메소드
+    @Query("SELECT COUNT(se) FROM ShadowingEvaluation se WHERE se.newsShadowing.member.id = :memberId")
+    Long countByMemberId(Long memberId);
 }
