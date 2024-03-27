@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface AiChatRoomRepository extends JpaRepository<AiChatRoom, Long> {
     List<AiChatRoom> findByMemberId(Long userId);
+    Long countByMemberId(Long memberId);
 }

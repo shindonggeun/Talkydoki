@@ -1,10 +1,15 @@
 package com.ssafy.backend.domain.member.service;
 
+import com.ssafy.backend.domain.aichat.repository.AiChatRoomRepository;
 import com.ssafy.backend.domain.member.dto.*;
 import com.ssafy.backend.domain.member.entity.Member;
 import com.ssafy.backend.domain.member.exception.MemberErrorCode;
 import com.ssafy.backend.domain.member.exception.MemberException;
 import com.ssafy.backend.domain.member.repository.MemberRepository;
+import com.ssafy.backend.domain.news.dto.AverageScoreDate;
+import com.ssafy.backend.domain.news.dto.UserScoreDate;
+import com.ssafy.backend.domain.news.repository.NewsShadowingRepository;
+import com.ssafy.backend.domain.news.repository.ShadowingEvaluationRepository;
 import com.ssafy.backend.global.component.jwt.repository.RefreshTokenRepository;
 import com.ssafy.backend.global.component.jwt.service.JwtTokenService;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +18,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -24,6 +31,9 @@ public class MemberServiceImpl implements MemberService {
     private final JwtTokenService jwtTokenService;
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final NewsShadowingRepository newsShadowingRepository;
+    private final ShadowingEvaluationRepository shadowingEvaluationRepository;
+    private final AiChatRoomRepository aiChatRoomRepository;
 
     @Override
     public void signupMember(MemberSignupRequest signupRequest) {
@@ -125,5 +135,23 @@ public class MemberServiceImpl implements MemberService {
         }
 
         member.updatePassword(passwordEncoder.encode(passwordChangeRequest.changePassword()));
+    }
+
+    @Override
+    public MemberPage getMyPageData(Long memberId) {
+        Long totalShaded = newsShadowingRepository.countByMemberId(memberId);
+        Long totalTalked = aiChatRoomRepository.countByMemberId(memberId);
+
+        List<UserScoreDate> userScoresByDate = shadowingEvaluationRepository.findScoresAndDatesByMemberId(memberId).stream()
+                .map(obj -> new UserScoreDate((Double) obj[0], (LocalDate) obj[1]))
+                .toList();
+
+        LocalDate endDate = LocalDate.now();
+        LocalDate startDate = endDate.minusDays(7);
+        List<AverageScoreDate> averageScoresByDate = shadowingEvaluationRepository.findAverageScoresByDateForAllUsers(startDate, endDate).stream()
+                .map(obj -> new AverageScoreDate((Double) obj[0], (LocalDate) obj[1]))
+                .toList();
+
+        return new MemberPage(totalShaded, totalTalked, userScoresByDate, averageScoresByDate);
     }
 }

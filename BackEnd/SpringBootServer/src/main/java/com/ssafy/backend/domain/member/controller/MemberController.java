@@ -118,4 +118,15 @@ public class MemberController {
         String reissueAccessToken = jwtTokenService.reissueAccessToken(memberEmail);
         return ResponseEntity.ok().body(Message.success(reissueAccessToken));
     }
+
+    @Operation(
+            summary = "마이 페이지 정보 출력",
+            description = "해당 회원의 쉐도잉 횟수, AI 회화 횟수, 날짜 별 학습 횟수, 최근 일주일 간 쉐도잉 점수, 최근 일주일 간 전체 유저 평균 쉐도잉 점수를 출력합니다."
+    )
+    @GetMapping("/mypage")
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<MemberPage>> getMyPage(@AuthenticationPrincipal MemberLoginActive loginActive) {
+        MemberPage myPageData = memberService.getMyPageData(loginActive.id());
+        return ResponseEntity.ok().body(Message.success(myPageData));
+    }
 }
