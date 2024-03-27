@@ -1,5 +1,6 @@
 package com.ssafy.backend.domain.aichat.entity;
 
+import com.ssafy.backend.domain.aichat.dto.AiChatReportDetailInfo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -37,4 +38,18 @@ public class AiChatReport {
 
     @Column(nullable = false)
     private Float contextScore;
+
+
+    public static AiChatReportDetailInfo dto(AiChatReport aiChatReport){
+        return new AiChatReportDetailInfo(
+                aiChatReport.getId(),
+                aiChatReport.aiChatRoom.getCategory(),
+                aiChatReport.getConversationSummary(),
+                aiChatReport.getVocabularyScore(),
+                aiChatReport.getGrammarScore(),
+                aiChatReport.getWordScore(),
+                aiChatReport.getFluencyScore(),
+                aiChatReport.getContextScore()
+        );
+    }
 }

@@ -6,5 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface AiChatFeedbackRepository extends JpaRepository<AiChatFeedback, Integer> {
-    List<AiChatFeedback> findByAiChatRoomIdAndAiChatHistoryId(Long aiChatId, Long aiChatHistoryId);
+//    List<AiChatFeedback> findByAiChatRoomIdAndAiChatHistoryId(Long aiChatId, Long aiChatHistoryId);
 }
