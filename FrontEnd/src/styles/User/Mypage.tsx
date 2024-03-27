@@ -104,6 +104,7 @@ export const JandiSection = styled.div`
 
 export const JandiCard = styled(Card)`
   width: 100%;
+  padding: 2vh 2vw;
   @media screen and (max-width: 992px) {
     width: 900px;
     height: 80%;
@@ -111,7 +112,7 @@ export const JandiCard = styled(Card)`
 `;
 export const MainSection = styled.div`
   width: 100%;
-  border: 1px solid;
+  /* border: 1px solid; */
   display: flex;
 
   .NewsReportContainer {
@@ -121,10 +122,18 @@ export const MainSection = styled.div`
   .VocaReportContainer {
     width: 30%;
     border: 1px solid;
+    position: relative;
   }
 `;
 
 export const FooterSection = styled.div`
   width: 100%;
   border: 1px solid;
+`;
+
+export const VocaCard = styled(Card)`
+  width: 90%;
+  height: 306px;
+  position: absolute;
+  top: 13%;
 `;
