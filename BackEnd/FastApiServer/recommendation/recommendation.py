@@ -1,6 +1,10 @@
 from fastapi import HTTPException, APIRouter
+
+from apscheduler.schedulers.background import BackgroundScheduler
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+
 from models.member import Member
 from models.news import News
 from models.keyword import Keyword
@@ -8,6 +12,7 @@ from models.news_keyword_mapping import NewsKeywordMapping
 from models.news_keyword_history import NewsKeywordHistory
 from models.news_shadowing import NewsShadowing
 from models.news_image import NewsImage
+
 from sklearn.metrics.pairwise import cosine_similarity
 from datetime import datetime, timedelta
 from collections import Counter
@@ -15,15 +20,6 @@ from collections import Counter
 import numpy as np
 import pandas as pd
 import pytz
-
-# import torch
-# import torch.nn as nntimedelta
-# import torch.nn.functional as F
-# import torch.optim as optim
-# from torch.utils.data import DataLoader
-# from datetime import datetime
-# from torch.utils.data import Dataset
-# from pydantic import BaseModel
 
 router = APIRouter()
 
@@ -140,6 +136,12 @@ class DataStorage:
 
 data_storage = DataStorage()
 
+scheduler = BackgroundScheduler()
+
+scheduler.add_job(data_storage.load_data, 'interval', minutes=10)
+
+scheduler.start()
+
 def get_news_data(news_id):
     news = data_storage.session.query(News).filter(News.id == news_id).first()
     if news:
@@ -185,151 +187,3 @@ async def news_recommend(member_id: int):
         "memberId": member_id, 
         "recommendations": recommendations
     }
-
-# @router.get("/recommend/news/{member_id}")
-# async def news_recommend(member_id: int):
-#     if member_id not in data_storage.users:
-#         raise HTTPException(status_code=404, detail="User not found")
-#     user_data = data_storage.cosine_sim_df.loc[member_id].sort_values(ascending=False)
-#     recommendations = user_data.index.values.tolist()[:3]
-
-#     return {
-#         "memberId": member_id, 
-#         "recommendations": recommendations
-#         }
-
-# class MatrixFactorization(nn.Module):
-#     def __init__(self, num_users, num_items, latent_dim=67.67, dropout_rate=0.5, l2=0.001):
-#         super(MatrixFactorization, self).__init__()
-#         self.user_embedding = nn.Embedding(num_users, latent_dim)
-#         self.item_embedding = nn.Embedding(num_items, latent_dim)
-#         self.user_bias = nn.Embedding(num_users, 1)
-#         self.item_bias = nn.Embedding(num_items, 1)
-#         self.dropout = nn.Dropout(dropout_rate)
-#         self.l2 = l2
-
-#         nn.init.normal_(self.user_embedding.weight, mean=0.0, std=0.01)
-#         nn.init.normal_(self.item_embedding.weight, mean=0.0, std=0.01)
-#         nn.init.zeros_(self.user_bias.weight)
-#         nn.init.zeros_(self.item_bias.weight)
-
-#     def forward(self, user_indices, item_indices):
-#         user_latent = self.dropout(self.user_embedding(user_indices))
-#         item_latent = self.dropout(self.item_embedding(item_indices))
-#         user_bias = self.user_bias(user_indices).squeeze()
-#         item_bias = self.item_bias(item_indices).squeeze()
-
-#         prediction = torch.sum(user_latent * item_latent, dim=1) + user_bias + item_bias
-#         return prediction
-
-#     def loss(self, prediction, target):
-#         mse_loss = F.mse_loss(prediction, target.float())
-#         l2_loss = sum(torch.norm(param) for param in self.parameters())
-#         total_loss = mse_loss + self.l2 * l2_loss
-#         return total_loss
-
-# class UserWordDataset(Dataset):
-#     def __init__(self, user_word_matrix):
-#         self.user_word_matrix = user_word_matrix.values
-#         self.num_users, self.num_items = user_word_matrix.shape
-
-#     def __len__(self):
-#         return self.num_users * self.num_items
-
-#     def __getitem__(self, idx):
-#         user_id = idx // self.num_items
-#         item_id = idx % self.num_items
-#         rating = self.user_word_matrix[user_id, item_id]
-#         return user_id, item_id, torch.tensor(rating, dtype=torch.float)
-
-# # 모델과 데이터셋을 로드하는 함수
-# def load_model_and_dataset(user_word_df):
-#     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-#     model_info = torch.load('best_model.pth', map_location=device)
-#     state_dict = model_info['state_dict']
-#     hyperparams = model_info['hyperparams']
-
-#     # 모델 재구성
-#     model = MatrixFactorization(
-#         model_info['num_users'],
-#         model_info['num_items'],
-#         hyperparams['latent_dim'],
-#         hyperparams['dropout_rate'],
-#         hyperparams['l2']
-#     ).to(device)
-
-#     # 모델 상태 복원
-#     model.load_state_dict(state_dict)
-#     model.to(device)
-#     model.eval()
-
-#     dataset = UserWordDataset(user_word_df)
-    
-#     return model, dataset, device
-
-# def fine_tune_model(model, dataset, device, lr=0.01, epochs=5, batch_size=32):
-#     model.train()
-#     optimizer = optim.Adam(model.parameters(), lr=lr)
-#     data_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
-    
-#     for epoch in range(epochs):
-#         total_loss = 0
-#         for user_indices, item_indices, ratings in data_loader:
-#             user_indices = user_indices.to(device)
-#             item_indices = item_indices.to(device)
-#             ratings = ratings.to(device)
-
-#             optimizer.zero_grad()
-#             predictions = model(user_indices, item_indices)
-#             loss = model.loss(predictions, ratings)
-#             loss.backward()
-#             optimizer.step()
-
-#             total_loss += loss.item()
-
-#         print(f'Epoch {epoch+1}/{epochs}, Loss: {total_loss/len(data_loader)}')
-#     model.eval()
-
-# def load_model_and_dataset_with_finetuning(user_word_df, fine_tune=False):
-#     model, dataset, device = load_model_and_dataset(user_word_df)
-    
-#     if fine_tune:
-#         print("Fine-tuning the model with updated data...")
-#         fine_tune_model(model, dataset, device)
-    
-#     return model, dataset, device
-
-# model, dataset, device = load_model_and_dataset_with_finetuning(data_storage.user_word_df, fine_tune=True)
-# model, dataset, device = load_model_and_dataset(data_storage.user_word_df)
-
-# class UserRecommendationRequest(BaseModel):
-#     user_index: int
-
-# @router.get("/recommend/word/{member_id}")
-# async def word_recommend(member_id: int):
-#     if member_id not in data_storage.users:
-#         raise HTTPException(status_code=404, detail="User not found")
-    
-#     user_index = data_storage.users.index(member_id)
-    
-#     untrained_item_indices = []
-#     untrained_item_names = data_storage.user_word_df.iloc[user_index][data_storage.user_word_df.iloc[user_index] == 0].index.tolist()
-#     for item_name in untrained_item_names:
-#         item_index = data_storage.user_word_df.columns.get_loc(item_name)
-#         untrained_item_indices.append(item_index)
-    
-#     if not untrained_item_indices:
-#         return {"message": "No items to recommend for this user."}
-    
-#     untrained_item_indices_tensor = torch.tensor(untrained_item_indices, dtype=torch.long, device=device)
-#     predictions = model(torch.tensor([user_index] * len(untrained_item_indices), device=device), untrained_item_indices_tensor)
-    
-#     top_scores, top_indices = torch.topk(predictions, 20)
-
-#     recommended_item_indices = [untrained_item_indices[index.item()] for index in top_indices]
-#     recommended_item_names = [data_storage.user_word_df.columns[index] for index in recommended_item_indices]
-    
-#     return {
-#         "memberId": member_id, 
-#         "recommended_items": recommended_item_names
-#     }
