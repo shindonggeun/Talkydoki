@@ -2,6 +2,7 @@ import {
   NewsListItemInterface,
   categoryInterface,
   newsInterface,
+  shadowingParams,
   splittedNewsInterface,
 } from "@/interface/NewsInterface";
 import { useIsSearchOn } from "@/stores/newsStore";
@@ -11,7 +12,12 @@ import {
   sentenceMaker,
   transSplitter,
 } from "@/util/language/format";
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 
 // 뉴스 리스트 get 하는 함수
 export const useGetNewsList = (category: categoryInterface[]) => {
@@ -137,5 +143,23 @@ export const useRecommendNews = () => {
     },
     staleTime: 1000 * 60 * 60, // 1시간
     gcTime: 1000 * 60 * 60, // 1시간
+  });
+};
+
+export const useSendSpeech = (newsId: number, idx: number) => {
+  const querytClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ newsId, original, userText }: shadowingParams) =>
+      customAxios.post(`news/shadowing/${newsId}`, { original, userText }),
+    onSuccess: ({ data }) => {
+      if (data.dataHeader.successCode == 0) {
+        querytClient.setQueryData(
+          ["shadowEvaluation", newsId, idx],
+          data.dataBody.similarity as number
+        );
+      }
+      return data;
+    },
   });
 };

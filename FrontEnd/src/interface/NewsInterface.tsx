@@ -47,6 +47,12 @@ export interface splittedNewsInterface {
   fullNews: string[];
 }
 
+export interface shadowingParams {
+  newsId: number;
+  original: string;
+  userText: string;
+}
+
 export const category: categoryInterface[] = [
   { id: 1, name: "SOCIETY", korName: "사회" },
   { id: 2, name: "WEATHER_DISASTER", korName: "날씨/재해" },
