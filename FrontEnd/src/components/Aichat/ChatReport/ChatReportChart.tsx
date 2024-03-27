@@ -15,9 +15,6 @@ function ChatReportChart({
     reportDetail.ContextScore,
   ];
   const options = {
-    chart: {
-      type: "polarArea",
-    },
     stroke: {
       show: false,
     },
