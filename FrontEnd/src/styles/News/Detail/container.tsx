@@ -213,8 +213,38 @@ export const ReadLineContainer = styled(WordContainer)`
 
 export const SpeechContainer = styled.div`
   margin: 4vh 0;
-  padding: 2vh 3vw;
+  padding: 2vh 1vw;
   width: 100%;
-  backdrop-filter: brightness(1.5);
-  border: 1px solid var(--shadow-dark);
+  backdrop-filter: brightness(1.3);
+  border: 1px solid
+    ${(props) =>
+      props.theme.mode == "light" ? "var(--shadow)" : "var(--main)"};
+  display: flex;
+
+  .buttons {
+    height: 100%;
+  }
+
+  .script {
+    padding: 1vh 2vw;
+  }
+
+  .similarity {
+    height: 30px;
+    color: ${(props) =>
+      props.theme.mode == "light" ? "var(--main)" : "var(--yellow-dark)"};
+  }
+
+  .alert {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.5;
+  }
+
+  @media screen and (max-width: 992px) {
+    flex-direction: column;
+  }
 `;

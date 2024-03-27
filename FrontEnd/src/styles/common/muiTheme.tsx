@@ -26,6 +26,9 @@ declare module "@mui/material" {
   interface ToggleButtonGroupPropsColorOverrides {
     purple: true;
   }
+  interface ButtonGroupPropsColorOverrides {
+    purple: true;
+  }
 }
 
 declare module "@mui/material/styles" {

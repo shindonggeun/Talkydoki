@@ -11,9 +11,10 @@ type Props = {
   setNow: React.Dispatch<React.SetStateAction<number | null>>;
   newsId: number;
   idx: number;
+  fullNews: string;
 };
 
-function NewsReadLine({ news, now, setNow, idx, newsId }: Props) {
+function NewsReadLine({ news, now, setNow, idx, newsId, fullNews }: Props) {
   const queryClient = useQueryClient();
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -37,7 +38,16 @@ function NewsReadLine({ news, now, setNow, idx, newsId }: Props) {
   }, [isPlaying]);
 
   return (
-    <ReadLineContainer className={idx == now ? "selected" : undefined}>
+    <ReadLineContainer
+      className={idx == now ? "selected" : undefined}
+      onClick={(e) => {
+        const target = e.target as HTMLElement;
+        if (target.classList.contains("playIcon")) return;
+        if (idx != now) {
+          setNow(idx);
+        }
+      }}
+    >
       <div className="newscontent">
         {/* 재생버튼 */}
         {isPlaying ? (
@@ -53,13 +63,7 @@ function NewsReadLine({ news, now, setNow, idx, newsId }: Props) {
         )}
         <audio ref={audioRef} onEnded={() => setIsPlaying(false)} />
         {/* 뉴스 본문 */}
-        <div
-          onClick={() => {
-            if (idx != now) {
-              setNow(idx);
-            }
-          }}
-        >
+        <div>
           {news.map((each, idx) => (
             <span className="jp" key={idx}>
               {each[0]}
@@ -68,7 +72,7 @@ function NewsReadLine({ news, now, setNow, idx, newsId }: Props) {
         </div>
       </div>
       {/* STT */}
-      {idx == now && <SpeechBox />}
+      {idx == now && <SpeechBox newsId={newsId} news={fullNews} idx={idx} />}
     </ReadLineContainer>
   );
 }
