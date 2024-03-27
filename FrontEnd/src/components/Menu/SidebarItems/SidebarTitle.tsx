@@ -36,9 +36,12 @@ function SidebarTitle({}: Props) {
       <img className="logoImg" src={Logo} alt="talkydoki" />
       <div>
         {isDark ? (
-          <LightModeIcon className="icon" onClick={() => toggleDarkmode()} />
+          <LightModeIcon
+            className="icon"
+            onClick={() => toggleDarkmode(false)}
+          />
         ) : (
-          <DarkModeIcon className="icon" onClick={() => toggleDarkmode()} />
+          <DarkModeIcon className="icon" onClick={() => toggleDarkmode(true)} />
         )}
         <LogoutIcon className="icon" onClick={handleLogoutModal} />
       </div>
