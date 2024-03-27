@@ -71,6 +71,11 @@ public class AiChatController {
 //        return aiChatService.createReport(roomId)
 //                .then(Mono.just(ResponseEntity.ok().body(Message.success())));
 //    }
+
+    @Operation(
+            summary = "OpenAI api를 호출해 레포트 생성",
+            description = "해당 {roomId}의 aiChatRoom의 모든 채팅 기록들을 조회 후 OpenAi api에 분석을 요청하여 레포트와 피드백을 생성합니다. "
+    )
     @PostMapping("/gpt/{roomId}/report")
     public Mono<ResponseEntity<Message<AiChatReportCreateApiResponse>>> createReportByGPT(@PathVariable Long roomId) {
         return aiChatService.createReport(roomId)
