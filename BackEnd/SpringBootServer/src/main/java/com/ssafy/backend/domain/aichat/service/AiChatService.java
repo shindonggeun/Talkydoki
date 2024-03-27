@@ -48,5 +48,5 @@ public interface AiChatService {
     Mono<Conversation> setupAiChatBot(Long roomId, AiChatCategory category);
 
     @Transactional
-    Mono<Mono<AiChatReportCreateResponse>> createReport(Long roomId);
+    Mono<Void> createReport(Long roomId);
 }

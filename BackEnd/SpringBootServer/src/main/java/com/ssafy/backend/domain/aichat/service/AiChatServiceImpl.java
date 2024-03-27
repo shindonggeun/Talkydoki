@@ -189,8 +189,28 @@ public class AiChatServiceImpl implements AiChatService {
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
+//    @Override
+//    public Mono<Mono<AiChatReportCreateResponse>> createReport(Long roomId) {
+//        return Mono.fromCallable(() -> aiChatHistoryRepository.findByAiChatRoomId(roomId))
+//                .subscribeOn(Schedulers.boundedElastic())
+//                .map(AiChatReportCreateApiRequest::convertRequest)
+//                .flatMap(request -> webClient.post()
+//                        .uri("/chat/completions")
+//                        .bodyValue(request)
+//                        .retrieve()
+//                        .bodyToMono(GptChatCompletionResponse.class))
+//                .flatMap(response -> {
+//                    String content = response.choices().get(0).message().content();
+//
+//                    log.info("GPT 레포트 결과!!!!: {}", content);
+//                    return Mono.fromCallable(() -> objectMapper.readValue(content, AiChatReportCreateRequest.class)) // 여기 List<FeedbackInfo> 땜시 에러 날지도
+//                            .subscribeOn(Schedulers.boundedElastic())
+//                            .flatMap(res -> Mono.fromCallable(() -> openAiCommunicationProvider.saveReport(roomId,res)));
+//                });
+//    }
+
     @Override
-    public Mono<Mono<AiChatReportCreateResponse>> createReport(Long roomId) {
+    public Mono<Void> createReport(Long roomId) {
         return Mono.fromCallable(() -> aiChatHistoryRepository.findByAiChatRoomId(roomId))
                 .subscribeOn(Schedulers.boundedElastic())
                 .map(AiChatReportCreateApiRequest::convertRequest)
@@ -201,13 +221,12 @@ public class AiChatServiceImpl implements AiChatService {
                         .bodyToMono(GptChatCompletionResponse.class))
                 .flatMap(response -> {
                     String content = response.choices().get(0).message().content();
-
                     log.info("GPT 레포트 결과!!!!: {}", content);
-                    return Mono.fromCallable(() -> objectMapper.readValue(content, AiChatReportCreateRequest.class)) // 여기 List<FeedbackInfo> 땜시 에러 날지도
-                            .subscribeOn(Schedulers.boundedElastic())
-                            .flatMap(res -> Mono.fromCallable(() -> openAiCommunicationProvider.saveReport(roomId,res)));
+                    return Mono.fromCallable(() -> objectMapper.readValue(content, AiChatReportCreateRequest.class))
+                            .flatMap(res -> openAiCommunicationProvider.saveReport(roomId, res));
                 });
     }
+
 
     private Conversation parseGetResponse(String responseString) {
         try {
