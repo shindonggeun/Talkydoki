@@ -78,3 +78,12 @@ export const Global = createGlobalStyle`
     }
 
 `;
+
+// 스크롤바 없애기
+export const NoScroll = createGlobalStyle`
+body, html, div, span, button, form, section {
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+`;
