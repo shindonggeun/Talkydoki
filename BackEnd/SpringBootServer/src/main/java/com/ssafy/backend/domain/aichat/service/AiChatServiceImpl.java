@@ -129,10 +129,7 @@ public class AiChatServiceImpl implements AiChatService {
                                                 log.info("GPT 응답값: {}", response);
                                                Conversation conversation = parseGetResponse(response);
                                                 // GPT 응답을 Redis에 저장
-                                                openAiRepository.saveAiChatHistory(roomId, List.of(
-                                                        new GptDialogueMessage("user", userMessage.japanese()),  // 이부분 나중에 삭제해야함
-                                                        new GptDialogueMessage("assistant", response)
-                                                ));
+                                                openAiRepository.saveAiChatHistory(roomId, List.of(new GptDialogueMessage("assistant", response)));
 
                                                 AiChatMessage gptMessage = AiChatMessage.builder()
                                                         .sender(AiChatSender.GPT)
