@@ -2,6 +2,7 @@ package com.ssafy.backend.domain.aichat.controller;
 
 import com.ssafy.backend.domain.aichat.dto.AiChatReportInfo;
 import com.ssafy.backend.domain.aichat.dto.FullReportInfo;
+import com.ssafy.backend.domain.aichat.service.AiChatReportService;
 import com.ssafy.backend.domain.aichat.service.AiChatService;
 import com.ssafy.backend.global.common.dto.Message;
 import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
@@ -24,7 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/report")
 public class AiChatReportController {
-    private final AiChatService aiChatService;
+    private final AiChatReportService aiChatReportService;
 
     @Operation(
             summary = "OpenAI api를 호출해 레포트 생성",
@@ -33,7 +34,7 @@ public class AiChatReportController {
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     @PostMapping("/create/{roomId}")
     public Mono<ResponseEntity<Message<AiChatReportCreateApiResponse>>> createReportByGPT(@PathVariable Long roomId) {
-        return aiChatService.createReport(roomId)
+        return aiChatReportService.createReport(roomId)
                 .map(reportId -> ResponseEntity.ok().body(Message.success(new AiChatReportCreateApiResponse(reportId))));
     }
 
@@ -45,7 +46,7 @@ public class AiChatReportController {
     @GetMapping("/get")
     public ResponseEntity<Message<List<AiChatReportInfo>>> getUserReports(@AuthenticationPrincipal MemberLoginActive loginActive){
 
-        List<AiChatReportInfo> aiChatReports = aiChatService.getUserReports(loginActive.id());
+        List<AiChatReportInfo> aiChatReports = aiChatReportService.getUserReports(loginActive.id());
         return ResponseEntity.ok().body(Message.success(aiChatReports));
     }
 
@@ -56,7 +57,7 @@ public class AiChatReportController {
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     @GetMapping("/detail/get/{reportId}")
     public ResponseEntity<Message<FullReportInfo>> getReportDetail(@PathVariable Long reportId){
-        FullReportInfo reportDetail = aiChatService.getReportDetail(reportId);
+        FullReportInfo reportDetail = aiChatReportService.getReportDetail(reportId);
 
         return ResponseEntity.ok().body(Message.success(reportDetail));
     }

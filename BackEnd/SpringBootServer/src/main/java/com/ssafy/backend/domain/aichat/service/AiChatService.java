@@ -23,22 +23,14 @@ public interface AiChatService {
     AiChatRoomCreateResponse creatAiChatRoom(Long memberId, AiChatCategory category);
 
     /**
-     * 사용자로부터 받은 메시지를 AI 채팅방에 전달합니다.
-     *
+     * 사용자가 보낸 메시지를 처리하고, GPT에게 대화를 요청한 후 결과를 RabbitMQ를 통해 전송합니다.
      * @param memberId 메시지를 보낸 사용자의 ID
-     * @param roomId 메시지를 전달할 채팅방의 ID
+     * @param roomId 대화가 진행되는 채팅방의 ID
      * @param userMessage 사용자가 보낸 메시지
      */
     void sendAiChatMessageByUser(Long memberId, Long roomId, AiChatMessage userMessage);
 
-    /**
-     * 사용자로부터 받은 메시지를 AI 채팅봇(GPT)에게 전달하여 그에 따른 응답을 처리하고 채팅방에 전달합니다.
-     *
-     * @param roomId 응답을 전달할 채팅방의 ID
-     * @param userMessage AI 채팅봇에게 전송한 원본 사용자 메시지
-     * @return 설정된 대화 내용을 담은 Mono<Conversation> 객체
-     */
-    Mono<Conversation> sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage);
+//    Mono<Conversation> sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage);
 
     /**
      * 주어진 AI 회화 채팅방의 ID와 카테고리에 따라 AI 채팅봇을 설정합니다.
@@ -48,13 +40,4 @@ public interface AiChatService {
      * @return 설정된 대화 내용을 담은 Mono<Conversation> 객체
      */
     Mono<Conversation> setupAiChatBot(Long roomId, AiChatCategory category);
-
-    @Transactional
-    Mono<Long> createReport(Long roomId);
-
-    List<AiChatAndFeedbackInfo> getAiChatFeedbackInfo();
-
-    FullReportInfo getReportDetail(Long reportId);
-
-   List<AiChatReportInfo> getUserReports(Long memberId);
 }
