@@ -71,6 +71,7 @@ public class KeywordServiceImpl implements KeywordService {
         List<NewsKeywordHistory> histories = newsKeywordHistoryRepository.findByMemberIdOrderByReadCountDesc(memberId);
         return histories.stream()
                 .map(history -> new NewsKeywordHistoryInfo(history.getKeyword().getJapanese(), history.getReadCount()))
+                .limit(10)
                 .toList();
     }
 }
