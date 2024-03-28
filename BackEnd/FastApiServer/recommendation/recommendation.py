@@ -35,7 +35,7 @@ class DataStorage:
         now_kst = datetime.now(kst)
         five_days_ago_kst = now_kst - timedelta(days=5)
         
-        articles = self.session.query(News).filter(News.write_date >= five_days_ago_kst).all()
+        articles = self.session.query(News).outerjoin(NewsImage).filter(News.write_date >= five_days_ago_kst).all()
         users = self.session.query(Member).all()
         keywords = self.session.query(Keyword).all()
         mappings = self.session.query(NewsKeywordMapping).join(NewsKeywordMapping.news).filter(News.write_date >= five_days_ago_kst).all()
@@ -136,7 +136,7 @@ scheduler.add_job(data_storage.load_data, 'interval', minutes=5)
 scheduler.start()
 
 def get_news_data(news_id):
-    news = data_storage.session.query(News).filter(News.id == news_id).first()
+    news = data_storage.session.query(News).outerjoin(NewsImage).filter(News.id == news_id).first()
     if news:
         images_urls = [image.image_url for image in news.news_images] if news.news_images else []
         keyword_list = [keyword.keyword.japanese for keyword in news.news_keyword_mappings]
