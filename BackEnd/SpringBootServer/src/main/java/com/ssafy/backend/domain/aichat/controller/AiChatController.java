@@ -12,28 +12,22 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
-import java.net.URI;
 import java.security.Principal;
-import java.util.List;
 
-@Tag(name = "Ai Chatting", description = "AiChatting 관련 API 입니다.")
+@Tag(name = "Ai 회화 채팅", description = "AI 회화 채팅 관련 API 입니다.")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/ai/chat")
 public class AiChatController {
-
     private final AiChatService aiChatService;
 
     @PostMapping("/room/create/{category}")
@@ -65,25 +59,6 @@ public class AiChatController {
         return aiChatService.setupAiChatBot(roomId, category)
                 .map(conversation -> ResponseEntity.ok().body(Message.success(conversation)));
     }
-
-//    @PostMapping("/gpt/{roomId}/report")
-//    public Mono<ResponseEntity<Message<Void>>> createReportByGPT(@PathVariable Long roomId) {
-//        return aiChatService.createReport(roomId)
-//                .then(Mono.just(ResponseEntity.ok().body(Message.success())));
-//    }
-
-    @Operation(
-            summary = "OpenAI api를 호출해 레포트 생성",
-            description = "해당 {roomId}의 aiChatRoom의 모든 채팅 기록들을 조회 후 OpenAi api에 분석을 요청하여 레포트와 피드백을 생성합니다. "
-    )
-    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    @PostMapping("/gpt/{roomId}/report")
-    public Mono<ResponseEntity<Message<AiChatReportCreateApiResponse>>> createReportByGPT(@PathVariable Long roomId) {
-        return aiChatService.createReport(roomId)
-                .map(reportId -> ResponseEntity.ok().body(Message.success(new AiChatReportCreateApiResponse(reportId))));
-    }
-
-
 }
 
 

@@ -104,7 +104,27 @@ public class AiChatServiceImpl implements AiChatService {
         // 사용자 메시지를 Redis에 저장
         openAiRepository.saveAiChatHistory(roomId, List.of(new GptDialogueMessage("user", userMessage.japanese())));
 
+        // RabbitMQ를 통해 사용자 메시지 전달
         rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, userMessage);
+
+        sendAiChatMessageByGpt(roomId, userMessage).subscribe(conversation -> {
+            AiChatMessage gptMessage = AiChatMessage.builder()
+                    .sender(AiChatSender.GPT)
+                    .japanese(conversation.gptJapaneseResponse())
+                    .korean(conversation.gptKoreanResponse())
+                    .build();
+
+            AiChatMessage userTipMessage = AiChatMessage.builder()
+                    .sender(AiChatSender.USER_TIP)
+                    .japanese(conversation.userJapaneseResponse())
+                    .korean(conversation.userKoreanResponse())
+                    .build()
+
+            // GPT 일본어 응답 rabbitmq 통해서 전달
+            rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
+            // USER_TIP (사용자 모범 답안 일본어 응답) rabbitmq 통해서 전달
+            rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, userTipMessage);
+        })
     }
 
     /**
@@ -128,19 +148,9 @@ public class AiChatServiceImpl implements AiChatService {
 
                                     return openAiCommunicationProvider.sendPromptToGpt(gptChatRequest)
                                             .flatMap(response -> {
-
                                                 Conversation conversation = parseGetResponse(response);
                                                 // GPT 응답을 Redis에 저장
                                                 openAiRepository.saveAiChatHistory(roomId, List.of(new GptDialogueMessage("assistant", response)));
-
-                                                AiChatMessage gptMessage = AiChatMessage.builder()
-                                                        .sender(AiChatSender.GPT)
-                                                        .japanese(conversation.gptJapaneseResponse())
-                                                        .korean(conversation.gptKoreanResponse())
-                                                        .build();
-
-                                                // GPT 일본어 응답 rabbitmq 통해서 전달
-                                                rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
 
                                                return Mono.just(conversation);
                                             });
