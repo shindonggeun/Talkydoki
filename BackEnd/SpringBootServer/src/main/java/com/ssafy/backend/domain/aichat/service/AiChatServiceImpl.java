@@ -74,6 +74,16 @@ public class AiChatServiceImpl implements AiChatService {
      * {@inheritDoc}
      */
     @Override
+    public Mono<Conversation> setupAiChatBot(Long roomId, AiChatCategory category) {
+        return getAiChatRoom(roomId)
+                .flatMap(aiChatRoom -> setupGptAndSaveHistory(roomId, aiChatRoom, category))
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void sendAiChatMessageByUser(Long memberId, Long roomId, AiChatMessage userMessage) {
         // 사용자 정보와 채팅방 정보를 검증합니다.
         Member member = memberRepository.findById(memberId).orElseThrow(()
@@ -89,24 +99,40 @@ public class AiChatServiceImpl implements AiChatService {
         handleConversationWithGpt(roomId);
     }
 
-    @Override
-    public Mono<Conversation> setupAiChatBot(Long roomId, AiChatCategory category) {
-        return getAiChatRoom(roomId)
-                .flatMap(aiChatRoom -> setupGptAndSaveHistory(roomId, aiChatRoom, category))
-                .subscribeOn(Schedulers.boundedElastic());
-    }
-
+    /**
+     * 채팅방 ID를 기반으로 해당 채팅방을 조회합니다. 비동기적으로 처리되며, 채팅방이 존재하지 않을 경우 AiChatException을 발생시킵니다.
+     *
+     * @param roomId 채팅방의 ID
+     * @return 조회된 AiChatRoom에 대한 Mono 객체
+     */
     private Mono<AiChatRoom> getAiChatRoom(Long roomId) {
         return Mono.fromCallable(() -> aiChatRoomRepository.findById(roomId)
                         .orElseThrow(() -> new AiChatException(AiChatErrorCode.NOT_FOUND_AI_CHAT_ROOM)))
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
+    /**
+     * GPT 설정을 진행하고, 해당 설정에 기반한 대화의 초기 메시지를 저장합니다.
+     *
+     * @param roomId 채팅방의 ID
+     * @param aiChatRoom 채팅방 객체
+     * @param category 채팅방 카테고리
+     * @return 설정된 대화에 대한 Mono<Conversation> 객체
+     */
     private Mono<Conversation> setupGptAndSaveHistory(Long roomId, AiChatRoom aiChatRoom, AiChatCategory category) {
         return openAiCommunicationProvider.setupPromptToGpt(category)
                 .flatMap(setupResponse -> parseAndSaveResponse(roomId, aiChatRoom, setupResponse, category));
     }
 
+    /**
+     * GPT 설정 응답을 파싱하고, 결과를 저장한 후, RabbitMQ를 통해 메시지를 전송합니다.
+     *
+     * @param roomId 채팅방 ID
+     * @param aiChatRoom 채팅방 객체
+     * @param setupResponse GPT 설정에 대한 응답 문자열
+     * @param category 채팅방 카테고리
+     * @return 설정된 대화에 대한 Mono<Conversation> 객체
+     */
     private Mono<Conversation> parseAndSaveResponse(Long roomId, AiChatRoom aiChatRoom, String setupResponse, AiChatCategory category) {
         return parseGetResponse(roomId, setupResponse)
                 .doOnSuccess(conversation -> {
@@ -115,8 +141,16 @@ public class AiChatServiceImpl implements AiChatService {
                 });
     }
 
+    /**
+     * GPT로부터 받은 대화 메시지를 데이터베이스에 저장하고, 대화 설정 및 응답 메시지를 Redis에 저장합니다.
+     *
+     * @param aiChatRoom 대화가 이루어지는 AI 채팅방 객체
+     * @param conversation GPT와의 대화 내용
+     * @param category 대화 카테고리
+     * @param setupResponse GPT 설정 응답 문자열
+     */
     private void saveGptMessage(AiChatRoom aiChatRoom, Conversation conversation, AiChatCategory category, String setupResponse) {
-        // 대화 정보 DB에 저장
+        // 대화 메시지 DB에 저장
         AiChatHistory gptChatHistory = AiChatHistory.builder()
                 .aiChatRoom(aiChatRoom)
                 .sender(AiChatSender.GPT)
@@ -133,13 +167,11 @@ public class AiChatServiceImpl implements AiChatService {
     }
 
     /**
-     * 사용자가 보낸 메시지를 저장하고 RabbitMQ를 통해 해당 메시지를 전송합니다.
-     * 이 과정은 사용자의 상호작용을 AI 채팅 기록으로 유지하며,
-     * 실시간으로 메시지를 다른 서비스나 컴포넌트에 알립니다.
+     * 사용자로부터 받은 메시지를 저장하고, RabbitMQ를 통해 해당 메시지를 다른 서비스나 컴포넌트에 실시간으로 알립니다.
      *
-     * @param roomId     대화가 이루어지는 채팅방의 식별자
-     * @param aiChatRoom 사용자 메시지와 연관된 AI 채팅방 인스턴스
-     * @param userMessage 사용자가 보낸 메시지 정보를 담은 객체
+     * @param roomId 대화가 이루어지는 채팅방의 ID
+     * @param aiChatRoom 사용자 메시지와 연관된 AI 채팅방 객체
+     * @param userMessage 사용자가 보낸 메시지 정보
      */
     private void saveUserMessage(Long roomId, AiChatRoom aiChatRoom, AiChatMessage userMessage) {
         // 사용자의 메시지를 채팅 기록으로 저장합니다.
@@ -158,10 +190,10 @@ public class AiChatServiceImpl implements AiChatService {
     }
 
     /**
-     * GPT와의 대화 처리를 담당합니다. 사용자 메시지를 바탕으로 GPT와의 대화를 진행하고,
-     * 대화 결과를 RabbitMQ를 통해 전송합니다.
+     * GPT와 대화 처리를 담당하여, 사용자 메시지를 기반으로 GPT와 대화를 진행하고 그 결과를 RabbitMQ를 통해 전송합니다.
+     * 이 메서드는 비동기적으로 대화를 진행하며, 대화 결과를 다른 사용자나 서비스와 공유하기 위해 메시지 브로커를 사용합니다.
      *
-     * @param roomId      대화가 이루어지는 채팅방의 식별자
+     * @param roomId 대화가 이루어지는 채팅방의 ID
      */
     private void handleConversationWithGpt(Long roomId) {
         // GPT와의 대화를 비동기적으로 처리하고 결과를 RabbitMQ로 전송합니다.
@@ -173,9 +205,10 @@ public class AiChatServiceImpl implements AiChatService {
     }
 
     /**
-     * 사용자 메시지를 바탕으로 GPT와의 대화를 진행하고, 대화 결과를 Mono<Conversation> 형태로 반환합니다.
+     * 사용자 메시지를 바탕으로 GPT와의 대화를 진행하고, 그 결과를 Mono<Conversation> 형태로 반환합니다.
+     * 이 과정은 GPT 설정을 확인하고, 설정된 대화 내역을 기반으로 GPT와의 새로운 대화를 생성합니다.
      *
-     * @param roomId      대화가 진행되는 채팅방의 식별자
+     * @param roomId 대화가 진행되는 채팅방의 ID
      * @return 대화 결과를 포함하는 Mono<Conversation> 객체
      */
     private Mono<Conversation> sendAiChatMessageByGpt(Long roomId) {
@@ -189,7 +222,7 @@ public class AiChatServiceImpl implements AiChatService {
      * GPT와의 대화를 처리합니다. 이 과정에서는 이전 대화 내역과 사용자 메시지를 포함하여
      * GPT에 대화를 요청하고, 응답을 처리합니다.
      *
-     * @param roomId       대화가 진행되는 채팅방의 식별자
+     * @param roomId       대화가 진행되는 채팅방의 ID
      * @param setupRequest GPT 대화 설정
      * @return 대화 결과를 포함하는 Mono<Conversation> 객체
      */
@@ -199,7 +232,7 @@ public class AiChatServiceImpl implements AiChatService {
         return openAiRepository.findAiChatHistory(roomId)
                 .flatMap(historyMessages -> {
                     messages.addAll(historyMessages);
-                    log.info(messages.toString());
+//                    log.info(messages.toString());
                     GptChatRequest gptChatRequest = new GptChatRequest("gpt-3.5-turbo-1106", messages, 500);
                     return openAiCommunicationProvider.sendPromptToGpt(gptChatRequest);
                 })
@@ -210,6 +243,13 @@ public class AiChatServiceImpl implements AiChatService {
                 }); // 람다 표현식 사용
     }
 
+    /**
+     * RabbitMQ를 통해 GPT 응답과 사용자의 모범 답안 메시지를 전송합니다.
+     * 이 메서드는 대화의 흐름을 다른 사용자나 서비스와 실시간으로 공유하는 데 사용됩니다.
+     *
+     * @param roomId 대화가 이루어지는 채팅방의 ID
+     * @param conversation GPT와의 대화 결과
+     */
     private void sendMessagesToRabbitMQ(Long roomId, Conversation conversation) {
         AiChatMessage gptMessage = buildAiChatMessage(conversation.gptJapaneseResponse(), conversation.gptKoreanResponse(), AiChatSender.GPT);
         AiChatMessage userTipMessage = buildAiChatMessage(conversation.userTipJapaneseResponse(), conversation.userTipKoreanResponse(), AiChatSender.USER_TIP);
@@ -219,6 +259,15 @@ public class AiChatServiceImpl implements AiChatService {
         rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, userTipMessage);
     }
 
+    /**
+     * 대화 메시지를 구성하는 메서드입니다.
+     * 이 메서드는 GPT의 응답 또는 사용자의 모범 답안 등 대화에 사용될 메시지를 구성하여 반환합니다.
+     *
+     * @param japanese 일본어 대화 내용입니다.
+     * @param korean 한국어 대화 내용입니다.
+     * @param sender 메시지의 발신자 (GPT 또는 사용자 모범 답안)
+     * @return 구성된 AiChatMessage 객체
+     */
     private AiChatMessage buildAiChatMessage(String japanese, String korean, AiChatSender sender) {
         return AiChatMessage.builder()
                 .sender(sender)
@@ -227,6 +276,14 @@ public class AiChatServiceImpl implements AiChatService {
                 .build();
     }
 
+    /**
+     * GPT로부터 받은 응답 문자열을 파싱하여 대화 객체로 변환합니다.
+     * 이 메서드는 GPT 응답의 JSON 구조를 해석하여 필요한 정보를 추출하는 데 사용됩니다.
+     *
+     * @param roomId 대화가 이루어지는 채팅방의 ID입니다.
+     * @param responseString GPT로부터 받은 응답 문자열입니다.
+     * @return 파싱된 대화 내용을 포함하는 Mono<Conversation> 객체입니다.
+     */
     private Mono<Conversation> parseGetResponse(Long roomId, String responseString) {
         return Mono.fromCallable(() -> {
             ObjectMapper mapper = new ObjectMapper();
@@ -240,6 +297,12 @@ public class AiChatServiceImpl implements AiChatService {
         });
     }
 
+    /**
+     * 예외 발생 시 RabbitMQ를 통해 에러 메시지를 전송합니다.
+     * 이 메서드는 대화 설정 과정에서 발생하는 예외를 처리하고, 관련 정보를 다른 사용자나 서비스와 공유하는 데 사용됩니다.
+     *
+     * @param roomId 예외가 발생한 채팅방의 ID입니다.
+     */
     private void sendExceptionToRabbitMQ(Long roomId) {
         AiChatMessage errorMessage = buildAiChatMessage(AiChatErrorCode.DUPLICATE_CONVERSATION_TOPIC.getErrorMessage(),
                 AiChatErrorCode.DUPLICATE_CONVERSATION_TOPIC.getErrorMessage(), AiChatSender.GPT);
