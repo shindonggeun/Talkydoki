@@ -9,8 +9,11 @@ import {
 import env from "@/interface/SttInterface";
 import { useEffect, useState } from "react";
 import { useAiChatStore } from "@/stores/aichatStore";
-
-type Props = { japanese: string; text?: string; feadback?: string | null };
+type Props = {
+  japanese: string;
+  text?: string | null | undefined;
+  feadback?: string | null;
+};
 
 function ChatMessage({ japanese, text, feadback }: Props) {
   const globalIsTranslate = useAiChatStore((state) => state.globalIsTranslate);
