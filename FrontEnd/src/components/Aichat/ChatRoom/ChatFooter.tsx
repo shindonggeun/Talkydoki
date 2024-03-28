@@ -88,7 +88,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
       const newTimer = window.setTimeout(() => {
         SpeechRecognition.stopListening();
         resetTranscript();
-        setIsRecording((isRecording) => !isRecording);
+        setIsRecording(false);
       }, 17000);
       setTimer(newTimer as unknown as number);
     }

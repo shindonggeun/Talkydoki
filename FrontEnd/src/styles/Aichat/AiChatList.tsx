@@ -4,7 +4,7 @@ import { AiChatCard } from "../common/ui/card";
 
 export const Flexbox = styled.div`
   width: 100%;
-  height: 95vh;
+  min-height: 95vh;
   display: flex;
   justify-content: center;
   align-items: center;

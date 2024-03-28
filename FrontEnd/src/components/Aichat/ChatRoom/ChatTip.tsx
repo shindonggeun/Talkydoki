@@ -17,6 +17,20 @@ type ChatTipProps = {
 function ChatTip({ lastUserTip }: ChatTipProps) {
   const globalIsTip = useAiChatStore((state) => state.globalIsTip);
   const [isTip, setIstip] = useState(globalIsTip);
+  //등장애니메이션 상태
+  const [isVisible, setIsVisible] = useState(false);
+
+  // 투명도 조절
+  const [isBehind, setIsBehind] = useState(false);
+
+  useEffect(() => {
+    if (lastUserTip) {
+      setTimeout(() => setIsVisible(true), 2000); // 2초 딜레이 후 보이게 설정
+    }
+  }, [lastUserTip]);
+  const handleTipClick = () => {
+    setIsBehind((prev) => !prev); // 클릭 시 상태 토글
+  };
   console.log("isTip:", isTip);
   console.log("lastUserTip", lastUserTip);
   useEffect(() => {
@@ -67,17 +81,29 @@ function ChatTip({ lastUserTip }: ChatTipProps) {
   return (
     <>
       {isTip ? (
-        <ChatTipContainer>
+        //  onClick={() => setIstip(!isTip)}
+        <ChatTipContainer
+          className={`${isVisible ? "isVisible" : ""} ${
+            isBehind ? "isBehind" : ""
+          }`}
+          onClick={handleTipClick}
+        >
           <div className="message-record">녹음버튼을 누르고 말해주세요</div>
           <div className="message-suggest">TIP 다음과 같이 말해보세요</div>
 
           <div className="message-text">
-            {lastUserTip?.japanese},{lastUserTip?.korean}
+            {lastUserTip?.japanese}
+            {lastUserTip?.korean}{" "}
           </div>
-          <VolumeUpIcon
-            style={{ fontSize: "17px", cursor: "pointer" }}
-            onClick={() => synthesizeSpeech(lastUserTip?.japanese)}
-          />
+          <div className="volume-box">
+            <VolumeUpIcon
+              style={{ fontSize: "17px", cursor: "pointer" }}
+              onClick={(event) => {
+                event.stopPropagation();
+                synthesizeSpeech(lastUserTip?.japanese);
+              }}
+            />
+          </div>
         </ChatTipContainer>
       ) : (
         ""
