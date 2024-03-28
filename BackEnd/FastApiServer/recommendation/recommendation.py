@@ -138,7 +138,7 @@ scheduler.start()
 def get_news_data(news_id):
     news = data_storage.session.query(News).filter(News.id == news_id).first()
     if news:
-        images_urls = [image.image_url for image in news.news_images]
+        images_urls = [image.image_url for image in news.news_images] if news.news_images else []
         keyword_list = [keyword.keyword.japanese for keyword in news.news_keyword_mappings]
         return {
             "id": news.id,
