@@ -31,7 +31,6 @@ import MyVoca from "./components/MyPage/MyVoca/MyVoca";
 import ProfileUpdate from "@/routes/ProfileUpdate";
 import NewsDetail from "./routes/NewsDetail";
 
-
 function App() {
   const isDark = useIsDark();
   const isModalOn = useIsModalOn();
@@ -54,7 +53,10 @@ function App() {
               <Route path="/news" element={<News />} />
               <Route path="/news/detail" element={<NewsDetail />} />
               <Route path="/aichatlist" element={<AiChatList />} />
-              <Route path="/aichatroom" element={<AiChatRoom />} />
+              <Route
+                path="/aichatlist/:catagory/:roomId"
+                element={<AiChatRoom />}
+              />
               <Route path="/aichatreport" element={<AiChatReport />} />
               <Route path="/mypage" element={<MyPage />} />
               <Route path="/mypage/myvoca" element={<MyVoca />} />
