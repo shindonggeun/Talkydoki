@@ -17,9 +17,7 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
-
     private final EmailRepository emailRepository;
-
     private final JavaMailSender javaMailSender;
 
     private static final int EXPIRES_MIN = 5;	// 인증코드 인증 제한시간 5분
