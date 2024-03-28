@@ -59,6 +59,7 @@ export const useAddVoca = () => {
   });
 };
 
+// 단어장 목록 표시
 export const useMyVoca = () => {
   return useInfiniteQuery({
     queryKey: ["getVocaList"],
