@@ -11,8 +11,9 @@ function PageSection({}: Props) {
   const now = useRef(0);
 
   const scrollHandler = () => {
+    const pageHeight = now.current * window.innerHeight * 1.5;
     const topHeight =
-      window.innerHeight * (2 + now.current) - window.innerHeight * 0.2;
+      window.innerHeight * 2 + pageHeight - window.innerHeight * 0.2;
     if (window.scrollY - topHeight >= 0) {
       now.current += 1;
       if (!scrollRef.current) return;
@@ -46,7 +47,7 @@ function PageSection({}: Props) {
         {/* p2 */}
         <div
           className="page reverse"
-          style={{ backgroundColor: "var(--red-dark)" }}
+          style={{ backgroundColor: "var(--yellow-dark)" }}
         >
           <img src={News} alt="news" className="image" />
           <div className="desc">

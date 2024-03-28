@@ -66,7 +66,7 @@ function ThumbnailView({ images, isThumb }: Props) {
         {images.map((each, idx) => (
           <img
             key={idx}
-            src={each}
+            src={each ? each : Img}
             alt={`뉴스 이미지 ${idx + 1}`}
             style={{ transform: `translateX(-${100 * now}%)` }}
             onError={(e) => {

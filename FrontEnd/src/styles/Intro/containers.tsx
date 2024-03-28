@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Texture from "@/assets/images/texture.png";
 
 export const IntroWrapper = styled.div`
   width: 100vw;
@@ -8,19 +9,22 @@ export const IntroWrapper = styled.div`
 export const IntroSidebarWrapper = styled.div`
   width: 100vw;
   height: 80px;
+  padding: 0 30px;
   position: fixed;
   z-index: 2;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: all 0.3s ease;
 
   .textLogo {
     width: 150px;
-    filter: drop-shadow(0 0 1px var(--text-button));
   }
 
-  .imageLogo {
-    width: 100px;
+  div {
+    & > * {
+      margin: 1vh 5px;
+    }
   }
 `;
 
@@ -68,6 +72,31 @@ export const IntroSectionWrapper = styled(SectionBase)`
       flex-direction: column;
       justify-content: center;
       align-items: center;
+
+      &:nth-child(2) {
+        div {
+          opacity: 0;
+          transform: translateY(-30px);
+          transition: transform 0.5s ease, opacity 1s ease;
+        }
+
+        &.active {
+          div {
+            opacity: 1;
+            transform: translateY(0px);
+
+            ${() => {
+              const children = [];
+              for (let n = 1; n < 6; n++) {
+                children.push(`&:nth-child(${n}) {
+                transition-delay: ${n - 1}s;
+            }`);
+              }
+              return children;
+            }}
+          }
+        }
+      }
     }
 
     .quote {
@@ -110,10 +139,13 @@ export const PageSectionWrapper = styled(SectionBase)`
 
   .page {
     width: 100%;
-    height: 100vh;
+    height: 150vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    background-image: url(${Texture});
+    background-repeat: repeat;
+    background-blend-mode: color-burn;
 
     .image {
       width: 60%;

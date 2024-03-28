@@ -3,6 +3,7 @@ import { TimerCarouselWrapper, MainCarouselItem } from "@/styles/Main/carousel";
 import { newsSplitter, sentenceMaker } from "@/util/language/format";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import DefaultImage from "@/assets/images/default_news_image.jpeg";
 
 type Props = {
   width: number; // 캐러셀 넓이, %단위 (Wrapper 기준)
@@ -85,7 +86,7 @@ function TimerCarousel({ width, height, news }: Props) {
             key={idx}
             $width={width}
             $height={height}
-            $bgImg={each.newsImages[0]}
+            $bgImg={each.newsImages[0] ? each.newsImages[0] : DefaultImage}
             onClick={() => {
               console.log(each.newsId);
               navigate(`/news/detail`, { state: { newsId: each.id } });
