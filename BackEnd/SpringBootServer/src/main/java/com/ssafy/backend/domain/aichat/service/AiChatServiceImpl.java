@@ -89,48 +89,47 @@ public class AiChatServiceImpl implements AiChatService {
         handleConversationWithGpt(roomId);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public Mono<Conversation> setupAiChatBot(Long roomId, AiChatCategory category) {
-        // 채팅방 정보 조회를 비동기로 수행
-        Mono<AiChatRoom> aiChatRoomMono = Mono.fromCallable(() -> aiChatRoomRepository.findById(roomId)
+        return getAiChatRoom(roomId)
+                .flatMap(aiChatRoom -> setupGptAndSaveHistory(roomId, aiChatRoom, category))
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    private Mono<AiChatRoom> getAiChatRoom(Long roomId) {
+        return Mono.fromCallable(() -> aiChatRoomRepository.findById(roomId)
                         .orElseThrow(() -> new AiChatException(AiChatErrorCode.NOT_FOUND_AI_CHAT_ROOM)))
                 .subscribeOn(Schedulers.boundedElastic());
+    }
 
-        // GPT 설정 요청을 비동기로 수행
-        Mono<String> setupResponseMono = openAiCommunicationProvider.setupPromptToGpt(category)
-                .subscribeOn(Schedulers.boundedElastic());
+    private Mono<Conversation> setupGptAndSaveHistory(Long roomId, AiChatRoom aiChatRoom, AiChatCategory category) {
+        return openAiCommunicationProvider.setupPromptToGpt(category)
+                .flatMap(setupResponse -> parseAndSaveResponse(roomId, aiChatRoom, setupResponse, category));
+    }
 
-        // 채팅방 정보와 GPT 설정 결과를 합쳐서 처리
-        return aiChatRoomMono.flatMap(aiChatRoom -> setupResponseMono
-                .flatMap(setupResponse -> parseGetResponse(roomId, setupResponse) // GPT 응답 파싱
-                        .flatMap(conversation -> {
-                            // 설정된 대화 정보를 DB에 저장
-                            AiChatHistory aiChatHistory = AiChatHistory.builder()
-                                    .aiChatRoom(aiChatRoom)
-                                    .sender(AiChatSender.GPT)
-                                    .content(conversation.gptJapaneseResponse())
-                                    .build();
-                            return Mono.fromCallable(() -> aiChatHistoryRepository.save(aiChatHistory))
-                                    .subscribeOn(Schedulers.boundedElastic())
-                                    .then(Mono.just(conversation));
-                        })
-                        .doOnSuccess(conversation -> {
-                            // Redis에 설정 정보 및 응답 메시지 저장
-                            GptSetupRequest setupRequest = GptSetupRequest.from(category);
-                            openAiRepository.saveOpenAiSetup(roomId, setupRequest);
-                            openAiRepository.saveAiChatHistory(roomId, List.of(new GptDialogueMessage("assistant", setupResponse)));
+    private Mono<Conversation> parseAndSaveResponse(Long roomId, AiChatRoom aiChatRoom, String setupResponse, AiChatCategory category) {
+        return parseGetResponse(roomId, setupResponse)
+                .doOnSuccess(conversation -> {
+                    saveGptMessage(aiChatRoom, conversation, category, setupResponse);
+                    sendMessagesToRabbitMQ(roomId, conversation);
+                });
+    }
 
-                            // RabbitMQ를 통해 메시지 전송
-                            AiChatMessage gptMessage = buildAiChatMessage(conversation.gptJapaneseResponse(), conversation.gptKoreanResponse(), AiChatSender.GPT);
-                            AiChatMessage userTipMessage = buildAiChatMessage(conversation.userTipJapaneseResponse(), conversation.userTipKoreanResponse(), AiChatSender.USER_TIP);
+    private void saveGptMessage(AiChatRoom aiChatRoom, Conversation conversation, AiChatCategory category, String setupResponse) {
+        // 대화 정보 DB에 저장
+        AiChatHistory gptChatHistory = AiChatHistory.builder()
+                .aiChatRoom(aiChatRoom)
+                .sender(AiChatSender.GPT)
+                .content(conversation.gptJapaneseResponse())
+                .build();
 
-                            rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
-                            rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, userTipMessage);
-                        }))
-                .subscribeOn(Schedulers.boundedElastic()));
+        // GPT의 응답 메시지를 DB에 저장합니다.
+        aiChatHistoryRepository.save(gptChatHistory);
+
+        // GPT의 프롬포트 설정 메시지와 응답 메시지를 Redis에 저장합니다. (캐싱 용도)
+        GptSetupRequest gptSetupRequest = GptSetupRequest.from(category);
+        openAiRepository.saveOpenAiSetup(aiChatRoom.getId(), gptSetupRequest);
+        openAiRepository.saveAiChatHistory(aiChatRoom.getId(), List.of(new GptDialogueMessage("assistant", setupResponse)));
     }
 
     /**
@@ -144,14 +143,14 @@ public class AiChatServiceImpl implements AiChatService {
      */
     private void saveUserMessage(Long roomId, AiChatRoom aiChatRoom, AiChatMessage userMessage) {
         // 사용자의 메시지를 채팅 기록으로 저장합니다.
-        AiChatHistory aiChatHistory = AiChatHistory.builder()
+        AiChatHistory userChatHistory = AiChatHistory.builder()
                 .aiChatRoom(aiChatRoom)
                 .sender(AiChatSender.USER)
                 .content(userMessage.japanese())
                 .build();
 
         // 사용자의 메시지를 DB와 Redis에 저장합니다.
-        aiChatHistoryRepository.save(aiChatHistory);
+        aiChatHistoryRepository.save(userChatHistory);
         openAiRepository.saveAiChatHistory(roomId, List.of(new GptDialogueMessage( "user", userMessage.japanese())));
 
         // RabbitMQ를 통해 실시간으로 사용자 메시지를 전송합니다.
@@ -200,7 +199,7 @@ public class AiChatServiceImpl implements AiChatService {
         return openAiRepository.findAiChatHistory(roomId)
                 .flatMap(historyMessages -> {
                     messages.addAll(historyMessages);
-//                    log.info(messages.toString());
+                    log.info(messages.toString());
                     GptChatRequest gptChatRequest = new GptChatRequest("gpt-3.5-turbo-1106", messages, 500);
                     return openAiCommunicationProvider.sendPromptToGpt(gptChatRequest);
                 })
