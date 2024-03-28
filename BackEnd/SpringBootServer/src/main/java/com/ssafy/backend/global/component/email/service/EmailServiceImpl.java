@@ -14,60 +14,74 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.Random;
 
+/**
+ * {@link EmailService}의 구현체로, 이메일 인증 코드의 발송과 검증 로직을 처리합니다.
+ */
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
+    private final EmailRepository emailRepository; // 이메일 인증 코드 저장소
+    private final JavaMailSender javaMailSender; // 이메일 발송을 위한 JavaMailSender
 
-    private final EmailRepository emailRepository;
+    private static final int EXPIRES_MIN = 5; // 인증 코드의 유효 시간(분)
 
-    private final JavaMailSender javaMailSender;
-
-    private static final int EXPIRES_MIN = 5;	// 인증코드 인증 제한시간 5분
-
-
+    /**
+     * 지정된 이메일 주소로 인증 코드를 비동기적으로 발송합니다.
+     *
+     * @param toEmail 인증 코드를 받을 이메일 주소입니다.
+     */
     @Override
     @Async("threadPoolTaskExecutor") // threadPoolTaskExecutor를 사용하여 비동기 처리
     public void sendEmailCode(String toEmail) {
-        String emailCode = createKey();
-        MimeMessage mimeMessage = createMessage(toEmail, emailCode);
-        javaMailSender.send(mimeMessage);
-        emailRepository.save(toEmail, emailCode, EXPIRES_MIN);
+        String emailCode = createKey(); // 인증 코드 생성
+        MimeMessage mimeMessage = createMessage(toEmail, emailCode); // 이메일 메시지 생성
+        javaMailSender.send(mimeMessage); // 이메일 발송
+        emailRepository.save(toEmail, emailCode, EXPIRES_MIN); // 인증 코드와 유효 시간을 저장
     }
 
+    /**
+     * 제공된 이메일 주소와 인증 코드를 검증합니다.
+     *
+     * @param email 검증할 이메일 주소입니다.
+     * @param code 사용자로부터 받은 인증 코드입니다.
+     * @throws GlobalException 인증 코드가 유효하지 않거나 일치하지 않는 경우 예외를 발생시킵니다.
+     */
     @Override
     public void verifyEmailCode(String email, String code) {
-        Optional<String> saveCode = emailRepository.findSignupCode(email);
+        Optional<String> savedCode = emailRepository.findSignupCode(email); // 저장된 인증 코드 조회
 
-        if (saveCode.isEmpty() || !saveCode.get().equals(code)) {
+        if (savedCode.isEmpty() || !savedCode.get().equals(code)) { // 인증 코드 불일치
             throw new GlobalException(GlobalErrorCode.INVALID_EMAIL_VERIFICATION_CODE);
         }
 
-        emailRepository.deleteSignupCode(email);
+        emailRepository.deleteSignupCode(email); // 인증 성공 후 인증 코드 삭제
     }
 
+    /**
+     * 8자리 인증 코드를 생성하는 내부 메서드입니다.
+     *
+     * @return 생성된 인증 코드입니다.
+     */
     private String createKey() {
         StringBuilder key = new StringBuilder();
         Random rnd = new Random();
+        // 인증 코드 구성: 소문자, 대문자, 숫자를 랜덤으로 조합
+        int [][] asciiIndex = {{26, 97}, {26, 65}, {10, 48}}; // 소문자, 대문자, 숫자에 해당하는 ASCII 범위
 
-        // 인증코드 8자리로
-        for (int i = 0; i < 8; i++) {
-            int index = rnd.nextInt(3); // 0 ~ 2 까지 랜덤
-
-            switch (index) {
-                case 0:
-                    key.append((char) ((int) (rnd.nextInt(26)) + 97));
-                    break;
-                case 1:
-                    key.append((char) ((int) (rnd.nextInt(26)) + 65));
-                    break;
-                case 2:
-                    key.append((rnd.nextInt(10)));
-                    break;
-            }
+        for(int i = 0; i < 8; i++) { // 8자리 인증 코드 생성
+            int[] ascii = asciiIndex[rnd.nextInt(asciiIndex.length)];
+            key.append((char)(rnd.nextInt(ascii[0]) + ascii[1]));
         }
         return key.toString();
     }
 
+    /**
+     * 이메일 메시지를 생성하는 내부 메서드입니다.
+     *
+     * @param toEmail 수신자 이메일 주소입니다.
+     * @param emailCode 발송할 인증 코드입니다.
+     * @return 생성된 MimeMessage 객체입니다.
+     */
     private MimeMessage createMessage(String toEmail, String emailCode) {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
 
@@ -75,6 +89,7 @@ public class EmailServiceImpl implements EmailService {
             mimeMessage.addRecipients(Message.RecipientType.TO, toEmail);
             mimeMessage.setSubject("Talkydoki 이메일 인증 코드입니다.");
 
+            // 이메일 본문 구성
             String msgg = "";
 
             msgg += "<div style='margin:20px;'>";
@@ -93,10 +108,9 @@ public class EmailServiceImpl implements EmailService {
 
             mimeMessage.setText(msgg, "utf-8", "html"); // 안에 들어갈 내용 세팅
             mimeMessage.setFrom(new InternetAddress("ssafy@gmail.com", "Talkydoki"));
+            return mimeMessage;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
-        return mimeMessage;
     }
 }

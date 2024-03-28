@@ -2,78 +2,41 @@ import { MainContainer } from "@/styles/Aichat/AiChatRoom";
 import chatbot from "@/assets/images/logo_face.png";
 
 import ChatMessage from "./ChatMessage";
+// 컴포넌트화필요 타입
+// 메시지 타입 정의
+interface ChatMessage {
+  sender: "USER" | "GPT" | "USER_TIP"; // 메시지를 보낸 주체
+  japanese: string; // 메시지의 일본어 텍스트
+  korean?: string | null; // 메시지의 한국어 번역, 없을 수도 있음
+}
 
-type Props = {};
+// props 타입 정의
+type ChatMainProps = {
+  messages: ChatMessage[]; // 메시지 배열을 props로 받음
+};
 
-function ChatMain({}: Props) {
-  const messages = [
-    {
-      id: 1,
-      text: "안녕하세요, 무엇을 도와드릴까요?",
-      japanese: "こんにちは何を助けますか？",
-      sender: "chatbot",
-    },
-    {
-      id: 2,
-      text: "오늘 날씨가 어때요?",
-      japanese: "今日の天気はどうですか？",
-      sender: "user",
-    },
-    {
-      id: 3,
-      text: "서울의 현재 날씨는 맑음입니다!",
-      japanese: "ソウルの現在の天気は晴れです！",
-      sender: "chatbot",
-    },
-    {
-      id: 4,
-      text: "감사합니다!",
-      japanese: "ありがとうございます！",
-      sender: "user",
-    },
-    {
-      id: 5,
-      text: "안녕하세요, 무엇을 도와드릴까요?",
-      japanese: "ありがとうございます！",
-      sender: "chatbot",
-    },
-    {
-      id: 6,
-      text: "오늘 날씨가 어때요?",
-      japanese: "ありがとうございます！",
-      sender: "user",
-    },
-    {
-      id: 7,
-      text: "서울의 현재 날씨는 맑음입니다!",
-      japanese: "ソウルの現在の天気は晴れです！",
-      sender: "chatbot",
-    },
-    {
-      id: 8,
-      text: "감사합니다!",
-      japanese: "ヤクルトの５年目、奥川恭伸投手（２２）",
-      sender: "user",
-    },
-  ];
+function ChatMain({ messages }: ChatMainProps) {
   return (
     <>
       <MainContainer>
-        {messages.map((message) =>
-          message.sender === "chatbot" ? (
-            <div key={message.id} className="message-item chatbot">
+        {messages.map((message, index) =>
+          message.sender === "GPT" ? (
+            <div key={index} className="message-item chatbot">
               <div className="chatbot-icon-container">
                 <img src={chatbot} alt="Chatbot" className="chatbot-icon" />
               </div>
               <div className="message-item chat">
-                <ChatMessage japanese={message.japanese} text={message.text} />
+                <ChatMessage
+                  japanese={message.japanese}
+                  text={message.korean}
+                />
               </div>
             </div>
-          ) : (
-            <div key={message.id} className="message-item self">
-              <ChatMessage japanese={message.japanese} text={message.text} />
+          ) : message.sender === "USER" ? (
+            <div key={index} className="message-item self">
+              <ChatMessage japanese={message.japanese} text={message.korean} />
             </div>
-          )
+          ) : null
         )}
       </MainContainer>
     </>

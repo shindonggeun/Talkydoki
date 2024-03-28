@@ -2,11 +2,15 @@ package com.ssafy.backend.domain.aichat.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.backend.domain.aichat.dto.*;
 import com.ssafy.backend.domain.aichat.entity.*;
 import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
 import com.ssafy.backend.domain.aichat.entity.enums.AiChatSender;
+import com.ssafy.backend.domain.aichat.exception.AiChatErrorCode;
+import com.ssafy.backend.domain.aichat.exception.AiChatException;
 import com.ssafy.backend.domain.aichat.repository.AiChatHistoryRepository;
 import com.ssafy.backend.domain.aichat.repository.AiChatReportRepository;
 import com.ssafy.backend.domain.aichat.repository.AiChatRoomRepository;
@@ -85,11 +89,9 @@ public class AiChatServiceImpl implements AiChatService {
     public void sendAiChatMessageByUser(Long memberId, Long roomId, AiChatMessage userMessage) {
         Member member = memberRepository.findById(memberId).orElseThrow(()
                 -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
-        log.info("메시지 보내는사람: {}", member.getName());
 
-        // TODO: AI 회화 채팅 커스텀 Exception 처리
         AiChatRoom aiChatRoom = aiChatRoomRepository.findById(roomId).orElseThrow(()
-                -> new RuntimeException("해당 AI 회화 채팅방을 찾을 수 없습니다."));
+                -> new AiChatException(AiChatErrorCode.NOT_FOUND_AI_CHAT_ROOM));
 
         AiChatHistory aiChatHistory = AiChatHistory.builder()
                 .aiChatRoom(aiChatRoom)
@@ -102,7 +104,27 @@ public class AiChatServiceImpl implements AiChatService {
         // 사용자 메시지를 Redis에 저장
         openAiRepository.saveAiChatHistory(roomId, List.of(new GptDialogueMessage("user", userMessage.japanese())));
 
+        // RabbitMQ를 통해 사용자 메시지 전달
         rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, userMessage);
+
+        sendAiChatMessageByGpt(roomId, userMessage).subscribe(conversation -> {
+            AiChatMessage gptMessage = AiChatMessage.builder()
+                    .sender(AiChatSender.GPT)
+                    .japanese(conversation.gptJapaneseResponse())
+                    .korean(conversation.gptKoreanResponse())
+                    .build();
+
+            AiChatMessage userTipMessage = AiChatMessage.builder()
+                    .sender(AiChatSender.USER_TIP)
+                    .japanese(conversation.userJapaneseResponse())
+                    .korean(conversation.userKoreanResponse())
+                    .build();
+
+            // GPT 일본어 응답 rabbitmq 통해서 전달
+            rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
+            // USER_TIP (사용자 모범 답안 일본어 응답) rabbitmq 통해서 전달
+            rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, userTipMessage);
+        });
     }
 
     /**
@@ -111,7 +133,7 @@ public class AiChatServiceImpl implements AiChatService {
     @Override
     public Mono<Conversation> sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage) {
         return openAiRepository.findOpenAiSetup(roomId)
-                .switchIfEmpty(Mono.error(new RuntimeException("GPT 채팅방 설정을 찾을 수 없습니다.")))
+                .switchIfEmpty(Mono.error(new AiChatException(AiChatErrorCode.NOT_FOUNT_AI_CHAT_ROOM_SETUP)))
                 .flatMap(setupRequest ->
                         // Redis에서 최근 대화 내역 가져오기
                         openAiRepository.findAiChatHistory(roomId)
@@ -122,25 +144,13 @@ public class AiChatServiceImpl implements AiChatService {
                                         messages.addAll(historyMessages);
                                     }
 
-                                    // 이제 'messages' 리스트는 첫 번째 시스템 프롬프트와 마지막으로 사용자의 최근 메시지를 포함합니다.
                                     GptChatRequest gptChatRequest = new GptChatRequest("gpt-3.5-turbo-1106", messages, 500);
-                                    log.info("gpt한테 prompt 보낼 메시지(유저가 보냄):  {}", gptChatRequest);
 
                                     return openAiCommunicationProvider.sendPromptToGpt(gptChatRequest)
                                             .flatMap(response -> {
-                                                log.info("GPT 응답값: {}", response);
-                                               Conversation conversation = parseGetResponse(response);
+                                                Conversation conversation = parseGetResponse(response);
                                                 // GPT 응답을 Redis에 저장
                                                 openAiRepository.saveAiChatHistory(roomId, List.of(new GptDialogueMessage("assistant", response)));
-
-                                                AiChatMessage gptMessage = AiChatMessage.builder()
-                                                        .sender(AiChatSender.GPT)
-                                                        .japanese(conversation.gptJapaneseResponse())
-                                                        .korean(conversation.gptKoreanResponse())
-                                                        .build();
-
-                                                // GPT 일본어 응답 rabbitmq 통해서 전달
-                                                rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
 
                                                return Mono.just(conversation);
                                             });
@@ -153,13 +163,10 @@ public class AiChatServiceImpl implements AiChatService {
     public Mono<Conversation> setupAiChatBot(Long roomId, AiChatCategory category) {
         // 채팅방 정보와 GPT 설정을 병렬로 실행
         return Mono.fromCallable(() -> aiChatRoomRepository.findById(roomId)
-                        .orElseThrow(() -> new RuntimeException("해당 AI 회화 채팅방을 찾을 수 없습니다.")))
+                        .orElseThrow(() -> new AiChatException(AiChatErrorCode.NOT_FOUND_AI_CHAT_ROOM)))
                 .subscribeOn(Schedulers.boundedElastic())
-                .zipWith(openAiCommunicationProvider.setupPromptToGpt(category)
-                                .onErrorMap(exception -> new RuntimeException("GPT 설정 실패: " + exception.getMessage())),
+                .zipWith(openAiCommunicationProvider.setupPromptToGpt(category),
                         (aiChatRoom, setupResponse) -> {
-                            // 설정된 대화 정보 로깅
-                            log.info("GPT 대화 세팅 완료: {}", setupResponse);
                             // 설정된 대화 정보를 기반으로 Conversation 객체 생성
                             Conversation conversation = parseGetResponse(setupResponse);
 
@@ -195,23 +202,6 @@ public class AiChatServiceImpl implements AiChatService {
                 .subscribeOn(Schedulers.boundedElastic());
     }
 
-//    @Override
-//    public Mono<Void> createReport(Long roomId) {
-//        return Mono.fromCallable(() -> aiChatHistoryRepository.findByAiChatRoomId(roomId))
-//                .subscribeOn(Schedulers.boundedElastic())
-//                .map(AiChatReportCreateApiRequest::convertRequest)
-//                .flatMap(request -> webClient.post()
-//                        .uri("/chat/completions")
-//                        .bodyValue(request)
-//                        .retrieve()
-//                        .bodyToMono(GptChatCompletionResponse.class))
-//                .flatMap(response -> {
-//                    String content = response.choices().get(0).message().content();
-//                    log.info("GPT 레포트 결과!!!!: {}", content);
-//                    return Mono.fromCallable(() -> objectMapper.readValue(content, AiChatReportCreateRequest.class))
-//                            .flatMap(res -> openAiCommunicationProvider.saveReport(roomId, res));
-//                });
-//    }
     @Override
     public Mono<Long> createReport(Long roomId) {
         return Mono.fromCallable(() -> aiChatHistoryRepository.findByAiChatRoomId(roomId))
@@ -236,13 +226,18 @@ public class AiChatServiceImpl implements AiChatService {
         QAiChatHistory qAiChatHistory = QAiChatHistory.aiChatHistory;
         QAiChatFeedback qAiChatFeedback = QAiChatFeedback.aiChatFeedback;
 
+        // 급한대로 gpt의 피드백도 생기는 오류를
+        // 아래 분기를 통해 해결
         return jpaQueryFactory
                 .select(
-                        qAiChatFeedback.id,
                         qAiChatHistory.id, // 이 부분은 chatId를 나타내며, AiChatHistory의 ID를 참조합니다.
                         qAiChatHistory.sender, // sender에 해당
                         qAiChatHistory.content, // message에 해당
-                        qAiChatFeedback.content // feedback에 해당
+//                        qAiChatFeedback.content // feedback에 해당
+                        new CaseBuilder()
+                                .when(qAiChatHistory.sender.eq(AiChatSender.GPT)) // sender가 GPT enum 값과 동일한 경우
+                                .then(Expressions.stringTemplate("CAST(NULL AS java.lang.String)")) // feedback을 null로 설정
+                                .otherwise(qAiChatFeedback.content) // 그렇지 않으면 실제 feedback 내용 사용
                 )
                 .from(qAiChatHistory)
                 .leftJoin(qAiChatFeedback).on(qAiChatHistory.id.eq(qAiChatFeedback.aiChatHistory.id))
@@ -252,14 +247,14 @@ public class AiChatServiceImpl implements AiChatService {
                         tuple.get(qAiChatHistory.id),
                         tuple.get(qAiChatHistory.sender),
                         tuple.get(qAiChatHistory.content),
-                        tuple.get(qAiChatFeedback.content)
+                        tuple.get(3, String.class) // feedback에 해당하는 값 처리
                 ))
                 .toList();
     }
 
     @Override
     public FullReportInfo getReportDetail(Long reportId) {
-        AiChatReport aiChatReport = aiChatReportRepository.findById(reportId).orElseThrow(() -> new RuntimeException("Can't find the report withd id: " + reportId));
+        AiChatReport aiChatReport = aiChatReportRepository.findById(reportId).orElseThrow(() -> new RuntimeException("Can't find the report with id: " + reportId));
 
         List<AiChatAndFeedbackInfo> aiChatAndFeedbackInfos = this.getAiChatFeedbackInfo();
 
@@ -282,7 +277,6 @@ public class AiChatServiceImpl implements AiChatService {
                 .collect(Collectors.toList());
     }
 
-
     private Conversation parseGetResponse(String responseString) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -290,17 +284,10 @@ public class AiChatServiceImpl implements AiChatService {
             // "conversation" 객체를 직접 찾습니다.
             // 만약 응답에 "conversation" 외의 다른 데이터가 포함되어 있고, 그 부분을 무시하고자 할 때 사용합니다.
             JsonNode conversationNode = root.path("conversation");
-
-            Conversation conversation = mapper.treeToValue(conversationNode, Conversation.class);
-            log.info("gpt 답변 일본어 파싱한 것: {}", conversation.gptJapaneseResponse());
-            log.info("gpt 답변 한국어 파싱한 것: {}", conversation.gptKoreanResponse());
-            log.info("user 모범 답변 일본어 파싱한 것: {}", conversation.userJapaneseResponse());
-            log.info("user 모범 답변 한국어 파싱한 것: {}", conversation.userKoreanResponse());
-            return conversation;
+            return mapper.treeToValue(conversationNode, Conversation.class);
         } catch (Exception e) {
-            // TODO: 파싱 예외 발생했다는건 대화가 주제에 안맞거나 종료되었다는 의미 (JSON 형태로 안오거나 conversation 객체에 감싸서 안왔다는 의미)
-            log.info("exception 터지는지 확인하기");
-            throw new RuntimeException("파싱 예외 발생", e);
+            log.info("exception 터지는지 확인하기: {}", e.getMessage());
+            throw new AiChatException(AiChatErrorCode.DUPLICATE_CONVERSATION_TOPIC);
         }
     }
 }

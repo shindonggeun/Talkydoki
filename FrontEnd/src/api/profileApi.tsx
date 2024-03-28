@@ -2,7 +2,10 @@ import {
   PasswordChangeParams,
   ProfileUpdateParams,
 } from "@/interface/AuthInterface";
-import { UserKeywordInterface } from "@/interface/UserInterface";
+import {
+  UserAchievementInterface,
+  UserKeywordInterface,
+} from "@/interface/UserInterface";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 import { useSetPasswordErrors } from "@/stores/signUpStore";
 import { customAxios } from "@/util/auth/customAxios";
@@ -103,6 +106,20 @@ export const useUserKeyword = () => {
         return data.dataBody as UserKeywordInterface[];
       } else {
         return [] as UserKeywordInterface[];
+      }
+    },
+    staleTime: 1000 * 60 * 60, // 1시간
+    gcTime: 1000 * 60 * 60, // 1시간
+  });
+};
+
+export const useGetUserAchievement = () => {
+  return useQuery({
+    queryKey: ["userAchievement"],
+    queryFn: () => customAxios.get("/member/mypage"),
+    select: ({ data }) => {
+      if (data.dataHeader.successCode == 0) {
+        return data.dataBody as UserAchievementInterface;
       }
     },
     staleTime: 1000 * 60 * 60, // 1시간

@@ -8,7 +8,7 @@ import { useTheme } from "styled-components";
 
 function UserKeywordChart() {
   const theme = useTheme();
-  const { data, isLoading } = useUserKeyword();
+  const { data } = useUserKeyword();
   const [keywords, setKeywords] = useState<{ x: string; y: number }[]>([]);
 
   useEffect(() => {
@@ -23,8 +23,6 @@ function UserKeywordChart() {
       });
     }
   }, [data]);
-
-  if (isLoading || !data) return <></>;
 
   const chartData: {
     series: ApexOptions["series"];

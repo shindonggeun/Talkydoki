@@ -31,6 +31,7 @@ export const TextFlow = styled.div`
 export const SectionTitle = styled.div`
   font-size: 80pt;
   font-weight: 900;
+  margin-top: 10vh;
 
   @media screen and (max-width: 992px) {
     font-size: 43pt;

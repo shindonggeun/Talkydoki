@@ -22,60 +22,72 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 /**
- * Spring Security 설정을 담당하는 클래스입니다.
- * {@link EnableMethodSecurity} 어노테이션을 통해 메소드 단위의 보안 설정을 활성화합니다.
+ * Spring Security의 구성을 정의하는 설정 클래스입니다.
+ * 이 클래스는 JWT 인증을 포함한 Spring Security의 여러 보안 관련 설정을 구성합니다.
+ * {@link EnableMethodSecurity} 어노테이션은 메소드 단위의 보안 주석을 활성화하여
+ * 세밀한 접근 제어를 가능하게 합니다.
  */
-
 @Configuration
 @RequiredArgsConstructor
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
-    private final JwtTokenProvider jwtTokenProvider;
-    private final ObjectMapper objectMapper;
+    private final JwtTokenProvider jwtTokenProvider;    // JWT 토큰 생성 및 검증을 담당하는 컴포넌트
+    private final ObjectMapper objectMapper;    // JSON 객체 변환을 위한 ObjectMapper
 
     /**
-     * Spring Security의 HTTP 보안 설정을 구성합니다.
+     * Spring Security의 HTTP 보안 설정을 구성하는 메서드입니다.
+     * 이 메서드는 CORS 설정, CSRF 보호 비활성화, HTTP 기본 인증 비활성화,
+     * 폼 기반 로그인과 로그아웃 비활성화, JWT 인증 필터 추가 등의 보안 관련 설정을 정의합니다.
      *
-     * @param http HttpSecurity
-     * @return 구성된 SecurityFilterChain
-     * @throws Exception 보안 구성 중 발생 가능한 예외
+     * @param http HttpSecurity 객체를 통해 웹 보안 설정을 구성할 수 있습니다.
+     * @return 구성된 SecurityFilterChain 객체를 반환합니다.
+     * @throws Exception 보안 설정 중 발생할 수 있는 예외를 처리합니다.
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        // CORS 설정
-        http.cors(cors ->
+        http
+                // CORS(Cross-Origin Resource Sharing) 설정을 적용합니다.
+                .cors(cors ->
                         cors.configurationSource(corsConfigurationSource())
                 )
-                .httpBasic(AbstractHttpConfigurer::disable) // HTTP 기본 인증 비활성화
+                // HTTP Basic 인증을 비활성화하여, 사용자 이름과 비밀번호를 사용한 인증 방식을 사용하지 않습니다.
+                .httpBasic(AbstractHttpConfigurer::disable)
+                // 웹 페이지를 <frame> 또는 <iframe> 내에서 렌더링하는 것을 방지하는 X-Frame-Options 헤더를 비활성화합니다.
                 .headers(header ->
-                        header.frameOptions(
-                                HeadersConfigurer.FrameOptionsConfig::disable // 프레임 옵션 비활성화
-                        )
+                        header.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)
                 )
+                // 모든 요청에 대해 접근을 허용합니다.
+                // 상세한 접근 제어는 각 API 엔드포인트에 @PreAuthorize 등의 어노테이션을 사용하여 설정할 수 있습니다.
                 .authorizeHttpRequests(auth ->
-                        auth.anyRequest().permitAll()   // 모든 요청에 대해 접근 허용
+                        auth.anyRequest().permitAll()
                 )
-                .formLogin(AbstractHttpConfigurer::disable) // Spring security 자체 제공 로그인 폼 비활성화
-                .logout(AbstractHttpConfigurer::disable)    // Spring security 자체 제공 로그아웃 비활성화
-                .addFilterBefore(jwtSecurityFilter(), UsernamePasswordAuthenticationFilter.class);  // JWT 필터 추가
+                // Spring Security가 제공하는 기본 로그인 페이지와 로그아웃 메커니즘을 비활성화합니다.
+                .formLogin(AbstractHttpConfigurer::disable)
+                .logout(AbstractHttpConfigurer::disable)
+                // JWT 인증을 위한 커스텀 필터를 UsernamePasswordAuthenticationFilter 클래스 실행 전에 추가합니다.
+                // 이 필터는 요청 헤더에 포함된 JWT를 검증하여 사용자 인증을 수행합니다.
+                .addFilterBefore(jwtSecurityFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
+
     /**
-     * WebSecurityCustomizer를 통해 웹 보안을 커스터마이징합니다.
+     * 웹 보안을 커스터마이즈하는 WebSecurityCustomizer 빈을 생성합니다.
+     * 이 설정을 통해 특정 요청 경로에 대한 보안 검사를 무시할 수 있습니다.
      *
-     * @return 구성된 WebSecurityCustomizer
+     * @return WebSecurityCustomizer 객체
      */
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().anyRequest();    // 모든 요청에 대해 보안 검사 무시
+        return (web) -> web.ignoring().anyRequest();    // 모든 요청에 대해 보안 검사를 무시합니다.
     }
 
     /**
-     * JWT 토큰을 처리하기 위한 필터를 생성합니다.
+     * JWT 인증 필터를 생성하는 메소드입니다.
+     * 이 필터는 HTTP 요청의 헤더에서 JWT를 추출하고 검증하는 역할을 합니다.
      *
-     * @return JwtSecurityFilter
+     * @return JwtSecurityFilter 객체
      */
     @Bean
     public JwtSecurityFilter jwtSecurityFilter() {
@@ -83,10 +95,10 @@ public class SecurityConfig {
     }
 
     /**
-     * CORS(Cross-Origin Resource Sharing) 설정을 위한 CorsConfigurationSource 객체를 제공합니다.
-     * 이 설정을 통해 다양한 출처의 요청을 안전하게 처리할 수 있게 하며, 웹 애플리케이션의 접근성을 높일 수 있습니다.
+     * CORS 설정을 위한 CorsConfigurationSource 객체를 생성하는 메소드입니다.
+     * 이 설정을 통해 서버는 다른 출처에서 온 요청을 안전하게 처리할 수 있습니다.
      *
-     * @return CORS 구성을 위한 CorsConfigurationSource 객체
+     * @return CorsConfigurationSource 객체
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
@@ -141,14 +153,14 @@ public class SecurityConfig {
     }
 
     /**
-     * 비밀번호 암호화를 위한 PasswordEncoder 빈을 생성합니다.
+     * 암호화된 비밀번호를 생성하고 검증하는 PasswordEncoder 빈을 생성합니다.
+     * 이 빈은 Spring Security에서 제공하는 BCryptPasswordEncoder를 사용합니다.
      *
-     * @return PasswordEncoder
+     * @return PasswordEncoder 객체
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // BCrypt 알고리즘을 사용한 패스워드 암호화 객체 생성
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(); // BCrypt 알고리즘을 사용한 패스워드 암호화 객체 생성하여 반환합니다.
     }
 
 }
