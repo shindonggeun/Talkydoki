@@ -1,32 +1,4 @@
 import styled from "styled-components";
-import { Card } from "../common/ui/card";
-
-export const ChatReportWrapper = styled.div`
-  width: 100%;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-
-  padding: 3vh 3vw 3vh 20vw;
-  @media screen and (max-width: 992px) {
-    padding: 60px 3vw 3vh 3vw;
-  }
-`;
-
-export const ChatReportCard = styled(Card)`
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: 0;
-`;
-
-export const ChatReportTitleSection = styled.section`
-  height: 9%;
-  padding: 3vh 3vw;
-  display: flex;
-  align-items: center;
-`;
 
 export const ChatReportCarouselSection = styled.section`
   width: 100%;
@@ -124,13 +96,19 @@ export const ChatReportCarouselItem = styled.div`
   justify-content: center;
   align-items: center;
 
-  .chart-report-wrapper {
+  .chart-report-carousel-wrapper {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: space-between;
+  }
+  .chart-report-wrapper {
+    width: 100%;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
   .apexcharts-pie text,
   .apexcharts-pie circle {

@@ -1,31 +1,6 @@
 import styled, { keyframes } from "styled-components";
 import { Card } from "../common/ui/card";
 
-export const Wrapper = styled.div`
-  width: 100vw;
-  min-height: 100vh;
-  padding-left: 20vw;
-
-  @media screen and (max-width: 992px) {
-    padding: 60px 3vw 3vw;
-  }
-`;
-
-export const Flexbox = styled.div`
-  width: 100%;
-  height: 90vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-direction: row;
-  flex-wrap: wrap;
-  padding: 0;
-  @media screen and (max-width: 992px) {
-    height: 85vh;
-  }
-  position: relative;
-`;
-
 export const ChatRoomContainer = styled(Card)`
   width: 100%;
   height: 98%;

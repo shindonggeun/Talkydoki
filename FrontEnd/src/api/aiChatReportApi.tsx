@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 export const useGetReport = (reportId: number) => {
   return useQuery({
     queryKey: ["getArticle", reportId],
-    queryFn: () => customAxios.get(`/report/${reportId}`),
+    queryFn: () => customAxios.get(`/report/detail/get/${reportId}`),
     select: ({ data }) => {
       if (data.dataHeader.successCode == 0) {
         return data.dataBody as chatReportResponseInterface;

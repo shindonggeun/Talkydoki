@@ -38,15 +38,20 @@ function ChatReportChart({
   };
 
   return (
-    <div className="chart-report-wrapper">
-      <div style={{ width: "100%", height: "100%" }}>
-        <ReactApexChart
-          options={options}
-          series={scoresArray}
-          type="polarArea"
-          width={"100%"}
-          height={"100%"}
-        />
+    <div className="chart-report-carousel-wrapper">
+      <div className="chart-report-wrapper">
+        <div
+          style={{
+            width: "100%",
+          }}
+        >
+          <ReactApexChart
+            options={options}
+            series={scoresArray}
+            type="polarArea"
+            width={"100%"}
+          />
+        </div>
       </div>
       <div className="conversation-summary-wrapper">
         <div className="conversation-summary">

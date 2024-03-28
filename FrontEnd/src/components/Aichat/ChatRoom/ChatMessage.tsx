@@ -25,6 +25,9 @@ function ChatMessage({ japanese, text, feadback }: Props) {
   useEffect(() => {
     setTranslate(globalIsTranslate);
   }, [globalIsTranslate]);
+  useEffect(() => {
+    setFeadback(!globalIsFeadback);
+  }, [globalIsFeadback]);
 
   const synthesizeSpeech = async (text: string) => {
     const client = new PollyClient({
