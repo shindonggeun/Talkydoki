@@ -1,36 +1,17 @@
-import { Card } from "@/styles/common/ui/card";
-import { Wrapper } from "@/styles/common/ui/container";
-import { NegativeTitle } from "@/styles/common/ui/text";
-import Button from "@mui/material/Button";
-import AIChatCategory from "@/components/ui/AIChatCategory";
-import AcUnitIcon from "@mui/icons-material/AcUnit";
-import TextField from "@mui/material/TextField";
+import { IntroWrapper } from "@/styles/Intro/containers";
+import IntroSidebar from "@/components/Intro/IntroSidebar";
+import IntroContents from "@/components/Intro/IntroContents";
+import IntroBackground from "@/components/Intro/IntroBackground";
 
-function Intro() {
+type Props = {};
+
+function Intro({}: Props) {
   return (
-    <>
-      <Wrapper>
-        <NegativeTitle>타이틀</NegativeTitle>
-        <Button variant="contained" color="purple" fullWidth>
-          버튼
-        </Button>
-        <Button variant="text" color="purple">
-          버튼
-        </Button>
-        <Button variant="outlined">버튼</Button>
-        <TextField
-          id="outlined-basic"
-          label="Outlined"
-          variant="outlined"
-          color="purple"
-          // sx={{ backgroundColor: "var(--bg-modal)" }}
-        />
-        <AIChatCategory Icon={AcUnitIcon} title={"눈송이"} />
-        <Card>asdfasdf</Card>
-        <Card>asdfasdf</Card>
-        <Card>asdfasdf</Card>
-      </Wrapper>
-    </>
+    <IntroWrapper>
+      <IntroSidebar />
+      <IntroContents />
+      <IntroBackground />
+    </IntroWrapper>
   );
 }
 

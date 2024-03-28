@@ -2,10 +2,11 @@ import {
   PasswordChangeParams,
   ProfileUpdateParams,
 } from "@/interface/AuthInterface";
+import { UserKeywordInterface } from "@/interface/UserInterface";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 import { useSetPasswordErrors } from "@/stores/signUpStore";
 import { customAxios } from "@/util/auth/customAxios";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 
 // 이미지 업로드
@@ -89,5 +90,22 @@ export const usePasswordChange = () => {
         }
       }
     },
+  });
+};
+
+// 사용자 키워드 불러오는 hook
+export const useUserKeyword = () => {
+  return useQuery({
+    queryKey: ["userKeywords"],
+    queryFn: () => customAxios.get("/keywords/member"),
+    select: ({ data }) => {
+      if (data.dataHeader.successCode == 0) {
+        return data.dataBody as UserKeywordInterface[];
+      } else {
+        return [] as UserKeywordInterface[];
+      }
+    },
+    staleTime: 1000 * 60 * 60, // 1시간
+    gcTime: 1000 * 60 * 60, // 1시간
   });
 };

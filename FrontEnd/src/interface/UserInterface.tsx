@@ -8,3 +8,9 @@ export interface UserInterface {
   profileImage: string | null;
   role: string;
 }
+
+// 유저 키워드 인터페이스
+export interface UserKeywordInterface {
+  keyword: string;
+  readCount: number;
+}

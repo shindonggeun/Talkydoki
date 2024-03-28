@@ -7,6 +7,7 @@ services:
       context: ./BackEnd/FastApiServer
       dockerfile: Dockerfile
     image: talkydoki_backend_fastapi_img
+    restart: always
     ports:
       - "8000:8000"
     networks:
@@ -18,6 +19,7 @@ services:
       context: ./BackEnd/DataProcessing
       dockerfile: Dockerfile
     image: talkydoki_backend_dataprocessing_img
+    restart: always
     volumes:
       - /home/ubuntu/newsData:/usr/src/app/Hadoop/data
     networks:

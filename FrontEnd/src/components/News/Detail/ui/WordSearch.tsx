@@ -19,6 +19,7 @@ function WordSearch() {
   const searchWord = useSearchWord();
   const searchRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
+  const [isAdd, setIsAdd] = useState(false);
   const [xy, setXy] = useState({ x: 0, y: 0 });
 
   const [word, setWord] = useState<WordSearchInterface>({
@@ -52,6 +53,7 @@ function WordSearch() {
     return () => {
       window.removeEventListener("wheel", moveHandler);
       window.removeEventListener("mousedown", clickHandler);
+      setIsAdd(false);
     };
   }, [isSearchOn]);
 
@@ -106,8 +108,9 @@ function WordSearch() {
             <div className="jp ">{word.japanese}</div>
             {word.id && (
               <StarIcon
-                className=" addIcon"
+                className={`addIcon ${isAdd && "added"}`}
                 onClick={() => {
+                  setIsAdd(true);
                   if (word.id != undefined) {
                     return addVoca(word.id);
                   }

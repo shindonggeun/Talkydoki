@@ -35,7 +35,7 @@ class DataStorage:
         now_kst = datetime.now(kst)
         five_days_ago_kst = now_kst - timedelta(days=5)
         
-        articles = self.session.query(News).filter(News.write_date >= five_days_ago_kst).all()
+        articles = self.session.query(News).outerjoin(NewsImage).filter(News.write_date >= five_days_ago_kst).all()
         users = self.session.query(Member).all()
         keywords = self.session.query(Keyword).all()
         mappings = self.session.query(NewsKeywordMapping).join(NewsKeywordMapping.news).filter(News.write_date >= five_days_ago_kst).all()
@@ -85,10 +85,12 @@ class DataStorage:
         for user in self.users:
             if user in individual_preferences:
                 preferred_category = individual_preferences[user]
-            else:
-                preferred_category_index = (user - len(individual_preferences) - 1) % len(self.categories)
+            elif 7 <= user <= 300:
+                preferred_category_index = (user - 7) % len(self.categories)
                 preferred_category = self.categories[preferred_category_index]
                 preferred_category = category_map[preferred_category]
+            else:
+                continue
             
             preferred_words = [word_id for word_id, info in self.words.items() if preferred_category in info['categories']]
             non_preferred_words = [word_id for word_id, info in self.words.items() if preferred_category not in info['categories']]
@@ -129,14 +131,14 @@ data_storage = DataStorage()
 
 scheduler = BackgroundScheduler()
 
-scheduler.add_job(data_storage.load_data, 'interval', minutes=10)
+scheduler.add_job(data_storage.load_data, 'interval', minutes=5)
 
 scheduler.start()
 
 def get_news_data(news_id):
-    news = data_storage.session.query(News).filter(News.id == news_id).first()
+    news = data_storage.session.query(News).outerjoin(NewsImage).filter(News.id == news_id).first()
     if news:
-        images_urls = [image.image_url for image in news.news_images]
+        images_urls = [image.image_url for image in news.news_images] if news.news_images else []
         keyword_list = [keyword.keyword.japanese for keyword in news.news_keyword_mappings]
         return {
             "id": news.id,

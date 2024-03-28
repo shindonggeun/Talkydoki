@@ -3,9 +3,10 @@ import TimerCarousel from "@/components/Main/NewsSection/TimerCarousel";
 import { useRecommendNews } from "@/api/newsApi";
 
 function TodaysNews() {
-  const { data } = useRecommendNews();
+  const { data, isLoading } = useRecommendNews();
 
-  if (!data) return <></>;
+  if (isLoading) return <></>;
+  if (!data || !data[0]) return <></>;
 
   return (
     <>

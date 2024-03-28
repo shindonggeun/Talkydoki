@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import PauseCircleIcon from "@mui/icons-material/PauseCircle";
 import SpeechBox from "./SpeechBox";
+import { KanaToHira } from "@/util/language/japanese";
 
 type Props = {
   news: string[][];
@@ -67,6 +68,7 @@ function NewsReadLine({ news, now, setNow, idx, newsId, fullNews }: Props) {
           {news.map((each, idx) => (
             <span className="jp" key={idx}>
               {each[0]}
+              <span className="jpRead">{KanaToHira(each[1])}</span>
             </span>
           ))}
         </div>

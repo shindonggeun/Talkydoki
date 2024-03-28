@@ -7,6 +7,7 @@ services:
       context: ./FrontEnd
       dockerfile: Dockerfile
     image: talkydoki_frontend_img
+    restart: always
     ports:
       - "80:80"
       - "443:443"
@@ -32,6 +33,7 @@ services:
   talkydoki_redis:
     image: redis
     container_name: talkydoki_redis
+    restart: always
     ports:
       - "6379:6379"
     networks:
