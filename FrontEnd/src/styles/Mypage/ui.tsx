@@ -1,6 +1,5 @@
 import styled from "styled-components";
 import { Card } from "../common/ui/card";
-import Pattern from "@/assets/images/texture.png";
 
 export const RecordContainer = styled.div`
   width: 50%;
