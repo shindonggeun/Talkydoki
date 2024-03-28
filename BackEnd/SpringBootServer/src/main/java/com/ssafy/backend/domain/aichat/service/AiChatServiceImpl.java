@@ -2,6 +2,8 @@ package com.ssafy.backend.domain.aichat.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.backend.domain.aichat.dto.*;
 import com.ssafy.backend.domain.aichat.entity.*;
@@ -236,13 +238,18 @@ public class AiChatServiceImpl implements AiChatService {
         QAiChatHistory qAiChatHistory = QAiChatHistory.aiChatHistory;
         QAiChatFeedback qAiChatFeedback = QAiChatFeedback.aiChatFeedback;
 
+        // 급한대로 gpt의 피드백도 생기는 오류를
+        // 아래 분기를 통해 해결
         return jpaQueryFactory
                 .select(
-                        qAiChatFeedback.id,
                         qAiChatHistory.id, // 이 부분은 chatId를 나타내며, AiChatHistory의 ID를 참조합니다.
                         qAiChatHistory.sender, // sender에 해당
                         qAiChatHistory.content, // message에 해당
-                        qAiChatFeedback.content // feedback에 해당
+//                        qAiChatFeedback.content // feedback에 해당
+                        new CaseBuilder()
+                                .when(qAiChatHistory.sender.eq(AiChatSender.GPT)) // sender가 GPT enum 값과 동일한 경우
+                                .then(Expressions.stringTemplate("CAST(NULL AS java.lang.String)")) // feedback을 null로 설정
+                                .otherwise(qAiChatFeedback.content) // 그렇지 않으면 실제 feedback 내용 사용
                 )
                 .from(qAiChatHistory)
                 .leftJoin(qAiChatFeedback).on(qAiChatHistory.id.eq(qAiChatFeedback.aiChatHistory.id))
@@ -252,14 +259,14 @@ public class AiChatServiceImpl implements AiChatService {
                         tuple.get(qAiChatHistory.id),
                         tuple.get(qAiChatHistory.sender),
                         tuple.get(qAiChatHistory.content),
-                        tuple.get(qAiChatFeedback.content)
+                        tuple.get(3, String.class) // feedback에 해당하는 값 처리
                 ))
                 .toList();
     }
 
     @Override
     public FullReportInfo getReportDetail(Long reportId) {
-        AiChatReport aiChatReport = aiChatReportRepository.findById(reportId).orElseThrow(() -> new RuntimeException("Can't find the report withd id: " + reportId));
+        AiChatReport aiChatReport = aiChatReportRepository.findById(reportId).orElseThrow(() -> new RuntimeException("Can't find the report with id: " + reportId));
 
         List<AiChatAndFeedbackInfo> aiChatAndFeedbackInfos = this.getAiChatFeedbackInfo();
 
