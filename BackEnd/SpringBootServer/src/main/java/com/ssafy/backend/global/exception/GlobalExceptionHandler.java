@@ -1,6 +1,5 @@
 package com.ssafy.backend.global.exception;
 
-import com.ssafy.backend.domain.vocabulary.exception.VocabularyException;
 import com.ssafy.backend.global.common.dto.Message;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
