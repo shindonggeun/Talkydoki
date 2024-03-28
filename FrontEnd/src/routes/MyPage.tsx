@@ -2,7 +2,7 @@ import Bage from "@/components/MyPage/Header/Bage";
 import MyAmount from "@/components/MyPage/Header/MyAmount";
 import Jandi from "@/components/MyPage/Jandi/Jandi";
 import NewsReport from "@/components/MyPage/Main/NewsReport";
-import VocaReport from "@/components/MyPage/Main/VocaReport";
+// import VocaReport from "@/components/MyPage/Main/VocaReport";
 import MyVocaSimple from "@/components/MyPage/MyVoca/MyVocaSimple";
 import {
   FooterSection,

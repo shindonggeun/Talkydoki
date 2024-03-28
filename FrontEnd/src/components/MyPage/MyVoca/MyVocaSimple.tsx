@@ -19,7 +19,7 @@ function MyVocaSimple({}: Props) {
     hasNextPage,
   } = useMyVoca();
   const isNextDisabled =
-    !isCover && (!hasNextPage || currentIndex + 1 >= words?.length);
+    !isCover && (!hasNextPage || (words && currentIndex + 1 >= words.length));
   console.log("words", words);
   const handleNext = () => {
     if (isCover) {
@@ -27,7 +27,7 @@ function MyVocaSimple({}: Props) {
     } else {
       const nextPageIndex = currentIndex + 1;
 
-      if (nextPageIndex < words.length) {
+      if (words && nextPageIndex < words.length) {
         setCurrentIndex(nextPageIndex);
       } else if (hasNextPage) {
         fetchNextPage().then(() => {
