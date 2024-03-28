@@ -194,6 +194,31 @@ export const ReadLineContainer = styled(WordContainer)`
     }
   }
 
+  .jp {
+    position: relative;
+    cursor: pointer;
+
+    .jpRead {
+      display: none;
+      position: absolute;
+      left: 0;
+      top: -30px;
+      padding: 5px 10px;
+      border-radius: 25px;
+      width: fit-content;
+      font-size: 9pt;
+      word-break: keep-all;
+      color: var(--text-button);
+      background-color: var(--blue-dark);
+    }
+
+    &:hover {
+      .jpRead {
+        display: block;
+      }
+    }
+  }
+
   &.selected {
     border: 1px solid var(--main);
     background-color: ${(props) =>
@@ -215,7 +240,7 @@ export const SpeechContainer = styled.div`
   margin: 4vh 0;
   padding: 2vh 1vw;
   width: 100%;
-  backdrop-filter: brightness(1.3);
+  backdrop-filter: brightness(1.2) grayscale(0.2);
   border: 1px solid
     ${(props) =>
       props.theme.mode == "light" ? "var(--shadow)" : "var(--main)"};

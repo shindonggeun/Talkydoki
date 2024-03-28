@@ -27,7 +27,7 @@ type Props = {
 function SpeechBox({ newsId, news, idx }: Props) {
   const original = news.replace(/[^ぁ-んァ-ヶｱ-ﾝﾞﾟ一-龠0-9a-zA-Zー]/g, "");
   const queryClient = useQueryClient();
-  const { mutate: sendSpeech, isSuccess } = useSendSpeech(newsId, idx);
+  const { mutate: sendSpeech, isSuccess, isIdle } = useSendSpeech(newsId, idx);
   const [similarity, setSimilarity] = useState<number | null>(null); // 유사도
   const [permission, setPermission] = useState(false); // 마이크 허용 여부
   const isMobile = useIsMobile();
@@ -221,6 +221,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
       </ButtonGroup>
       <div className="script">
         <div className="similarity">
+          {isIdle && "마이크를 누르고 녹음을 시작해 보세요."}
           {similarity ? (
             <>
               {[...new Array(Math.floor(similarity))].map((_each, idx) => (

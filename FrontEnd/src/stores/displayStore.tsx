@@ -5,16 +5,16 @@ import { createJSONStorage, persist } from "zustand/middleware";
 
 interface DarkModeInterface {
   isDark: boolean;
-  setIsDark: () => void;
+  setIsDark: (by: boolean) => void;
 }
 
 const useDarkModeStore = create(
   persist<DarkModeInterface>(
     (set) => ({
       isDark: false,
-      setIsDark: () =>
-        set((state) => ({
-          isDark: !state.isDark,
+      setIsDark: (by) =>
+        set(() => ({
+          isDark: by,
         })),
     }),
     {
