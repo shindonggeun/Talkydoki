@@ -225,23 +225,9 @@ export const ReadLineContainer = styled(WordContainer)`
 
     .jpRead {
       display: none;
-      position: absolute;
-      left: 0;
-      top: -30px;
-      padding: 5px 10px;
-      border-radius: 25px;
-      width: fit-content;
-      font-size: 9pt;
-      word-break: keep-all;
-      color: var(--text-button);
-      background-color: var(--blue-dark);
     }
 
-    &:hover {
-      .jpRead {
-        display: block;
-      }
-    }
+
   }
 
   &.selected {
@@ -257,6 +243,25 @@ export const ReadLineContainer = styled(WordContainer)`
     .jp {
       color: ${(props) =>
         props.theme.mode == "light" ? "var(--main-dark)" : "var(--main-light)"};
+
+      .jpRead {
+        display: none;
+        position: absolute;
+        left: 0;
+        top: -30px;
+        padding: 5px 10px;
+        border-radius: 25px;
+        width: fit-content;
+        font-size: 9pt;
+        word-break: keep-all;
+        color: var(--text-button);
+        background-color: var(--blue-dark);
+      }
+
+      &:hover {
+      .jpRead {
+        display: block;
+      }
     }
   }
 `;

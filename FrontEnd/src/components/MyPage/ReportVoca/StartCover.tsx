@@ -1,4 +1,4 @@
-import { VocaCard } from "@/styles/User/Mypage";
+import { VocaCard } from "@/styles/Mypage/components";
 
 // Props 타입을 정의합니다. TypeScript를 사용하는 경우 이 부분을 interface로 정의할 수 있습니다.
 type StartCoverProps = {

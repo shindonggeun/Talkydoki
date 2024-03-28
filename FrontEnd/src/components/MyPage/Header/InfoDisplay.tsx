@@ -1,11 +1,13 @@
-type Props = { label: string; count: string };
+import { RecordContainer } from "@/styles/Mypage/ui";
+
+type Props = { label: string; count: number };
 
 function InfoDisplay({ label, count }: Props) {
   return (
-    <div className="ReadNewDiv">
+    <RecordContainer>
       <div className="label">{label}</div>
       <div className="count">{count}개</div>
-    </div>
+    </RecordContainer>
   );
 }
 

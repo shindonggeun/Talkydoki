@@ -56,8 +56,7 @@ export const IntroSectionWrapper = styled(SectionBase)`
   align-items: end;
 
   .contentBox {
-    width: 70%;
-    min-width: 900px;
+    width: 100%;
     height: 100%;
     padding: 0 150px;
     display: flex;
@@ -89,7 +88,7 @@ export const IntroSectionWrapper = styled(SectionBase)`
               const children = [];
               for (let n = 1; n < 6; n++) {
                 children.push(`&:nth-child(${n}) {
-                transition-delay: ${n - 1}s;
+                transition-delay: ${n - 1 * 0.5}s;
             }`);
               }
               return children;
