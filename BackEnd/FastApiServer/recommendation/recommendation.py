@@ -131,7 +131,7 @@ data_storage = DataStorage()
 
 scheduler = BackgroundScheduler()
 
-scheduler.add_job(data_storage.load_data, 'interval', minutes=10)
+scheduler.add_job(data_storage.load_data, 'interval', minutes=5)
 
 scheduler.start()
 
