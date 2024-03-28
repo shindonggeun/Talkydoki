@@ -2,14 +2,17 @@ package com.ssafy.backend.domain.news.service;
 
 import com.ssafy.backend.domain.news.dto.KeywordMappingRequest;
 import com.ssafy.backend.domain.news.dto.KeywordPostRequest;
+import com.ssafy.backend.domain.news.dto.NewsKeywordHistoryInfo;
 import com.ssafy.backend.domain.news.entity.Keyword;
 import com.ssafy.backend.domain.news.entity.News;
+import com.ssafy.backend.domain.news.entity.NewsKeywordHistory;
 import com.ssafy.backend.domain.news.entity.NewsKeywordMapping;
 import com.ssafy.backend.domain.news.exception.KeywordErrorCode;
 import com.ssafy.backend.domain.news.exception.KeywordException;
 import com.ssafy.backend.domain.news.exception.NewsErrorCode;
 import com.ssafy.backend.domain.news.exception.NewsException;
 import com.ssafy.backend.domain.news.repository.KeywordRepository;
+import com.ssafy.backend.domain.news.repository.NewsKeywordHistoryRepository;
 import com.ssafy.backend.domain.news.repository.NewsKeywordMappingRepository;
 import com.ssafy.backend.domain.news.repository.NewsRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Slf4j
@@ -28,6 +32,7 @@ public class KeywordServiceImpl implements KeywordService {
     private final NewsRepository newsRepository;
     private final KeywordRepository keywordRepository;
     private final NewsKeywordMappingRepository newsKeywordMappingRepository;
+    private final NewsKeywordHistoryRepository newsKeywordHistoryRepository;
 
     @Override
     public void insertKeyword(KeywordPostRequest keywordPostRequest) {
@@ -59,5 +64,13 @@ public class KeywordServiceImpl implements KeywordService {
                     .build();
             newsKeywordMappingRepository.save(mapping);
         }
+    }
+
+    @Override
+    public List<NewsKeywordHistoryInfo> getKeywordsByMemberId(Long memberId) {
+        List<NewsKeywordHistory> histories = newsKeywordHistoryRepository.findByMemberIdOrderByReadCountDesc(memberId);
+        return histories.stream()
+                .map(history -> new NewsKeywordHistoryInfo(history.getKeyword().getJapanese(), history.getReadCount()))
+                .toList();
     }
 }

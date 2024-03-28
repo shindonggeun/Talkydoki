@@ -1,8 +1,6 @@
 package com.ssafy.backend.domain.news.service;
 import com.ssafy.backend.domain.news.dto.*;
-import com.ssafy.backend.domain.news.entity.enums.NewsCategory;
 import com.ssafy.backend.global.common.dto.SliceResponse;
-import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
@@ -40,7 +38,7 @@ public interface NewsService {
     /**
      * 사용자에 맞는 뉴스를 추천합니다.
      *
-     * @param memberId 사용자 PK
+     * @param memberId 사용자 ID
      */
     Mono<Map<String, Object>> getNewsRecommendation(Long memberId);
 
