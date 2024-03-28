@@ -8,10 +8,6 @@ type Props = {};
 function AiChatCategory({}: Props) {
   const navigate = useNavigate();
 
-  // const goAiChatRoom = (category: string) => {
-  //   navigate(`/aichatlist/${category}`);
-  // };
-
   const { mutate: createChatRoom } = useCreateChatRoom();
   const { mutate: chatStart } = useChatStart();
 
