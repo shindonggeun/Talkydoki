@@ -85,10 +85,12 @@ class DataStorage:
         for user in self.users:
             if user in individual_preferences:
                 preferred_category = individual_preferences[user]
-            else:
-                preferred_category_index = (user - len(individual_preferences) - 1) % len(self.categories)
+            elif 7 <= user <= 300:
+                preferred_category_index = (user - 7) % len(self.categories)
                 preferred_category = self.categories[preferred_category_index]
                 preferred_category = category_map[preferred_category]
+            else:
+                continue
             
             preferred_words = [word_id for word_id, info in self.words.items() if preferred_category in info['categories']]
             non_preferred_words = [word_id for word_id, info in self.words.items() if preferred_category not in info['categories']]
