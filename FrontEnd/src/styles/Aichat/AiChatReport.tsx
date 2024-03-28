@@ -123,4 +123,36 @@ export const ChatReportCarouselItem = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  .chart-report-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .apexcharts-pie text,
+  .apexcharts-pie circle {
+    display: none;
+  }
+  .conversation-summary-wrapper {
+    width: 100%;
+    height: fit-content;
+    padding: 3vh 3vw;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-modal);
+  }
+  .conversation-summary {
+    max-width: calc(100% - 130px);
+  }
+  .next-report-icon {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+    width: 130px;
+    color: var(--main);
+  }
 `;

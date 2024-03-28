@@ -1,5 +1,6 @@
 import { reportDetailInterface } from "@/interface/AiChatReportInterface";
 import ReactApexChart from "react-apexcharts";
+import DoubleArrowRoundedIcon from "@mui/icons-material/DoubleArrowRounded";
 
 function ChatReportChart({
   reportDetail,
@@ -20,22 +21,42 @@ function ChatReportChart({
     },
     labels: scoreName,
     legend: {
-      show: false, // 범례 숨기기
+      show: true,
+      formatter: (val: string, opts: any) =>
+        val + " : " + opts.w.globals.series[opts.seriesIndex],
     },
-    grid: {
-      show: false, // 차트의 격자 무늬 숨기기
+    plotOptions: {
+      polarArea: {
+        rings: {
+          strokeWidth: 0,
+        },
+        spokes: {
+          strokeWidth: 0,
+        },
+      },
     },
   };
 
   return (
-    <div style={{ width: "100%", height: "100%" }}>
-      <ReactApexChart
-        options={options}
-        series={scoresArray}
-        type="polarArea"
-        width={"100%"}
-        height={"100%"}
-      />
+    <div className="chart-report-wrapper">
+      <div style={{ width: "100%", height: "100%" }}>
+        <ReactApexChart
+          options={options}
+          series={scoresArray}
+          type="polarArea"
+          width={"100%"}
+          height={"100%"}
+        />
+      </div>
+      <div className="conversation-summary-wrapper">
+        <div className="conversation-summary">
+          {reportDetail.conversationSummary}
+        </div>
+        <div className="next-report-icon">
+          채팅 리포트
+          <DoubleArrowRoundedIcon />
+        </div>
+      </div>
     </div>
   );
 }
