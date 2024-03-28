@@ -90,6 +90,7 @@ export const SocialButtonDiv = styled.div`
     width: 60px;
     aspect-ratio: 1;
     margin: 0 5px;
+    cursor: pointer;
 
     .icon {
       width: 100%;
