@@ -3,6 +3,7 @@ import MyAmount from "@/components/MyPage/Header/MyAmount";
 import Jandi from "@/components/MyPage/Jandi/Jandi";
 import NewsReport from "@/components/MyPage/Main/NewsReport";
 // import VocaReport from "@/components/MyPage/Main/VocaReport";
+import MyVocaSimple from "@/components/MyPage/MyVoca/MyVocaSimple";
 import {
   FooterSection,
   HeaderSection,
@@ -42,6 +43,14 @@ function MyPage({}: Props) {
 
       <MainSection>
         <NewsReport />
+        {/* <BlueButton
+          width="95px"
+          height="33px"
+          onClick={() => navigate("myvoca")}
+        >
+          프로필 수정
+        </BlueButton> */}
+        <MyVocaSimple></MyVocaSimple>
         {/* <VocaReport onClick={() => navigate("myvoca")} /> */}
       </MainSection>
 

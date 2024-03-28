@@ -1,8 +1,23 @@
 import { IntroSectionWrapper } from "@/styles/Intro/containers";
+import { useEffect, useRef } from "react";
 
 type Props = {};
 
 function IntroSection({}: Props) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollChecker = () => {
+    if (!scrollRef.current) return;
+    if (window.scrollY > window.innerHeight * 0.5) {
+      scrollRef.current.classList.add("active");
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", scrollChecker);
+    return () => window.removeEventListener("scroll", scrollChecker);
+  }, []);
+
   return (
     <IntroSectionWrapper>
       <div className="contentBox">
@@ -17,7 +32,7 @@ function IntroSection({}: Props) {
             "이거 <span className="strong">맞는 표현</span>인가?"
           </div>
         </div>
-        <div className="seciton">
+        <div className="section" ref={scrollRef}>
           <div className="intros">
             여행이나 비즈니스로 일본에 갔을 때, 이렇게 생각한 적 없으신가요?
             <br />

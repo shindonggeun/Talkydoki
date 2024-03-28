@@ -1,4 +1,3 @@
-import React from "react";
 import { IntroWrapper } from "@/styles/Intro/containers";
 import IntroSidebar from "@/components/Intro/IntroSidebar";
 import IntroContents from "@/components/Intro/IntroContents";
