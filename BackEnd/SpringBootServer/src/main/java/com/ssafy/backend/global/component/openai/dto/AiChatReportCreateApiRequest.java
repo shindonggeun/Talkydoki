@@ -102,8 +102,10 @@ public class AiChatReportCreateApiRequest {
         int tokenSize;
         if (messages.size() <= 10)
             tokenSize = 1500;
-        else if (messages.size() < 40)
+        else if (messages.size() < 30)
             tokenSize = 2500;
+        else if (messages.size() <= 45)
+            tokenSize = 3000;
         else
             throw new RuntimeException("Conversation's too long to service."); // 에러 처리하기
 
