@@ -267,7 +267,6 @@ public class AiChatServiceImpl implements AiChatService {
                 .collect(Collectors.toList());
     }
 
-
     private Conversation parseGetResponse(String responseString) {
         try {
             ObjectMapper mapper = new ObjectMapper();
@@ -277,7 +276,6 @@ public class AiChatServiceImpl implements AiChatService {
             JsonNode conversationNode = root.path("conversation");
             return mapper.treeToValue(conversationNode, Conversation.class);
         } catch (Exception e) {
-            // TODO: 파싱 예외 발생했다는건 대화가 주제에 안맞거나 종료되었다는 의미 (JSON 형태로 안오거나 conversation 객체에 감싸서 안왔다는 의미)
             log.info("exception 터지는지 확인하기: {}", e.getMessage());
             throw new AiChatException(AiChatErrorCode.DUPLICATE_CONVERSATION_TOPIC);
         }

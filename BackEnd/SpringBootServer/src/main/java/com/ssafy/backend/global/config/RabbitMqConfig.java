@@ -18,24 +18,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * RabbitMQ 설정을 위한 클래스입니다.
- * @EnableRabbit 애너테이션을 통해 Spring RabbitMQ 지원을 활성화합니다.
+ * RabbitMQ 메시지 큐 설정을 정의하는 클래스입니다.
+ * {@link EnableRabbit} 어노테이션은 Spring AMQP를 활성화시킵니다.
+ * 이 클래스는 RabbitMQ와의 연결 설정, 메시지 교환, 메시지 변환 방법 등을 구성합니다.
  */
 @EnableRabbit
 @Configuration
 @RequiredArgsConstructor
 public class RabbitMqConfig {
-    private final RabbitMqProps rabbitMqProps;
+    private final RabbitMqProps rabbitMqProps; // RabbitMQ 접속 설정을 담고 있는 프로퍼티 객체
 
-    // RabbitMQ에서 기본적으로 제공하는 Topic 타입의 Exchange를 사용할 예정
-    private static final String TOPIC_EXCHANGE_NAME = "amq.topic";
+    private static final String TOPIC_EXCHANGE_NAME = "amq.topic"; // 토픽 교환의 이름
 
-    // Topic Exchange에 맞는 라우팅 키 지정
-    private static final String ROUTING_KEY = "room.*";
+    private static final String ROUTING_KEY = "room.*"; // 라우팅 키 패턴
 
     /**
-     * 기본 토픽 익스체인지를 정의합니다.
-     * @return TopicExchange 객체
+     * RabbitMQ의 토픽 교환(Topic Exchange)을 정의하고 스프링 빈으로 등록합니다.
+     * @return 생성된 TopicExchange 객체
      */
     @Bean
     public TopicExchange topicExchange() {
@@ -43,8 +42,8 @@ public class RabbitMqConfig {
     }
 
     /**
-     * Topic Exchange와 큐를 바인딩합니다.
-     * @return Binding 객체
+     * 주어진 라우팅 키와 토픽 교환을 바인딩하고, 이 바인딩을 스프링 빈으로 등록합니다.
+     * @return 생성된 Binding 객체
      */
     @Bean
     public Binding binding() {
@@ -55,8 +54,9 @@ public class RabbitMqConfig {
     }
 
     /**
-     * RabbitTemplate을 설정합니다. 메시지 변환기를 JsonMessageConverter로 지정합니다.
-     * @return RabbitTemplate 객체
+     * RabbitTemplate을 스프링 빈으로 등록하며, RabbitMQ와의 메시지 송수신을 위한 템플릿을 구성합니다.
+     * 메시지 변환기로 Jackson2JsonMessageConverter를 사용하여 메시지를 JSON 형태로 변환합니다.
+     * @return 구성된 RabbitTemplate 객체
      */
     @Bean
     public RabbitTemplate rabbitTemplate() {
@@ -67,8 +67,9 @@ public class RabbitMqConfig {
     }
 
     /**
-     * 메시지 리스너 컨테이너를 설정합니다. 연결 팩토리를 설정합니다.
-     * @return SimpleMessageListenerContainer 객체
+     * RabbitMQ의 메시지 리스너 컨테이너를 스프링 빈으로 등록합니다.
+     * 이 컨테이너는 메시지 처리를 위한 리스너의 설정을 담당합니다.
+     * @return 구성된 SimpleMessageListenerContainer 객체
      */
     @Bean
     public SimpleMessageListenerContainer container() {
@@ -78,8 +79,9 @@ public class RabbitMqConfig {
     }
 
     /**
-     * RabbitMQ 서버에 대한 연결을 생성하는 ConnectionFactory를 정의합니다.
-     * @return ConnectionFactory 객체
+     * RabbitMQ 서버와의 연결을 위한 ConnectionFactory를 스프링 빈으로 등록합니다.
+     * RabbitMQ 서버의 호스트, 사용자 이름, 비밀번호 등의 접속 정보를 설정합니다.
+     * @return 구성된 CachingConnectionFactory 객체
      */
     @Bean
     public ConnectionFactory connectionFactory() {
@@ -91,26 +93,26 @@ public class RabbitMqConfig {
     }
 
     /**
-     * JSON 메시지 변환을 위한 Jackson2JsonMessageConverter를 설정합니다.
-     * 날짜와 시간을 타임스탬프로 변환하는 설정 포함.
-     * @return Jackson2JsonMessageConverter 객체
+     * Jackson2JsonMessageConverter를 스프링 빈으로 등록합니다.
+     * 이 컨버터는 메시지를 JSON 형태로 변환하는 데 사용됩니다.
+     * Java 8 날짜/시간 API를 올바르게 처리하기 위해 JavaTimeModule을 등록합니다.
+     * @return 구성된 Jackson2JsonMessageConverter 객체
      */
     @Bean
     public Jackson2JsonMessageConverter jsonMessageConverter() {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, true);
         objectMapper.registerModule(dateTimeModule());
-
         return new Jackson2JsonMessageConverter(objectMapper);
     }
 
     /**
-     * Java 8 날짜와 시간 API 지원을 위한 JavaTimeModule을 반환합니다.
-     * @return JavaTimeModule 객체
+     * JavaTimeModule을 스프링 빈으로 등록합니다.
+     * 이 모듈은 Jackson에서 Java 8 날짜/시간 API를 올바르게 처리하는 데 필요합니다.
+     * @return 생성된 JavaTimeModule 객체
      */
     @Bean
     public JavaTimeModule dateTimeModule() {
         return new JavaTimeModule();
     }
-
 }
