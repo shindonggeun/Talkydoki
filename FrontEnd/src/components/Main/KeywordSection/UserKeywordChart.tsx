@@ -1,59 +1,38 @@
+import { useUserKeyword } from "@/api/profileApi";
 import { KeywordChartWrapper } from "@/styles/Main/keywordChart";
 import { Divider } from "@mui/material";
 import { ApexOptions } from "apexcharts";
+import { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 import { useTheme } from "styled-components";
 
 function UserKeywordChart() {
   const theme = useTheme();
+  const { data, isLoading } = useUserKeyword();
+  const [keywords, setKeywords] = useState<{ x: string; y: number }[]>([]);
+
+  useEffect(() => {
+    if (data) {
+      data.forEach((each, idx) => {
+        if (idx < 10) {
+          const newValue: { x: string; y: number } = { x: "", y: 0 };
+          newValue.x = each.keyword;
+          newValue.y = each.readCount;
+          setKeywords((prev) => [...prev, newValue]);
+        }
+      });
+    }
+  }, [data]);
+
+  if (isLoading || !data) return <></>;
+
   const chartData: {
     series: ApexOptions["series"];
     options: ApexOptions;
   } = {
     series: [
       {
-        data: [
-          {
-            x: "New Delhi",
-            y: 218,
-          },
-          {
-            x: "Kolkata",
-            y: 149,
-          },
-          {
-            x: "Mumbai",
-            y: 184,
-          },
-          {
-            x: "Ahmedabad",
-            y: 55,
-          },
-          {
-            x: "Bangaluru",
-            y: 84,
-          },
-          {
-            x: "Pune",
-            y: 31,
-          },
-          {
-            x: "Chennai",
-            y: 70,
-          },
-          {
-            x: "Jaipur",
-            y: 30,
-          },
-          {
-            x: "Surat",
-            y: 44,
-          },
-          {
-            x: "Hyderabad",
-            y: 68,
-          },
-        ],
+        data: keywords,
       },
     ],
     options: {

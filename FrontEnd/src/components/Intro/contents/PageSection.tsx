@@ -39,7 +39,7 @@ function PageSection({}: Props) {
             <h1>오늘의 뉴스</h1>
             <div>
               사용자의 취향을 분석하여 일본어 뉴스를 추천해 드립니다. 뉴스를
-              듣고, 쉐도잉한 후 발음을 평가받아보세요
+              듣고, 따라 읽고, 모르는 표현을 기록하며 말하기에 익숙해져 보세요.
             </div>
           </div>
         </div>
@@ -50,10 +50,21 @@ function PageSection({}: Props) {
         >
           <img src={News} alt="news" className="image" />
           <div className="desc">
-            <h1>오늘의 뉴스</h1>
+            <h1>테마별 회화</h1>
             <div>
-              사용자의 취향을 분석하여 일본어 뉴스를 추천해 드립니다. 뉴스를
-              듣고, 쉐도잉한 후 발음을 평가받아보세요
+              식당, 편의점, 호텔, 비즈니스 등, AI와 함께 상황에 맞는 여러가지
+              테마의 회화를 연습할 수 있어요.
+            </div>
+          </div>
+        </div>
+        {/* p3 */}
+        <div className="page" style={{ backgroundColor: "var(--text)" }}>
+          <img src={News} alt="news" className="image" />
+          <div className="desc">
+            <h1>사용자 분석</h1>
+            <div>
+              학습을 진행하고 학습량을 측정하여 학습 진도를 확인하고, 다른
+              유저들의 평균을 확인하여 나의 레벨을 파악할 수 있어요.
             </div>
           </div>
         </div>

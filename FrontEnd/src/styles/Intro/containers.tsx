@@ -157,11 +157,11 @@ export const PageSectionWrapper = styled(SectionBase)`
 
     .desc {
       width: 30%;
-      padding: 3vh 3vw;
+      padding: 20vh 3vw;
       height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: start;
       align-items: end;
 
       * {
@@ -208,6 +208,7 @@ export const PageSectionWrapper = styled(SectionBase)`
       }
 
       .desc {
+        padding: 3vh 3vw;
         width: 80%;
         height: fit-content;
       }

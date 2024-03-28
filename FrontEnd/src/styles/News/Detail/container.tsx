@@ -153,12 +153,37 @@ export const WordSearchWrapper = styled.div`
 
     .addIcon {
       cursor: pointer;
-      /* color: var(--main); */
+
+      &:hover,
+      &:active {
+        color: var(--main);
+      }
+
+      &:active {
+        transform: scale(0.7);
+      }
+
+      &.added {
+        color: var(--main);
+        animation: clickAnimation 0.3s ease;
+      }
     }
   }
 
   @media screen and (max-width: 992px) {
     width: calc(100vw - 10px);
+  }
+
+  @-webkit-keyframes clickAnimation {
+    0% {
+      transform: scale(0.7);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
 `;
 
