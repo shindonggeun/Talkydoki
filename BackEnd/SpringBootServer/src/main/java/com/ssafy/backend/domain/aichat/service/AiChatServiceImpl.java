@@ -86,7 +86,7 @@ public class AiChatServiceImpl implements AiChatService {
         saveUserMessage(roomId, aiChatRoom, userMessage);
 
         // GPT와의 대화를 진행합니다.
-        handleConversationWithGpt(roomId, userMessage);
+        handleConversationWithGpt(roomId);
     }
 
     /**
@@ -125,7 +125,10 @@ public class AiChatServiceImpl implements AiChatService {
 
                             // RabbitMQ를 통해 메시지 전송
                             AiChatMessage gptMessage = buildAiChatMessage(conversation.gptJapaneseResponse(), conversation.gptKoreanResponse(), AiChatSender.GPT);
+                            AiChatMessage userTipMessage = buildAiChatMessage(conversation.userTipJapaneseResponse(), conversation.userTipKoreanResponse(), AiChatSender.USER_TIP);
+
                             rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
+                            rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, userTipMessage);
                         }))
                 .subscribeOn(Schedulers.boundedElastic()));
     }
@@ -160,11 +163,10 @@ public class AiChatServiceImpl implements AiChatService {
      * 대화 결과를 RabbitMQ를 통해 전송합니다.
      *
      * @param roomId      대화가 이루어지는 채팅방의 식별자
-     * @param userMessage 사용자가 보낸 메시지 정보를 담은 객체
      */
-    private void handleConversationWithGpt(Long roomId, AiChatMessage userMessage) {
+    private void handleConversationWithGpt(Long roomId) {
         // GPT와의 대화를 비동기적으로 처리하고 결과를 RabbitMQ로 전송합니다.
-        sendAiChatMessageByGpt(roomId, userMessage)
+        sendAiChatMessageByGpt(roomId)
                 .subscribe(conversation -> {
                     // GPT와 사용자 모범 답안의 메시지를 RabbitMQ를 통해 전달합니다.
                     sendMessagesToRabbitMQ(roomId, conversation);
@@ -175,14 +177,13 @@ public class AiChatServiceImpl implements AiChatService {
      * 사용자 메시지를 바탕으로 GPT와의 대화를 진행하고, 대화 결과를 Mono<Conversation> 형태로 반환합니다.
      *
      * @param roomId      대화가 진행되는 채팅방의 식별자
-     * @param userMessage 사용자가 보낸 메시지
      * @return 대화 결과를 포함하는 Mono<Conversation> 객체
      */
-    private Mono<Conversation> sendAiChatMessageByGpt(Long roomId, AiChatMessage userMessage) {
+    private Mono<Conversation> sendAiChatMessageByGpt(Long roomId) {
         // GPT 채팅 설정을 조회하고, 설정이 없는 경우 예외를 발생시킵니다.
         return openAiRepository.findOpenAiSetup(roomId)
                 .switchIfEmpty(Mono.error(new AiChatException(AiChatErrorCode.NOT_FOUNT_AI_CHAT_ROOM_SETUP)))
-                .flatMap(setupRequest -> processGptConversation(roomId, setupRequest, userMessage));
+                .flatMap(setupRequest -> processGptConversation(roomId, setupRequest));
     }
 
     /**
@@ -191,10 +192,9 @@ public class AiChatServiceImpl implements AiChatService {
      *
      * @param roomId       대화가 진행되는 채팅방의 식별자
      * @param setupRequest GPT 대화 설정
-     * @param userMessage  사용자가 보낸 메시지
      * @return 대화 결과를 포함하는 Mono<Conversation> 객체
      */
-    private Mono<Conversation> processGptConversation(Long roomId, GptSetupRequest setupRequest, AiChatMessage userMessage) {
+    private Mono<Conversation> processGptConversation(Long roomId, GptSetupRequest setupRequest) {
         // 이전 대화 내역을 포함한 새 대화 요청을 구성합니다.
         List<GptDialogueMessage> messages = new ArrayList<>(setupRequest.messages());
         return openAiRepository.findAiChatHistory(roomId)
@@ -213,7 +213,7 @@ public class AiChatServiceImpl implements AiChatService {
 
     private void sendMessagesToRabbitMQ(Long roomId, Conversation conversation) {
         AiChatMessage gptMessage = buildAiChatMessage(conversation.gptJapaneseResponse(), conversation.gptKoreanResponse(), AiChatSender.GPT);
-        AiChatMessage userTipMessage = buildAiChatMessage(conversation.userJapaneseResponse(), conversation.userKoreanResponse(), AiChatSender.USER_TIP);
+        AiChatMessage userTipMessage = buildAiChatMessage(conversation.userTipJapaneseResponse(), conversation.userTipKoreanResponse(), AiChatSender.USER_TIP);
 
         // GPT 응답과 사용자 모범 답안을 RabbitMQ를 통해 전달
         rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);

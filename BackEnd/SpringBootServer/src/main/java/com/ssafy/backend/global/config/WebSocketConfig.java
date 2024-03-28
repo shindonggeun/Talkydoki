@@ -1,7 +1,7 @@
 package com.ssafy.backend.global.config;
 
 import com.ssafy.backend.global.component.websocket.RabbitMqProps;
-import com.ssafy.backend.global.component.websocket.WebSocketAuthenticationInterceptor;
+import com.ssafy.backend.global.component.websocket.WebSocketSetupInterceptor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,7 +20,7 @@ import org.springframework.web.socket.server.standard.ServletServerContainerFact
 @EnableWebSocketMessageBroker   // @EnableWebSocketMessageBroker 어노테이션을 사용해 WebSocket 메시지 브로커를 활성화합니다.
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private final RabbitMqProps rabbitMqProps; // RabbitMQ 연결 설정을 저장하는 프로퍼티 클래스의 인스턴스입니다.
-    private final WebSocketAuthenticationInterceptor authenticationInterceptor; // WebSocket 연결 인증을 처리하는 인터셉터입니다.
+    private final WebSocketSetupInterceptor webSocketSetupInterceptor; // WebSocket 연결 설정 및 인증을 처리하는 인터셉터입니다.
 
     // 클라이언트가 WebSocket 연결을 시작할 수 있는 엔드포인트를 등록합니다.
     @Override
@@ -50,7 +50,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void configureClientInboundChannel(ChannelRegistration registration) {
         // 인증 인터셉터를 클라이언트 인바운드 채널에 추가하여 메시지를 받기 전에 사용자 인증을 수행합니다.
-        registration.interceptors(authenticationInterceptor);
+        registration.interceptors(webSocketSetupInterceptor);
     }
 
     // WebSocket 메시지의 크기 제한을 설정하는 빈을 생성합니다.
