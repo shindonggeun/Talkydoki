@@ -91,6 +91,7 @@ public class AiChatReportCreateApiRequest {
             String role = switch (chatHistory.getSender()) {
                 case GPT -> "assistant";
                 case USER -> "user";
+                case USER_TIP -> null;
             };
 
             String chatId = String.valueOf(chatHistory.getId());

@@ -118,13 +118,13 @@ public class AiChatServiceImpl implements AiChatService {
                     .sender(AiChatSender.USER_TIP)
                     .japanese(conversation.userJapaneseResponse())
                     .korean(conversation.userKoreanResponse())
-                    .build()
+                    .build();
 
             // GPT 일본어 응답 rabbitmq 통해서 전달
             rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, gptMessage);
             // USER_TIP (사용자 모범 답안 일본어 응답) rabbitmq 통해서 전달
             rabbitTemplate.convertAndSend(topicExchange.getName(), "room." + roomId, userTipMessage);
-        })
+        });
     }
 
     /**
