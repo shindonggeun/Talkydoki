@@ -81,26 +81,30 @@ function TimerCarousel({ width, height, news }: Props) {
 
       {/* 캐러셀 내용물 컨테이너 */}
       <div className="track" style={{ left: `${now * -100}%` }}>
-        {news.map((each, idx) => (
-          <MainCarouselItem
-            key={idx}
-            $width={width}
-            $height={height}
-            $bgImg={each.newsImages[0] ? each.newsImages[0] : DefaultImage}
-            onClick={() => {
-              console.log(each.newsId);
-              navigate(`/news/detail`, { state: { newsId: each.id } });
-            }}
-          >
-            <div className="titleBox">
-              <div className="koTitle">{each.titleTranslated}</div>
-              <div className="jpTitle">
-                {" "}
-                {sentenceMaker(newsSplitter(each.title)[0])}
+        {news.map((each, idx) => {
+          const newsImage =
+            each.newsImages != null ? each.newsImages[0] : DefaultImage;
+          return (
+            <MainCarouselItem
+              key={idx}
+              $width={width}
+              $height={height}
+              $bgImg={newsImage}
+              onClick={() => {
+                console.log(each.newsId);
+                navigate(`/news/detail`, { state: { newsId: each.id } });
+              }}
+            >
+              <div className="titleBox">
+                <div className="koTitle">{each.titleTranslated}</div>
+                <div className="jpTitle">
+                  {" "}
+                  {sentenceMaker(newsSplitter(each.title)[0])}
+                </div>
               </div>
-            </div>
-          </MainCarouselItem>
-        ))}
+            </MainCarouselItem>
+          );
+        })}
       </div>
     </TimerCarouselWrapper>
   );
