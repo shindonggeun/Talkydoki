@@ -1,5 +1,4 @@
 import { IntroContentsWrapper } from "@/styles/Intro/containers";
-import React from "react";
 import IntroSection from "./contents/IntroSection";
 import PageSection from "./contents/PageSection";
 

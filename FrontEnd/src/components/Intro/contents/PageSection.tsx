@@ -1,8 +1,7 @@
 import { PageSectionWrapper } from "@/styles/Intro/containers";
 import { SectionTitle } from "@/styles/Intro/ui";
 import News from "@/assets/images/samples/news2.png";
-import { Divider } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 type Props = {};
 

@@ -1,6 +1,5 @@
 import { IntroSidebarWrapper } from "@/styles/Intro/containers";
 import TextLogo from "@/assets/images/logo_text_light.png";
-import ImageLogo from "@/assets/images/logo_face2.png";
 import { useEffect, useState } from "react";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
