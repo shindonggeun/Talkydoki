@@ -15,7 +15,7 @@ export const Inner = styled.div`
 
   .menuToggle {
     position: absolute;
-    right: 5vw;
+    left: 5vw;
     font-size: 2rem;
     color: var(--text);
   }

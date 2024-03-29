@@ -74,6 +74,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
     return () => {
       scriptRef.current = "";
       stopRecord();
+      queryClient.invalidateQueries({ queryKey: ["userAchievement"] });
     };
   }, []);
 

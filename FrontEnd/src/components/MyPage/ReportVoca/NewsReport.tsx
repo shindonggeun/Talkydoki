@@ -67,9 +67,9 @@ function NewsReport({ user, average }: Props) {
           curve: "smooth",
         },
         yaxis: {
-          stepSize: 0.5,
+          stepSize: 1,
           min: 0,
-          max: 1,
+          max: 5,
           decimalsInFloat: 2,
         },
         xaxis: {

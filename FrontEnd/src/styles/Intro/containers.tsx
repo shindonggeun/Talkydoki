@@ -35,6 +35,7 @@ export const IntroSidebarWrapper = styled.div`
     }
 
     & > * {
+      width: max-content;
       margin: 1vh 5px;
     }
   }
@@ -146,7 +147,7 @@ export const IntroSectionWrapper = styled(SectionBase)`
 `;
 
 export const PageSectionWrapper = styled(SectionBase)`
-  margin-bottom: 50vh;
+  /* margin-bottom: 50vh; */
 
   .page {
     width: 100%;
@@ -154,12 +155,31 @@ export const PageSectionWrapper = styled(SectionBase)`
     display: flex;
     justify-content: center;
     align-items: center;
-    background-image: url(${Texture});
     background-repeat: repeat;
-    background-blend-mode: color-burn;
     margin-bottom: 50vh;
     position: relative;
     box-shadow: 0 0 50px 0px rgb(0, 0, 0, 0.3);
+
+    .background {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 0;
+
+      &:after {
+        content: " ";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background-image: url(${Texture});
+        filter: brightness(0.8);
+        opacity: 0.3;
+      }
+    }
 
     .image {
       width: 60%;
@@ -167,6 +187,7 @@ export const PageSectionWrapper = styled(SectionBase)`
       object-fit: contain;
       opacity: 0;
       transition: opacity 2s ease;
+      z-index: 1;
     }
 
     .desc {
@@ -177,6 +198,7 @@ export const PageSectionWrapper = styled(SectionBase)`
       flex-direction: column;
       justify-content: start;
       align-items: end;
+      z-index: 1;
 
       * {
         color: var(--text-button);
@@ -213,6 +235,19 @@ export const PageSectionWrapper = styled(SectionBase)`
           text-align: start;
         }
       }
+    }
+  }
+
+  .footer {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+
+    img {
+      width: 40vw;
     }
   }
 

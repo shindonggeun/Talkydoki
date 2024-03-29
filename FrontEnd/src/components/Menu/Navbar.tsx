@@ -12,11 +12,11 @@ function Navbar() {
   return (
     <NavbarWrapper>
       <Inner>
-        <img className="logo" src={Logo} alt="logo" />
         <MenuIcon
           className="menuToggle"
           onClick={() => toggleSidebar(!isSidebarOpen)}
         />
+        <img className="logo" src={Logo} alt="logo" />
         {/* <button onClick={() => toggleSidebar(!isSidebarOpen)}>asdfdsfdf</button> */}
       </Inner>
     </NavbarWrapper>
