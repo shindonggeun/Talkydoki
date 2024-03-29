@@ -4,10 +4,12 @@ import { Inner } from "@/styles/Menu/navbar";
 import Logo from "@/assets/images/logo_face2.png";
 import { useIsSidebarOpen, useSetIsSidebarOpen } from "@/stores/displayStore";
 import MenuIcon from "@mui/icons-material/Menu";
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const isSidebarOpen = useIsSidebarOpen();
   const toggleSidebar = useSetIsSidebarOpen();
+  const naviagte = useNavigate();
 
   return (
     <NavbarWrapper>
@@ -16,7 +18,12 @@ function Navbar() {
           className="menuToggle"
           onClick={() => toggleSidebar(!isSidebarOpen)}
         />
-        <img className="logo" src={Logo} alt="logo" />
+        <img
+          className="logo"
+          src={Logo}
+          alt="logo"
+          onClick={() => naviagte("/")}
+        />
         {/* <button onClick={() => toggleSidebar(!isSidebarOpen)}>asdfdsfdf</button> */}
       </Inner>
     </NavbarWrapper>

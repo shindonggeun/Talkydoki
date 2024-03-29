@@ -21,7 +21,7 @@ import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 function News() {
   const [isShowKor, setIsShowKor] = useState(true);
   const [selected, setSelected] = useState<categoryInterface[]>([]);
-  const [categories, setcategories] = useState(category);
+  const categories = category;
 
   const isDark = useIsDark();
   const setIsModalOn = useSetISModalOn();
@@ -52,12 +52,10 @@ function News() {
       return;
     }
     setSelected((prev) => [...prev, category]);
-    setcategories((prev) => prev.filter((each) => each.id != category.id));
   };
 
   const removeCategory = (category: categoryInterface) => {
     setSelected((prev) => prev.filter((each) => each.id != category.id));
-    setcategories((prev) => [...prev, category]);
   };
 
   if (isLoading) return <></>;
@@ -68,26 +66,23 @@ function News() {
 
       {/* 카테고리 */}
       <CategorySection>
-        {selected.map((cat) => (
-          <Category
-            $isDark={isDark}
-            key={cat.id}
-            className="selected"
-            onClick={() => removeCategory(cat)}
-          >
-            <CloseIcon className="icon" />
-            {cat.korName}
-          </Category>
-        ))}
-        {categories.map((cat) => (
-          <Category
-            $isDark={isDark}
-            onClick={() => addCategory(cat)}
-            key={cat.id}
-          >
-            {cat.korName}
-          </Category>
-        ))}
+        {categories.map((cat) => {
+          const isSelected = selected.indexOf(cat) != -1;
+
+          return (
+            <Category
+              $isDark={isDark}
+              onClick={() =>
+                isSelected ? removeCategory(cat) : addCategory(cat)
+              }
+              className={isSelected ? "selected" : undefined}
+              key={cat.id}
+            >
+              {isSelected && <CloseIcon className="icon" />}
+              {cat.korName}
+            </Category>
+          );
+        })}
       </CategorySection>
 
       {/* 메뉴바 (번역보기) */}

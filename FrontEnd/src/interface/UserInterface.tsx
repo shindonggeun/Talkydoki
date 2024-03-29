@@ -10,6 +10,7 @@ export interface UserInterface {
   name: string;
   nickname: string;
   profileImage: string | null;
+  provider: string | null;
   role: string;
 }
 

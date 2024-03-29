@@ -69,6 +69,9 @@ function UserKeywordChart() {
     <KeywordChartWrapper>
       <div>나의 키워드</div>
       <Divider />
+      {keywords.length == 0 && (
+        <div className="msg">뉴스를 읽고 관심 키워드를 추가해 보세요</div>
+      )}
       <ReactApexChart
         series={chartData.series}
         options={chartData.options}

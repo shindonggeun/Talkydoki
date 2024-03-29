@@ -208,6 +208,17 @@ async def news_recommend(member_id: int):
                 recommendations_id.append(news_id_str)
                 if len(recommendations_id) == 3:
                     break
+    
+    if len(recommendations_id) < 3:
+        try:
+            # 쉐도잉되지 않은 뉴스 중 랜덤으로 3개 선택
+            query = data_storage.session.query(News.id).filter(~News.id.in_(shadowed_news_ids))
+            all_news_ids = [news_id[0] for news_id in query.all()]
+            if all_news_ids:
+                selected_ids = np.random.choice(all_news_ids, size=min(3, len(all_news_ids)), replace=False)
+                recommendations_id.extend([f"기사{news_id}" for news_id in selected_ids])
+        except Exception as e:
+            print(f"Error selecting random news: {e}")
 
     recommendations = [get_news_data(int(news_id.split('기사')[-1])) for news_id in recommendations_id]
 

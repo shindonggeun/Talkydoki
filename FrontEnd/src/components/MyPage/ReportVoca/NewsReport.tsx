@@ -10,6 +10,26 @@ type Props = {
   average: { averageScore: number; date: string }[];
 };
 
+// const userDummy = [
+//   { score: 1, date: "2024-03-20" },
+//   { score: 3.2, date: "2024-03-21" },
+//   { score: 5, date: "2024-03-25" },
+//   { score: 4.2, date: "2024-03-24" },
+//   { score: 4.3, date: "2024-03-27" },
+//   { score: 3.4, date: "2024-03-28" },
+//   { score: 3.2, date: "2024-03-29" },
+// ];
+
+// const averageDummy = [
+//   { averageScore: 5, date: "2024-03-20" },
+//   { averageScore: 5, date: "2024-03-22" },
+//   { averageScore: 4, date: "2024-03-25" },
+//   { averageScore: 5, date: "2024-03-26" },
+//   { averageScore: 3.2, date: "2024-03-27" },
+//   { averageScore: 3.1, date: "2024-03-28" },
+//   { averageScore: 5, date: "2024-03-29" },
+// ];
+
 function NewsReport({ user, average }: Props) {
   const [records, setRecords] = useState<RecordInterface[]>([]);
   const theme = useTheme();
@@ -19,23 +39,17 @@ function NewsReport({ user, average }: Props) {
     const today = new Date().getTime();
     setRecords([]);
 
-    user.forEach((each) => {
+    average.forEach((each) => {
       const date = each.date;
-      const averageDate = average.filter((each) => {
-        const scoreDate = new Date(each.date).getTime();
-        // 일주일 이내 기록만 추가
-        return (
-          each.date == date && today - scoreDate <= 1000 * 60 * 60 * 24 * 7
-        );
-      });
 
-      if (averageDate.length > 0) {
-        const averageScore = averageDate[0].averageScore;
-        setRecords((prev) => [
-          ...prev,
-          { date, averageScore, userScore: each.score },
-        ]);
-      }
+      const averageScore = each.averageScore;
+      const scoreDate = new Date(each.date).getTime();
+      // 일주일 이내 데이터만 집계
+      if (today - scoreDate > 1000 * 60 * 60 * 24 * 7) return;
+
+      const userDate = user.filter((userScore) => userScore.date == date);
+      const userScore = userDate.length > 0 ? userDate[0].score : 0;
+      setRecords((prev) => [...prev, { date, averageScore, userScore }]);
     });
   }, []);
 
