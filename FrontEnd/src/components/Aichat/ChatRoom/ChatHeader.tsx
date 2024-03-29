@@ -11,7 +11,6 @@ type Props = {};
 function ChatHeader({}: Props) {
   const navigate = useNavigate();
 
-  // 전역 상태 관리
   const globalIsTranslate = useAiChatStore((state) => state.globalIsTranslate);
   const setGlobalIsTranslate = useAiChatStore(
     (state) => state.setGlobalIsTranslate
@@ -35,7 +34,6 @@ function ChatHeader({}: Props) {
     setIsModalOn(true);
   };
 
-  // 번역표시 팁표시 기능 추가 필요
   const options = [
     { label: "번역표시" },
     { label: "팁표시" },
@@ -57,7 +55,6 @@ function ChatHeader({}: Props) {
   const handleOptionClick: (action: (() => void) | undefined) => () => void =
     (action) => () => {
       action?.();
-      // setAnchorEl(null);
     };
 
   return (
@@ -95,7 +92,6 @@ function ChatHeader({}: Props) {
             component="div"
             style={{
               display: "flex",
-              // justifyContent: index === 1 ? "flex-end" : "space-between",
             }}
           >
             {index === 0 && (
