@@ -11,7 +11,7 @@ services:
     ports:
       - "8000:8000"
     networks:
-      - talkydoki_net_test
+      - talkydoki_net
 
   talkydoki_backend_dataprocessing:
     container_name: talkydoki_backend_dataprocessing
@@ -23,7 +23,7 @@ services:
     volumes:
       - /home/ubuntu/newsData:/usr/src/app/Hadoop/data
     networks:
-      - talkydoki_net_test
+      - talkydoki_net
 
 networks:
-  talkydoki_net_test:
+  talkydoki_net:

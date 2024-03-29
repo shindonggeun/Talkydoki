@@ -6,6 +6,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import NoSuchElementException
 from googletrans import Translator
 from datetime import datetime
 import MeCab
@@ -13,7 +14,6 @@ import requests
 import json
 import warnings
 import os
-import json
 import sys
 sys.path.append('/usr/src/app')
 from Url import NEWS_API_URL, DUPLICATENEWS_PATH
@@ -27,6 +27,7 @@ cat_info = json.loads(sys.argv[1])
 CAT_NAME = cat_info["CAT_NAME"]
 CAT_URL = cat_info["CAT_URL"]
 
+CSS_SELECTOR_BUTTON = "footer.module--footer.button-more p.button"
 CLASS_NAME_CONTENT_LIST = "content--list"
 CLASS_NAME_CONTENT_THUMB = "content--thumb"
 CLASS_NAME_CONTENT_VIDEO = "content--video"
@@ -63,6 +64,26 @@ driver.get(f'{BASE_URL}{CAT_URL}')
 
 # 대기 설정
 wait = WebDriverWait(driver, 10)
+
+# 버튼이 나타날 때까지 반복
+# while True:
+#     try:
+#         # 버튼이 나타날 때까지 대기 (10초)
+#         button = WebDriverWait(driver, 10).until(
+#             EC.presence_of_element_located((By.CSS_SELECTOR, CSS_SELECTOR_BUTTON))
+#         )
+        
+#         # 요소로 스크롤하여 보이도록 이동
+#         actions = ActionChains(driver)
+#         actions.move_to_element(button).perform()
+        
+#         # 버튼 클릭
+#         button.click()
+#     except NoSuchElementException:
+#         # 버튼이 없을 경우 크롤링 시작
+#         print("버튼이 더 이상 없습니다. 크롤링을 시작합니다.")
+#         # 크롤링 코드를 여기에 작성하세요
+#         break
 
 # 뉴스 목록
 news_urls = []
@@ -101,23 +122,25 @@ for news_url in news_urls:
     except Exception as e:
         pass
 
-    ########### 뉴스 비디오 ###########
-    try:
-        news_video = driver.find_element(By.CLASS_NAME, CLASS_NAME_CONTENT_VIDEO)
-        # iframe 태그 가져오기
-        news_iframe = news_video.find_element(By.TAG_NAME, "iframe")
-        # src 추출
-        news_media_url = news_iframe.get_attribute("src")
-    except Exception as e:
-        pass
+    # ########### 뉴스 비디오 ###########
+    # try:
+    #     news_video = driver.find_element(By.CLASS_NAME, CLASS_NAME_CONTENT_VIDEO)
+    #     # iframe 태그 가져오기
+    #     news_iframe = news_video.find_element(By.TAG_NAME, "iframe")
+    #     # src 추출
+    #     news_media_url = news_iframe.get_attribute("src")
+    # except Exception as e:
+    #     pass
 
     ########### 뉴스 작성시간 ###########
-    news_date = driver.find_element(By.CLASS_NAME, CLASS_NAME_CONTENT_DATE).find_element(By.TAG_NAME, "time").text
+    news_date = driver.find_element(By.CLASS_NAME, CLASS_NAME_CONTENT_DATE).find_element(By.TAG_NAME, "time").get_attribute("datetime")
 
     ########### 뉴스 요약 ###########
     news_summary = driver.find_element(By.CLASS_NAME, CLASS_NAME_CONTENT_SUMMARY).text
-    news_summary_translated = translator.translate(news_summary, dest='ko', src='ja').text
     news_summary_output = morphological_analysis(news_summary)
+
+    news_summary_sentences = news_summary.split("。")
+    news_summary_translated = translator.translate("\n\n\n".join(news_summary_sentences), dest='ko', src='ja').text
 
     ########### 뉴스 본문 ###########
     news_content_bodys = driver.find_elements(By.CLASS_NAME, CLASS_NAME_CONTENT_BODY)
@@ -147,12 +170,10 @@ for news_url in news_urls:
             pass
 
     # 뉴스 바디 출력
-    try:
-        news_body_translated = translator.translate(news_body, dest='ko', src='ja').text
-    except TypeError as e:
-        news_body_translated = ""
-
     news_body_output = morphological_analysis(news_body)
+
+    news_body_sentences = news_body.split("。")
+    news_body_translated = translator.translate("\n\n\n".join(news_body_sentences), dest='ko', src='ja').text
 
     news_data = {
         "title": news_title_output,
@@ -174,8 +195,7 @@ for news_url in news_urls:
             }
             requests.post(f'{NEWS_API_URL}/images/post', json=news_image_data)
         
-        
-        news_datetime = datetime.strptime(news_date.split(" ")[0], '%Y年%m月%d日')
+        news_datetime = datetime.fromisoformat(news_date)
         newsdate = news_datetime.strftime('%Y%m%d')
         filename = f"{DUPLICATENEWS_PATH}/news_data_{newsdate}.json"
         # 기존의 JSON 파일 불러오기
