@@ -23,7 +23,6 @@ import {
 import { UserInterface } from "@/interface/UserInterface";
 import { useSetSignupErrors } from "@/stores/signUpStore";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
-import { useDisplayAction } from "@/stores/displayStore";
 
 // 일반 로그인
 export const useLogin = () => {
@@ -132,7 +131,6 @@ export const useLogout = () => {
   const navigate = useNavigate();
   const setIsLogin = useSetIsLogin();
   const queryClient = useQueryClient();
-  const setIsDark = useDisplayAction();
 
   return useMutation({
     mutationFn: () => customAxios.post(`/member/logout`),
@@ -143,7 +141,6 @@ export const useLogout = () => {
         queryClient.removeQueries(["getMember"] as QueryFilters);
         setIsLogin(false);
         setTimeout(() => {
-          setIsDark(false);
           navigate("/intro");
         }, 0);
       } else {

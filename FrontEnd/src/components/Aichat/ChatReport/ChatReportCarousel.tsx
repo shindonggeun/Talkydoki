@@ -10,10 +10,12 @@ import ChatReportChatFeadback from "./ChatReportChatFeadback";
 import { useGetReport } from "@/api/aiChatReportApi";
 import ChatHeader from "../ChatHeader";
 import { useAiChatStore } from "@/stores/aichatStore";
+import { useParams } from "react-router-dom";
 
 function ChatReportCarousel() {
+  const { roomId } = useParams<{ roomId: string | undefined }>();
   const [now, setNow] = useState(0);
-  const { data } = useGetReport(1);
+  const { data } = useGetReport(Number(roomId));
   const changeCarousel = (pageNum: number) => {
     setNow(pageNum);
   };

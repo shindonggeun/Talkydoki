@@ -33,6 +33,7 @@ export const FooterContainer = styled.div`
   align-items: center;
   justify-content: center;
   position: relative;
+  z-index: 1;
   .cancel-icon {
     position: absolute;
     left: 42.5%;
@@ -62,13 +63,28 @@ export const FooterContainer = styled.div`
       animation: ${pulse} 1.5s infinite;
     }
   }
-
+  .transcriptdiv {
+    position: absolute;
+    bottom: 430%;
+  }
   .reportdiv {
     font-family: "Mplus";
     font-weight: 700;
     position: absolute;
     right: 2%;
   }
+`;
+
+const fadeInUp = keyframes`
+    from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
 `;
 
 export const ChatTipContainer = styled.div`
@@ -83,7 +99,16 @@ export const ChatTipContainer = styled.div`
   align-items: center;
   background-color: var(--grey-light);
   padding: 15px 30px;
-
+  //애니메이션 추가
+  animation: ${fadeInUp} 2s ease-out;
+  &.isVisible {
+    animation: ${fadeInUp} 2s ease-out;
+  }
+  z-index: 2;
+  &.isBehind {
+    z-index: 0; // 뒤로 보내기
+    opacity: 0.2; // 투명도 조절
+  }
   .message {
     align-self: flex-start;
     font-size: 15px;
@@ -117,5 +142,9 @@ export const ChatTipContainer = styled.div`
     @media screen and (max-width: 992px) {
       font-size: 11px;
     }
+  }
+
+  .volume-box {
+    align-self: self-start;
   }
 `;

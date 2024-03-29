@@ -13,6 +13,7 @@ function MyVocaSimple({}: Props) {
   const [vocaList, setVocaList] = useState<PersonalVocaInterface[]>([]);
   const { data } = useMyVoca();
 
+  // 단어장 단어 5개만 미리보기
   useEffect(() => {
     if (!data) return;
     setVocaList([]);

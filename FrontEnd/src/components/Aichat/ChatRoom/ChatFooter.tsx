@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { getCookie } from "@/util/auth/userCookie";
 import { useSendMessage } from "@/api/chatApi";
 import { getStompClient } from "@/util/websocket/stompConnection";
+import { BeatLoader } from "react-spinners";
+// import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 
 interface ChatFooterProps {
   roomId: string | undefined;
@@ -19,6 +21,8 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const { transcript, resetTranscript } = useSpeechRecognition();
   const navigate = useNavigate();
+  console.log("transcript", transcript);
+
   // 타이머
   const [timer, setTimer] = useState<number | undefined>(undefined);
   console.log("시각화 확인 콘솔:isRecording", isRecording);
@@ -26,6 +30,21 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
   // const [chats, setChats] = useState<ChatMessage[]>([]);
   const [chatText, setChatText] = useState<string>("");
   const { mutate: sendChatMessage } = useSendMessage();
+  // 레포트 작성 모달추가
+  // const setModalContent = useSetModalContent();
+  // const setIsModalOn = useSetISModalOn();
+  // const handleReportModal = () => {
+  //   setModalContent({
+  //     message: "레포트를 저장하시겠습니까??",
+  //     onSuccess: () => {
+  //       setIsModalOn(false);
+  //       navigate(-1);
+  //     },
+
+  //     isInfo: false,
+  //   });
+  //   setIsModalOn(true);
+  // };
 
   const sendMessage = (text = chatText) => {
     console.log("메세지 전송");
@@ -88,7 +107,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
       const newTimer = window.setTimeout(() => {
         SpeechRecognition.stopListening();
         resetTranscript();
-        setIsRecording((isRecording) => !isRecording);
+        setIsRecording(false);
       }, 17000);
       setTimer(newTimer as unknown as number);
     }
@@ -112,8 +131,12 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
           />
         </div>
       )}
-      <div>{transcript}</div>
-
+      {isRecording && (
+        <div className="transcriptdiv">
+          {transcript ? <p>{transcript}</p> : <BeatLoader />}
+        </div>
+      )}
+      {transcript}
       <div
         className={`micdiv ${isRecording ? "recording" : ""}`}
         onClick={toggleRecording}

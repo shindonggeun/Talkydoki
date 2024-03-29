@@ -22,6 +22,18 @@ export const IntroSidebarWrapper = styled.div`
   }
 
   div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .icon {
+      cursor: pointer;
+
+      &:hover {
+        color: var(--yellow-dark);
+      }
+    }
+
     & > * {
       margin: 1vh 5px;
     }
@@ -49,7 +61,7 @@ export const BackgroundSectionWrapper = styled(SectionBase)`
 `;
 
 export const IntroSectionWrapper = styled(SectionBase)`
-  height: 200vh;
+  height: 250vh;
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -76,7 +88,7 @@ export const IntroSectionWrapper = styled(SectionBase)`
         div {
           opacity: 0;
           transform: translateY(-30px);
-          transition: transform 0.5s ease, opacity 1s ease;
+          transition: transform 1s ease, opacity 0.5s ease;
         }
 
         &.active {
@@ -88,7 +100,7 @@ export const IntroSectionWrapper = styled(SectionBase)`
               const children = [];
               for (let n = 1; n < 6; n++) {
                 children.push(`&:nth-child(${n}) {
-                transition-delay: ${n - 1 * 0.5}s;
+                  transition-delay: ${(n - 1) * 0.3}s;
             }`);
               }
               return children;
@@ -145,6 +157,9 @@ export const PageSectionWrapper = styled(SectionBase)`
     background-image: url(${Texture});
     background-repeat: repeat;
     background-blend-mode: color-burn;
+    margin-bottom: 50vh;
+    position: relative;
+    box-shadow: 0 0 50px 0px rgb(0, 0, 0, 0.3);
 
     .image {
       width: 60%;
@@ -167,12 +182,18 @@ export const PageSectionWrapper = styled(SectionBase)`
         color: var(--text-button);
         opacity: 0;
         transform: translateX(50px);
-        transition: transform 0.5s ease, opacity 0.5s ease;
+        transition: transform 1s ease, opacity 0.5s ease;
         text-align: end;
 
-        &:nth-child(2) {
-          transition-delay: 0.5s;
-        }
+        ${() => {
+          const children = [];
+          for (let n = 2; n < 7; n++) {
+            children.push(`&:nth-child(${n}) {
+              transition-delay: ${(n - 1) * 0.1}s;
+            }`);
+          }
+          return children;
+        }}
       }
     }
 
