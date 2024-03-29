@@ -33,8 +33,10 @@ public class AiChatReportController {
     )
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     @PostMapping("/create/{roomId}")
-    public Mono<ResponseEntity<Message<AiChatReportCreateApiResponse>>> createReportByGPT(@PathVariable Long roomId) {
-        return aiChatReportService.createReport(roomId)
+    public Mono<ResponseEntity<Message<AiChatReportCreateApiResponse>>> createReportByGPT(
+            @AuthenticationPrincipal MemberLoginActive loginActive,
+            @PathVariable Long roomId) {
+        return aiChatReportService.createReport(loginActive.id(), roomId)
                 .map(reportId -> ResponseEntity.ok().body(Message.success(new AiChatReportCreateApiResponse(reportId))));
     }
 

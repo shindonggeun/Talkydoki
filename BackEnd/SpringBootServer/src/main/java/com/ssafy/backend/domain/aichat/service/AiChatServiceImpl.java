@@ -232,6 +232,9 @@ public class AiChatServiceImpl implements AiChatService {
                 .flatMap(historyMessages -> {
                     // 이전 대화 내역을 메시지 목록에 추가합니다.
                     messages.addAll(historyMessages);
+
+//                    log.info(messages.toString());
+
                     // GPT와의 새 대화 요청을 생성합니다.
                     GptChatRequest gptChatRequest = new GptChatRequest("gpt-3.5-turbo-1106", messages, 500);
                     // GPT에 대화 요청을 보내고 응답을 받습니다.

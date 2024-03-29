@@ -1,5 +1,7 @@
 package com.ssafy.backend.domain.news.service;
 
+import com.ssafy.backend.domain.attendance.entity.enums.AttendanceType;
+import com.ssafy.backend.domain.attendance.service.AttendanceService;
 import com.ssafy.backend.domain.member.entity.Member;
 import com.ssafy.backend.domain.member.exception.MemberErrorCode;
 import com.ssafy.backend.domain.member.exception.MemberException;
@@ -43,6 +45,7 @@ public class NewsServiceImpl implements NewsService {
     private final NewsShadowingRepository newsShadowingRepository;
     private final ShadowingEvaluationRepository shadowingEvaluationRepository;
     private final WebClient webClient;
+    private final AttendanceService attendanceService;
 
     @Override
     public Long insertNews(NewsPostRequest newsPostRequest) {
@@ -162,7 +165,8 @@ public class NewsServiceImpl implements NewsService {
                 .newsShadowing(newsShadowing)
                 .build();
         shadowingEvaluationRepository.save(shadowingEvaluation);
-
+        attendanceService.createAttendance(memberId, AttendanceType.NEWS_SHADOWING);
+        
         return new ShadowingResponse(similarity);
     }
 }
