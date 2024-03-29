@@ -1,17 +1,16 @@
 import ChatRoom from "@/components/Aichat/ChatRoom/ChatRoom";
-import { Flexbox, Wrapper } from "@/styles/Aichat/AiChatRoom";
-// import React from "react";
+import { ChatCard, ChatWrapper } from "@/styles/Aichat/AiChat";
 
 type Props = {};
 
 function AiChatRoom({}: Props) {
   return (
     <>
-      <Wrapper>
-        <Flexbox>
-          <ChatRoom></ChatRoom>
-        </Flexbox>
-      </Wrapper>
+      <ChatWrapper>
+        <ChatCard>
+          <ChatRoom />
+        </ChatCard>
+      </ChatWrapper>
     </>
   );
 }

@@ -3,7 +3,7 @@ interface AiChatInterace {
   globalIsTranslate: boolean;
   setGlobalIsTranslate: () => void;
   globalIsTip: boolean;
-  setGlobalIstip: () => void;  
+  setGlobalIstip: () => void;
   globalIsFeadback: boolean;
   setglobalIsFeadback: () => void;
 }
@@ -14,7 +14,7 @@ export const useAiChatStore = create<AiChatInterace>((set) => ({
     set((state) => ({ globalIsTranslate: !state.globalIsTranslate })),
   globalIsTip: true,
   setGlobalIstip: () => set((state) => ({ globalIsTip: !state.globalIsTip })),
-  globalIsFeadback: false,
+  globalIsFeadback: true,
   setglobalIsFeadback: () =>
     set((state) => ({ globalIsFeadback: !state.globalIsFeadback })),
 }));

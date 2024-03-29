@@ -1,45 +1,20 @@
 import { IconButton, Menu, MenuItem, Switch } from "@mui/material";
 import React from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
-import { HeaderContainer } from "@/styles/Aichat/AiChatRoom";
 import { useNavigate } from "react-router-dom";
-import { useAiChatStore } from "@/stores/aichatStore";
-import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
+import { HeaderContainer } from "@/styles/Aichat/AiChat";
 
-type Props = {};
+type Props = {
+  aiChatTitle: string;
+  options: {
+    label: string;
+    checked?: boolean;
+    onChange?: () => void;
+  }[];
+};
 
-function ChatHeader({}: Props) {
+function ChatHeader({ aiChatTitle, options }: Props) {
   const navigate = useNavigate();
-
-  const globalIsTranslate = useAiChatStore((state) => state.globalIsTranslate);
-  const setGlobalIsTranslate = useAiChatStore(
-    (state) => state.setGlobalIsTranslate
-  );
-  const globalIsTip = useAiChatStore((state) => state.globalIsTip);
-  const setGlobalIsTip = useAiChatStore((state) => state.setGlobalIstip);
-  // 모달추가
-  const setModalContent = useSetModalContent();
-  const setIsModalOn = useSetISModalOn();
-
-  const handleExitModal = () => {
-    setModalContent({
-      message: "나가시겠습니까?",
-      onSuccess: () => {
-        setIsModalOn(false);
-        navigate(-1);
-      },
-
-      isInfo: false,
-    });
-    setIsModalOn(true);
-  };
-
-  const options = [
-    { label: "번역표시" },
-    { label: "팁표시" },
-    { label: "나가기", action: () => handleExitModal() },
-  ];
-
   const ITEM_HEIGHT = 48;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -52,14 +27,11 @@ function ChatHeader({}: Props) {
     setAnchorEl(null);
   };
 
-  const handleOptionClick: (action: (() => void) | undefined) => () => void =
-    (action) => () => {
-      action?.();
-    };
+  const handleOptionClick = () => navigate("/aichatlist");
 
   return (
     <HeaderContainer>
-      <div>AI 회화 채팅</div>
+      <div>{aiChatTitle}</div>
       <IconButton
         aria-label="more"
         id="long-button"
@@ -88,13 +60,13 @@ function ChatHeader({}: Props) {
         {options.map((option, index) => (
           <MenuItem
             key={option.label}
-            onClick={handleOptionClick(option.action)}
             component="div"
             style={{
               display: "flex",
+              // justifyContent: index === 1 ? "flex-end" : "space-between",
             }}
           >
-            {index === 0 && (
+            {index !== options.length - 1 && (
               <div
                 style={{
                   width: "100%",
@@ -105,30 +77,22 @@ function ChatHeader({}: Props) {
               >
                 {option.label}
                 <Switch
-                  checked={globalIsTranslate}
-                  onChange={() => setGlobalIsTranslate()}
+                  checked={option.checked}
+                  onChange={option.onChange}
                   color="primary"
                 />
               </div>
             )}
-            {index === 1 && (
+            {index === options.length - 1 && (
               <div
                 style={{
                   width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
                 }}
+                onClick={() => handleOptionClick()}
               >
                 {option.label}
-                <Switch
-                  checked={globalIsTip}
-                  onChange={() => setGlobalIsTip()}
-                  color="primary"
-                />
               </div>
             )}
-            {index === 2 && option.label}
           </MenuItem>
         ))}
       </Menu>
