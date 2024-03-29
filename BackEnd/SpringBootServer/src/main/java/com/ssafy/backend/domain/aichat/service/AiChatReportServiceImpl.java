@@ -79,9 +79,10 @@ public class AiChatReportServiceImpl implements AiChatReportService {
         return new FullReportInfo(AiChatReport.dto(aiChatReport), aiChatAndFeedbackInfos) ;
     }
 
+    // 개선 사항: queryDSL 사용하면 더 빠르게 조회 가능할 것
     @Override
     public List<AiChatReportInfo> getUserReports(Long memberId) {
-        List<AiChatRoom> aiChatRooms = aiChatRoomRepository.findByMemberId(memberId); // nullable false 해놔서 orElseThrow 필요 없는 듯?
+        List<AiChatRoom> aiChatRooms = aiChatRoomRepository.findByMemberId(memberId);
 
         // 각 AiChatRoom에 대한 AiChatReport를 조회하고, AiChatReportInfo로 변환하여 수집
         return aiChatRooms.stream()
@@ -89,7 +90,7 @@ public class AiChatReportServiceImpl implements AiChatReportService {
                     // AiChatRoom ID를 사용하여 각 AiChatRoom에 대응하는 AiChatReport를 조회
                     AiChatReport aiChatReport = aiChatReportRepository.findByAiChatRoomId(aiChatRoom.getId()).orElseThrow(() -> new IllegalArgumentException("Can't find the report with aiChatRoomId: " + aiChatRoom.getId()));
                     // AiChatReport가 존재하고, 해당 AiChatRoom의 category 정보를 사용하여 AiChatReportInfo 생성
-                    return (aiChatReport != null) ? new AiChatReportInfo(aiChatReport.getId(), aiChatRoom.getCategory()) : null;
+                    return (aiChatReport != null) ? new AiChatReportInfo(aiChatReport.getId(), aiChatRoom.getId(), aiChatRoom.getCategory()) : null;
                 })
                 .filter(Objects::nonNull) // null인 결과 제거
                 .collect(Collectors.toList());
