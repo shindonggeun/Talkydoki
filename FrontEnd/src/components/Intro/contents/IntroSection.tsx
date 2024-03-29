@@ -8,7 +8,7 @@ function IntroSection({}: Props) {
 
   const scrollChecker = () => {
     if (!scrollRef.current) return;
-    if (window.scrollY > window.innerHeight * 0.5) {
+    if (window.scrollY > 0) {
       scrollRef.current.classList.add("active");
     }
   };

@@ -1,14 +1,20 @@
 import { IntroSidebarWrapper } from "@/styles/Intro/containers";
-import TextLogo from "@/assets/images/logo_text_light.png";
 import { useEffect, useState } from "react";
-import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { useDisplayAction, useIsDark } from "@/stores/displayStore";
+
+import TextLogo from "@/assets/images/logo_text_light.png";
+import { Button } from "@mui/material";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
+import LightModeIcon from "@mui/icons-material/LightMode";
 
 type Props = {};
 
 function IntroSidebar({}: Props) {
   const [isHead, setIsHead] = useState(true);
   const navigate = useNavigate();
+  const isDark = useIsDark();
+  const toggleDarkmode = useDisplayAction();
 
   const checkScroll = () => {
     if (window.scrollY > window.innerHeight * 2) {
@@ -49,6 +55,14 @@ function IntroSidebar({}: Props) {
         >
           회원가입
         </Button>
+        {isDark ? (
+          <LightModeIcon
+            className="icon"
+            onClick={() => toggleDarkmode(false)}
+          />
+        ) : (
+          <DarkModeIcon className="icon" onClick={() => toggleDarkmode(true)} />
+        )}
       </div>
     </IntroSidebarWrapper>
   );

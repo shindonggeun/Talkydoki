@@ -54,6 +54,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
   const [audio, setAudio] = useState("");
   const [isUserAudioPlaying, setIsUserAudioPlaying] = useState(false);
 
+  // 마이크 권한 받기
   const getPermission = async () => {
     if ("MediaRecorder" in window) {
       try {
@@ -68,8 +69,12 @@ function SpeechBox({ newsId, news, idx }: Props) {
 
   useEffect(() => {
     getPermission();
+    return () => {
+      stopRecord();
+    };
   }, []);
 
+  // 목소리 녹음
   const startRecordVoice = async () => {
     if (stream) {
       const media = new MediaRecorder(stream, { mimeType: mimeType });
@@ -88,6 +93,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
     }
   };
 
+  // 목소리 녹음 중지
   const stopRecordVoice = () => {
     if (!mediaRecorder.current) return;
     mediaRecorder.current.stop();
@@ -99,6 +105,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
     };
   };
 
+  // stt+녹음 중지
   const stopRecord = () => {
     SpeechRecognition.stopListening();
     const userText = scriptRef.current.replace(
@@ -184,6 +191,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
         color="purple"
         className="buttons"
       >
+        {/* 녹음버튼 */}
         <Button
           onClick={() => {
             listening ? stopRecord() : startRecord();
@@ -198,6 +206,8 @@ function SpeechBox({ newsId, news, idx }: Props) {
             <MicIcon />
           )}
         </Button>
+
+        {/* 듣기버튼 */}
         <Button
           disabled={audio.length == 0}
           onClick={() => {
@@ -220,6 +230,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
         </Button>
       </ButtonGroup>
       <div className="script">
+        {/* 읽은 내용 + 점수 표시 */}
         <div className="similarity">
           {isIdle && "마이크를 누르고 녹음을 시작해 보세요."}
           {similarity ? (
