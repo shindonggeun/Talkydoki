@@ -45,44 +45,5 @@ public class OpenAiCommunicationProvider {
                 .bodyToMono(GptChatCompletionResponse.class)
                 .map(response -> response.choices().get(0).message().content());
     }
-
-    @Transactional
-    public Mono<Long> saveReport(Long roomId, AiChatReportCreateRequest reportRequest) {
-        return getAiChatReportCreateResponseMono(roomId, reportRequest, aiChatRoomRepository, aiChatReportRepository, aiChatHistoryRepository, aiChatFeedbackRepository);
-    }
-
-    public Mono<Long> getAiChatReportCreateResponseMono(Long roomId, AiChatReportCreateRequest reportRequest, AiChatRoomRepository aiChatRoomRepository, AiChatReportRepository aiChatReportRepository, AiChatHistoryRepository aiChatHistoryRepository, AiChatFeedbackRepository aiChatFeedbackRepository) {
-        return Mono.fromCallable(() -> aiChatRoomRepository.findById(roomId).orElseThrow(() -> new RuntimeException("Can't find the aiChatRoom with id: " + roomId)))
-                .subscribeOn(Schedulers.boundedElastic())
-                .flatMap(aiChatRoom -> {
-                    AiChatReport report = AiChatReport.builder()
-                            .aiChatRoom(aiChatRoom)
-                            .conversationSummary(reportRequest.conversationSummary())
-                            .vocabularyScore(reportRequest.vocabularyScore())
-                            .wordScore(reportRequest.wordScore())
-                            .grammarScore(reportRequest.grammarScore())
-                            .fluencyScore(reportRequest.fluencyScore())
-                            .contextScore(reportRequest.contextScore())
-                            .build();
-
-                    return Mono.fromCallable(() -> aiChatReportRepository.save(report))
-                            .subscribeOn(Schedulers.boundedElastic())
-                            .flatMap(savedReport -> Flux.fromIterable(reportRequest.feedbacks())
-                                    .publishOn(Schedulers.boundedElastic())
-                                    .flatMap(feedback ->
-                                            Mono.fromCallable(() -> {
-                                                AiChatHistory aiChatHistory = aiChatHistoryRepository.findById(feedback.chatId())
-                                                        .orElseThrow(() -> new RuntimeException("Can't find the chat"));
-                                                AiChatFeedback aiChatFeedback = AiChatFeedback.builder()
-                                                        .aiChatHistory(aiChatHistory)
-                                                        .content(feedback.content())
-                                                        .build();
-                                                aiChatFeedbackRepository.save(aiChatFeedback);
-                                                return aiChatFeedback;
-                                            }).subscribeOn(Schedulers.boundedElastic()))
-                                    .then(Mono.just(savedReport.getId())));
-                });
-    }
-
 }
 

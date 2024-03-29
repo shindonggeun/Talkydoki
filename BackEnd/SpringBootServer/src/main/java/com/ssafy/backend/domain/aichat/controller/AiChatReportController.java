@@ -57,9 +57,9 @@ public class AiChatReportController {
             description = "유저의 레포트의 평가 내용과 채팅에 대한 피드백들을 조회합니다"
     )
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    @GetMapping("/detail/get/{reportId}")
-    public ResponseEntity<Message<FullReportInfo>> getReportDetail(@PathVariable Long reportId){
-        FullReportInfo reportDetail = aiChatReportService.getReportDetail(reportId);
+    @GetMapping("/detail/get/{roomId}")
+    public ResponseEntity<Message<FullReportInfo>> getReportDetail(@PathVariable Long roomId){
+        FullReportInfo reportDetail = aiChatReportService.getReportDetail(roomId);
 
         return ResponseEntity.ok().body(Message.success(reportDetail));
     }
