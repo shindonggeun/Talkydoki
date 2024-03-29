@@ -17,7 +17,7 @@ public interface AiChatReportService {
     @Transactional
     Mono<Long> createReport(Long memberId, Long roomId);
 
-    FullReportInfo getReportDetail(Long roomId);
+    FullReportInfo getReportDetail(Long reportId);
 
     List<AiChatReportInfo> getUserReports(Long memberId);
 

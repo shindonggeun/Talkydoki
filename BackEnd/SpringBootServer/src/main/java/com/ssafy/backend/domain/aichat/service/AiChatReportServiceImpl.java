@@ -71,10 +71,10 @@ public class AiChatReportServiceImpl implements AiChatReportService {
 
 
     @Override
-    public FullReportInfo getReportDetail(Long roomId) {
-        AiChatReport aiChatReport = aiChatReportRepository.findByAiChatRoomId(roomId).orElseThrow(() -> new IllegalArgumentException("Can't find the report with aiChatRoomId: " + roomId));
+    public FullReportInfo getReportDetail(Long reportId) {
+        AiChatReport aiChatReport = aiChatReportRepository.findByAiChatRoomId(reportId).orElseThrow(() -> new IllegalArgumentException("Can't find the report with Id: " + reportId));
 
-        List<AiChatAndFeedbackInfo> aiChatAndFeedbackInfos = aiChatFeedbackRepository.getAiChatFeedbackInfo(roomId);
+        List<AiChatAndFeedbackInfo> aiChatAndFeedbackInfos = aiChatFeedbackRepository.getAiChatFeedbackInfo(aiChatReport.getAiChatRoom().getId());
 
         return new FullReportInfo(AiChatReport.dto(aiChatReport), aiChatAndFeedbackInfos) ;
     }
@@ -90,7 +90,7 @@ public class AiChatReportServiceImpl implements AiChatReportService {
                     // AiChatRoom ID를 사용하여 각 AiChatRoom에 대응하는 AiChatReport를 조회
                     AiChatReport aiChatReport = aiChatReportRepository.findByAiChatRoomId(aiChatRoom.getId()).orElseThrow(() -> new IllegalArgumentException("Can't find the report with aiChatRoomId: " + aiChatRoom.getId()));
                     // AiChatReport가 존재하고, 해당 AiChatRoom의 category 정보를 사용하여 AiChatReportInfo 생성
-                    return (aiChatReport != null) ? new AiChatReportInfo(aiChatReport.getId(), aiChatRoom.getId(), aiChatRoom.getCategory()) : null;
+                    return (aiChatReport != null) ? new AiChatReportInfo(aiChatReport.getId(), aiChatRoom.getCategory()) : null;
                 })
                 .filter(Objects::nonNull) // null인 결과 제거
                 .collect(Collectors.toList());
