@@ -8,6 +8,7 @@ import { useDisplayAction, useIsDark } from "@/stores/displayStore";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 import { useLogout } from "@/api/memberApi";
 import { SidebarTitleSection } from "@/styles/Menu/sidebar";
+import { useNavigate } from "react-router-dom";
 
 type Props = {};
 
@@ -16,6 +17,7 @@ function SidebarTitle({}: Props) {
   const toggleDarkmode = useDisplayAction();
   const setModalContent = useSetModalContent();
   const setIsModalOn = useSetISModalOn();
+  const navigate = useNavigate();
 
   const { mutate: logout } = useLogout();
 
@@ -33,7 +35,12 @@ function SidebarTitle({}: Props) {
 
   return (
     <SidebarTitleSection>
-      <img className="logoImg" src={Logo} alt="talkydoki" />
+      <img
+        className="logoImg"
+        src={Logo}
+        alt="talkydoki"
+        onClick={() => navigate("/")}
+      />
       <div>
         {isDark ? (
           <LightModeIcon

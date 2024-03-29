@@ -4,8 +4,7 @@ import { splitMeaning } from "@/util/language/voca";
 import { useState } from "react";
 
 import CircularProgress from "@mui/material/CircularProgress";
-import AddIcon from "@mui/icons-material/Add";
-import CheckIcon from "@mui/icons-material/Check";
+import StarIcon from "@mui/icons-material/Star";
 import { JptoKor } from "@/util/language/japanese";
 
 function RandomVoca() {
@@ -40,11 +39,7 @@ function RandomVoca() {
           handleAddVoca(id);
         }}
       >
-        {isAdded ? (
-          <CheckIcon className={`icon ${isAdded ? "added" : null}`} />
-        ) : (
-          <AddIcon className={`icon ${isAdded ? "added" : null}`} />
-        )}
+        <StarIcon className={`addIcon ${isAdded && "added"}`} />
       </AddVocaBtn>
 
       {/* 오늘의 단어 컨텐츠 */}

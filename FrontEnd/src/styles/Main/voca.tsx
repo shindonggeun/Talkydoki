@@ -69,55 +69,32 @@ export const AddVocaBtn = styled.div`
   position: absolute;
   top: 20px;
   right: 20px;
-  height: fit-content;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  aspect-ratio: 1;
-  border-radius: 50%;
   cursor: pointer;
-
-  .icon {
-    &.added {
-      animation: iconAnimation 0.5s;
-      color: var(--text);
-    }
-  }
-
-  &:before {
-    content: "나의 단어장에 추가";
-    position: absolute;
-    right: 30px;
-    top: 3px;
-    width: 140px;
-    max-width: 0px;
-    overflow: hidden;
-    white-space: nowrap;
-    transition: max-width 0.3s ease;
-  }
 
   &:hover,
   &:active {
-    background-color: var(--main);
-    color: var(--text-button);
-
-    &:before {
-      color: var(--grey);
-      max-width: 140px;
-    }
+    color: var(--main);
   }
 
   &:active {
-    background-color: var(--main-dark);
+    transform: scale(0.7);
   }
 
   &.added {
-    background-color: transparent;
+    color: var(--main);
+    animation: clickAnimation 0.3s ease;
+    -webkit-animation: clickAnimation 0.3s ease;
+  }
 
-    &:before {
-      display: none;
+  @-webkit-keyframes clickAnimation {
+    0% {
+      transform: scale(0.7);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
     }
   }
 `;

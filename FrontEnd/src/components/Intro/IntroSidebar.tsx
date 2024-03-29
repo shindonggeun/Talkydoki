@@ -35,6 +35,9 @@ function IntroSidebar({}: Props) {
         backdropFilter: isHead
           ? undefined
           : "blur(4px) brightness(1.3) grayscale(0.3)",
+        WebkitBackdropFilter: isHead
+          ? undefined
+          : "blur(4px) brightness(1.3) grayscale(0.3)",
       }}
     >
       <img src={TextLogo} alt="logo" className="textLogo" />

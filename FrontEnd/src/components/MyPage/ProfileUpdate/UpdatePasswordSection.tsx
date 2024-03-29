@@ -13,13 +13,17 @@ type Props = {
   children?: React.ReactNode;
   index: number;
   value: number;
+  provider: string | null;
 };
 
-function UpdatePasswordSection({ index, value }: Props) {
+function UpdatePasswordSection({ index, value, provider }: Props) {
+  const isSocial = Boolean(provider);
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newPassword2, setNewPassword2] = useState("");
   const [isDefferent, setIsDefferent] = useState(false);
+
+  console.log(isSocial);
 
   const setModalContent = useSetModalContent();
   const setIsModalOn = useSetISModalOn();
@@ -46,38 +50,45 @@ function UpdatePasswordSection({ index, value }: Props) {
   return (
     <UpdatePwContext>
       {/* 비밀번호 변경 section */}
+
       <div className="section password">
         <div className="title">비밀번호 변경</div>
         <Divider flexItem orientation="vertical" />
         <form onSubmit={handleChangePassword} className="form">
-          <div>
-            <PasswordInput
-              password={oldPassword}
-              setPassword={setOldPassword}
-              isConfirm={false}
-            />
-            <PasswordInput
-              password={newPassword}
-              setPassword={setNewPassword}
-              isConfirm={true}
-              error={changePasswordError}
-            />
-            <PasswordInput
-              password={newPassword2}
-              setPassword={setNewPassword2}
-              isConfirm={true}
-              isDefferent={isDefferent}
-              error={changePasswordCheckError}
-            />
-          </div>
-          <Button
-            variant="contained"
-            color="purple"
-            disabled={!isValidPWChange(oldPassword, newPassword, newPassword2)}
-            type="submit"
-          >
-            수정하기
-          </Button>
+          {isSocial ? (
+            <div className="social">지원하지 않는 기능입니다.</div>
+          ) : (
+            <>
+              <PasswordInput
+                password={oldPassword}
+                setPassword={setOldPassword}
+                isConfirm={false}
+              />
+              <PasswordInput
+                password={newPassword}
+                setPassword={setNewPassword}
+                isConfirm={true}
+                error={changePasswordError}
+              />
+              <PasswordInput
+                password={newPassword2}
+                setPassword={setNewPassword2}
+                isConfirm={true}
+                isDefferent={isDefferent}
+                error={changePasswordCheckError}
+              />
+              <Button
+                variant="contained"
+                color="purple"
+                disabled={
+                  !isValidPWChange(oldPassword, newPassword, newPassword2)
+                }
+                type="submit"
+              >
+                수정하기
+              </Button>
+            </>
+          )}
         </form>
       </div>
 

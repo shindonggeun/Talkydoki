@@ -24,7 +24,6 @@ function Menus() {
   return (
     <div>
       <MenuDivider textAlign="left">menu</MenuDivider>
-
       {/* 홈 */}
       <MenuItem
         onClick={() => menuHandler("/main")}
@@ -65,7 +64,7 @@ function Menus() {
       >
         <div className="label">
           <FaceIcon />
-          <div>마이페이지</div>
+          <div>마이 데이터</div>
         </div>
         <KeyboardArrowRightIcon />
       </MenuItem>

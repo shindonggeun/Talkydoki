@@ -4,27 +4,20 @@ import UpdatePasswordSection from "@/components/MyPage/ProfileUpdate/UpdatePassw
 
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import { UpdateHeader, UpdateWrapper } from "@/styles/ProfileUpdate/UpdateForm";
+import { UpdateWrapper } from "@/styles/ProfileUpdate/UpdateForm";
 import { useState } from "react";
 import { useTheme } from "styled-components";
 import { useGetMember } from "@/api/memberApi";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { useNavigate } from "react-router-dom";
 
 type Props = {};
 
 function ProfileUpdate({}: Props) {
   const [now, setNow] = useState(0);
   const theme = useTheme();
-  const navigate = useNavigate();
   const { data } = useGetMember();
 
   return (
     <Wrapper>
-      <UpdateHeader onClick={() => navigate("/mypage")}>
-        <ArrowBackIcon className="icon" />
-        <div>마이페이지</div>
-      </UpdateHeader>
       <UpdateWrapper>
         <Tabs
           value={now}
@@ -41,7 +34,13 @@ function ProfileUpdate({}: Props) {
         </Tabs>
 
         {data && <UpdateProfileSection value={now} index={0} user={data} />}
-        {data && <UpdatePasswordSection value={now} index={1} />}
+        {data && (
+          <UpdatePasswordSection
+            value={now}
+            index={1}
+            provider={data.provider}
+          />
+        )}
       </UpdateWrapper>
     </Wrapper>
   );

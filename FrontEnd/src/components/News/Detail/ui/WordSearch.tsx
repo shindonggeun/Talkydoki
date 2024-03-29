@@ -101,7 +101,11 @@ function WordSearch() {
       ref={searchRef}
       style={{ top: `${xy.y}px`, left: `${xy.x}px` }}
     >
-      {isFetching && <CircularProgress color="purple" />}
+      {isFetching && (
+        <div className="flex">
+          <CircularProgress color="purple" />
+        </div>
+      )}
       {data && (
         <div>
           <div className="header ">

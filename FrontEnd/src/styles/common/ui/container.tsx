@@ -55,6 +55,7 @@ export const ModalCard = styled(Card)`
   z-index: 102;
   box-shadow: none;
   animation: moveToTop 0.2s ease-out;
+  -webkit-animation: moveToTop 0.2s ease-out;
 
   .innerText {
     width: 100%;
