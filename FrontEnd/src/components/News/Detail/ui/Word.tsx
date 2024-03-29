@@ -1,5 +1,5 @@
 import { WordItem } from "@/styles/News/Detail/ui";
-import { JptoKor, KanaToHira } from "@/util/language/japanese";
+import { JptoKor, KanaToHira, hasMeaning } from "@/util/language/japanese";
 import { useSetIsSearchOn, useSetSearchWord } from "@/stores/newsStore";
 
 type Props = {
@@ -14,17 +14,6 @@ function Word({ word, isReadOn, isReadKrOn }: Props) {
   const readKor = JptoKor(read);
   const setSearchWord = useSetSearchWord();
   const setIsSearchOn = useSetIsSearchOn();
-
-  const hasMeaning = (wordType: string) => {
-    if (
-      wordType.startsWith("名詞-普通名詞") ||
-      wordType.startsWith("動詞-非自立可能")
-    ) {
-      return true;
-    } else {
-      return false;
-    }
-  };
 
   const searchHandler = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!hasMeaning(word[4])) return;
