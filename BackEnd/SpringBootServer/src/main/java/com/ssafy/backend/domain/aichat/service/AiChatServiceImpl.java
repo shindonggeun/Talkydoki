@@ -227,20 +227,23 @@ public class AiChatServiceImpl implements AiChatService {
      * @return 대화 결과를 포함하는 Mono<Conversation> 객체
      */
     private Mono<Conversation> processGptConversation(Long roomId, GptSetupRequest setupRequest) {
-        // 이전 대화 내역을 포함한 새 대화 요청을 구성합니다.
         List<GptDialogueMessage> messages = new ArrayList<>(setupRequest.messages());
         return openAiRepository.findAiChatHistory(roomId)
                 .flatMap(historyMessages -> {
                     messages.addAll(historyMessages);
-//                    log.info(messages.toString());
                     GptChatRequest gptChatRequest = new GptChatRequest("gpt-3.5-turbo-1106", messages, 500);
                     return openAiCommunicationProvider.sendPromptToGpt(gptChatRequest);
                 })
-                // 아래의 map을 람다 표현식으로 변경합니다.
-                .flatMap(responseString -> {
-                    openAiRepository.saveAiChatHistory(roomId, List.of(new GptDialogueMessage("assistant", responseString)));
-                    return parseGetResponse(roomId, responseString);
-                }); // 람다 표현식 사용
+                .flatMap(responseString ->
+                        parseGetResponse(roomId, responseString)
+                                .flatMap(conversation ->
+                                        getAiChatRoom(roomId)
+                                                .doOnSuccess(aiChatRoom -> {
+                                                    saveGptMessage(aiChatRoom, conversation, aiChatRoom.getCategory(), responseString);
+                                                })
+                                                .thenReturn(conversation)
+                                )
+                );
     }
 
     /**

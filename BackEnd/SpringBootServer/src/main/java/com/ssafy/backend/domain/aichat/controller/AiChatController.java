@@ -47,14 +47,6 @@ public class AiChatController {
         aiChatService.sendAiChatMessageByUser(Long.valueOf(principal.getName()), roomId, aiChatMessage);
     }
 
-//    @PostMapping("/gpt/{roomId}")
-//    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-//    public Mono<ResponseEntity<Message<Conversation>>> sendAiChatMessageByGpt(@PathVariable Long roomId,
-//                                                                      @RequestBody AiChatMessage userMessage) {
-//        return aiChatService.sendAiChatMessageByGpt(roomId, userMessage)
-//                .map(conversation -> ResponseEntity.ok().body(Message.success(conversation)));
-//    }
-
     @PostMapping("/gpt/setup/{roomId}/{category}")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     public Mono<ResponseEntity<Message<Conversation>>> setupAiChatBot(@PathVariable Long roomId,
