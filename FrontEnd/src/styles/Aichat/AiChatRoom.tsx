@@ -73,7 +73,7 @@ export const MainContainer = styled.div`
     align-items: center;
     justify-content: center;
     flex-direction: row;
-    max-width: calc(60+50px);
+    max-width: 60%;
     margin-bottom: 30px;
 
     .chatbot-icon-container {
@@ -85,8 +85,7 @@ export const MainContainer = styled.div`
       margin-right: 10px;
     }
     .chatbot-icon {
-      max-width: 100%;
-      max-height: 100%;
+      width: 50px;
     }
     .buttonbox {
       margin: 5px 0;
@@ -97,7 +96,7 @@ export const MainContainer = styled.div`
     .message-item.chat {
       display: flex;
       flex-direction: column;
-      width: calc(100%-50px);
+      width: calc(100%-px);
       padding: 10px;
       background: var(--bg-modal);
       color: var(--text);
@@ -216,14 +215,16 @@ export const ChatTipContainer = styled.div`
   position: absolute;
   width: 60%;
   left: 20%;
-  top: 68%;
+  top: 60%;
   border-radius: 10px;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: column-reverse;
+  justify-content: flex-start;
   align-items: center;
-  background-color: var(--grey-light);
+  background-color: ${(props) =>
+    props.theme.mode == "light" ? "var(--grey-light)" : "var(--shadow-dark)"};
   padding: 15px 30px;
+  min-height: 5px; // 최소 높이 설정
   //애니메이션 추가
   animation: ${fadeInUp} 2s ease-out;
   &.isVisible {
@@ -268,7 +269,9 @@ export const ChatTipContainer = styled.div`
       font-size: 11px;
     }
   }
-
+  @media screen and (max-width: 992px) {
+    top: 58%;
+  }
   .volume-box {
     align-self: self-start;
   }

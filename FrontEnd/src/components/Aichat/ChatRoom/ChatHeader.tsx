@@ -26,7 +26,7 @@ function ChatHeader({}: Props) {
       message: "나가시겠습니까?",
       onSuccess: () => {
         setIsModalOn(false);
-        navigate(-1);
+        navigate("/aichatlist");
       },
 
       isInfo: false,
