@@ -90,6 +90,7 @@ public class MemberServiceImpl implements MemberService {
                 .name(member.getName())
                 .nickname(member.getNickname())
                 .profileImage(member.getProfileImage())
+                .provider(member.getOAuthDomain())
                 .role(member.getRole())
                 .build();
     }
