@@ -52,8 +52,7 @@ public class NewsServiceImpl implements NewsService {
         if (newsRepository.existsBySrcOrigin(newsPostRequest.getSrcOrigin())) {
             throw new NewsException(NewsErrorCode.EXIST_NEWS_SRC_ORIGIN);
         }
-        // 일본식 날짜 형식에 맞는 DateTimeFormatter 생성
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("[yyyy年]M月d日[ ]H時m分");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
         LocalDateTime writeDateTime;
 
         try {
