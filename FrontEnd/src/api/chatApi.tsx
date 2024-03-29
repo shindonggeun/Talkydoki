@@ -54,3 +54,19 @@ export const useChatStart = () => {
     },
   });
 };
+
+//레포트 작성
+
+export const useReportCreate = () => {
+  return useMutation({
+    mutationFn: (roomId: string | undefined) => {
+      return customAxios.post(`report/create/${roomId}`);
+    },
+    onSuccess: (res) => {
+      console.log("리포트 작성 성공 및 데이터", res);
+    },
+    onError: (err) => {
+      console.log("리포트 작성 실패 및 데이터", err);
+    },
+  });
+};

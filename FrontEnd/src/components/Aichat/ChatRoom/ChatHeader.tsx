@@ -4,25 +4,40 @@ import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { HeaderContainer } from "@/styles/Aichat/AiChatRoom";
 import { useNavigate } from "react-router-dom";
 import { useAiChatStore } from "@/stores/aichatStore";
+import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 
 type Props = {};
 
 function ChatHeader({}: Props) {
   const navigate = useNavigate();
 
-  // 전역 상태 관리
   const globalIsTranslate = useAiChatStore((state) => state.globalIsTranslate);
   const setGlobalIsTranslate = useAiChatStore(
     (state) => state.setGlobalIsTranslate
   );
   const globalIsTip = useAiChatStore((state) => state.globalIsTip);
   const setGlobalIsTip = useAiChatStore((state) => state.setGlobalIstip);
+  // 모달추가
+  const setModalContent = useSetModalContent();
+  const setIsModalOn = useSetISModalOn();
 
-  // 번역표시 팁표시 기능 추가 필요
+  const handleExitModal = () => {
+    setModalContent({
+      message: "나가시겠습니까?",
+      onSuccess: () => {
+        setIsModalOn(false);
+        navigate(-1);
+      },
+
+      isInfo: false,
+    });
+    setIsModalOn(true);
+  };
+
   const options = [
     { label: "번역표시" },
     { label: "팁표시" },
-    { label: "나가기", action: () => navigate(-1) },
+    { label: "나가기", action: () => handleExitModal() },
   ];
 
   const ITEM_HEIGHT = 48;
@@ -40,7 +55,6 @@ function ChatHeader({}: Props) {
   const handleOptionClick: (action: (() => void) | undefined) => () => void =
     (action) => () => {
       action?.();
-      // setAnchorEl(null);
     };
 
   return (
@@ -78,7 +92,6 @@ function ChatHeader({}: Props) {
             component="div"
             style={{
               display: "flex",
-              // justifyContent: index === 1 ? "flex-end" : "space-between",
             }}
           >
             {index === 0 && (

@@ -46,22 +46,17 @@ function ChatMessage({ japanese, text, feadback }: Props) {
       );
       if (AudioStream) {
         console.log("AudioStream", AudioStream);
-        // ReadableStream을 Web Stream으로 변환
         const webStream = AudioStream.transformToWebStream();
 
-        // Blob으로 변환
         const response = new Response(webStream);
         const audioBlob = await response.blob();
 
-        // Blob을 이용해 오디오 URL 생성
         const audioUrl = URL.createObjectURL(audioBlob);
 
-        // Audio 객체를 사용하여 음성 재생
         const audio = new Audio(audioUrl);
         console.log(audio);
         audio.play();
 
-        // 재생이 완료되면 URL 해제
         audio.onended = () => {
           URL.revokeObjectURL(audioUrl);
         };

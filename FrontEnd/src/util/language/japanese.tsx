@@ -152,3 +152,17 @@ export const KanaToHira = (word: string) => {
     )
     .replace(/ー/g, (_matched, index) => changeStick(word.charAt(index - 1)));
 };
+
+// 단어장 표시할 단어 품사 거르는 함수
+export const hasMeaning = (wordType: string) => {
+  if (
+    wordType.startsWith("名詞-普通名詞") ||
+    wordType.startsWith("名詞-固有名詞-一般") ||
+    wordType.startsWith("動詞-非自立可能") ||
+    wordType.startsWith("動詞-一般")
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+};
