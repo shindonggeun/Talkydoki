@@ -35,10 +35,10 @@ spring:
       mode: always
       data-locations:
         - 'classpath:/data_vocabulary.sql'
-        - 'classpath:/data_news.sql'
+        # - 'classpath:/data_news.sql'
         - 'classpath:/data_member.sql'
-        - 'classpath:/data_keyword.sql'
-        - 'classpath:/data_news_keyword_mapping.sql'
+        # - 'classpath:/data_keyword.sql'
+        # - 'classpath:/data_news_keyword_mapping.sql'
 
   # NoSQL setting
   data:
