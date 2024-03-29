@@ -1,4 +1,4 @@
-import { MainContainer } from "@/styles/Aichat/AiChat";
+import { MainContainer } from "@/styles/Aichat/AiChatRoom";
 import chatbot from "@/assets/images/logo_face.png";
 
 import ChatMessage from "./ChatMessage";
@@ -22,7 +22,7 @@ function ChatMain({ messages }: ChatMainProps) {
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
   return (
-    <MainSession>
+    <>
       <MainContainer>
         {messages.map((message, index) =>
           message.sender === "GPT" ? (
@@ -45,7 +45,7 @@ function ChatMain({ messages }: ChatMainProps) {
         )}
         <div ref={endOfMessagesRef} />
       </MainContainer>
-    </MainSession>
+    </>
   );
 }
 
