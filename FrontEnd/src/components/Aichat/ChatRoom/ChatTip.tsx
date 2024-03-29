@@ -29,7 +29,7 @@ function ChatTip({ lastUserTip }: ChatTipProps) {
     }
   }, [lastUserTip]);
   const handleTipClick = () => {
-    setIsBehind((prev) => !prev); // 클릭 시 상태 토글
+    setIsBehind((prev) => !prev); // 클릭 시 상태 토글 투명해지고 뒤로 보내기
   };
   console.log("isTip:", isTip);
   console.log("lastUserTip", lastUserTip);
@@ -81,7 +81,6 @@ function ChatTip({ lastUserTip }: ChatTipProps) {
   return (
     <>
       {isTip ? (
-        //  onClick={() => setIstip(!isTip)}
         <ChatTipContainer
           className={`${isVisible ? "isVisible" : ""} ${
             isBehind ? "isBehind" : ""

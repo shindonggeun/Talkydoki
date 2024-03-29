@@ -82,7 +82,6 @@ function ChatRoom() {
       }
     };
 
-    // 웹소켓 연결을 시도
     connectStompClient(
       serverURL,
       token,

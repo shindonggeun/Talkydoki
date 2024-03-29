@@ -57,7 +57,10 @@ function App() {
                 path="/aichatlist/:catagory/:roomId"
                 element={<AiChatRoom />}
               />
-              <Route path="/aichatreport/:roomId" element={<AiChatReport />} />
+              <Route
+                path="/aichatreport/:reportId"
+                element={<AiChatReport />}
+              />
               <Route path="/mypage" element={<MyPage />} />
               <Route path="/mypage/myvoca" element={<MyVoca />} />
               <Route path="/mypage/update" element={<ProfileUpdate />} />

@@ -8,10 +8,11 @@ import SpeechRecognition, {
 import { BlueButton } from "@/styles/common/ui/button";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "@/util/auth/userCookie";
-import { useSendMessage } from "@/api/chatApi";
+import { useReportCreate, useSendMessage } from "@/api/chatApi";
 import { getStompClient } from "@/util/websocket/stompConnection";
 import { BeatLoader } from "react-spinners";
-// import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
+import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
+import Loading from "@/components/ui/Loading";
 
 interface ChatFooterProps {
   roomId: string | undefined;
@@ -22,29 +23,47 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
   const { transcript, resetTranscript } = useSpeechRecognition();
   const navigate = useNavigate();
   console.log("transcript", transcript);
+  //로딩 추가
+  const [isLoading, setIsLoading] = useState(false);
 
   // 타이머
   const [timer, setTimer] = useState<number | undefined>(undefined);
   console.log("시각화 확인 콘솔:isRecording", isRecording);
 
-  // const [chats, setChats] = useState<ChatMessage[]>([]);
   const [chatText, setChatText] = useState<string>("");
   const { mutate: sendChatMessage } = useSendMessage();
-  // 레포트 작성 모달추가
-  // const setModalContent = useSetModalContent();
-  // const setIsModalOn = useSetISModalOn();
-  // const handleReportModal = () => {
-  //   setModalContent({
-  //     message: "레포트를 저장하시겠습니까??",
-  //     onSuccess: () => {
-  //       setIsModalOn(false);
-  //       navigate(-1);
-  //     },
 
-  //     isInfo: false,
-  //   });
-  //   setIsModalOn(true);
-  // };
+  // 레포트 작성 모달추가
+  const setModalContent = useSetModalContent();
+  const setIsModalOn = useSetISModalOn();
+  const { mutate: reportCreate } = useReportCreate();
+
+  const handleReportModal = () => {
+    setModalContent({
+      message: "리포트를 저장하시겠습니까??",
+      onSuccess: () => {
+        setIsLoading(true);
+        reportCreate(roomId, {
+          onSuccess: ({
+            data: {
+              dataBody: { reportId },
+            },
+          }) => {
+            console.log("리포트 아이디", reportId);
+            setIsLoading(false);
+            setIsModalOn(false);
+            navigate(`/aichatreport/${reportId}`);
+          },
+          onError: () => {
+            navigate("/aichatlist");
+          },
+        });
+      },
+
+      isInfo: false,
+    });
+    setIsModalOn(true);
+  };
 
   const sendMessage = (text = chatText) => {
     console.log("메세지 전송");
@@ -57,8 +76,8 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
       };
 
       const sendpayload = {
-        roomId: roomId ?? "", // 현재 roomId 사용
-        data: message, // 위에서 생성한 메시지 객체
+        roomId: roomId ?? "",
+        data: message,
       };
 
       getStompClient()?.send(
@@ -74,7 +93,6 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
       console.log("보낸메세지~~~", message);
 
       setChatText("");
-      // resetTranscript();
     }
   };
 
@@ -90,19 +108,17 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
     if (isRecording) {
       sendMessage(transcript);
       SpeechRecognition.stopListening();
-      // SpeechRecognition.abortListening();
 
       setTimeout(() => {
         resetTranscript(); // 인식된 텍스트 초기화
         setIsRecording(false); // 음성 인식 상태 업데이트
-      }, 300); // 500ms 대기 후 실행
+      }, 300);
 
-      clearTimeout(timer); // 설정된 타이머 취
+      clearTimeout(timer);
 
       clearTimeout(timer);
     } else {
       SpeechRecognition.startListening({ continuous: true, language: "ja-JP" });
-      // 17초 타이머 설정
 
       const newTimer = window.setTimeout(() => {
         SpeechRecognition.stopListening();
@@ -118,6 +134,9 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
     return <span>크롬 브라우저를 사용해주세요.</span>;
   }
 
+  if (isLoading) {
+    return <Loading />;
+  }
   return (
     <FooterContainer>
       {isRecording && (
@@ -147,7 +166,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
         <BlueButton
           width="95px"
           height="33px"
-          onClick={() => navigate("/aichatreport")}
+          onClick={() => handleReportModal()}
         >
           리포트 작성
         </BlueButton>
