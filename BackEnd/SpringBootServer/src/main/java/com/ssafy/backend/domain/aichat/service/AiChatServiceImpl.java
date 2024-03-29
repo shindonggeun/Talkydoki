@@ -75,9 +75,9 @@ public class AiChatServiceImpl implements AiChatService {
      */
     @Override
     public Mono<Conversation> setupAiChatBot(Long roomId, AiChatCategory category) {
-        return getAiChatRoom(roomId)
-                .flatMap(aiChatRoom -> setupGptAndSaveHistory(roomId, aiChatRoom, category))
-                .subscribeOn(Schedulers.boundedElastic());
+        return getAiChatRoom(roomId) // roomId에 해당하는 AiChatRoom을 비동기적으로 조회합니다.
+                .flatMap(aiChatRoom -> setupGptAndSaveHistory(roomId, aiChatRoom, category)) // 조회된 AiChatRoom과 함께 GPT 설정 및 이력 저장 로직을 수행합니다.
+                .subscribeOn(Schedulers.boundedElastic()); // 이 작업을 별도의 스레드에서 실행하도록 Schedulers를 사용하여 구독합니다.
     }
 
     /**
@@ -100,8 +100,8 @@ public class AiChatServiceImpl implements AiChatService {
     }
 
     /**
-     * 채팅방 ID를 기반으로 해당 채팅방을 조회합니다. 비동기적으로 처리되며, 채팅방이 존재하지 않을 경우 AiChatException을 발생시킵니다.
-     *
+     * 채팅방 ID를 기반으로 해당 채팅방을 조회합니다.
+     * 비동기적으로 처리되며, 채팅방이 존재하지 않을 경우 AiChatException을 발생시킵니다.
      * @param roomId 채팅방의 ID
      * @return 조회된 AiChatRoom에 대한 Mono 객체
      */
@@ -112,7 +112,7 @@ public class AiChatServiceImpl implements AiChatService {
     }
 
     /**
-     * GPT 설정을 진행하고, 해당 설정에 기반한 대화의 초기 메시지를 저장합니다.
+     * GPT 설정을 진행하고, 해당 설정에 기반한 대화를 분석하여 저장합니다.
      *
      * @param roomId 채팅방의 ID
      * @param aiChatRoom 채팅방 객체
@@ -120,8 +120,8 @@ public class AiChatServiceImpl implements AiChatService {
      * @return 설정된 대화에 대한 Mono<Conversation> 객체
      */
     private Mono<Conversation> setupGptAndSaveHistory(Long roomId, AiChatRoom aiChatRoom, AiChatCategory category) {
-        return openAiCommunicationProvider.setupPromptToGpt(category)
-                .flatMap(setupResponse -> parseAndSaveResponse(roomId, aiChatRoom, setupResponse, category));
+        return openAiCommunicationProvider.setupPromptToGpt(category) // 주어진 카테고리에 대해 GPT 프롬프트 설정을 시작합니다.
+                .flatMap(setupResponse -> parseAndSaveResponse(roomId, aiChatRoom, setupResponse, category)); // 설정 응답을 분석하고 저장하는 메소드를 호출합니다.
     }
 
     /**
@@ -134,10 +134,10 @@ public class AiChatServiceImpl implements AiChatService {
      * @return 설정된 대화에 대한 Mono<Conversation> 객체
      */
     private Mono<Conversation> parseAndSaveResponse(Long roomId, AiChatRoom aiChatRoom, String setupResponse, AiChatCategory category) {
-        return parseGetResponse(roomId, setupResponse)
-                .doOnSuccess(conversation -> {
-                    saveGptMessage(aiChatRoom, conversation, category, setupResponse);
-                    sendMessagesToRabbitMQ(roomId, conversation);
+        return parseGetResponse(roomId, setupResponse) // 설정 응답 문자열을 분석하여 Conversation 객체로 변환합니다.
+                .doOnSuccess(conversation -> { // 성공적으로 Conversation 객체를 얻었을 때 수행할 작업을 정의합니다.
+                    saveGptMessage(aiChatRoom, conversation, category, setupResponse); // GPT 메시지를 데이터베이스에 저장합니다.
+                    sendMessagesToRabbitMQ(roomId, conversation); // 메시지를 RabbitMQ를 통해 전송합니다.
                 });
     }
 
@@ -219,29 +219,33 @@ public class AiChatServiceImpl implements AiChatService {
     }
 
     /**
-     * GPT와의 대화를 처리합니다. 이 과정에서는 이전 대화 내역과 사용자 메시지를 포함하여
-     * GPT에 대화를 요청하고, 응답을 처리합니다.
+     * GPT와의 대화를 처리합니다.
+     * 이 과정에서는 이전 대화 내역과 사용자 메시지를 포함하여 GPT에 대화를 요청하고, 응답을 처리합니다.
      *
      * @param roomId       대화가 진행되는 채팅방의 ID
      * @param setupRequest GPT 대화 설정
      * @return 대화 결과를 포함하는 Mono<Conversation> 객체
      */
     private Mono<Conversation> processGptConversation(Long roomId, GptSetupRequest setupRequest) {
-        List<GptDialogueMessage> messages = new ArrayList<>(setupRequest.messages());
-        return openAiRepository.findAiChatHistory(roomId)
+        List<GptDialogueMessage> messages = new ArrayList<>(setupRequest.messages()); // 설정 요청으로부터 초기 대화 메시지 목록을 가져옵니다.
+        return openAiRepository.findAiChatHistory(roomId) // roomId에 해당하는 이전 대화 내역을 비동기적으로 조회합니다.
                 .flatMap(historyMessages -> {
+                    // 이전 대화 내역을 메시지 목록에 추가합니다.
                     messages.addAll(historyMessages);
+                    // GPT와의 새 대화 요청을 생성합니다.
                     GptChatRequest gptChatRequest = new GptChatRequest("gpt-3.5-turbo-1106", messages, 500);
+                    // GPT에 대화 요청을 보내고 응답을 받습니다.
                     return openAiCommunicationProvider.sendPromptToGpt(gptChatRequest);
                 })
                 .flatMap(responseString ->
-                        parseGetResponse(roomId, responseString)
+                        parseGetResponse(roomId, responseString) // GPT로부터 받은 응답을 파싱합니다.
                                 .flatMap(conversation ->
-                                        getAiChatRoom(roomId)
+                                        getAiChatRoom(roomId) // roomId에 해당하는 AiChatRoom을 다시 조회합니다.
                                                 .doOnSuccess(aiChatRoom -> {
+                                                    // GPT 메시지를 데이터베이스와 Redis에 저장합니다.
                                                     saveGptMessage(aiChatRoom, conversation, aiChatRoom.getCategory(), responseString);
                                                 })
-                                                .thenReturn(conversation)
+                                                .thenReturn(conversation) // Conversation 객체를 반환합니다.
                                 )
                 );
     }
@@ -289,14 +293,14 @@ public class AiChatServiceImpl implements AiChatService {
      */
     private Mono<Conversation> parseGetResponse(Long roomId, String responseString) {
         return Mono.fromCallable(() -> {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode root = mapper.readTree(responseString);
-            JsonNode conversationNode = root.path("conversation");
-            return mapper.treeToValue(conversationNode, Conversation.class);
+            ObjectMapper mapper = new ObjectMapper(); // JSON 데이터를 처리하기 위한 ObjectMapper 인스턴스를 생성합니다.
+            JsonNode root = mapper.readTree(responseString); // 문자열로부터 JSON 노드 트리를 생성합니다.
+            JsonNode conversationNode = root.path("conversation"); // JSON 트리에서 "conversation" 필드를 찾습니다.
+            return mapper.treeToValue(conversationNode, Conversation.class); // JSON 노드를 Conversation 클래스의 인스턴스로 변환합니다.
         }).onErrorResume(e -> {
-            log.info("exception 터지는지 확인하기: {}", e.getMessage());
-            sendExceptionToRabbitMQ(roomId);
-            return Mono.empty(); // 예외가 발생했을 때 빈 Mono를 반환
+            log.info("exception 터지는지 확인하기: {}", e.getMessage()); // 예외 발생 시 로그를 남깁니다.
+            sendExceptionToRabbitMQ(roomId); // 예외 발생 시 RabbitMQ를 통해 에러 메시지를 전송합니다.
+            return Mono.empty(); // 예외가 발생했을 때 빈 Mono를 반환하여 에러 회복을 시도합니다.
         });
     }
 
