@@ -5,17 +5,19 @@ export const Inner = styled.div`
   height: 100%;
   position: relative;
   backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
   display: flex;
   justify-content: center;
   align-items: center;
 
   img.logo {
     height: 80%;
+    cursor: pointer;
   }
 
   .menuToggle {
     position: absolute;
-    right: 5vw;
+    left: 5vw;
     font-size: 2rem;
     color: var(--text);
   }

@@ -47,8 +47,13 @@ export const NewsArticleWrapper = styled(Card)`
   }
 
   .info {
+    word-break: break-all;
     font-size: 10pt;
     opacity: 0.8;
+  }
+
+  @media screen and (max-width: 992px) {
+    margin: 1vh 0;
   }
 `;
 
@@ -71,11 +76,17 @@ export const NewsWidget = styled(Card)`
     padding: 2vh 0;
     margin-bottom: 2vh;
     flex-wrap: wrap;
-    justify-content: start;
+    justify-content: center;
+  }
+
+  .speedChanger {
+    margin: 2vh 0;
   }
 
   @media screen and (max-width: 992px) {
     position: static;
+    margin: 1vh 0;
+    padding: 2vh 10px;
   }
 `;
 
@@ -141,6 +152,12 @@ export const WordSearchWrapper = styled.div`
   border-top: 8px solid var(--main);
   box-shadow: 0 0 10px 5px var(--shadow);
 
+  .flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   .header {
     display: flex;
     justify-content: space-between;
@@ -166,6 +183,7 @@ export const WordSearchWrapper = styled.div`
       &.added {
         color: var(--main);
         animation: clickAnimation 0.3s ease;
+        -webkit-animation: clickAnimation 0.3s ease;
       }
     }
   }
@@ -251,7 +269,7 @@ export const ReadLineContainer = styled(WordContainer)`
         top: -30px;
         padding: 5px 10px;
         border-radius: 25px;
-        width: fit-content;
+        width: max-content;
         font-size: 9pt;
         word-break: keep-all;
         color: var(--text-button);
@@ -271,6 +289,8 @@ export const SpeechContainer = styled.div`
   padding: 2vh 1vw;
   width: 100%;
   backdrop-filter: brightness(1.2) grayscale(0.2);
+  -webkit-backdrop-filter: brightness(1.2) grayscale(0.2);
+
   border: 1px solid
     ${(props) =>
       props.theme.mode == "light" ? "var(--shadow)" : "var(--main)"};

@@ -33,13 +33,37 @@ class DataStorage:
     def load_data(self):
         kst = pytz.timezone('Asia/Seoul')
         now_kst = datetime.now(kst)
-        five_days_ago_kst = now_kst - timedelta(days=5)
+        seven_days_ago_kst = now_kst - timedelta(days=7)
         
-        articles = self.session.query(News).outerjoin(NewsImage).filter(News.write_date >= five_days_ago_kst).all()
-        users = self.session.query(Member).all()
-        keywords = self.session.query(Keyword).all()
-        mappings = self.session.query(NewsKeywordMapping).join(NewsKeywordMapping.news).filter(News.write_date >= five_days_ago_kst).all()
-        histories = self.session.query(NewsKeywordHistory).all()
+        try:
+            articles = self.session.query(News).outerjoin(NewsImage).filter(News.write_date >= seven_days_ago_kst).all()
+        except Exception as e:
+            print(f"Error loading articles: {e}")
+            articles = []
+
+        try:
+            users = self.session.query(Member).all()
+        except Exception as e:
+            print(f"Error loading users: {e}")
+            users = []
+
+        try:
+            keywords = self.session.query(Keyword).all()
+        except Exception as e:
+            print(f"Error loading keywords: {e}")
+            keywords = []
+
+        try:
+            mappings = self.session.query(NewsKeywordMapping).join(NewsKeywordMapping.news).filter(News.write_date >= seven_days_ago_kst).all()
+        except Exception as e:
+            print(f"Error loading mappings: {e}")
+            mappings = []
+
+        try:
+            histories = self.session.query(NewsKeywordHistory).all()
+        except Exception as e:
+            print(f"Error loading histories: {e}")
+            histories = []
 
         categories = ['SOCIETY', 'BUSINESS', 'POLITICS', 'SCIENCE_CULTURE', 'INTERNATIONAL', 'SPORTS', 'LIFE', 'WEATHER_DISASTER']
         category_kr = ['사회', '경제', '정치', '과학', '국제', '스포츠', '생활', '재난/날씨']
@@ -65,8 +89,15 @@ class DataStorage:
             else:
                 article_word_data[article_key] = {word_id: mapping.weight}
 
-        self.article_word_df = pd.DataFrame(0, index=self.articles, columns=self.words.keys())
-        self.user_word_df = pd.DataFrame(0, index=self.users, columns=self.words.keys())
+        if not self.articles or not self.words:
+            self.article_word_df = pd.DataFrame() 
+        else:
+            self.article_word_df = pd.DataFrame(0, index=self.articles, columns=self.words.keys())
+            
+        if not self.users or not self.words:
+            self.user_word_df = pd.DataFrame()
+        else:
+            self.user_word_df = pd.DataFrame(0, index=self.users, columns=self.words.keys())
 
         for article, word_ids in article_word_data.items():
             for word_id, weight in word_ids.items():
@@ -82,30 +113,31 @@ class DataStorage:
             6: '스포츠'
         }
         
-        for user in self.users:
-            if user in individual_preferences:
-                preferred_category = individual_preferences[user]
-            elif 7 <= user <= 300:
-                preferred_category_index = (user - 7) % len(self.categories)
-                preferred_category = self.categories[preferred_category_index]
-                preferred_category = category_map[preferred_category]
-            else:
-                continue
-            
-            preferred_words = [word_id for word_id, info in self.words.items() if preferred_category in info['categories']]
-            non_preferred_words = [word_id for word_id, info in self.words.items() if preferred_category not in info['categories']]
-            num_to_exclude = int(len(preferred_words) * 0.15)
-            excluded_words = np.random.choice(preferred_words, size=num_to_exclude, replace=False)
-
-            for word_id in preferred_words:
-                if word_id not in excluded_words:
-                    self.user_word_df.at[user, word_id] = np.random.randint(5, 11)
+        if not self.user_word_df.empty and self.words:
+            for user in self.users:
+                if user in individual_preferences:
+                    preferred_category = individual_preferences[user]
+                elif 7 <= user <= 300:
+                    preferred_category_index = (user - 7) % len(self.categories)
+                    preferred_category = self.categories[preferred_category_index]
+                    preferred_category = category_map[preferred_category]
                 else:
-                    self.user_word_df.at[user, word_id] = 0
+                    continue
+                
+                preferred_words = [word_id for word_id, info in self.words.items() if preferred_category in info['categories']]
+                non_preferred_words = [word_id for word_id, info in self.words.items() if preferred_category not in info['categories']]
+                num_to_exclude = int(len(preferred_words) * 0.15)
+                excluded_words = np.random.choice(preferred_words, size=num_to_exclude, replace=False)
 
-            for word_id in non_preferred_words:
-                count = np.random.randint(0, 5)
-                self.user_word_df.at[user, word_id] = count
+                for word_id in preferred_words:
+                    if word_id not in excluded_words:
+                        self.user_word_df.at[user, word_id] = np.random.randint(5, 11)
+                    else:
+                        self.user_word_df.at[user, word_id] = 0
+
+                for word_id in non_preferred_words:
+                    count = np.random.randint(0, 5)
+                    self.user_word_df.at[user, word_id] = count
         
         for history in histories:
             member_id = history.member_id
@@ -115,11 +147,14 @@ class DataStorage:
             if member_id in self.user_word_df.index and keyword_id in self.user_word_df.columns:
                 self.user_word_df.at[member_id, keyword_id] += read_count
 
-        self.user_word_df_norm = (self.user_word_df - self.user_word_df.min()) / (self.user_word_df.max() - self.user_word_df.min())
-        self.article_word_df_norm = (self.article_word_df - self.article_word_df.min()) / (self.article_word_df.max() - self.article_word_df.min())
+        if self.article_word_df.empty or self.user_word_df.empty:
+            self.cosine_sim_df = pd.DataFrame()
+        else:
+            self.user_word_df_norm = (self.user_word_df - self.user_word_df.min()) / (self.user_word_df.max() - self.user_word_df.min())
+            self.article_word_df_norm = (self.article_word_df - self.article_word_df.min()) / (self.article_word_df.max() - self.article_word_df.min())
 
-        self.cosine_sim = cosine_similarity(self.user_word_df_norm.fillna(0), self.article_word_df_norm.fillna(0))
-        self.cosine_sim_df = pd.DataFrame(self.cosine_sim, columns=self.articles, index=self.users)
+            self.cosine_sim = cosine_similarity(self.user_word_df_norm.fillna(0), self.article_word_df_norm.fillna(0))
+            self.cosine_sim_df = pd.DataFrame(self.cosine_sim, columns=self.articles, index=self.users)
         
     def get_most_recommended_articles(self, num_recommendations=3):
         all_recommendations = self.cosine_sim_df.apply(lambda row: row.sort_values(ascending=False).index.values.tolist()[:num_recommendations], axis=1).explode()
@@ -131,7 +166,7 @@ data_storage = DataStorage()
 
 scheduler = BackgroundScheduler()
 
-scheduler.add_job(data_storage.load_data, 'interval', minutes=5)
+scheduler.add_job(data_storage.load_data, 'interval', minutes=3)
 
 scheduler.start()
 
@@ -173,6 +208,17 @@ async def news_recommend(member_id: int):
                 recommendations_id.append(news_id_str)
                 if len(recommendations_id) == 3:
                     break
+    
+    if len(recommendations_id) < 3:
+        try:
+            # 쉐도잉되지 않은 뉴스 중 랜덤으로 3개 선택
+            query = data_storage.session.query(News.id).filter(~News.id.in_(shadowed_news_ids))
+            all_news_ids = [news_id[0] for news_id in query.all()]
+            if all_news_ids:
+                selected_ids = np.random.choice(all_news_ids, size=min(3, len(all_news_ids)), replace=False)
+                recommendations_id.extend([f"기사{news_id}" for news_id in selected_ids])
+        except Exception as e:
+            print(f"Error selecting random news: {e}")
 
     recommendations = [get_news_data(int(news_id.split('기사')[-1])) for news_id in recommendations_id]
 

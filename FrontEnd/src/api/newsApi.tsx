@@ -85,6 +85,7 @@ export const useGetArticle = (newsId: number) => {
           const regex = new RegExp(`${each}`, "g");
           keywords[each] = news.content.match(regex)?.length || 0;
         });
+        console.log(news);
 
         // 뉴스 변환
         const newNews = {
@@ -150,8 +151,12 @@ export const useSendSpeech = (newsId: number, idx: number) => {
   const querytClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ newsId, original, userText }: shadowingParams) =>
-      customAxios.post(`news/shadowing/${newsId}`, { original, userText }),
+    mutationFn: ({ newsId, original, userText }: shadowingParams) => {
+      return customAxios.post(`news/shadowing/${newsId}`, {
+        original,
+        userText,
+      });
+    },
     onSuccess: ({ data }) => {
       if (data.dataHeader.successCode == 0) {
         querytClient.setQueryData(

@@ -1,7 +1,6 @@
 import { HeaderSection } from "@/styles/Mypage/components";
 
-import { Button, Divider } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Divider } from "@mui/material";
 import InfoDisplay from "./Header/InfoDisplay";
 import Badge from "./Header/Badge";
 import { NegativeTitle } from "@/styles/common/ui/text";
@@ -13,7 +12,6 @@ type Props = {
 };
 
 function MypageHeader({ totalShaded, totalTalked }: Props) {
-  const navigate = useNavigate();
   const rank =
     Math.floor((totalShaded + totalTalked) / 15) > 4
       ? 3
@@ -22,14 +20,7 @@ function MypageHeader({ totalShaded, totalTalked }: Props) {
   return (
     <HeaderSection>
       <div className="menu">
-        <NegativeTitle>마이페이지</NegativeTitle>
-        <Button
-          variant="text"
-          color="purple"
-          onClick={() => navigate("update")}
-        >
-          프로필 수정
-        </Button>
+        <NegativeTitle>마이 데이터</NegativeTitle>
       </div>
       <div className="achievement">
         <div className="counts">

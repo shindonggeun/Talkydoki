@@ -63,14 +63,18 @@ function SpeechBox({ newsId, news, idx }: Props) {
         });
         setPermission(true);
         setStream(streamData);
-      } catch (e) {}
+      } catch (e) {
+        console.log("권한이 없습니다");
+      }
     }
   };
 
   useEffect(() => {
     getPermission();
     return () => {
+      scriptRef.current = "";
       stopRecord();
+      queryClient.invalidateQueries({ queryKey: ["userAchievement"] });
     };
   }, []);
 
@@ -108,11 +112,16 @@ function SpeechBox({ newsId, news, idx }: Props) {
   // stt+녹음 중지
   const stopRecord = () => {
     SpeechRecognition.stopListening();
+    if (!listening) return;
     const userText = scriptRef.current.replace(
       /[^ぁ-んァ-ヶｱ-ﾝﾞﾟ一-龠0-9a-zA-Zー]/g,
       ""
     );
-    sendSpeech({ newsId, original, userText });
+    console.log("평가시도");
+    if (userText.length > 0) {
+      console.log("평가진행");
+      sendSpeech({ newsId, original, userText });
+    }
     stopRecordVoice();
   };
 
@@ -153,21 +162,17 @@ function SpeechBox({ newsId, news, idx }: Props) {
   };
 
   useEffect(() => {
-    // 30초 경과 시 자동 종료
-    const autoStop30 = setTimeout(stopRecord, 1000 * 30);
-    if (listening) {
-      autoStop30;
-    } else if (!listening) {
-      clearTimeout(autoStop30);
-    }
+    if (!listening) return;
+    const autoStop30 = setTimeout(() => stopRecord(), 1000 * 30);
+    return () => clearTimeout(autoStop30);
   }, [listening]);
 
   useEffect(() => {
+    if (!listening) return;
     // 5초 이상 말 안하면 자동 종료
-    const autoStop5 = setTimeout(stopRecord, 1000 * 5);
-    autoStop5;
+    const autoStop5 = setTimeout(() => stopRecord(), 1000 * 5);
     return () => clearTimeout(autoStop5);
-  }, [transcript]);
+  }, [transcript, listening]);
 
   if (!browserSupportsSpeechRecognition)
     return (

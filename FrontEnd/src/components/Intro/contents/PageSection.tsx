@@ -3,6 +3,7 @@ import { SectionTitle } from "@/styles/Intro/ui";
 import { useEffect, useRef } from "react";
 import News from "@/assets/images/samples/news2.png";
 import MyPage from "@/assets/images/samples/mypage.png";
+import Logo from "@/assets/images/logo_text_light.png";
 
 type Props = {};
 
@@ -35,7 +36,7 @@ function PageSection({}: Props) {
     <>
       <PageSectionWrapper ref={scrollRef}>
         {/* p1 */}
-        <div className="page" style={{ backgroundColor: "var(--main)" }}>
+        <div className="page">
           <SectionTitle>뉴스 쉐도잉</SectionTitle>
           <img src={News} alt="news" className="image" />
           <div className="desc">
@@ -57,12 +58,13 @@ function PageSection({}: Props) {
               수 있어요.
             </div>
           </div>
+          <div
+            className="background"
+            style={{ backgroundColor: "var(--main)" }}
+          />
         </div>
         {/* p2 */}
-        <div
-          className="page reverse"
-          style={{ backgroundColor: "var(--yellow-dark)" }}
-        >
+        <div className="page reverse">
           <SectionTitle style={{ left: "inherit", right: "10px" }}>
             회화 연습
           </SectionTitle>
@@ -86,9 +88,13 @@ function PageSection({}: Props) {
               요약본을 체크하며 매일 늘어가는 나의 실력을 확인해 보세요.
             </div>
           </div>
+          <div
+            className="background"
+            style={{ backgroundColor: "var(--yellow-dark)" }}
+          />
         </div>
         {/* p3 */}
-        <div className="page" style={{ backgroundColor: "var(--red-dark)" }}>
+        <div className="page">
           <SectionTitle>사용자 분석 </SectionTitle>
           <img src={MyPage} alt="news" className="image" />
           <div className="desc">
@@ -108,6 +114,15 @@ function PageSection({}: Props) {
               보세요.
             </div>
           </div>
+          <div
+            className="background"
+            style={{ backgroundColor: "var(--red-dark)" }}
+          />
+        </div>
+        <div className="footer">
+          <img src={Logo} />
+          <div className="circle-inner"></div>
+          <div className="circle"></div>
         </div>
       </PageSectionWrapper>
     </>

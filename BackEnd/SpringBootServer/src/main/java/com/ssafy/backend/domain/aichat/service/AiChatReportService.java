@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface AiChatReportService {
     @Transactional
-    Mono<Long> createReport(Long roomId);
+    Mono<Long> createReport(Long memberId, Long roomId);
 
     List<AiChatAndFeedbackInfo> getAiChatFeedbackInfo();
 

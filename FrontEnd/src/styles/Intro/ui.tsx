@@ -15,6 +15,7 @@ export const TextFlow = styled.div`
       line-height: 1;
       opacity: 0.1;
       animation: moveToLeft 600s linear infinite;
+      -webkit-animation: moveToLeft 600s linear infinite;
     }
   }
 
@@ -29,11 +30,11 @@ export const TextFlow = styled.div`
 `;
 
 export const SectionTitle = styled.div`
-  font-size: 80pt;
+  font-size: 65pt;
   font-weight: 900;
   margin-top: 10vh;
   position: absolute;
-  top: -29vh;
+  top: -25  vh;
   left: 10px;
 
   @media screen and (max-width: 992px) {

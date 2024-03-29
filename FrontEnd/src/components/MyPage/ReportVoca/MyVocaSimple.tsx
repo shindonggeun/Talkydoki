@@ -18,7 +18,7 @@ function MyVocaSimple({}: Props) {
     if (!data) return;
     setVocaList([]);
     data.forEach((each, idx) => {
-      if (idx > 5) return;
+      if (idx > 4) return;
       setVocaList((prev) => [...prev, each]);
     });
   }, [data]);

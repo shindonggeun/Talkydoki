@@ -16,6 +16,8 @@ import com.ssafy.backend.domain.aichat.entity.enums.AiChatSender;
 import com.ssafy.backend.domain.aichat.repository.AiChatHistoryRepository;
 import com.ssafy.backend.domain.aichat.repository.AiChatReportRepository;
 import com.ssafy.backend.domain.aichat.repository.AiChatRoomRepository;
+import com.ssafy.backend.domain.attendance.entity.enums.AttendanceType;
+import com.ssafy.backend.domain.attendance.service.AttendanceService;
 import com.ssafy.backend.global.component.openai.OpenAiCommunicationProvider;
 import com.ssafy.backend.global.component.openai.dto.GptChatRequest;
 import lombok.RequiredArgsConstructor;
@@ -40,8 +42,10 @@ public class AiChatReportServiceImpl implements AiChatReportService {
 
     private final JPAQueryFactory jpaQueryFactory;
 
+    private final AttendanceService attendanceService;
+
     @Override
-    public Mono<Long> createReport(Long roomId) {
+    public Mono<Long> createReport(Long memberId, Long roomId) {
         // aiChatHistoryRepository에서 roomId에 해당하는 히스토리(대화내역)를 조회
         return Mono.fromCallable(() -> aiChatHistoryRepository.findByAiChatRoomId(roomId))
                 .subscribeOn(Schedulers.boundedElastic())
@@ -53,7 +57,14 @@ public class AiChatReportServiceImpl implements AiChatReportService {
                 .flatMap(response -> {
                     log.info("GPT 레포트 결과!!!!: {}", response);
                     return Mono.fromCallable(() -> objectMapper.readValue(response, AiChatReportCreateRequest.class))
-                            .flatMap(res -> openAiCommunicationProvider.saveReport(roomId, res));
+                            .flatMap(reportRequest -> {
+                                // 여기서 보고서 저장 후, 생성된 보고서의 ID를 반환합니다.
+                                Mono<Long> reportIdMono = openAiCommunicationProvider.saveReport(roomId, reportRequest);
+                                // 보고서가 저장되면 출석을 생성합니다.
+                                return reportIdMono.doOnSuccess(reportId -> {
+                                    attendanceService.createAttendance(memberId, AttendanceType.AI_CHAT);
+                                });
+                            });
                 });
     }
 

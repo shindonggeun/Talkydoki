@@ -1,7 +1,7 @@
 import { chatWithFeedbackInterface } from "@/interface/AiChatReportInterface";
-import ChatMessage from "../ChatRoom/ChatMessage";
+import ChatMessage from "../ChatMessage";
 import chatbot from "@/assets/images/logo_face.png";
-import { MainContainer } from "@/styles/Aichat/AiChatRoom";
+import { MainContainer } from "@/styles/Aichat/AiChat";
 
 function ChatReportChatFeadback({
   chatsWithFeedback,
