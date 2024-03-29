@@ -36,7 +36,6 @@ COPY . .
 
 # 스크립트 실행 권한 부여
 RUN chmod +x /usr/src/app/DataProcessing.sh
-RUN /usr/src/app/DataProcessing.sh
 
 
 # 크론 작업 실행 명령어를 추가합니다.
