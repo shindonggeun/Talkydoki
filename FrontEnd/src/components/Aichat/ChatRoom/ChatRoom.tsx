@@ -24,7 +24,9 @@ export type ChatMessage = {
   korean?: string | null;
 };
 function ChatRoom() {
-  const { roomId } = useParams<{ roomId: string }>();
+  const { roomId } = useParams<{ roomId: string | undefined }>();
+  const { catagory } = useParams<{ catagory: string | undefined }>();
+
   const [chats, setChats] = useState<ChatMessage[]>([]);
   const [lastUserTip, setLastUserTip] = useState<ChatMessage | null>(null);
   console.log(chats);
@@ -62,7 +64,14 @@ function ChatRoom() {
     };
 
     // 웹소켓 연결을 시도
-    connectStompClient(serverURL, token, onConnected, onError);
+    connectStompClient(
+      serverURL,
+      token,
+      roomId,
+      catagory,
+      onConnected,
+      onError
+    );
 
     // 컴포넌트 언마운트 시 웹소켓 연결을 종료
     return () => {

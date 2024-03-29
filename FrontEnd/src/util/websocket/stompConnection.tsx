@@ -1,5 +1,5 @@
 // stompClient.ts
-import { Client, Frame, over } from 'webstomp-client';
+import { Client, Frame, over } from "webstomp-client";
 
 export type StompClient = Client | null;
 
@@ -15,6 +15,8 @@ let stompClient: StompClient = null;
 export const connectStompClient = (
   serverURL: string,
   token: string,
+  roomId: string | undefined,
+  category: string | undefined,
   onConnected: OnConnectedCallback,
   onError: OnErrorCallback
 ): void => {
@@ -22,22 +24,27 @@ export const connectStompClient = (
   const client = over(socket);
 
   const headers = {
-    'Authorization': `Bearer ${token}`,
+    roomId: `${roomId}`,
+    category: `${category}`,
+    Authorization: `Bearer ${token}`,
   };
 
   // 수정된 connect 호출 부분
-  client.connect(headers, (frame?: Frame) => {
-    console.log('WebSocket Stomp 연결: ', frame);
-    if (frame) {
-      onConnected(client);
+  client.connect(
+    headers,
+    (frame?: Frame) => {
+      console.log("WebSocket Stomp 연결: ", frame);
+      if (frame) {
+        onConnected(client);
+      }
+    },
+    (error: Frame | CloseEvent) => {
+      onError(error instanceof Frame ? error : "CloseEvent");
     }
-  }, (error: Frame | CloseEvent) => {
-    onError(error instanceof Frame ? error : 'CloseEvent');
-  });
+  );
 
   stompClient = client;
-}
-
+};
 
 // STOMP 클라이언트 객체를 가져오는 함수
 export const getStompClient = (): StompClient => stompClient;
