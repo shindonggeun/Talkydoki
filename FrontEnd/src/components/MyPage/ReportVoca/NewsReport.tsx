@@ -14,6 +14,7 @@ function NewsReport({ user, average }: Props) {
   const [records, setRecords] = useState<RecordInterface[]>([]);
   const theme = useTheme();
 
+  // 그래프에 사용할 데이터 배열 제작
   useEffect(() => {
     const today = new Date().getTime();
     setRecords([]);

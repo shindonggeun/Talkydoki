@@ -19,6 +19,7 @@ export interface UserKeywordInterface {
   readCount: number;
 }
 
+// 유저 학습기록 인터페이스
 export interface UserAchievementInterface {
   totalShaded: number;
   totalTalked: number;
@@ -32,17 +33,18 @@ export interface UserAchievementInterface {
   }[];
 }
 
-interface userRankInterface {
-  icon: string;
-  rank: string;
-}
-
+// 프로필페이지 뉴스 쉐도잉 그래프용 인터페이스
 export interface RecordInterface {
   date: string;
   userScore: number;
   averageScore: number;
 }
 
+// 유저 티어
+interface userRankInterface {
+  icon: string;
+  rank: string;
+}
 export const userRank: userRankInterface[] = [
   {
     icon: Bronze,

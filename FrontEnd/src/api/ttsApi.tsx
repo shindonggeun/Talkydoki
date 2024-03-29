@@ -32,6 +32,7 @@ const fetchTTS = async (text: string) => {
     if (res.$metadata.httpStatusCode == 200) {
       const { AudioStream } = res;
 
+      if (!AudioStream) return undefined;
       // ReadableStream을 Web Stream으로 변환
       const webStream = AudioStream.transformToWebStream();
 

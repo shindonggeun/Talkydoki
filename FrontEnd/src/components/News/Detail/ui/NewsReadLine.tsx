@@ -22,6 +22,7 @@ function NewsReadLine({ news, now, setNow, idx, newsId, fullNews }: Props) {
 
   // 오디오 세팅
   useEffect(() => {
+    setIsPlaying(false);
     if (now != idx) return;
     if (!audioRef.current) return;
     const sound = queryClient.getQueryData(["getVoice", newsId, idx]) as string;
@@ -39,6 +40,7 @@ function NewsReadLine({ news, now, setNow, idx, newsId, fullNews }: Props) {
   }, [isPlaying]);
 
   return (
+    // 각 문장 선택
     <ReadLineContainer
       className={idx == now ? "selected" : undefined}
       onClick={(e) => {
