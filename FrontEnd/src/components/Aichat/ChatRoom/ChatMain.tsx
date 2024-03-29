@@ -1,7 +1,8 @@
-import { MainContainer } from "@/styles/Aichat/AiChatRoom";
+import { MainContainer } from "@/styles/Aichat/AiChat";
 import chatbot from "@/assets/images/logo_face.png";
 
-import ChatMessage from "./ChatMessage";
+import ChatMessage from "../ChatMessage";
+import { MainSession } from "@/styles/Aichat/AiChatRoom";
 // 컴포넌트화필요 타입
 // 메시지 타입 정의
 interface ChatMessage {
@@ -17,7 +18,7 @@ type ChatMainProps = {
 
 function ChatMain({ messages }: ChatMainProps) {
   return (
-    <>
+    <MainSession>
       <MainContainer>
         {messages.map((message, index) =>
           message.sender === "GPT" ? (
@@ -39,7 +40,7 @@ function ChatMain({ messages }: ChatMainProps) {
           ) : null
         )}
       </MainContainer>
-    </>
+    </MainSession>
   );
 }
 

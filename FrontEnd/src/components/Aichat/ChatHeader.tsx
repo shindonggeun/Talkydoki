@@ -2,7 +2,7 @@ import { IconButton, Menu, MenuItem, Switch } from "@mui/material";
 import React from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useNavigate } from "react-router-dom";
-import { HeaderContainer } from "@/styles/Aichat/AiChatRoom";
+import { HeaderContainer } from "@/styles/Aichat/AiChat";
 
 type Props = {
   aiChatTitle: string;

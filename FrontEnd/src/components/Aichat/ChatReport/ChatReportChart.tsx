@@ -22,6 +22,7 @@ function ChatReportChart({
     labels: scoreName,
     legend: {
       show: true,
+      position: "bottom" as "top" | "right" | "bottom" | "left",
       formatter: (val: string, opts: any) =>
         val + " : " + opts.w.globals.series[opts.seriesIndex],
     },
@@ -40,18 +41,13 @@ function ChatReportChart({
   return (
     <div className="chart-report-carousel-wrapper">
       <div className="chart-report-wrapper">
-        <div
-          style={{
-            width: "100%",
-          }}
-        >
-          <ReactApexChart
-            options={options}
-            series={scoresArray}
-            type="polarArea"
-            width={"100%"}
-          />
-        </div>
+        <ReactApexChart
+          options={options}
+          series={scoresArray}
+          type="polarArea"
+          width={"100%"}
+          height={"100%"}
+        />
       </div>
       <div className="conversation-summary-wrapper">
         <div className="conversation-summary">

@@ -4,7 +4,6 @@ import ChatHeader from "../ChatHeader";
 import ChatMain from "./ChatMain";
 import ChatFooter from "./ChatFooter";
 import ChatTip from "./ChatTip";
-import { ChatRoomContainer } from "@/styles/Aichat/AiChatRoom";
 
 // 환경변수에서 웹소켓 서버의 URL을 가져옵니다.
 
@@ -92,12 +91,10 @@ function ChatRoom() {
 
   return (
     <>
-      <ChatRoomContainer>
-        <ChatHeader aiChatTitle="AI 회화 채팅" options={options} />
-        <ChatMain messages={chats} />
-        <ChatFooter roomId={roomId} />
-        <ChatTip lastUserTip={lastUserTip} />
-      </ChatRoomContainer>
+      <ChatHeader aiChatTitle="AI 회화 채팅" options={options} />
+      <ChatMain messages={chats} />
+      <ChatFooter roomId={roomId} />
+      <ChatTip lastUserTip={lastUserTip} />
     </>
   );
 }

@@ -105,10 +105,8 @@ export const ChatReportCarouselItem = styled.div`
   }
   .chart-report-wrapper {
     width: 100%;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    height: 100%;
+    margin-top: 10vh;
   }
   .apexcharts-pie text,
   .apexcharts-pie circle {
