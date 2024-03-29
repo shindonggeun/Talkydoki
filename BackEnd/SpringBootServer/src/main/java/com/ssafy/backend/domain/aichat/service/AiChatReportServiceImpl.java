@@ -17,12 +17,10 @@ import com.ssafy.backend.domain.aichat.repository.AiChatHistoryRepository;
 import com.ssafy.backend.domain.aichat.repository.AiChatReportRepository;
 import com.ssafy.backend.domain.aichat.repository.AiChatRoomRepository;
 import com.ssafy.backend.global.component.openai.OpenAiCommunicationProvider;
-import com.ssafy.backend.global.component.openai.dto.AiChatReportCreateApiRequest;
-import com.ssafy.backend.global.component.openai.dto.GptChatCompletionResponse;
+import com.ssafy.backend.global.component.openai.dto.GptChatRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -37,27 +35,24 @@ public class AiChatReportServiceImpl implements AiChatReportService {
     private final AiChatRoomRepository aiChatRoomRepository;
     private final AiChatHistoryRepository aiChatHistoryRepository;
     private final AiChatReportRepository aiChatReportRepository;
-    private final WebClient webClient;
     private final ObjectMapper objectMapper;
     private final OpenAiCommunicationProvider openAiCommunicationProvider;
 
     private final JPAQueryFactory jpaQueryFactory;
 
-
     @Override
     public Mono<Long> createReport(Long roomId) {
+        // aiChatHistoryRepository에서 roomId에 해당하는 히스토리(대화내역)를 조회
         return Mono.fromCallable(() -> aiChatHistoryRepository.findByAiChatRoomId(roomId))
                 .subscribeOn(Schedulers.boundedElastic())
-                .map(AiChatReportCreateApiRequest::convertRequest)
-                .flatMap(request -> webClient.post()
-                        .uri("/chat/completions")
-                        .bodyValue(request)
-                        .retrieve()
-                        .bodyToMono(GptChatCompletionResponse.class))
+                // 조회된 히스토리를 기반으로 GptChatRequest 생성
+                .map(GptChatRequest::fromAiChatHistories)
+                // GptChatRequest를 사용해 GPT와 통신
+                .flatMap(openAiCommunicationProvider::sendPromptToGpt)
+                // GPT 응답을 AiChatReportCreateRequest 객체로 변환
                 .flatMap(response -> {
-                    String content = response.choices().get(0).message().content();
-                    log.info("GPT 레포트 결과!!!!: {}", content);
-                    return Mono.fromCallable(() -> objectMapper.readValue(content, AiChatReportCreateRequest.class))
+                    log.info("GPT 레포트 결과!!!!: {}", response);
+                    return Mono.fromCallable(() -> objectMapper.readValue(response, AiChatReportCreateRequest.class))
                             .flatMap(res -> openAiCommunicationProvider.saveReport(roomId, res));
                 });
     }

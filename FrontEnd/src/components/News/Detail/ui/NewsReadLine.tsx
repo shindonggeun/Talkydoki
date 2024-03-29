@@ -4,7 +4,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import PlayCircleIcon from "@mui/icons-material/PlayCircle";
 import PauseCircleIcon from "@mui/icons-material/PauseCircle";
 import SpeechBox from "./SpeechBox";
-import { KanaToHira } from "@/util/language/japanese";
+import { JptoKor, KanaToHira, hasMeaning } from "@/util/language/japanese";
+import { useButtonActions, useNewsSpeed } from "@/stores/newsStore";
 
 type Props = {
   news: string[][];
@@ -19,6 +20,8 @@ function NewsReadLine({ news, now, setNow, idx, newsId, fullNews }: Props) {
   const queryClient = useQueryClient();
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const { setIsPlayingEach } = useButtonActions();
+  const newsSpeed = useNewsSpeed();
 
   // 오디오 세팅
   useEffect(() => {
@@ -33,8 +36,11 @@ function NewsReadLine({ news, now, setNow, idx, newsId, fullNews }: Props) {
   useEffect(() => {
     if (!audioRef.current) return;
     if (isPlaying) {
+      audioRef.current.playbackRate = newsSpeed;
+      setIsPlayingEach(true);
       audioRef.current.play();
     } else {
+      setIsPlayingEach(false);
       audioRef.current.pause();
     }
   }, [isPlaying]);
@@ -67,12 +73,20 @@ function NewsReadLine({ news, now, setNow, idx, newsId, fullNews }: Props) {
         <audio ref={audioRef} onEnded={() => setIsPlaying(false)} />
         {/* 뉴스 본문 */}
         <div>
-          {news.map((each, idx) => (
-            <span className="jp" key={idx}>
-              {each[0]}
-              <span className="jpRead">{KanaToHira(each[1])}</span>
-            </span>
-          ))}
+          {news.map((each, idx) => {
+            const jpRead = KanaToHira(each[1]);
+
+            return (
+              <span className="jp" key={idx}>
+                {each[0]}
+                {hasMeaning(each[4]) && (
+                  <span className="jpRead">
+                    {jpRead} / {JptoKor(jpRead)}
+                  </span>
+                )}
+              </span>
+            );
+          })}
         </div>
       </div>
       {/* STT */}

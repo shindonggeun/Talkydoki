@@ -6,7 +6,11 @@ import { useEffect, useRef, useState } from "react";
 import Word from "./ui/Word";
 import { useGetWholeTTS } from "@/api/ttsApi";
 import { useQueryClient } from "@tanstack/react-query";
-import { useButtonActions, useButtonStates } from "@/stores/newsStore";
+import {
+  useButtonActions,
+  useButtonStates,
+  useNewsSpeed,
+} from "@/stores/newsStore";
 import NewsButton from "./ui/NewsButton";
 
 type Props = {
@@ -20,6 +24,7 @@ function ArticleRead({ newsId, news, korNews, fullNews }: Props) {
   const [nowPlaying, setNowPlaying] = useState(0);
   const audioRef = useRef<HTMLAudioElement>(null);
   const { isPlaying, isReadKrOn, isReadOn, isTransOn } = useButtonStates();
+  const newsSpeed = useNewsSpeed();
   const { setIsPlaying, setIsTTSReady } = useButtonActions();
 
   const TTSList = useGetWholeTTS(newsId, fullNews);
@@ -51,8 +56,8 @@ function ArticleRead({ newsId, news, korNews, fullNews }: Props) {
       nowPlaying,
     ]) as string;
     if (audioUrl == undefined) return;
-    console.log("변경됨");
     audio.src = audioUrl;
+    audio.playbackRate = newsSpeed;
     audio.play();
   }, [nowPlaying, isPlaying]);
 
@@ -88,7 +93,6 @@ function ArticleRead({ newsId, news, korNews, fullNews }: Props) {
           if (nowPlaying == fullNews.length - 1) {
             setIsPlaying(false);
           }
-          console.log("끝");
           setTimeout(() => {
             setNowPlaying((prev) =>
               prev + 1 < fullNews.length ? prev + 1 : 0

@@ -150,8 +150,12 @@ export const useSendSpeech = (newsId: number, idx: number) => {
   const querytClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ newsId, original, userText }: shadowingParams) =>
-      customAxios.post(`news/shadowing/${newsId}`, { original, userText }),
+    mutationFn: ({ newsId, original, userText }: shadowingParams) => {
+      return customAxios.post(`news/shadowing/${newsId}`, {
+        original,
+        userText,
+      });
+    },
     onSuccess: ({ data }) => {
       if (data.dataHeader.successCode == 0) {
         querytClient.setQueryData(
