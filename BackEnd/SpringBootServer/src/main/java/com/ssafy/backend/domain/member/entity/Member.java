@@ -1,5 +1,6 @@
 package com.ssafy.backend.domain.member.entity;
 
+import com.ssafy.backend.domain.attendance.entity.Attendance;
 import com.ssafy.backend.domain.member.dto.MemberUpdateRequest;
 import com.ssafy.backend.domain.member.entity.enums.MemberRole;
 import com.ssafy.backend.domain.news.entity.NewsKeywordHistory;
@@ -96,6 +97,13 @@ public class Member extends BaseEntity {
      */
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NewsShadowing> newsShadowing = new ArrayList<>();
+
+    /**
+     * 회원과 관련된 출석 기록 목록과의 일대다 관계를 정의합니다.
+     * 회원이 삭제되면 해당 회원의 모든 출석 기록도 함께 삭제됩니다. (cascade = CascadeType.ALL, orphanRemoval = true)
+     */
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Attendance> attendances = new ArrayList<>();
 
     /**
      * 회원의 프로필 이미지와 닉네임을 업데이트합니다.
