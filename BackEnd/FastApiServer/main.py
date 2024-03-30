@@ -1,14 +1,6 @@
 # main.py
 from fastapi import FastAPI
-from contextlib import asynccontextmanager
-from sqlalchemy import MetaData
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
-from sqlalchemy.orm import sessionmaker
-from database import engine, SessionLocal, Base
-from faker import Faker
-
-from models.member import Member
-from models.vocabulary import Vocabulary
+from database import engine, Base
 
 from routes.vocabulary import router as vocabulary_router
 from recommendation.recommendation import router as recommendation_router
