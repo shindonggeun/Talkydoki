@@ -4,7 +4,7 @@ fastapi==0.110.0
 numpy==1.26.4
 pandas==2.2.1
 paramiko==3.4.0
-pytz==2024.
+pytz==2024.1
 PyMySQL==1.1.0
 Requests==2.31.0
 scikit_learn==1.4.1.post1
