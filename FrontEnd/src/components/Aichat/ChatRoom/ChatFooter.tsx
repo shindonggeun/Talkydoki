@@ -55,6 +55,8 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
             navigate(`/aichatreport/${reportId}`);
           },
           onError: () => {
+            setIsModalOn(false);
+
             navigate("/aichatlist");
           },
         });
@@ -98,36 +100,44 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
 
   // 레코딩취소
   const cancelRecording = () => {
-    setIsRecording(false);
     SpeechRecognition.stopListening();
+
+    setIsRecording(false);
     resetTranscript();
-    SpeechRecognition.abortListening();
+    clearTimeout(timer);
+    // SpeechRecognition.abortListening();
   };
 
   const toggleRecording = () => {
+    // 음성 인식을 중지하는 경우
     if (isRecording) {
-      sendMessage(transcript);
       SpeechRecognition.stopListening();
 
-      setTimeout(() => {
-        resetTranscript(); // 인식된 텍스트 초기화
-        setIsRecording(false); // 음성 인식 상태 업데이트
-      }, 300);
+      sendMessage(transcript);
+      resetTranscript(); // 인식된 텍스트 초기화
 
-      clearTimeout(timer);
-
-      clearTimeout(timer);
+      setIsRecording(false); // 음성 인식 상태 업데이트
+      clearTimeout(timer); // 이전 타이머가 있다면 취소
     } else {
+      // 음성 인식을 시작하기 전에 이전 타이머가 있다면 취소
+      if (timer) {
+        clearTimeout(timer);
+      }
+      resetTranscript(); // 인식된 텍스트 초기화
+
       SpeechRecognition.startListening({ continuous: true, language: "ja-JP" });
 
+      // 새로운 타이머 설정
       const newTimer = window.setTimeout(() => {
         SpeechRecognition.stopListening();
         resetTranscript();
         setIsRecording(false);
       }, 17000);
+
+      // 새 타이머 상태 업데이트
       setTimer(newTimer as unknown as number);
+      setIsRecording(true);
     }
-    setIsRecording(!isRecording);
   };
 
   if (!SpeechRecognition.browserSupportsSpeechRecognition()) {
@@ -155,7 +165,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
           {transcript ? <p>{transcript}</p> : <BeatLoader />}
         </div>
       )}
-      {transcript}
+
       <div
         className={`micdiv ${isRecording ? "recording" : ""}`}
         onClick={toggleRecording}
