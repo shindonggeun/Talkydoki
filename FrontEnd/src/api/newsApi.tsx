@@ -85,6 +85,7 @@ export const useGetArticle = (newsId: number) => {
           const regex = new RegExp(`${each}`, "g");
           keywords[each] = news.content.match(regex)?.length || 0;
         });
+        console.log(news);
 
         // 뉴스 변환
         const newNews = {

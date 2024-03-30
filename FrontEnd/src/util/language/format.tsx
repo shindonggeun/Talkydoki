@@ -23,7 +23,7 @@ export const newsSplitter = (line: string) => {
 };
 
 export const transSplitter = (trans: string) => {
-  const splitted = trans.split(/\n\n/g);
+  const splitted = trans.split(/\n\n\n/g);
   return splitted;
 };
 

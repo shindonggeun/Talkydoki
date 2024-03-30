@@ -43,7 +43,9 @@ public record GptChatRequest(
                 + "      \"content\": \"여기에 대화 <chatId>에 대한 피드백을 작성합니다.\"\n"
                 + "    }\n"
                 + "  ]\n"
-                + "}\n\n";
+                + "}\n\n"
+                +"[주의]\n"
+                +"피드백은 chatId 하나 당 한 개의 피드백만을 생성합니다. 이 부분을 명심하세요.";
 
         ArrayList<GptDialogueMessage> messageList = new ArrayList<>();
         messageList.add(new GptDialogueMessage("system", systemMessage));
@@ -58,7 +60,7 @@ public record GptChatRequest(
             if (role != null) {
                 String chatId = String.valueOf(chatHistory.getId());
                 String content = chatHistory.getContent();
-                messageList.add(new GptDialogueMessage(role, content));
+                messageList.add(new GptDialogueMessage(role, "(chatId: "+chatId+", role: " + role + ")" + content));
             }
         }
 

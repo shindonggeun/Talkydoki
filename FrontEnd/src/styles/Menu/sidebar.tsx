@@ -7,14 +7,31 @@ export const ProfileSection = styled.section`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 10px;
+  /* padding: 10px; */
+
+  .link {
+    font-size: 9pt;
+    font-weight: 400;
+    opacity: 0.5;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-self: start;
+    align-self: flex-start;
+    margin: 15px 0 0 15px;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
 
   .profileDiv {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    padding: 20px 0 15px 0;
+    margin: 30px 0 20px 0;
     width: 100%;
 
     .profileImg {
@@ -27,6 +44,7 @@ export const ProfileSection = styled.section`
     .name {
       font-weight: 500;
       padding: 15px 0;
+      padding-bottom: 5px;
     }
   }
 `;
@@ -36,6 +54,7 @@ export const SidebarTitleSection = styled.div`
   justify-content: space-between;
   align-items: center;
   padding: 10px;
+  padding-bottom: 0;
 
   .icon {
     cursor: pointer;
@@ -48,6 +67,7 @@ export const SidebarTitleSection = styled.div`
 
   img.logoImg {
     width: 50%;
+    cursor: pointer;
   }
 `;
 

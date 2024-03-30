@@ -63,7 +63,7 @@ function App() {
               />
               <Route path="/mypage" element={<MyPage />} />
               <Route path="/mypage/myvoca" element={<MyVoca />} />
-              <Route path="/mypage/update" element={<ProfileUpdate />} />
+              <Route path="/userUpdate" element={<ProfileUpdate />} />
               <Route path="/*" element={<Navigate replace to="/main" />} />
             </Routes>
           </>

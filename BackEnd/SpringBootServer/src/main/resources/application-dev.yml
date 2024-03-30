@@ -13,7 +13,7 @@ spring:
     defer-datasource-initialization: true
     generate-ddl: true
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true             # 하이버네이트가 실행한 SQL을 출력할 때 보기 좋게 정렬
@@ -32,7 +32,7 @@ spring:
   # data_테이블명.sql 관련 실행 setting
   sql:
     init:
-      mode: always
+      mode: never
       data-locations:
         - 'classpath:/data_vocabulary.sql'
         # - 'classpath:/data_news.sql'

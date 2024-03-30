@@ -156,10 +156,9 @@ export const KanaToHira = (word: string) => {
 // 단어장 표시할 단어 품사 거르는 함수
 export const hasMeaning = (wordType: string) => {
   if (
-    wordType.startsWith("名詞-普通名詞") ||
-    wordType.startsWith("名詞-固有名詞-一般") ||
-    wordType.startsWith("動詞-非自立可能") ||
-    wordType.startsWith("動詞-一般")
+    wordType.startsWith("名詞") ||
+    wordType.startsWith("動詞") ||
+    wordType.startsWith("接尾辞")
   ) {
     return true;
   } else {

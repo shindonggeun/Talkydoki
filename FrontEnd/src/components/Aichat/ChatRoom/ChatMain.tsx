@@ -1,8 +1,8 @@
-import { MainContainer } from "@/styles/Aichat/AiChat";
+import { MainContainer } from "@/styles/Aichat/AiChatRoom";
 import chatbot from "@/assets/images/logo_face.png";
 
-import ChatMessage from "../ChatMessage";
-import { MainSession } from "@/styles/Aichat/AiChatRoom";
+import ChatMessage from "./ChatMessage";
+import { useEffect, useRef } from "react";
 // 컴포넌트화필요 타입
 // 메시지 타입 정의
 interface ChatMessage {
@@ -16,8 +16,13 @@ type ChatMainProps = {
 };
 
 function ChatMain({ messages }: ChatMainProps) {
+  const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    // 스크롤을 맨 아래로 이동시킵니다.
+    endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
   return (
-    <MainSession>
+    <>
       <MainContainer>
         {messages.map((message, index) =>
           message.sender === "GPT" ? (
@@ -38,8 +43,9 @@ function ChatMain({ messages }: ChatMainProps) {
             </div>
           ) : null
         )}
+        <div ref={endOfMessagesRef} />
       </MainContainer>
-    </MainSession>
+    </>
   );
 }
 

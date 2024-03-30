@@ -101,6 +101,15 @@ export const UpdatePwContext = styled.div`
   height: 90%;
   margin: 10px;
 
+  .social {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.5;
+  }
+
   .section {
     width: 100%;
     display: flex;

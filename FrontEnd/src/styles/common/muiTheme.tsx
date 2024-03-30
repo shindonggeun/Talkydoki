@@ -43,6 +43,9 @@ declare module "@mui/material/styles" {
 
 // 라이트모드
 export const muiTheme = createTheme({
+  typography: {
+    fontFamily: ["ScoreDream", "Mplus"].join(","),
+  },
   components: {
     MuiSwitch: {
       styleOverrides: {
@@ -76,6 +79,9 @@ export const muiTheme = createTheme({
 
 // 다크모드
 export const muiDarkTheme = createTheme({
+  typography: {
+    fontFamily: ["ScoreDream", "Mplus"].join(","),
+  },
   components: {
     MuiSwitch: {
       styleOverrides: {

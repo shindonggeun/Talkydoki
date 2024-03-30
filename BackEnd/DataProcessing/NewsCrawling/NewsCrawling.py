@@ -15,7 +15,6 @@ import json
 import warnings
 warnings.filterwarnings('ignore')
 import os
-from time import sleep
 import sys
 sys.path.append('/usr/src/app')
 from Url import NEWS_API_URL, DUPLICATENEWS_PATH
@@ -28,6 +27,7 @@ cat_info = json.loads(sys.argv[1])
 CAT_NAME = cat_info["CAT_NAME"]
 CAT_URL = cat_info["CAT_URL"]
 
+CSS_SELECTOR_BUTTON = "footer.module--footer.button-more p.button"
 CSS_SELECTOR_BUTTON = "footer.module--footer.button-more p.button"
 CLASS_NAME_CONTENT_LIST = "content--list"
 CLASS_NAME_CONTENT_THUMB = "content--thumb"
