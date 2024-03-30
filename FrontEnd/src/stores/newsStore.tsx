@@ -82,7 +82,6 @@ const useSearchStore = create<WordSearchInterface>((set) => ({
   setWord: (by) => set(() => ({ word: by })),
   isSearchOn: false,
   setIsSearchOn: (by) => {
-    // console.log(by);
     return set(() => ({ isSearchOn: by }));
   },
 }));

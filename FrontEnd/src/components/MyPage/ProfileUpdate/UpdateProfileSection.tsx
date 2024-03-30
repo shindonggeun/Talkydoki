@@ -46,10 +46,11 @@ function UpdateProfileSection({ index, value, user }: Props) {
   useEffect(() => {
     // 업로드 이미지 mutate 완료 후 프로필 이미지 변경되면 프로필 업데이트
     if (isSuccess) {
-      updateProfile({
-        nickname: newNickname,
-        profileImage: newProfImg,
-      });
+      if (profileImage != newProfImg)
+        updateProfile({
+          nickname: newNickname,
+          profileImage: newProfImg,
+        });
     }
   }, [newProfImg, isSuccess]);
 
@@ -103,7 +104,7 @@ function UpdateProfileSection({ index, value, user }: Props) {
 
               // 썸네일 미리보기 변경
               setNewProfThumb(thumbnail);
-
+              newProfForm.current.delete("file");
               newProfForm.current.append("file", e.target.files[0]);
               newProfForm.current.append(
                 "fileName",
@@ -149,6 +150,7 @@ function UpdateProfileSection({ index, value, user }: Props) {
         </div>
         <div className="inputGroup">
           <Button
+            disabled={Boolean(!newNickname)}
             variant="contained"
             color="purple"
             fullWidth

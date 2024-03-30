@@ -43,7 +43,6 @@ export const useLogin = () => {
     onSuccess: (res) => {
       // console.log(res);
       const { data } = res;
-      console.log(data);
       if (data.dataHeader.successCode === 0) {
         console.log("로그인 성공");
         console.log("전역 로그인 확인", isLogin);

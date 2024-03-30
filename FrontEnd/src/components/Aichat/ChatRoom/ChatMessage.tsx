@@ -54,7 +54,6 @@ function ChatMessage({ japanese, text, feadback }: Props) {
         const audioUrl = URL.createObjectURL(audioBlob);
 
         const audio = new Audio(audioUrl);
-        console.log(audio);
         audio.play();
 
         audio.onended = () => {

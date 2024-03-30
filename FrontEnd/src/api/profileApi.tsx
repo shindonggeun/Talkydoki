@@ -33,24 +33,51 @@ export const useUpdateProfile = () => {
   const setIsModalOn = useSetISModalOn();
 
   return useMutation({
-    mutationFn: (payload: ProfileUpdateParams) =>
-      customAxios.patch("/member/update", payload, {}),
-    onSuccess: ({ data }) => {
+    mutationFn: (payload: ProfileUpdateParams) => {
+      return customAxios.patch("/member/update", payload, {});
+    },
+    onMutate: async (payload) => {
+      // 낙관적 업데이트
+      await queryClient.cancelQueries({ queryKey: ["getMember"] });
+      const previousData = queryClient.getQueryData(["getMember"]);
+
+      const newProfImg = payload.profileImage;
+      const newNickname = payload.nickname;
+
+      const updatedProfile = JSON.parse(JSON.stringify(previousData));
+
+      if (newProfImg) updatedProfile.dataBody.nickname = newNickname;
+      if (newNickname) updatedProfile.dataBody.profileImage = newProfImg;
+
+      queryClient.setQueryData(["getMember"], updatedProfile);
+
+      return { previousData };
+    },
+    // onSettled: () => {
+    //   queryClient.invalidateQueries({ queryKey: ["getMember"] });
+    // },
+    onSuccess: ({ data }, _params, context) => {
       if (data.dataHeader.successCode == 0) {
         setModalContent({
           message: "프로필이 저장되었습니다.",
           isInfo: true,
           isReadOnly: true,
         });
-        navigate("/mypage");
+        navigate(-1);
         setTimeout(() => {
-          queryClient.invalidateQueries({ queryKey: ["getMember"] });
           setIsModalOn(false);
-        }, 800);
+        }, 100);
+        return;
       } else {
-        console.log(data.dataHeader.resultMessage);
+        queryClient.setQueryData(["getMember"], context.previousData);
         setIsModalOn(false);
       }
+    },
+    onError: (_err, _newData, context) => {
+      console.log(context?.previousData);
+      queryClient.setQueryData(["getMember"], context?.previousData);
+      navigate(-1);
+      setIsModalOn(false);
     },
   });
 };

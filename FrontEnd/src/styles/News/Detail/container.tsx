@@ -244,8 +244,6 @@ export const ReadLineContainer = styled(WordContainer)`
     .jpRead {
       display: none;
     }
-
-
   }
 
   &.selected {
@@ -277,8 +275,9 @@ export const ReadLineContainer = styled(WordContainer)`
       }
 
       &:hover {
-      .jpRead {
-        display: block;
+        .jpRead {
+          display: block;
+        }
       }
     }
   }
@@ -302,6 +301,18 @@ export const SpeechContainer = styled.div`
 
   .script {
     padding: 1vh 2vw;
+    width: 100%;
+    height: 100%;
+
+    .msg {
+      flex-grow: 1;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0.5;
+    }
   }
 
   .similarity {

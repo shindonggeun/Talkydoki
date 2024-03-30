@@ -22,7 +22,6 @@ const Protected = () => {
       setIsLogin(true);
     } else {
       setIsLogin(false);
-      console.log(isLogin);
     }
   }, [pathname]);
 

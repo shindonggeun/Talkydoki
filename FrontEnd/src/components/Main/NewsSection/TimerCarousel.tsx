@@ -16,7 +16,6 @@ function TimerCarousel({ width, height, news }: Props) {
   const [timer, setTimer] = useState(0);
   const [nextTime, setNextTime] = useState(1);
   const navigate = useNavigate();
-  // console.log(news);
 
   // 5초마다 한 번씩 캐러셀 넘어감
   useEffect(() => {
@@ -91,7 +90,6 @@ function TimerCarousel({ width, height, news }: Props) {
               $height={height}
               $bgImg={newsImage}
               onClick={() => {
-                console.log(each.newsId);
                 navigate(`/news/detail`, { state: { newsId: each.id } });
               }}
             >

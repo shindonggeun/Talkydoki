@@ -51,7 +51,7 @@ function NewsReport({ user, average }: Props) {
       const userScore = userDate.length > 0 ? userDate[0].score : 0;
       setRecords((prev) => [...prev, { date, averageScore, userScore }]);
     });
-  }, []);
+  }, [user, average]);
 
   const chartOptions: { series: ApexOptions["series"]; options: ApexOptions } =
     {
