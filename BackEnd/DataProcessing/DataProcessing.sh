@@ -17,15 +17,7 @@ CAT=(
 
 # Python 스크립트 실행
 for cat_info in "${CAT[@]}"; do
-    while true; do
-        python3 /usr/src/app/NewsCrawling/NewsCrawling.py "$cat_info"
-        if [ $? -eq 0 ]; then
-            break
-        else
-            echo "An error occurred. Retrying..."
-            sleep 1  # 1초 후 재시도
-        fi
-    done
+    python3 /usr/src/app/NewsCrawling/NewsCrawling.py "$cat_info"
 done
 
 python3 /usr/src/app/NewsCrawling/RemoveDuplicateNews.py
