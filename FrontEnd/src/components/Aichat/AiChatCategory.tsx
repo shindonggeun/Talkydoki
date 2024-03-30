@@ -1,10 +1,18 @@
 import { useCreateChatRoom } from "@/api/chatApi";
 import { Categorybox, NegativeTiTle } from "@/styles/Aichat/AiChatList";
-import { AiChatCard } from "@/styles/common/ui/card";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Loading from "../ui/Loading";
-
+import Category from "../ui/Category";
+import LocalConvenienceStoreIcon from "@mui/icons-material/LocalConvenienceStore";
+import FastfoodIcon from "@mui/icons-material/Fastfood";
+import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
+import ContentCutIcon from "@mui/icons-material/ContentCut";
+import VaccinesIcon from "@mui/icons-material/Vaccines";
+import LocalPoliceIcon from "@mui/icons-material/LocalPolice";
+import AccessibilityNewIcon from "@mui/icons-material/AccessibilityNew";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import BrunchDiningIcon from "@mui/icons-material/BrunchDining";
 type Props = {};
 
 function AiChatCategory({}: Props) {
@@ -50,27 +58,67 @@ function AiChatCategory({}: Props) {
   return (
     <>
       <div className="titleBox">
-        <NegativeTiTle>회화 리포트</NegativeTiTle>
+        <NegativeTiTle>초급 회화</NegativeTiTle>
       </div>
       <Categorybox>
-        <AiChatCard onClick={() => handleCategorySelect("SOCIETY")}>
-          Society
-        </AiChatCard>
-        <AiChatCard onClick={() => handleCategorySelect("ECONOMY")}>
-          Economy
-        </AiChatCard>
-        <AiChatCard onClick={() => handleCategorySelect("HAMBURGER_ORDER")}>
-          HAMBURGER_ORDER
-        </AiChatCard>
-        <AiChatCard onClick={() => handleCategorySelect("HEALTH")}>
-          Health
-        </AiChatCard>
-        <AiChatCard onClick={() => handleCategorySelect("SPORTS")}>
-          Sports
-        </AiChatCard>
-        <AiChatCard onClick={() => handleCategorySelect("ENTERTAINMENT")}>
-          Entertainment
-        </AiChatCard>
+        {/* Icon={AcUnitIcon} */}
+        <Category
+          Icon={LocalConvenienceStoreIcon}
+          title={"편의점에서 잔돈받기"}
+          // onClick={() => handleCategorySelect("ECONOMY")}
+        ></Category>
+        <Category
+          Icon={SportsSoccerIcon}
+          title={"축구 대화 하기"}
+          // onClick={() => handleCategorySelect("SOCIETY")}
+        ></Category>
+        <Category
+          Icon={FastfoodIcon}
+          title={"  햄버거 주문하기"}
+          // onClick={() => handleCategorySelect("HAMBURGER_ORDER")}
+        ></Category>
+      </Categorybox>
+
+      <div className="titleBox">
+        <NegativeTiTle>중급 회화</NegativeTiTle>
+      </div>
+      <Categorybox>
+        <Category
+          Icon={ContentCutIcon}
+          title={"미용실에서 머리자르기"}
+          // onClick={() => handleCategorySelect("SPORTS")}
+        ></Category>
+        <Category
+          Icon={VaccinesIcon}
+          title={"병원에서 몸상태 말하기"}
+          // onClick={() => handleCategorySelect("HEALTH")}
+        ></Category>
+        <Category
+          Icon={LocalPoliceIcon}
+          title={"경찰서에서 분실물 찾기"}
+          // onClick={() => handleCategorySelect("ENTERTAINMENT")}
+        ></Category>
+      </Categorybox>
+
+      <div className="titleBox">
+        <NegativeTiTle>상급 회화</NegativeTiTle>
+      </div>
+      <Categorybox>
+        <Category
+          Icon={AccessibilityNewIcon}
+          title={"  사회적 토론하기"}
+          // onClick={() => handleCategorySelect("ENTERTAINMENT")}
+        ></Category>
+        <Category
+          Icon={FavoriteIcon}
+          title={"동료와 친해지기"}
+          // onClick={() => handleCategorySelect("ENTERTAINMENT")}
+        ></Category>
+        <Category
+          Icon={BrunchDiningIcon}
+          title={"브런치 먹으며 대화하기"}
+          // onClick={() => handleCategorySelect("ENTERTAINMENT")}
+        ></Category>
       </Categorybox>
     </>
   );

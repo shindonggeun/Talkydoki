@@ -87,13 +87,6 @@ function ChatTip({ lastUserTip }: ChatTipProps) {
           }`}
           onClick={handleTipClick}
         >
-          <div className="message-record">녹음버튼을 누르고 말해주세요</div>
-          <div className="message-suggest">TIP 다음과 같이 말해보세요</div>
-
-          <div className="message-text">
-            {lastUserTip?.japanese}
-            {lastUserTip?.korean}{" "}
-          </div>
           <div className="volume-box">
             <VolumeUpIcon
               style={{ fontSize: "17px", cursor: "pointer" }}
@@ -103,6 +96,14 @@ function ChatTip({ lastUserTip }: ChatTipProps) {
               }}
             />
           </div>
+
+          <div className="message-text">
+            {lastUserTip?.japanese}
+            {lastUserTip?.korean}{" "}
+          </div>
+          <div className="message-suggest">TIP 다음과 같이 말해보세요</div>
+
+          <div className="message-record">녹음버튼을 누르고 말해주세요</div>
         </ChatTipContainer>
       ) : (
         ""
