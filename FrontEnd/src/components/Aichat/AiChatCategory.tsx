@@ -1,7 +1,7 @@
-import { useCreateChatRoom } from "@/api/chatApi";
+// import { useCreateChatRoom } from "@/api/chatApi";
 import { Categorybox, NegativeTiTle } from "@/styles/Aichat/AiChatList";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import Loading from "../ui/Loading";
 import Category from "../ui/Category";
 import LocalConvenienceStoreIcon from "@mui/icons-material/LocalConvenienceStore";
@@ -16,9 +16,11 @@ import BrunchDiningIcon from "@mui/icons-material/BrunchDining";
 type Props = {};
 
 function AiChatCategory({}: Props) {
-  const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(false);
-  const { mutate: createChatRoom } = useCreateChatRoom();
+  // const navigate = useNavigate();
+  const [isLoading, 
+  // setIsLoading
+  ] = useState(false);
+  // const { mutate: createChatRoom } = useCreateChatRoom();
   // const handleCategorySelect = (category: string) => {
   //   setIsLoading(true);
   //   createChatRoom(category, {
