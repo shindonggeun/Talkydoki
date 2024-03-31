@@ -17,6 +17,7 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,7 +41,14 @@ public class NewsRepositoryCustomImpl implements NewsRepositoryCustom {
         // 카테고리 조건 설정. 카테고리 목록이 비어있지 않은 경우에만 적용됩니다.
         BooleanExpression categoryCondition = categories != null && !categories.isEmpty() ? qNews.category.in(categories) : null;
         // 마지막 뉴스 ID 조건 설정. lastNewsId가 null이 아닐 때만 적용됩니다.
-        BooleanExpression lastNewsIdCondition = lastNewsId != null ? qNews.id.lt(lastNewsId) : null;
+        BooleanExpression lastWriteDateCondition =
+                lastNewsId != null ?
+                qNews.writeDate.lt(queryFactory
+                        .select(qNews.writeDate)
+                        .from(qNews)
+                        .where(qNews.id.eq(lastNewsId))
+                        .fetchOne())
+                : null;
 
         // 뉴스 조회 쿼리 실행
         List<NewsSimplyInfo> newsSimplyInfoList = queryFactory
@@ -54,8 +62,8 @@ public class NewsRepositoryCustomImpl implements NewsRepositoryCustom {
                         qNews.srcOrigin
                 ))
                 .from(qNews)
-                .where(categoryCondition, lastNewsIdCondition)
-                .orderBy(qNews.writeDate.desc(), qNews.id.desc())
+                .where(categoryCondition, lastWriteDateCondition)
+                .orderBy(qNews.writeDate.desc())
                 .limit(limit + 1)
                 .fetch();
 
