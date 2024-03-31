@@ -72,10 +72,9 @@ public class AiChatReportServiceImpl implements AiChatReportService {
 
     @Override
     public FullReportInfo getReportDetail(Long reportId) {
-        AiChatReport aiChatReport = aiChatReportRepository.findById(reportId).orElseThrow(() -> new IllegalArgumentException("Can't find the report with Id: " + reportId));
+        AiChatReport aiChatReport = aiChatReportRepository.findByAiChatRoomId(reportId).orElseThrow(() -> new IllegalArgumentException("Can't find the report with Id: " + reportId));
 
         List<AiChatAndFeedbackInfo> aiChatAndFeedbackInfos = aiChatFeedbackRepository.getAiChatFeedbackInfo(aiChatReport.getAiChatRoom().getId());
-        log.info("roomId는!!: {}", aiChatReport.getAiChatRoom().getId());
 
         return new FullReportInfo(AiChatReport.dto(aiChatReport), aiChatAndFeedbackInfos) ;
     }
@@ -88,10 +87,10 @@ public class AiChatReportServiceImpl implements AiChatReportService {
         // 각 AiChatRoom에 대한 AiChatReport를 조회하고, AiChatReportInfo로 변환하여 수집
         return aiChatRooms.stream()
                 .map(aiChatRoom -> {
-                    // AiChatRoom ID를 사용하여 각 AiChatRoom에 대응하는 AiChatReport를 조회하고, 존재하지 않으면 null 반환
-                    return aiChatReportRepository.findByAiChatRoomId(aiChatRoom.getId())
-                            .map(aiChatReport -> new AiChatReportInfo(aiChatReport.getId(), aiChatRoom.getCategory()))
-                            .orElse(null); // 예외를 던지지 않고, 결과가 없을 경우 null 반환
+                    // AiChatRoom ID를 사용하여 각 AiChatRoom에 대응하는 AiChatReport를 조회
+                    AiChatReport aiChatReport = aiChatReportRepository.findByAiChatRoomId(aiChatRoom.getId()).orElseThrow(() -> new IllegalArgumentException("Can't find the report with aiChatRoomId: " + aiChatRoom.getId()));
+                    // AiChatReport가 존재하고, 해당 AiChatRoom의 category 정보를 사용하여 AiChatReportInfo 생성
+                    return (aiChatReport != null) ? new AiChatReportInfo(aiChatReport.getId(), aiChatRoom.getCategory()) : null;
                 })
                 .filter(Objects::nonNull) // null인 결과 제거
                 .collect(Collectors.toList());

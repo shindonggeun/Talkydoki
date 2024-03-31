@@ -7,8 +7,12 @@ import { getCookie } from "@/util/auth/userCookie";
 
 // 로그인 필요 체크용 프로텍트라우터
 const Protected = () => {
-  const { setIsLogin } = useAuthStore(
+  const { 
+    // isLogin, 
+    setIsLogin 
+    } = useAuthStore(
     useShallow((state) => ({
+      isLogin: state.isLogin,
       setIsLogin: state.setIsLogin,
     }))
   );

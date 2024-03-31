@@ -37,7 +37,7 @@ export interface splittedNewsInterface {
   category: string;
   content: string[][][];
   contentTranslated: string[];
-  newsKeywords: { [keyword: string]: { count: number; read: string } };
+  newsKeywords: { [keyword: string]: number };
   summary: string[][][];
   summaryTranslated: string[];
   writeDate: string;

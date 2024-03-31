@@ -103,15 +103,6 @@ export const SimpleVocaContainer = styled(Card)`
     }
   }
 
-  .nodata {
-    width: 100%;
-    height: 75%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.5;
-  }
-
   .voca {
     padding: 0 10px;
     display: flex;

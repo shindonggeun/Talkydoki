@@ -5,7 +5,6 @@ import { sentenceMaker, newsSplitter } from "@/util/language/format";
 import { useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { customAxios } from "@/util/auth/customAxios";
-import DefaultImg from "@/assets/images/default_news_image.jpeg";
 
 type Props = {
   news: NewsListItemInterface;
@@ -16,8 +15,6 @@ type Props = {
 function NewsItem({ news, isShowKor, idx }: Props) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const newsImages =
-    news.newsImages.length > 0 ? news.newsImages : [DefaultImg];
 
   const prefetchArticle = () => {
     console.log("실행중");
@@ -39,7 +36,7 @@ function NewsItem({ news, isShowKor, idx }: Props) {
         prefetchArticle();
       }}
     >
-      <ThumbnailView images={newsImages} isThumb={true} />
+      <ThumbnailView images={news.newsImages} isThumb={true} />
       <div className="titleBox">
         <div className="title">
           {sentenceMaker(newsSplitter(news.title)[0])}

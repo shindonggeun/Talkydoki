@@ -4,13 +4,10 @@ import { getProfileImage } from "@/util/common/getFullUrl";
 import { useGetMember } from "@/api/memberApi";
 import { useNavigate } from "react-router-dom";
 import PersonIcon from "@mui/icons-material/Person";
-import { useIsMobile, useSetIsSidebarOpen } from "@/stores/displayStore";
 
 function SidebarProfile() {
   const { data, isLoading } = useGetMember();
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
-  const setIsSidebarOpen = useSetIsSidebarOpen();
 
   if (!data || isLoading) return <></>;
 
@@ -18,13 +15,7 @@ function SidebarProfile() {
 
   return (
     <ProfileSection>
-      <div
-        className="link"
-        onClick={() => {
-          if (isMobile) setIsSidebarOpen(false);
-          navigate("/userUpdate");
-        }}
-      >
+      <div className="link" onClick={() => navigate("/userUpdate")}>
         <PersonIcon sx={{ fontSize: "12pt", marginRight: "2px" }} />
         마이페이지
       </div>

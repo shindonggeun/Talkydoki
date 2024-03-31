@@ -50,12 +50,6 @@ export const NewsArticleWrapper = styled(Card)`
     word-break: break-all;
     font-size: 10pt;
     opacity: 0.8;
-    text-decoration: none;
-    color: var(--text);
-    &:hover,
-    &:active {
-      color: var(--main);
-    }
   }
 
   @media screen and (max-width: 992px) {

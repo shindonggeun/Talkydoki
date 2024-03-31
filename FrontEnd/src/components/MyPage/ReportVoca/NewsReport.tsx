@@ -95,7 +95,6 @@ function NewsReport({ user, average }: Props) {
           x: {
             format: "yyyy-MM-dd",
           },
-          theme: theme.mode,
         },
       },
     };

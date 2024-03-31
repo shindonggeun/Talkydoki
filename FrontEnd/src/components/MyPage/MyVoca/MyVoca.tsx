@@ -44,9 +44,6 @@ function MyVoca() {
           />
         </div>
         {/* 단어장 리스트 출력 */}
-        {data && data.length == 0 && (
-          <div className="nodata">등록된 단어가 없습니다.</div>
-        )}
         {data &&
           data.map((each) => (
             <MyVocaCard

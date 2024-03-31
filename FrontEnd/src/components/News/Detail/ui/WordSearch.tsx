@@ -82,13 +82,13 @@ function WordSearch() {
     setXy({ x: nx, y: ny });
   }, [searchWord]);
 
-  const { data, isFetching, isError } = useSearchWordApi(searchWord.word);
+  const { data, isFetching } = useSearchWordApi(searchWord.word);
   const { mutate: addVoca } = useAddVoca();
 
   // 검색
   useEffect(() => {
     if (!data) return;
-    if (data == "nodata" || isError) {
+    if (data == "nodata") {
       setWord({ japanese: searchWord.word, japaneseRead: searchWord.read });
     } else {
       setWord({ ...data });

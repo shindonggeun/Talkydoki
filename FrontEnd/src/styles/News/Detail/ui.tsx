@@ -49,22 +49,13 @@ export const NewsTitle = styled.h1`
   font-weight: 900;
 `;
 
-export const KeywordItem = styled.div<{ $color: string }>`
+export const KeywordItem = styled.div`
   padding: 5px 10px;
   font-size: 10pt;
   width: fit-content;
   margin: 5px;
   border: 1px solid var(--grey);
   border-radius: 25px;
-  cursor: pointer;
-
-  &:hover {
-    border-width: 2px;
-    border-color: ${(props) => `rgb(${props.$color})`};
-    color: ${(props) => `rgb(${props.$color})`};
-    font-weight: 600;
-    background-color: ${(props) => `rgba(${props.$color}, 0.2)`};
-  }
 
   span {
     color: var(--main);

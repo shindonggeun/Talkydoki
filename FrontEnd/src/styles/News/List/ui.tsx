@@ -62,7 +62,7 @@ export const NewsCard = styled.div<{ $index: number }>`
 
     .titleTrans {
       word-break: keep-all;
-      font-size: 10pt;
+      font-size: 12pt;
       opacity: 0;
 
       &.show {
