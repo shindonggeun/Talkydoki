@@ -34,9 +34,9 @@ spring:
     init:
       mode: always
       data-locations:
-        - 'classpath:/FOREIGN_KEY_CHECKS_0.sql'
-        - 'classpath:/db_backup.sql'
-        - 'classpath:/FOREIGN_KEY_CHECKS_1.sql'
+        - 'classpath:/FOREIGN_KEY_CHECKS_0.sql'   # 외래키 제약 조건 비활성화
+        - 'classpath:/db_backup.sql'              # DB 백업본 실행
+        - 'classpath:/FOREIGN_KEY_CHECKS_1.sql'   # 외래키 제약 조건 활성화
 
 
   # NoSQL setting

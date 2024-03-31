@@ -1,15 +1,12 @@
 package com.ssafy.backend.domain.aichat.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.backend.domain.aichat.dto.AiChatAndFeedbackInfo;
 import com.ssafy.backend.domain.aichat.dto.AiChatReportCreateRequest;
 import com.ssafy.backend.domain.aichat.dto.AiChatReportInfo;
 import com.ssafy.backend.domain.aichat.dto.FullReportInfo;
 import com.ssafy.backend.domain.aichat.entity.*;
-import com.ssafy.backend.domain.aichat.entity.enums.AiChatSender;
 import com.ssafy.backend.domain.aichat.repository.AiChatFeedbackRepository;
 import com.ssafy.backend.domain.aichat.repository.AiChatHistoryRepository;
 import com.ssafy.backend.domain.aichat.repository.AiChatReportRepository;
@@ -18,7 +15,6 @@ import com.ssafy.backend.domain.attendance.entity.enums.AttendanceType;
 import com.ssafy.backend.domain.attendance.service.AttendanceService;
 import com.ssafy.backend.global.component.openai.OpenAiCommunicationProvider;
 import com.ssafy.backend.global.component.openai.dto.GptChatRequest;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -40,8 +36,6 @@ public class AiChatReportServiceImpl implements AiChatReportService {
     private final AiChatFeedbackRepository aiChatFeedbackRepository;
     private final ObjectMapper objectMapper;
     private final OpenAiCommunicationProvider openAiCommunicationProvider;
-
-    private final JPAQueryFactory jpaQueryFactory;
 
     private final AttendanceService attendanceService;
 
