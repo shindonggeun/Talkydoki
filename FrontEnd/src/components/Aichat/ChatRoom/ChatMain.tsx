@@ -3,8 +3,7 @@ import chatbot from "@/assets/images/logo_face.png";
 
 import ChatMessage from "./ChatMessage";
 import { useEffect, useRef } from "react";
-// 컴포넌트화필요 타입
-// 메시지 타입 정의
+import { BeatLoader } from "react-spinners";
 interface ChatMessage {
   sender: "USER" | "GPT" | "USER_TIP";
   japanese: string;
@@ -13,14 +12,17 @@ interface ChatMessage {
 
 type ChatMainProps = {
   messages: ChatMessage[];
+  transcript: string;
+  isRecording: boolean;
 };
 
-function ChatMain({ messages }: ChatMainProps) {
+function ChatMain({ messages, transcript, isRecording }: ChatMainProps) {
   const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
+  console.log("isRecording", isRecording);
+
   useEffect(() => {
-    // 스크롤을 맨 아래로 이동시킵니다.
     endOfMessagesRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, isRecording]);
   return (
     <>
       <MainContainer>
@@ -43,6 +45,27 @@ function ChatMain({ messages }: ChatMainProps) {
             </div>
           ) : null
         )}
+        {isRecording &&
+          (transcript ? (
+            <div
+              className="message-item self"
+              style={{
+                backgroundColor: "var(--shadow-dark)",
+              }}
+            >
+              <div className="message-text">
+                <p>{transcript}</p>
+              </div>
+            </div>
+          ) : (
+            <div
+              className="message-item self"
+              style={{ backgroundColor: "transparent" }}
+            >
+              <BeatLoader />
+            </div>
+          ))}
+
         <div ref={endOfMessagesRef} />
       </MainContainer>
     </>

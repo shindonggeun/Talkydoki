@@ -11,9 +11,9 @@ spring:
   jpa:
     open-in-view: false
     defer-datasource-initialization: true
-    generate-ddl: true
+    generate-ddl: false
     hibernate:
-      ddl-auto: create-drop                # ddl 자동 작성 여부
+      ddl-auto: none                # ddl 자동 작성 여부
     properties:
       hibernate:
         format_sql: true             # 하이버네이트가 실행한 SQL을 출력할 때 보기 좋게 정렬
@@ -34,11 +34,9 @@ spring:
     init:
       mode: always
       data-locations:
-        - 'classpath:/data_vocabulary.sql'
-        - 'classpath:/data_news.sql'
-        - 'classpath:/data_member.sql'
-        - 'classpath:/data_keyword.sql'
-        - 'classpath:/data_news_keyword_mapping.sql'
+        - 'classpath:/FOREIGN_KEY_CHECKS_0.sql'
+        - 'classpath:/db_backup.sql'
+        - 'classpath:/FOREIGN_KEY_CHECKS_1.sql'
 
 
   # NoSQL setting

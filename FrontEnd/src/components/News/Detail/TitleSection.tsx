@@ -26,7 +26,9 @@ function TitleSection({
       <div className="jpTitle">{title}</div>
       <div className="koTitle">{kortitle}</div>
       <div className="info">작성일: {date.slice(0, 10)}</div>
-      <div className="info">url: {url}</div>
+      <a href={url} className="info">
+        {url}
+      </a>
       <Divider sx={{ margin: "2vh 0" }} />
       {/* 이미지 */}
       <div style={{ margin: "10vh 0" }}>

@@ -28,25 +28,10 @@ function AiChatCategory({}: Props) {
         console.log("roomId", roomId);
         setIsLoading(false);
         navigate(`/aichatlist/${category}/${roomId}`);
-        // chatStart(
-        //   { roomId, category },
-        //   {
-        //     onSuccess: () => {
-        //       setIsLoading(false);
-        //       navigate(`/aichatlist/${category}/${roomId}`);
-        //     },
-        //     onError: (error) => {
-        //       console.error("Error during chat setup:", error);
-        //       setIsLoading(false);
-        //       // 채팅방 초기 설정 에러 처리
-        //     },
-        //   }
-        // );
       },
       onError: (error) => {
         console.error("Error creating chat room:", error);
         setIsLoading(false);
-        // 채팅방 생성 에러 처리
       },
     });
   };
@@ -61,21 +46,20 @@ function AiChatCategory({}: Props) {
         <NegativeTiTle>초급 회화</NegativeTiTle>
       </div>
       <Categorybox>
-        {/* Icon={AcUnitIcon} */}
         <Category
           Icon={LocalConvenienceStoreIcon}
           title={"편의점에서 잔돈받기"}
-          // onClick={() => handleCategorySelect("ECONOMY")}
+          onClick={() => handleCategorySelect("ECONOMY")}
         ></Category>
         <Category
           Icon={SportsSoccerIcon}
           title={"축구 대화 하기"}
-          // onClick={() => handleCategorySelect("SOCIETY")}
+          onClick={() => handleCategorySelect("SOCIETY")}
         ></Category>
         <Category
           Icon={FastfoodIcon}
           title={"  햄버거 주문하기"}
-          // onClick={() => handleCategorySelect("HAMBURGER_ORDER")}
+          onClick={() => handleCategorySelect("HAMBURGER_ORDER")}
         ></Category>
       </Categorybox>
 
@@ -86,17 +70,17 @@ function AiChatCategory({}: Props) {
         <Category
           Icon={ContentCutIcon}
           title={"미용실에서 머리자르기"}
-          // onClick={() => handleCategorySelect("SPORTS")}
+          onClick={() => handleCategorySelect("SPORTS")}
         ></Category>
         <Category
           Icon={VaccinesIcon}
           title={"병원에서 몸상태 말하기"}
-          // onClick={() => handleCategorySelect("HEALTH")}
+          onClick={() => handleCategorySelect("HEALTH")}
         ></Category>
         <Category
           Icon={LocalPoliceIcon}
           title={"경찰서에서 분실물 찾기"}
-          // onClick={() => handleCategorySelect("ENTERTAINMENT")}
+          onClick={() => handleCategorySelect("ENTERTAINMENT")}
         ></Category>
       </Categorybox>
 
@@ -107,17 +91,17 @@ function AiChatCategory({}: Props) {
         <Category
           Icon={AccessibilityNewIcon}
           title={"  사회적 토론하기"}
-          // onClick={() => handleCategorySelect("ENTERTAINMENT")}
+          onClick={() => handleCategorySelect("ENTERTAINMENT")}
         ></Category>
         <Category
           Icon={FavoriteIcon}
           title={"동료와 친해지기"}
-          // onClick={() => handleCategorySelect("ENTERTAINMENT")}
+          onClick={() => handleCategorySelect("ENTERTAINMENT")}
         ></Category>
         <Category
           Icon={BrunchDiningIcon}
-          title={"브런치 먹으며 대화하기"}
-          // onClick={() => handleCategorySelect("ENTERTAINMENT")}
+          title={"브런치 식사 대화하기"}
+          onClick={() => handleCategorySelect("ENTERTAINMENT")}
         ></Category>
       </Categorybox>
     </>

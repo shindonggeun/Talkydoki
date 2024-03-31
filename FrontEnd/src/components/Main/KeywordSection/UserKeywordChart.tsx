@@ -44,8 +44,17 @@ function UserKeywordChart() {
         },
       },
       colors: [theme.main.color],
+      dataLabels: {
+        style: {
+          fontFamily: "Mplus",
+          fontSize: "16pt",
+        },
+      },
       tooltip: {
-        enabled: false,
+        theme: theme.mode,
+        style: {
+          fontSize: "10pt",
+        },
       },
       stroke: {
         show: false,

@@ -2,25 +2,30 @@ import React, { useState } from "react";
 import { FooterContainer } from "@/styles/Aichat/AiChatRoom";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import MicIcon from "@mui/icons-material/Mic";
-import SpeechRecognition, {
-  useSpeechRecognition,
-} from "react-speech-recognition";
+import SpeechRecognition from "react-speech-recognition";
 import { BlueButton } from "@/styles/common/ui/button";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "@/util/auth/userCookie";
 import { useReportCreate, useSendMessage } from "@/api/chatApi";
 import { getStompClient } from "@/util/websocket/stompConnection";
-import { BeatLoader } from "react-spinners";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 import Loading from "@/components/ui/Loading";
 
 interface ChatFooterProps {
   roomId: string | undefined;
+  transcript: string;
+  resetTranscript: () => void;
+  isRecording: boolean;
+  setIsRecording: (isRecording: boolean) => void;
 }
 
-const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
-  const [isRecording, setIsRecording] = useState<boolean>(false);
-  const { transcript, resetTranscript } = useSpeechRecognition();
+const ChatFooter: React.FC<ChatFooterProps> = ({
+  roomId,
+  transcript,
+  resetTranscript,
+  isRecording,
+  setIsRecording,
+}) => {
   const navigate = useNavigate();
   console.log("transcript", transcript);
   //로딩 추가
@@ -98,43 +103,37 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
     }
   };
 
-  // 레코딩취소
   const cancelRecording = () => {
     SpeechRecognition.stopListening();
 
     setIsRecording(false);
     resetTranscript();
     clearTimeout(timer);
-    // SpeechRecognition.abortListening();
   };
 
   const toggleRecording = () => {
-    // 음성 인식을 중지하는 경우
     if (isRecording) {
       SpeechRecognition.stopListening();
 
       sendMessage(transcript);
-      resetTranscript(); // 인식된 텍스트 초기화
+      resetTranscript();
 
-      setIsRecording(false); // 음성 인식 상태 업데이트
-      clearTimeout(timer); // 이전 타이머가 있다면 취소
+      setIsRecording(false);
+      clearTimeout(timer);
     } else {
-      // 음성 인식을 시작하기 전에 이전 타이머가 있다면 취소
       if (timer) {
         clearTimeout(timer);
       }
-      resetTranscript(); // 인식된 텍스트 초기화
+      resetTranscript();
 
       SpeechRecognition.startListening({ continuous: true, language: "ja-JP" });
 
-      // 새로운 타이머 설정
       const newTimer = window.setTimeout(() => {
         SpeechRecognition.stopListening();
         resetTranscript();
         setIsRecording(false);
       }, 17000);
 
-      // 새 타이머 상태 업데이트
       setTimer(newTimer as unknown as number);
       setIsRecording(true);
     }
@@ -158,11 +157,6 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
               marginRight: "10px",
             }}
           />
-        </div>
-      )}
-      {isRecording && (
-        <div className="transcriptdiv">
-          {transcript ? <p>{transcript}</p> : <BeatLoader />}
         </div>
       )}
 

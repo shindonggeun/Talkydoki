@@ -11,7 +11,7 @@ spring:
   jpa:
     open-in-view: false
     defer-datasource-initialization: true
-    generate-ddl: true
+    generate-ddl: false
     hibernate:
       ddl-auto: none
     properties:
@@ -30,15 +30,15 @@ spring:
     password: ENC(pcq3fN0xzVJNEAPYy/U+mQ==)                     # 데이터베이스 계정 비밀번호
 
   # data_테이블명.sql 관련 실행 setting
-  sql:
-    init:
-      mode: never
-      data-locations:
-        - 'classpath:/data_vocabulary.sql'
-        # - 'classpath:/data_news.sql'
-        - 'classpath:/data_member.sql'
-        # - 'classpath:/data_keyword.sql'
-        # - 'classpath:/data_news_keyword_mapping.sql'
+  # sql:
+  #   init:
+  #     mode: never
+  #     data-locations:
+  #       - 'classpath:/data_vocabulary.sql'
+  #       - 'classpath:/data_news.sql'
+  #       - 'classpath:/data_member.sql'
+  #       - 'classpath:/data_keyword.sql'
+  #       - 'classpath:/data_news_keyword_mapping.sql'
 
   # NoSQL setting
   data:

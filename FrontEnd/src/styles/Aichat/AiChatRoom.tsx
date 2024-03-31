@@ -224,7 +224,7 @@ export const ChatTipContainer = styled.div`
   background-color: ${(props) =>
     props.theme.mode == "light" ? "var(--grey-light)" : "var(--shadow-dark)"};
   padding: 15px 30px;
-  min-height: 5px; // 최소 높이 설정
+  min-height: 5px;
   //애니메이션 추가
   animation: ${fadeInUp} 2s ease-out;
   &.isVisible {
