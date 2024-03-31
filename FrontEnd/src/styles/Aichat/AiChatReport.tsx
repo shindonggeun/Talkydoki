@@ -115,7 +115,7 @@ export const ChatReportCarouselItem = styled.div`
   .conversation-summary-wrapper {
     width: 100%;
     height: fit-content;
-    padding: 3vh 3vw;
+    padding: 3vh 1vw 3vh 3vw;
     display: flex;
     align-items: center;
     justify-content: space-between;

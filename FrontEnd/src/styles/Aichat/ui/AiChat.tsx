@@ -46,7 +46,7 @@ export const HeaderContainer = styled.div`
 export const MainContainer = styled.div`
   border-top: 3px solid var(--shadow);
   border-bottom: 3px solid var(--shadow);
-  height: 79%;
+  height: 100%;
   background: var(--shadow);
   overflow-y: auto;
   display: flex;

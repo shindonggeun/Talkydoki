@@ -3,22 +3,38 @@ import React from "react";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { useNavigate } from "react-router-dom";
 import { HeaderContainer } from "@/styles/Aichat/ui/AiChat";
+import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 
 type Props = {
   aiChatTitle: string;
   options: {
     label: string;
-    checked?: boolean;
-    onChange?: () => void;
+    checked: boolean;
+    onChange: () => void;
   }[];
 };
 
 function ChatHeader({ aiChatTitle, options }: Props) {
   const navigate = useNavigate();
-  const ITEM_HEIGHT = 48;
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
+  // 모달추가
+  const setModalContent = useSetModalContent();
+  const setIsModalOn = useSetISModalOn();
+
+  const handleExitModal = () => {
+    setModalContent({
+      message: "나가시겠습니까?",
+      onSuccess: () => {
+        setIsModalOn(false);
+        navigate("/aichatlist");
+      },
+
+      isInfo: false,
+    });
+    setIsModalOn(true);
+  };
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
   };
@@ -26,8 +42,6 @@ function ChatHeader({ aiChatTitle, options }: Props) {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
-  const handleOptionClick = () => navigate("/aichatlist");
 
   return (
     <HeaderContainer>
@@ -50,14 +64,8 @@ function ChatHeader({ aiChatTitle, options }: Props) {
         anchorEl={anchorEl}
         open={open}
         onClose={handleClose}
-        PaperProps={{
-          style: {
-            maxHeight: ITEM_HEIGHT * 4.5,
-            width: "20ch",
-          },
-        }}
       >
-        {options.map((option, index) => (
+        {options.map((option) => (
           <MenuItem
             key={option.label}
             component="div"
@@ -66,35 +74,39 @@ function ChatHeader({ aiChatTitle, options }: Props) {
               // justifyContent: index === 1 ? "flex-end" : "space-between",
             }}
           >
-            {index !== options.length - 1 && (
-              <div
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                {option.label}
-                <Switch
-                  checked={option.checked}
-                  onChange={option.onChange}
-                  color="primary"
-                />
-              </div>
-            )}
-            {index === options.length - 1 && (
-              <div
-                style={{
-                  width: "100%",
-                }}
-                onClick={() => handleOptionClick()}
-              >
-                {option.label}
-              </div>
-            )}
+            <div
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
+            >
+              {option.label}
+              <Switch
+                checked={option.checked}
+                onChange={option.onChange}
+                color="primary"
+              />
+            </div>
           </MenuItem>
         ))}
+        <MenuItem
+          component="div"
+          style={{
+            display: "flex",
+            // justifyContent: index === 1 ? "flex-end" : "space-between",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+            }}
+            onClick={() => handleExitModal()}
+          >
+            나가기
+          </div>
+        </MenuItem>
       </Menu>
     </HeaderContainer>
   );
