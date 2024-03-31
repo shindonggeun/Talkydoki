@@ -5,7 +5,7 @@ import ChatMain from "./ChatMain";
 import ChatFooter from "./ChatFooter";
 import ChatTip from "./ChatTip";
 import { ChatRoomContainer } from "@/styles/Aichat/AiChatRoom";
-
+import { useSpeechRecognition } from "react-speech-recognition";
 // 환경변수에서 웹소켓 서버의 URL을 가져옵니다.
 
 // 예시 붙이는용
@@ -30,6 +30,9 @@ function ChatRoom() {
   const [chats, setChats] = useState<ChatMessage[]>([]);
   const [lastUserTip, setLastUserTip] = useState<ChatMessage | null>(null);
   console.log(chats);
+  // 추가
+  const { transcript, resetTranscript } = useSpeechRecognition();
+  const [isRecording, setIsRecording] = useState<boolean>(false);
 
   useEffect(() => {
     const serverURL = VITE_REACT_WS_URL as string;
@@ -82,8 +85,18 @@ function ChatRoom() {
     <>
       <ChatRoomContainer>
         <ChatHeader />
-        <ChatMain messages={chats} />
-        <ChatFooter roomId={roomId} />
+        <ChatMain
+          messages={chats}
+          transcript={transcript}
+          isRecording={isRecording}
+        />
+        <ChatFooter
+          roomId={roomId}
+          transcript={transcript}
+          resetTranscript={resetTranscript}
+          isRecording={isRecording}
+          setIsRecording={setIsRecording}
+        />
         <ChatTip lastUserTip={lastUserTip} />
       </ChatRoomContainer>
     </>
