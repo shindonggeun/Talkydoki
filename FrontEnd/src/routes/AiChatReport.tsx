@@ -1,8 +1,4 @@
-import {
-  ChatReportCard,
-  ChatReportWrapper,
-  ChatReportTitleSection,
-} from "@/styles/Aichat/AiChatReport";
+import { Flexbox, Wrapper } from "@/styles/Aichat/ui/AiChat";
 import ChatReportCarousel from "../components/Aichat/ChatReport/ChatReportCarousel";
 
 type Props = {};
@@ -10,12 +6,11 @@ type Props = {};
 function AiChatReport({}: Props) {
   return (
     <>
-      <ChatReportWrapper>
-        <ChatReportCard>
-          <ChatReportTitleSection>AI 회화 리포트</ChatReportTitleSection>
+      <Wrapper>
+        <Flexbox>
           <ChatReportCarousel />
-        </ChatReportCard>
-      </ChatReportWrapper>
+        </Flexbox>
+      </Wrapper>
     </>
   );
 }

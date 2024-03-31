@@ -24,7 +24,7 @@ export const newsSplitter = (line: string) => {
 
 // 한국어 번역 분리
 export const transSplitter = (trans: string) => {
-  const splitted = trans.split(/\n\n/g);
+  const splitted = trans.split(/\n\n\n/g);
   return splitted;
 };
 
