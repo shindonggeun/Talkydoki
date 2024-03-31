@@ -23,8 +23,6 @@ function UpdatePasswordSection({ index, value, provider }: Props) {
   const [newPassword2, setNewPassword2] = useState("");
   const [isDefferent, setIsDefferent] = useState(false);
 
-  console.log(isSocial);
-
   const setModalContent = useSetModalContent();
   const setIsModalOn = useSetISModalOn();
   const isMobile = useIsMobile();
