@@ -1,5 +1,6 @@
 server:
   base-url: j10c107.p.ssafy.io
+  https-url: https://j10c107.p.ssafy.io
 
 spring:
   servlet:
@@ -86,7 +87,7 @@ oauth:
   kakao:
     client-id: ENC(BWjHj+A/SJQBzhtK+vutMYiLyOsKAo2lQwFqW2PqRPDxuWfF6Ncx+Qq5piFGk1SY)   # REST API 키
     client-secret: ENC(U2L8zI42xYdW0BrMSGzgJYk5Q+lkgUx2ZowRtdJ1yPTjq+l0VevuR0r9ucPc6ZrL)  # 보안 -> Client Secret 키
-    redirect-uri: ${server.base-url}/member/loading/kakao
+    redirect-uri: ${server.https-url}/member/loading/kakao
     scope:
       - profile_nickname
       - profile_image
@@ -96,7 +97,7 @@ oauth:
   naver:
     client-id: ENC(fgllU6jmkfqSW5Lbet7BdnTta/ycQfTAwj3mVFHrkko=)
     client-secret: ENC(MNZuMPNyaH+s/6Fx8gOKJ2bKC+7tFMMu)
-    redirect_uri: ${server.base-url}/member/loading/naver
+    redirect_uri: ${server.https-url}/member/loading/naver
     scope:
       - nickname
       - name
@@ -106,7 +107,7 @@ oauth:
   google:
     client_id: ENC(QKPQqGiQ64z9Aqor6E4+iqkn9coyITJcZJpnGofHf1rweieZI2PYBd80sfG4sRzJqgkMFqumuuvlHgCXoIZ5n7Ax2Wen8jYzt/9T2WmQ1LfQEdmdhLxaSg==)
     client_secret: ENC(9s47E9126PeDwGGEQ3CEOxgisyvSvZEF8rGmM6ylTJ3YyAAJ4ES/lRkULyEamSgc)
-    redirect_uri: ${server.base-url}/member/loading/google
+    redirect_uri: ${server.https-url}/member/loading/google
     scope:
       - profile
       - email
