@@ -79,6 +79,12 @@ class DataStorage:
             except Exception as e:
                 print(f"Error loading histories: {e}")
                 histories = []
+            
+            self.articles = articles
+            self.users = users
+            self.keywords = keywords
+            self.mappings = mappings
+            self.histories = histories
 
         categories = ['SOCIETY', 'BUSINESS', 'POLITICS', 'SCIENCE_CULTURE', 'INTERNATIONAL', 'SPORTS', 'LIFE', 'WEATHER_DISASTER']
         category_kr = ['사회', '경제', '정치', '과학', '국제', '스포츠', '생활', '재난/날씨']
