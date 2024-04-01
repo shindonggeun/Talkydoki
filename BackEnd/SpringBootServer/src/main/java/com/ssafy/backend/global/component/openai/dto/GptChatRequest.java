@@ -45,7 +45,7 @@ public record GptChatRequest(
                 + "  ]\n"
                 + "}\n\n"
                 +"[주의!]\n"
-                +"하나씩 잘 파악하세요. 피드백은 반드시 chatId 하나 당 한 개의 피드백만을 생성합니다. 피드백은 기본적으로 한국어로 설명하고 예시 표현은 일본어(괄호 안에 한국어 번역)로 표현합니다. 이 부분을 반드시 적용하세요. 예외는 없습니다.";
+                +"하나씩 하나씩 파악하세요.\n    1. 피드백은 반드시 chatId 하나 당 한 개의 피드백만을 생성합니다.\n    2. 피드백은 기본적으로 한국어로 설명하고 예시 표현은 일본어와 괄호 안에 한국어 번역이 있는 형식으로 표현합니다.\n이 주의사항들을 반드시 적용하세요. 예외는 없습니다.";
 
         ArrayList<GptDialogueMessage> messageList = new ArrayList<>();
         messageList.add(new GptDialogueMessage("system", systemMessage));
