@@ -1,4 +1,4 @@
-import { useCreateChatRoom } from "@/api/chatApi";
+import { useCreateChatRoom } from "@/components/Aichat/ChatReport/chatApi";
 import { Categorybox, NegativeTiTle } from "@/styles/Aichat/AiChatList";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";

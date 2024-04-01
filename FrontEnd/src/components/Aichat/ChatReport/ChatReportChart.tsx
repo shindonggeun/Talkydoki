@@ -1,6 +1,5 @@
 import { reportDetailInterface } from "@/interface/AiChatReportInterface";
 import ReactApexChart from "react-apexcharts";
-import DoubleArrowRoundedIcon from "@mui/icons-material/DoubleArrowRounded";
 
 function ChatReportChart({
   reportDetail,
@@ -39,25 +38,14 @@ function ChatReportChart({
   };
 
   return (
-    <div className="chart-report-carousel-wrapper">
-      <div className="chart-report-wrapper">
-        <ReactApexChart
-          options={options}
-          series={scoresArray}
-          type="polarArea"
-          width={"100%"}
-          height={"100%"}
-        />
-      </div>
-      <div className="conversation-summary-wrapper">
-        <div className="conversation-summary">
-          {reportDetail.conversationSummary}
-        </div>
-        <div className="next-report-icon">
-          채팅 리포트
-          <DoubleArrowRoundedIcon />
-        </div>
-      </div>
+    <div className="chart-report-wrapper">
+      <ReactApexChart
+        options={options}
+        series={scoresArray}
+        type="polarArea"
+        width={"100%"}
+        height={"100%"}
+      />
     </div>
   );
 }

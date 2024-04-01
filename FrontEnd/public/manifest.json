@@ -3,7 +3,8 @@
   "short_name": "TalkyDoki",
   "start_url": "/intro",
   "display": "standalone",
-  "background_color": "#957DF8",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
   "icons": [
     {
       "src": "icons/apple-touch-icon-57x57.png",

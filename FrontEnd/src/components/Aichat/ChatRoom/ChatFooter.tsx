@@ -6,7 +6,10 @@ import SpeechRecognition from "react-speech-recognition";
 import { BlueButton } from "@/styles/common/ui/button";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "@/util/auth/userCookie";
-import { useReportCreate, useSendMessage } from "@/api/chatApi";
+import {
+  useReportCreate,
+  useSendMessage,
+} from "@/components/Aichat/ChatReport/chatApi";
 import { getStompClient } from "@/util/websocket/stompConnection";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 import Loading from "@/components/ui/Loading";

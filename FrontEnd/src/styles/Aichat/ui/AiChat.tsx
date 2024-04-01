@@ -26,7 +26,7 @@ export const Flexbox = styled.div`
   position: relative;
 `;
 
-export const ChatRoomContainer = styled(Card)`
+export const ChatContainer = styled(Card)`
   width: 100%;
   height: 98%;
   display: flex;
@@ -44,9 +44,9 @@ export const HeaderContainer = styled.div`
 `;
 
 export const MainContainer = styled.div`
+  flex-grow: 1;
   border-top: 3px solid var(--shadow);
   border-bottom: 3px solid var(--shadow);
-  height: 100%;
   background: var(--shadow);
   overflow-y: auto;
   display: flex;
@@ -132,4 +132,14 @@ export const MainContainer = styled.div`
       color: var(--text-button);
     }
   }
+`;
+
+export const FooterContainer = styled.div`
+  width: 100%;
+  height: 12%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
 `;

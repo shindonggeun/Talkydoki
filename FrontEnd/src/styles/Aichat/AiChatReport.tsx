@@ -1,8 +1,10 @@
 import styled from "styled-components";
+import { FooterContainer } from "./ui/AiChat";
+import { BlueButton } from "../common/ui/button";
 
 export const ChatReportCarouselSection = styled.section`
   width: 100%;
-  height: 91%;
+  flex-grow: 1;
   border-top: 3px solid var(--shadow);
   border-bottom: 3px solid var(--shadow);
   background: var(--shadow);
@@ -46,7 +48,6 @@ export const ChatReportCarouselSection = styled.section`
     cursor: pointer;
     color: var(--main);
     z-index: 1;
-    opacity: 0.3;
     transition: opacity 0.3s, background-color 0.3s;
   }
 
@@ -61,10 +62,6 @@ export const ChatReportCarouselSection = styled.section`
     filter: blur(30px);
     transition: opacity 0.3s;
     opacity: 0;
-  }
-
-  .carousel-btn:hover {
-    opacity: 1;
   }
 
   .carousel-btn:hover::before {
@@ -106,29 +103,41 @@ export const ChatReportCarouselItem = styled.div`
   .chart-report-wrapper {
     width: 100%;
     height: 100%;
-    margin-top: 10vh;
+    margin: auto;
   }
+  .apexcharts-svg {
+    height: fit-content;
+  }
+
   .apexcharts-pie text,
   .apexcharts-pie circle {
     display: none;
   }
-  .conversation-summary-wrapper {
-    width: 100%;
-    height: fit-content;
-    padding: 3vh 1vw 3vh 3vw;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--bg-modal);
-  }
+`;
+
+export const DoneButton = styled(BlueButton)`
+  width: fit-content;
+  height: fit-content;
+  padding: 10px;
+  background-color: var(--main);
+`;
+
+export const ChatReportFooter = styled(FooterContainer)`
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3vh 3vw;
+  background: var(--bg-modal);
   .conversation-summary {
-    max-width: calc(100% - 130px);
+    max-width: calc(100% - 70px);
   }
-  .next-report-icon {
+  .done-btn {
     display: flex;
     align-items: center;
     justify-content: end;
-    width: 130px;
+    width: 70px;
     color: var(--main);
   }
 `;
