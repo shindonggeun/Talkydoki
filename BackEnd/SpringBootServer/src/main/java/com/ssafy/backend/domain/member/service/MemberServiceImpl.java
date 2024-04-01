@@ -1,5 +1,6 @@
 package com.ssafy.backend.domain.member.service;
 
+import com.ssafy.backend.domain.aichat.repository.AiChatReportRepository;
 import com.ssafy.backend.domain.aichat.repository.AiChatRoomRepository;
 import com.ssafy.backend.domain.member.dto.*;
 import com.ssafy.backend.domain.member.entity.Member;
@@ -31,7 +32,7 @@ public class MemberServiceImpl implements MemberService {
     private final PasswordEncoder passwordEncoder;
     private final RefreshTokenRepository refreshTokenRepository;
     private final ShadowingEvaluationRepository shadowingEvaluationRepository;
-    private final AiChatRoomRepository aiChatRoomRepository;
+    private final AiChatReportRepository aiChatReportRepository;
 
     @Override
     public void signupMember(MemberSignupRequest signupRequest) {
@@ -142,7 +143,7 @@ public class MemberServiceImpl implements MemberService {
         LocalDateTime startDate = endDate.minusDays(7);
 
         Long totalShaded = shadowingEvaluationRepository.countByMemberId(memberId);
-        Long totalTalked = aiChatRoomRepository.countByMemberId(memberId);
+        Long totalTalked = aiChatReportRepository.countByAiChatRoom_MemberId(memberId);
 
         List<UserScoreDate> userScore = shadowingEvaluationRepository.findAverageScoresByDateForMember(memberId, startDate, endDate).stream()
                 .map(obj -> new UserScoreDate((Double) obj[0], ((java.sql.Date) obj[1]).toLocalDate()))

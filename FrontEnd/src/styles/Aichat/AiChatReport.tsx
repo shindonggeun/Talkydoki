@@ -1,36 +1,10 @@
 import styled from "styled-components";
-import { Card } from "../common/ui/card";
-
-export const ChatReportWrapper = styled.div`
-  width: 100%;
-  height: 100vh;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-
-  padding: 3vh 3vw 3vh 20vw;
-  @media screen and (max-width: 992px) {
-    padding: 60px 3vw 3vh 3vw;
-  }
-`;
-
-export const ChatReportCard = styled(Card)`
-  width: 100%;
-  height: 100%;
-  padding: 0;
-  margin: 0;
-`;
-
-export const ChatReportTitleSection = styled.section`
-  height: 9%;
-  padding: 3vh 3vw;
-  display: flex;
-  align-items: center;
-`;
+import { FooterContainer } from "./ui/AiChat";
+import { BlueButton } from "../common/ui/button";
 
 export const ChatReportCarouselSection = styled.section`
   width: 100%;
-  height: 91%;
+  flex-grow: 1;
   border-top: 3px solid var(--shadow);
   border-bottom: 3px solid var(--shadow);
   background: var(--shadow);
@@ -74,7 +48,6 @@ export const ChatReportCarouselSection = styled.section`
     cursor: pointer;
     color: var(--main);
     z-index: 1;
-    opacity: 0.3;
     transition: opacity 0.3s, background-color 0.3s;
   }
 
@@ -89,10 +62,6 @@ export const ChatReportCarouselSection = styled.section`
     filter: blur(30px);
     transition: opacity 0.3s;
     opacity: 0;
-  }
-
-  .carousel-btn:hover {
-    opacity: 1;
   }
 
   .carousel-btn:hover::before {
@@ -124,35 +93,51 @@ export const ChatReportCarouselItem = styled.div`
   justify-content: center;
   align-items: center;
 
-  .chart-report-wrapper {
+  .chart-report-carousel-wrapper {
     width: 100%;
     height: 100%;
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: space-between;
   }
+  .chart-report-wrapper {
+    width: 100%;
+    height: 100%;
+    margin: auto;
+  }
+  .apexcharts-svg {
+    height: fit-content;
+  }
+
   .apexcharts-pie text,
   .apexcharts-pie circle {
     display: none;
   }
-  .conversation-summary-wrapper {
-    width: 100%;
-    height: fit-content;
-    padding: 3vh 3vw;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--bg-modal);
-  }
+`;
+
+export const DoneButton = styled(BlueButton)`
+  width: fit-content;
+  height: fit-content;
+  padding: 10px;
+  background-color: var(--main);
+`;
+
+export const ChatReportFooter = styled(FooterContainer)`
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 3vh 3vw;
+  background: var(--bg-modal);
   .conversation-summary {
-    max-width: calc(100% - 130px);
+    max-width: calc(100% - 70px);
   }
-  .next-report-icon {
+  .done-btn {
     display: flex;
     align-items: center;
     justify-content: end;
-    width: 130px;
+    width: 70px;
     color: var(--main);
   }
 `;

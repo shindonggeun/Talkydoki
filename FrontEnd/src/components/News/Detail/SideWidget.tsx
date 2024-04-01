@@ -1,6 +1,8 @@
 import { NewsWidget } from "@/styles/News/Detail/container";
 import WidgetGraph from "./ui/WidgetGraph";
+import { KeywordItem } from "@/styles/News/Detail/ui";
 import { Button, FormControl, InputLabel, MenuItem } from "@mui/material";
+import { useIsMobile } from "@/stores/displayStore";
 
 import Select from "@mui/material/Select";
 import {
@@ -10,12 +12,13 @@ import {
 } from "@/stores/newsStore";
 
 type Props = {
-  keywords: { [keyword: string]: { count: number; read: string } };
+  keywords: { [keyword: string]: number };
   isReadMode: boolean;
   setIsReadMode: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 function SideWidget({ keywords, isReadMode, setIsReadMode }: Props) {
+  const isMobile = useIsMobile();
   const playSpeed = useNewsSpeed();
   const setPlaySpeed = useSetNewsSpeed();
   const { isPlaying, isPlayingEach } = useIsPlaying();
@@ -23,8 +26,14 @@ function SideWidget({ keywords, isReadMode, setIsReadMode }: Props) {
   return (
     <NewsWidget>
       <div className="title">🔥자주 나온 단어🔥</div>
-      <WidgetGraph keyword={keywords} />
-
+      {!isMobile && <WidgetGraph keyword={keywords} />}
+      <div className="keywordSection">
+        {Object.entries(keywords).map(([key, value]) => (
+          <KeywordItem key={key}>
+            {key} <span>{value}</span>
+          </KeywordItem>
+        ))}
+      </div>
       {/* 음원 재생 속도 선택 */}
       <FormControl fullWidth color="purple" className="speedChanger">
         <InputLabel id="demo-simple-select-standard-label">

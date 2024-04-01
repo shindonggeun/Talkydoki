@@ -3,10 +3,9 @@ package com.ssafy.backend.domain.aichat.controller;
 import com.ssafy.backend.domain.aichat.dto.AiChatReportInfo;
 import com.ssafy.backend.domain.aichat.dto.FullReportInfo;
 import com.ssafy.backend.domain.aichat.service.AiChatReportService;
-import com.ssafy.backend.domain.aichat.service.AiChatService;
 import com.ssafy.backend.global.common.dto.Message;
 import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
-import com.ssafy.backend.global.component.openai.dto.AiChatReportCreateApiResponse;
+import com.ssafy.backend.domain.aichat.dto.AiChatReportCreateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -33,11 +32,11 @@ public class AiChatReportController {
     )
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
     @PostMapping("/create/{roomId}")
-    public Mono<ResponseEntity<Message<AiChatReportCreateApiResponse>>> createReportByGPT(
+    public Mono<ResponseEntity<Message<AiChatReportCreateResponse>>> createReportByGPT(
             @AuthenticationPrincipal MemberLoginActive loginActive,
             @PathVariable Long roomId) {
         return aiChatReportService.createReport(loginActive.id(), roomId)
-                .map(reportId -> ResponseEntity.ok().body(Message.success(new AiChatReportCreateApiResponse(reportId))));
+                .map(reportId -> ResponseEntity.ok().body(Message.success(new AiChatReportCreateResponse(reportId))));
     }
 
     @Operation(
