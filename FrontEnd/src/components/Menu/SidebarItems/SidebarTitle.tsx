@@ -4,7 +4,12 @@ import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import LogoutIcon from "@mui/icons-material/Logout";
 
-import { useDisplayAction, useIsDark } from "@/stores/displayStore";
+import {
+  useDisplayAction,
+  useIsDark,
+  useIsMobile,
+  useSetIsSidebarOpen,
+} from "@/stores/displayStore";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
 import { useLogout } from "@/api/memberApi";
 import { SidebarTitleSection } from "@/styles/Menu/sidebar";
@@ -18,6 +23,8 @@ function SidebarTitle({}: Props) {
   const setModalContent = useSetModalContent();
   const setIsModalOn = useSetISModalOn();
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
+  const setIsSidebarOpen = useSetIsSidebarOpen();
 
   const { mutate: logout } = useLogout();
 
@@ -39,7 +46,10 @@ function SidebarTitle({}: Props) {
         className="logoImg"
         src={Logo}
         alt="talkydoki"
-        onClick={() => navigate("/")}
+        onClick={() => {
+          navigate("/");
+          if (isMobile) setIsSidebarOpen(false);
+        }}
       />
       <div>
         {isDark ? (
