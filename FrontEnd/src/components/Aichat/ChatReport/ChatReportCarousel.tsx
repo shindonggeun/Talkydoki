@@ -20,9 +20,9 @@ function ChatReportCarousel() {
   const navigate = useNavigate();
   const location = useLocation();
   const redirect = location.state?.redirect || "/main";
-  const { roomId } = useParams<{ roomId: string | undefined }>();
+  const { reportId } = useParams<{ reportId: string | undefined }>();
   const [now, setNow] = useState(0);
-  const { data } = useGetReport(Number(roomId));
+  const { data } = useGetReport(Number(reportId));
   const changeCarousel = (pageNum: number) => {
     setNow(pageNum);
   };
