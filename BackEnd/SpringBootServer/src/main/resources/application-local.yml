@@ -68,9 +68,9 @@ spring:
 
 # jwt setting
 jwt:
-  accessKey: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
-  refreshKey: TestRefreshKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
-  accessExpiration: PT60M  # 60분 (PT60M)
+  accessKey: ENC(s0vsxAuXmlzr6DjkUVLrlIS+MdTML5arOQyKWar2qbFPkVVJ1zZoR09t83GnhFYhzIvLDaD119HeajudDJS4GXxVTkd+M/zQ/q1ssX4aw00y+52LOysZk/q/I3T4a3zYmOxfYI4aCslih6D5TTl5rQnPeZV2rmjdJXAg1X7owfGsquBPnuUptjuKxteIdEjtFFp1SF9QZ/+TvWyYrlwH1Q==)
+  refreshKey: ENC(gE+DTAeZ7HD32Rd6u5HcfJu+bg4kgdULucqZWVJCbHG5q5SE53YWhNuQcSyE61MVF8Cow5idsgt1RoMi3w0ri7Bq57Fr6+m6qr5bi+kXL+nQOv/GWoPcj2DxteTB5izXHEp5fzC5uq1m8QrltRiQa1WfY8s1w6myZFWqPzn4S8FjoR/7/4oG7XU/Q/+HV1I0viF/51ziOKJFVn0nPAyMnQ==)
+  accessExpiration: PT420M  # 420분 (PT420M)
   refreshExpiration: PT10080M  # 10080분 (7일) (PT10080M)
 
 # log 관리
