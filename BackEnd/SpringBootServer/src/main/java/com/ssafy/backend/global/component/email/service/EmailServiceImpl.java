@@ -7,9 +7,11 @@ import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.util.Optional;
 import java.util.Random;
@@ -17,6 +19,7 @@ import java.util.Random;
 /**
  * {@link EmailService}의 구현체로, 이메일 인증 코드의 발송과 검증 로직을 처리합니다.
  */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService {
@@ -31,12 +34,21 @@ public class EmailServiceImpl implements EmailService {
      * @param toEmail 인증 코드를 받을 이메일 주소입니다.
      */
     @Override
-    @Async("threadPoolTaskExecutor") // threadPoolTaskExecutor를 사용하여 비동기 처리
-    public void sendEmailCode(String toEmail) {
-        String emailCode = createKey(); // 인증 코드 생성
-        MimeMessage mimeMessage = createMessage(toEmail, emailCode); // 이메일 메시지 생성
-        javaMailSender.send(mimeMessage); // 이메일 발송
-        emailRepository.save(toEmail, emailCode, EXPIRES_MIN); // 인증 코드와 유효 시간을 저장
+    public Mono<Void> sendEmailCode(String toEmail) {
+        // 이메일 주소 유효성 검사
+        if (toEmail == null || toEmail.isEmpty() || !toEmail.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
+            return Mono.error(new GlobalException(GlobalErrorCode.INVALID_EMAIL_ADDRESS));
+        }
+
+        Mono.fromRunnable(() -> {
+            String emailCode = createKey();
+            MimeMessage mimeMessage = createMessage(toEmail, emailCode);
+            javaMailSender.send(mimeMessage); // 블로킹 호출
+            emailRepository.save(toEmail, emailCode, EXPIRES_MIN); // 블로킹 호출
+        }).subscribeOn(Schedulers.boundedElastic()).subscribe();
+
+        // 클라이언트에게 즉시 성공 응답을 반환
+        return Mono.empty();
     }
 
     /**
