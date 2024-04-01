@@ -83,12 +83,14 @@ function TimerCarousel({ width, height, news }: Props) {
         {news.map((each, idx) => {
           const newsImage =
             each.newsImages != null ? each.newsImages[0] : DefaultImage;
+
           return (
             <MainCarouselItem
               key={idx}
               $width={width}
               $height={height}
               $bgImg={newsImage}
+              $fallBack={DefaultImage}
               onClick={() => {
                 navigate(`/news/detail`, { state: { newsId: each.id } });
               }}
