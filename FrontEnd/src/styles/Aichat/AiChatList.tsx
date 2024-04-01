@@ -11,9 +11,11 @@ export const Flexbox = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   padding: 3vh 3vw;
+
   .titleBox {
     width: calc(100% - 3vw);
     height: 10%;
+    margin: 2vh 1.5vw;
   }
 
   .Categorybox {
@@ -26,6 +28,7 @@ export const NegativeTiTle = styled(NegativeTitle)`
 
 export const Categorybox = styled.div`
   width: calc(100% - 3vw);
+  margin: 3vh 1.5vw;
   height: 100%;
   display: inline-flex;
   flex-wrap: wrap;
@@ -60,5 +63,82 @@ export const AiCatagoryCard = styled(Card)`
   @media screen and (max-width: 992px) {
     width: calc(50% - 3vw);
     aspect-ratio: 1;
+  }
+`;
+
+export const MyGraphWrapper = styled(Card)`
+  width: 100%;
+  min-height: 50vh;
+  display: flex;
+
+  .title {
+    margin-bottom: 4vh;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: ;
+    border-bottom: 2px solid var(--text);
+
+    .more {
+      font-weight: 400;
+      opacity: 0.5;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
+  }
+
+  .chartBox {
+    height: auto;
+    width: 60%;
+
+    .chart {
+      height: 100%;
+      min-width: 300px;
+      width: 100%;
+
+      * {
+        color: var(--text-button);
+      }
+    }
+  }
+
+  .list {
+    width: 40%;
+    padding: 0 2vw;
+
+    .recent {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      padding: 1vh 0;
+      border-bottom: 1px solid var(--shadow-dark);
+      margin-bottom: 1vh;
+      cursor: pointer;
+
+      &:hover {
+        opacity: 0.5;
+      }
+    }
+  }
+
+  @media screen and (max-width: 992px) {
+    margin: 0;
+    flex-direction: column;
+
+    .chartBox {
+      width: 100%;
+      height: 100%;
+
+      .chart {
+        min-height: 400px;
+      }
+    }
+
+    .list {
+      width: 100%;
+    }
   }
 `;

@@ -1,15 +1,16 @@
 import AiChatCategory from "@/components/Aichat/AiChatCategory";
-import { Flexbox } from "@/styles/Aichat/AiChatList";
+import MyChatGraph from "@/components/Aichat/ChatList/MyChatGraph";
 import { Wrapper } from "@/styles/common/ui/container";
+import { NegativeTitle } from "@/styles/common/ui/text";
 
 type Props = {};
 
 function AiChatList({}: Props) {
   return (
     <Wrapper>
-      <Flexbox>
-        <AiChatCategory></AiChatCategory>
-      </Flexbox>
+      <NegativeTitle>AI 채팅</NegativeTitle>
+      <MyChatGraph />
+      <AiChatCategory />
     </Wrapper>
   );
 }
