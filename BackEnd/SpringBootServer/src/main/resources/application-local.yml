@@ -30,13 +30,13 @@ spring:
     password: ENC(nA/sTfx2u8plMWgVt5MQ3A==)                     # 데이터베이스 계정 비밀번호
 
   # data_테이블명.sql 관련 실행 setting
-  sql:
-    init:
-      mode: always
-      data-locations:
-        - 'classpath:/FOREIGN_KEY_CHECKS_0.sql'   # 외래키 제약 조건 비활성화
-        - 'classpath:/db_backup.sql'              # DB 백업본 실행
-        - 'classpath:/FOREIGN_KEY_CHECKS_1.sql'   # 외래키 제약 조건 활성화
+#  sql:
+#    init:
+#      mode: always
+#      data-locations:
+#        - 'classpath:/FOREIGN_KEY_CHECKS_0.sql'   # 외래키 제약 조건 비활성화
+#        - 'classpath:/db_backup.sql'              # DB 백업본 실행
+#        - 'classpath:/FOREIGN_KEY_CHECKS_1.sql'   # 외래키 제약 조건 활성화
 
 
   # NoSQL setting
