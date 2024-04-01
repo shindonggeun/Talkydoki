@@ -1,6 +1,7 @@
 package com.ssafy.backend.domain.aichat.entity;
 
-import com.ssafy.backend.domain.aichat.dto.AiChatReportDetailInfo;
+import com.ssafy.backend.domain.aichat.dto.AiChatReportInfo;
+import com.ssafy.backend.global.common.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 @Entity
-public class AiChatReport {
+public class AiChatReport extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,8 +41,8 @@ public class AiChatReport {
     private Float contextScore;
 
 
-    public static AiChatReportDetailInfo dto(AiChatReport aiChatReport){
-        return new AiChatReportDetailInfo(
+    public static AiChatReportInfo dto(AiChatReport aiChatReport){
+        return new AiChatReportInfo(
                 aiChatReport.getId(),
                 aiChatReport.aiChatRoom.getCategory(),
                 aiChatReport.getConversationSummary(),
@@ -49,7 +50,8 @@ public class AiChatReport {
                 aiChatReport.getGrammarScore(),
                 aiChatReport.getWordScore(),
                 aiChatReport.getFluencyScore(),
-                aiChatReport.getContextScore()
+                aiChatReport.getContextScore(),
+                aiChatReport.getCreatedAt()
         );
     }
 }

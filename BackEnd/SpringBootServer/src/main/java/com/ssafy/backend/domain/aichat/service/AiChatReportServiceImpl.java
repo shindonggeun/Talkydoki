@@ -84,7 +84,8 @@ public class AiChatReportServiceImpl implements AiChatReportService {
                     // AiChatRoom ID를 사용하여 각 AiChatRoom에 대응하는 AiChatReport를 조회
                     AiChatReport aiChatReport = aiChatReportRepository.findByAiChatRoomId(aiChatRoom.getId()).orElseThrow(() -> new IllegalArgumentException("Can't find the report with aiChatRoomId: " + aiChatRoom.getId()));
                     // AiChatReport가 존재하고, 해당 AiChatRoom의 category 정보를 사용하여 AiChatReportInfo 생성
-                    return (aiChatReport != null) ? new AiChatReportInfo(aiChatReport.getId(), aiChatRoom.getCategory()) : null;
+                    return (aiChatReport != null) ?
+                            AiChatReport.dto(aiChatReport) : null;
                 })
                 .filter(Objects::nonNull) // null인 결과 제거
                 .collect(Collectors.toList());
