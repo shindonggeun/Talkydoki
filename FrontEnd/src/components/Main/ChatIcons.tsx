@@ -1,12 +1,44 @@
 import { IconBox } from "@/styles/Main/iconBox";
 import { NegativeTitle } from "@/styles/common/ui/text";
 import RecordVoiceOverOutlinedIcon from "@mui/icons-material/RecordVoiceOverOutlined";
-import AIChatCategory from "../ui/AIChatCategory";
-import AcUnitIcon from "@mui/icons-material/AcUnit";
+import ChatCategory from "../ui/AIChatCategory";
 import { useIsDark, useIsMobile } from "@/stores/displayStore";
 import { useTheme } from "styled-components";
 
 type Props = {};
+
+const categories = [
+  {
+    iconId: 1,
+    title: "편의점에서 잔돈받기",
+    category: "CHANGE_AT_CONVENIENCE_STORE",
+  },
+  { iconId: 2, title: "축구 대화 하기", category: "SOCCER_CONVERSATION" },
+  { iconId: 3, title: "햄버거 주문하기", category: "ORDER_HAMBURGER" },
+  { iconId: 4, title: "미용실에서 머리자르기", category: "HAIRCUT_AT_SALON" },
+  {
+    iconId: 5,
+    title: "병원에서 몸상태 말하기",
+    category: "DESCRIBE_HEALTH_CONDITION_AT_HOSPITAL",
+  },
+  {
+    iconId: 6,
+    title: "경찰서에서 분실물 찾기",
+    category: "FIND_LOST_ITEM_AT_POLICE_STATION",
+  },
+  {
+    iconId: 7,
+    title: "사회적 토론하기",
+    category: "ENGAGE_IN_SOCIAL_DISCUSSION",
+  },
+  { iconId: 8, title: "동료와 친해지기", category: "BEFRIEND_A_COLLEAGUE" },
+  { iconId: 9, title: "브런치 식사 대화하기", category: "BRUNCH_CONVERSATION" },
+];
+
+function getRandomCategories() {
+  const shuffled = categories.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, 3);
+}
 
 // 오늘의 회화 아이콘
 function ChatIcons({}: Props) {
@@ -14,6 +46,7 @@ function ChatIcons({}: Props) {
   const theme = useTheme();
   const isDark = useIsDark();
 
+  const randomCategories = getRandomCategories();
   return (
     <>
       {isMobile ? <NegativeTitle>오늘의 회화</NegativeTitle> : null}
@@ -46,9 +79,13 @@ function ChatIcons({}: Props) {
             />
           </div>
         </div>
-        <AIChatCategory Icon={AcUnitIcon} title={"눈송이"} />
-        <AIChatCategory Icon={AcUnitIcon} title={"눈송이"} />
-        <AIChatCategory Icon={AcUnitIcon} title={"눈송이"} />
+        {randomCategories.map((cat) => (
+          <ChatCategory
+            iconId={cat.iconId}
+            title={cat.title}
+            Category={cat.category}
+          />
+        ))}
       </IconBox>
     </>
   );
