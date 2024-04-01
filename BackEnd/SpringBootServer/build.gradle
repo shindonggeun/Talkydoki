@@ -69,6 +69,9 @@ dependencies {
 	implementation 'org.apache.commons:commons-lang3:3.14.0'
 	implementation 'org.apache.commons:commons-text:1.9'
 
+	// flyway (DB 마이그레이션)
+	implementation 'org.flywaydb:flyway-core'
+
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'
