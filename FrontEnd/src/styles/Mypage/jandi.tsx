@@ -27,7 +27,7 @@ export const JandiStyle = createGlobalStyle`
 
 .react-calendar-heatmap .color-empty {
   fill: var(--shadow);
-  opacity: 0.6;
+  opacity: 0.2;
 }
 
 .react-calendar-heatmap .color-filled {
@@ -39,19 +39,19 @@ export const JandiStyle = createGlobalStyle`
  */
 
 .react-calendar-heatmap .color-github-0 {
-  fill: var(--bg-modal);
+  fill: var(--bg);
 }
 .react-calendar-heatmap .color-github-1 {
-  fill: var(--yellow-light);
+  fill:  var(--shadow);
 }
 .react-calendar-heatmap .color-github-2 {
-  fill: var(--yellow);
+  fill: var(--main-light);
 }
 .react-calendar-heatmap .color-github-3 {
-  fill: var(--yellow-dark);
+  fill: var(--main);
 }
 .react-calendar-heatmap .color-github-4 {
-  fill: var(--yellow-dark);
+  fill: var(--main-dark);
 }
 
 /*

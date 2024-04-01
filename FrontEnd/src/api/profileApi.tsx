@@ -4,6 +4,8 @@ import {
 } from "@/interface/AuthInterface";
 import {
   UserAchievementInterface,
+  UserAttendacneResponseInterface,
+  UserAttendanceInterface,
   UserKeywordInterface,
 } from "@/interface/UserInterface";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
@@ -53,9 +55,9 @@ export const useUpdateProfile = () => {
 
       return { previousData };
     },
-    // onSettled: () => {
-    //   queryClient.invalidateQueries({ queryKey: ["getMember"] });
-    // },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ["getMember"] });
+    },
     onSuccess: ({ data }, _params, context) => {
       if (data.dataHeader.successCode == 0) {
         setModalContent({
@@ -140,6 +142,7 @@ export const useUserKeyword = () => {
   });
 };
 
+// 유저 실적
 export const useGetUserAchievement = () => {
   return useQuery({
     queryKey: ["userAchievement"],
@@ -151,5 +154,58 @@ export const useGetUserAchievement = () => {
     },
     staleTime: 1000 * 60 * 60, // 1시간
     gcTime: 1000 * 60 * 60, // 1시간
+  });
+};
+
+// 유저 출석 api
+export const useUserAttendance = () => {
+  return useQuery({
+    queryKey: ["userAttendance"],
+    queryFn: () => customAxios.get("/attendance/list/get"),
+    select: ({ data }) => {
+      if (data.dataHeader.successCode == 0) {
+        const newData = data.dataBody.reduce(
+          (
+            acc: UserAttendanceInterface,
+            current: UserAttendacneResponseInterface
+          ) => {
+            const date = current.dateTime.slice(0, 10);
+            const currentData = acc[date];
+            const type = current.type;
+
+            if (currentData) {
+              const count = currentData.totalCount;
+              const news = currentData.news;
+              const chat = currentData.chat;
+              if (type == "NEWS_SHADOWING") {
+                acc[date] = {
+                  date,
+                  totalCount: count + 1,
+                  news: news + 1,
+                  chat,
+                };
+              } else if (type == "AI_CHAT") {
+                acc[date] = {
+                  date,
+                  totalCount: count + 1,
+                  news,
+                  chat: chat + 1,
+                };
+              }
+              return acc;
+            } else {
+              if (type == "NEWS_SHADOWING") {
+                acc[date] = { date, totalCount: 1, news: 1, chat: 0 };
+              } else if (type == "AI_CHAT") {
+                acc[date] = { date, totalCount: 1, news: 0, chat: 1 };
+              }
+              return acc;
+            }
+          },
+          {}
+        );
+        return newData as UserAttendanceInterface;
+      }
+    },
   });
 };

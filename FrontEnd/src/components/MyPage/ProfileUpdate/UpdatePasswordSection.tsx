@@ -54,7 +54,7 @@ function UpdatePasswordSection({ index, value, provider }: Props) {
         <Divider flexItem orientation="vertical" />
         <form onSubmit={handleChangePassword} className="form">
           {isSocial ? (
-            <div className="social">지원하지 않는 기능입니다.</div>
+            <div className="social">소셜 회원은 지원하지 않는 기능입니다.</div>
           ) : (
             <>
               <PasswordInput

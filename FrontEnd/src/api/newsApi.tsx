@@ -86,7 +86,8 @@ export const useGetArticle = (newsId: number) => {
           {};
 
         // 키워드 발음 추출
-        news.newsKeywords.forEach((each) => {
+        news.newsKeywords.forEach((each, idx) => {
+          if (idx > 4) return;
           const read = newsContent
             .map((e) => e.filter((word) => word[0] == each))
             .filter((e) => e.length > 0)[0][0][1];
