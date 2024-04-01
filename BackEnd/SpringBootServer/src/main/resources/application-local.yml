@@ -10,7 +10,7 @@ spring:
 
   jpa:
     open-in-view: false
-    defer-datasource-initialization: true
+    defer-datasource-initialization: false  # flyway 관련 마이그레이션 이슈 -> false로 변경
     generate-ddl: false
     hibernate:
       ddl-auto: none                # ddl 자동 작성 여부
@@ -65,6 +65,9 @@ spring:
           auth: true
           starttls:
             enable: true
+
+  flyway:
+    enabled: false  # Flyway 활성화
 
 # jwt setting
 jwt:

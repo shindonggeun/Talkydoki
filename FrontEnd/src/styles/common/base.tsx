@@ -61,6 +61,7 @@ export const Global = createGlobalStyle`
     body, html, div, span, button, form, section {
       box-sizing: border-box;
       color: var(--text);
+      
 
       &::-webkit-scrollbar {
         width: 10px;

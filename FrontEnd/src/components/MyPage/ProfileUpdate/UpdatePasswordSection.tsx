@@ -23,8 +23,6 @@ function UpdatePasswordSection({ index, value, provider }: Props) {
   const [newPassword2, setNewPassword2] = useState("");
   const [isDefferent, setIsDefferent] = useState(false);
 
-  console.log(isSocial);
-
   const setModalContent = useSetModalContent();
   const setIsModalOn = useSetISModalOn();
   const isMobile = useIsMobile();
@@ -56,19 +54,21 @@ function UpdatePasswordSection({ index, value, provider }: Props) {
         <Divider flexItem orientation="vertical" />
         <form onSubmit={handleChangePassword} className="form">
           {isSocial ? (
-            <div className="social">지원하지 않는 기능입니다.</div>
+            <div className="social">소셜 회원은 지원하지 않는 기능입니다.</div>
           ) : (
             <>
               <PasswordInput
                 password={oldPassword}
                 setPassword={setOldPassword}
                 isConfirm={false}
+                label="기존 비밀번호"
               />
               <PasswordInput
                 password={newPassword}
                 setPassword={setNewPassword}
                 isConfirm={true}
                 error={changePasswordError}
+                label="신규 비밀번호"
               />
               <PasswordInput
                 password={newPassword2}
@@ -76,6 +76,7 @@ function UpdatePasswordSection({ index, value, provider }: Props) {
                 isConfirm={true}
                 isDefferent={isDefferent}
                 error={changePasswordCheckError}
+                label="신규 비밀번호 확인"
               />
               <Button
                 variant="contained"

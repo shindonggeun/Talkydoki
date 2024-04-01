@@ -4,13 +4,13 @@ interface ModalInterface {
   isModalOn: boolean;
   setIsModalOn: (on: boolean) => void;
   modalContent: {
-    message: string;
+    message: string | JSX.Element;
     onSuccess: () => void;
     isInfo: boolean;
     isReadOnly?: boolean;
   };
   setModalContent: (newContent: {
-    message: string;
+    message: string | JSX.Element;
     onSuccess?: () => void;
     isInfo: boolean;
     isReadOnly?: boolean;

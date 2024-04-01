@@ -75,6 +75,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
       scriptRef.current = "";
       stopRecord();
       queryClient.invalidateQueries({ queryKey: ["userAchievement"] });
+      queryClient.invalidateQueries({ queryKey: ["userAttendance"] });
     };
   }, []);
 
@@ -169,8 +170,8 @@ function SpeechBox({ newsId, news, idx }: Props) {
 
   useEffect(() => {
     if (!listening) return;
-    // 5초 이상 말 안하면 자동 종료
-    const autoStop5 = setTimeout(() => stopRecord(), 1000 * 5);
+    // 3초 이상 말 안하면 자동 종료
+    const autoStop5 = setTimeout(() => stopRecord(), 1000 * 3);
     return () => clearTimeout(autoStop5);
   }, [transcript, listening]);
 

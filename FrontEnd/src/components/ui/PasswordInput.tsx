@@ -14,6 +14,7 @@ type Props = {
   setPassword: React.Dispatch<React.SetStateAction<string>>; // 비밀번호 변경 set 함수
   isDefferent?: boolean; // 비밀번호/비밀번호 확인 유효성 검사 결과 (필수아님)
   error?: string | null; // 에러 있을 시 에러메세지
+  label: string;
 };
 
 function PasswordInput({
@@ -22,6 +23,7 @@ function PasswordInput({
   setPassword,
   isDefferent,
   error,
+  label,
 }: Props) {
   const [isShow, setIsShow] = useState(false);
 
@@ -32,7 +34,7 @@ function PasswordInput({
       color="purple"
       sx={{ margin: "1vh 0" }}
     >
-      <InputLabel>{isConfirm ? "비밀번호 확인" : "비밀번호"}</InputLabel>
+      <InputLabel>{label}</InputLabel>
       <OutlinedInput
         value={password}
         onChange={(e) => setPassword(e.target.value)}

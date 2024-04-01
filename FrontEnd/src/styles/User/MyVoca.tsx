@@ -6,6 +6,15 @@ export const VocaContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
 
+  div.nodata {
+    width: 100%;
+    height: 50vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.5;
+  }
+
   div.options {
     width: 100%;
     text-align: end;
@@ -21,9 +30,16 @@ export const VocaCard = styled(Card)`
   position: relative;
 
   *.hide {
-    background-color: var(--shadow);
     & > * {
-      color: var(--shadow);
+      color: transparent;
+      border-bottom: 2px solid var(--shadow-dark);
+      width: fit-content;
+    }
+
+    &:hover {
+      & > * {
+        color: var(--text);
+      }
     }
   }
 
