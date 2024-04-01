@@ -23,7 +23,7 @@ function ChatHeader({}: Props) {
 
   const handleExitModal = () => {
     setModalContent({
-      message: "나가시겠습니까?",
+      message: "리포트를 작성하지 않고 종료하시겠습니까?",
       onSuccess: () => {
         setIsModalOn(false);
         navigate("/aichatlist");
@@ -102,13 +102,10 @@ function ChatHeader({}: Props) {
                   alignItems: "center",
                   justifyContent: "space-between",
                 }}
+                onClick={() => setGlobalIsTranslate()}
               >
                 {option.label}
-                <Switch
-                  checked={globalIsTranslate}
-                  onChange={() => setGlobalIsTranslate()}
-                  color="primary"
-                />
+                <Switch checked={globalIsTranslate} color="primary" />
               </div>
             )}
             {index === 1 && (
@@ -119,13 +116,10 @@ function ChatHeader({}: Props) {
                   alignItems: "center",
                   justifyContent: "space-between",
                 }}
+                onClick={() => setGlobalIsTip()}
               >
                 {option.label}
-                <Switch
-                  checked={globalIsTip}
-                  onChange={() => setGlobalIsTip()}
-                  color="primary"
-                />
+                <Switch checked={globalIsTip} color="primary" />
               </div>
             )}
             {index === 2 && option.label}

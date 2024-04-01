@@ -143,12 +143,14 @@ const SignUp: React.FC = () => {
               setPassword={setPassword}
               isConfirm={false}
               error={passwordError}
+              label="비밀번호"
             />
             <PasswordInput
               password={passwordConfirm}
               setPassword={setPasswordConfirm}
               isConfirm={true}
               isDefferent={!isSamePassword(password, passwordConfirm)}
+              label="비밀번호 확인"
             />
           </AuthMain>
           <AuthMainFooter>

@@ -79,8 +79,9 @@ function ChatIcons({}: Props) {
             />
           </div>
         </div>
-        {randomCategories.map((cat) => (
+        {randomCategories.map((cat, idx) => (
           <ChatCategory
+            key={idx}
             iconId={cat.iconId}
             title={cat.title}
             Category={cat.category}

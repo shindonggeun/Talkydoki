@@ -1,15 +1,13 @@
 import React, { useState } from "react";
-import { FooterContainer } from "@/styles/Aichat/AiChatRoom";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import MicIcon from "@mui/icons-material/Mic";
 import SpeechRecognition from "react-speech-recognition";
-import { BlueButton } from "@/styles/common/ui/button";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "@/util/auth/userCookie";
 import { getStompClient } from "@/util/websocket/stompConnection";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
-import Loading from "@/components/ui/Loading";
 import { useReportCreate, useSendMessage } from "@/api/chatApi";
+import { Button, CircularProgress } from "@mui/material";
 
 interface ChatFooterProps {
   roomId: string | undefined;
@@ -17,6 +15,9 @@ interface ChatFooterProps {
   resetTranscript: () => void;
   isRecording: boolean;
   setIsRecording: (isRecording: boolean) => void;
+  isWaiting: boolean;
+  setIsWaiting: React.Dispatch<React.SetStateAction<boolean>>;
+  isEnd: boolean;
 }
 
 const ChatFooter: React.FC<ChatFooterProps> = ({
@@ -25,11 +26,13 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
   resetTranscript,
   isRecording,
   setIsRecording,
+  isWaiting,
+  setIsWaiting,
+  isEnd,
 }) => {
   const navigate = useNavigate();
   console.log("transcript", transcript);
   //로딩 추가
-  const [isLoading, setIsLoading] = useState(false);
 
   // 타이머
   const [timer, setTimer] = useState<number | undefined>(undefined);
@@ -45,9 +48,13 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
 
   const handleReportModal = () => {
     setModalContent({
-      message: "리포트를 저장하시겠습니까??",
+      message: "리포트를 작성하시겠습니까?",
       onSuccess: () => {
-        setIsLoading(true);
+        setModalContent({
+          message: <CircularProgress color="purple" />,
+          isReadOnly: true,
+          isInfo: true,
+        });
         reportCreate(roomId, {
           onSuccess: ({
             data: {
@@ -61,7 +68,6 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
             };
           }) => {
             console.log("리포트 아이디", reportId);
-            setIsLoading(false);
             setIsModalOn(false);
             navigate(`/aichatreport/${reportId}`, {
               state: { redirect: "/aichatlist" },
@@ -102,7 +108,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
           Authorization: `Bearer ${token}`,
         }
       );
-
+      setIsWaiting(true);
       sendChatMessage(sendpayload);
 
       console.log("보낸메세지~~~", message);
@@ -120,6 +126,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
   };
 
   const toggleRecording = () => {
+    if (isWaiting || isEnd) return;
     if (isRecording) {
       SpeechRecognition.stopListening();
 
@@ -151,39 +158,39 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
     return <span>크롬 브라우저를 사용해주세요.</span>;
   }
 
-  if (isLoading) {
-    return <Loading />;
-  }
   return (
-    <FooterContainer>
-      {isRecording && (
-        <div className="cancel-icon" onClick={cancelRecording}>
-          <HighlightOffIcon
-            style={{
-              fontSize: "2.2rem",
-              color: "#DC143C",
-              marginRight: "10px",
-            }}
-          />
+    <>
+      <div className={`micdiv`}>
+        {isRecording && (
+          <div className="cancel-icon" onClick={cancelRecording}>
+            <HighlightOffIcon
+              style={{
+                fontSize: "2.2rem",
+                color: "var(--red)",
+                marginRight: "10px",
+              }}
+            />
+          </div>
+        )}
+        <div
+          onClick={toggleRecording}
+          className={`mic  ${isRecording && "recording"} ${
+            (isWaiting || isEnd) && "disabled"
+          }`}
+        >
+          <MicIcon className="icon" />
         </div>
-      )}
-
-      <div
-        className={`micdiv ${isRecording ? "recording" : ""}`}
-        onClick={toggleRecording}
-      >
-        <MicIcon style={{ fontSize: "2.5rem", color: "#FFFFFF" }} />
       </div>
       <div className="reportdiv">
-        <BlueButton
-          width="95px"
-          height="33px"
+        <Button
+          variant="text"
+          color="purple"
           onClick={() => handleReportModal()}
         >
           리포트 작성
-        </BlueButton>
+        </Button>
       </div>
-    </FooterContainer>
+    </>
   );
 };
 

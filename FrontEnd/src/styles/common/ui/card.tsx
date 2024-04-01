@@ -28,6 +28,8 @@ export const AiChatCard = styled(Card)`
     bottom: -50%;
     text-align: center;
     width: 100%;
+    word-break: keep-all;
+
     @media screen and (max-width: 992px) {
       width: 100px;
       bottom: -80%;
