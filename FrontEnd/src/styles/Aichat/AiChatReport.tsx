@@ -87,7 +87,7 @@ export const ChatReportCarouselSection = styled.section`
 export const ChatReportCarouselItem = styled.div`
   transition: transform 0.5s ease;
   width: 100%;
-  height: 100%;
+  flex-grow: 1;
   position: relative;
   display: flex;
   justify-content: center;
