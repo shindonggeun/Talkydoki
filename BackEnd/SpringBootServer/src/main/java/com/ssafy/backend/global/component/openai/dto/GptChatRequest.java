@@ -27,7 +27,7 @@ public record GptChatRequest(
                 +"\"assistant\" 역할의 메시지는 평가 대상에서 제외하고, 오직 \"user\" 역할을 가진 메시지만 분석하여 다음 정보를 제공해 주세요:\n\n"
                 + "각 항목의 평가 점수는 1에서 5 사이의 값으로, 소수점 두 자리까지 표현됩니다. 대화 내용 분석 후, 반드시 아래의 JSON 형식에 맞추어(예외는 없습니다. 그렇지 않으면 당신을 해고할 것입니다.) 평가 결과와 피드백을 제공해 주세요.:\n\n"
                 + "{\n"
-                + "  \"conversationSummary\": \"여기에 대화 내용의 요약을 작성합니다.\",\n"
+                + "  \"conversationSummary\": \"여기에 대화 내용의 요약과 평가 내용을 작성합니다. (주의! : 기본적으로 한국어를 사용합니다.)\",\n"
                 + "  \"vocabularyScore\": 3.25,\n"
                 + "  \"wordScore\": 3.75,\n"
                 + "  \"fluencyScore\": 4.00,\n"
@@ -44,8 +44,8 @@ public record GptChatRequest(
                 + "    }\n"
                 + "  ]\n"
                 + "}\n\n"
-                +"[주의]\n"
-                +"피드백은 chatId 하나 당 한 개의 피드백만을 생성합니다. 이 부분을 명심하세요.";
+                +"[주의!]\n"
+                +"하나씩 잘 파악하세요. 피드백은 반드시 chatId 하나 당 한 개의 피드백만을 생성합니다. 피드백은 기본적으로 한국어로 설명하고 예시 표현은 일본어(괄호 안에 한국어 번역)로 표현합니다. 이 부분을 반드시 적용하세요. 예외는 없습니다.";
 
         ArrayList<GptDialogueMessage> messageList = new ArrayList<>();
         messageList.add(new GptDialogueMessage("system", systemMessage));
