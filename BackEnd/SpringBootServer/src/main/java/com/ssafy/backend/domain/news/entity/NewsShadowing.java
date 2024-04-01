@@ -20,7 +20,7 @@ public class NewsShadowing extends BaseEntity {
     @Column(columnDefinition = "INT UNSIGNED")
     private Long id;
 
-    @OneToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "news_id")
     private News news;
 
