@@ -2,8 +2,6 @@ from fastapi import HTTPException, APIRouter
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
-from contextlib import contextmanager
-
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -25,23 +23,11 @@ import pytz
 
 router = APIRouter()
 
-@contextmanager
-def session_scope(engine):
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    try:
-        yield session
-        session.commit()
-    except Exception as e:
-        session.rollback()
-        print(f"Session error: {e}")
-        raise
-    finally:
-        session.close()
-
 class DataStorage:
     def __init__(self, database_url="mysql+pymysql://ssafy:ssafy@j10c107.p.ssafy.io/talkydoki"):
         self.engine = create_engine(database_url)
+        Session = sessionmaker(bind=self.engine)
+        self.session = Session()
         self.load_data()
 
     def load_data(self):
@@ -49,42 +35,35 @@ class DataStorage:
         now_kst = datetime.now(kst)
         seven_days_ago_kst = now_kst - timedelta(days=7)
         
-        with session_scope(self.engine) as session:
-            try:
-                articles = session.query(News).outerjoin(NewsImage).filter(News.write_date >= seven_days_ago_kst).all()
-            except Exception as e:
-                print(f"Error loading articles: {e}")
-                articles = []
+        try:
+            articles = self.session.query(News).outerjoin(NewsImage).filter(News.write_date >= seven_days_ago_kst).all()
+        except Exception as e:
+            print(f"Error loading articles: {e}")
+            articles = []
 
-            try:
-                users = session.query(Member).all()
-            except Exception as e:
-                print(f"Error loading users: {e}")
-                users = []
+        try:
+            users = self.session.query(Member).all()
+        except Exception as e:
+            print(f"Error loading users: {e}")
+            users = []
 
-            try:
-                keywords = session.query(Keyword).all()
-            except Exception as e:
-                print(f"Error loading keywords: {e}")
-                keywords = []
+        try:
+            keywords = self.session.query(Keyword).all()
+        except Exception as e:
+            print(f"Error loading keywords: {e}")
+            keywords = []
 
-            try:
-                mappings = session.query(NewsKeywordMapping).join(NewsKeywordMapping.news).filter(News.write_date >= seven_days_ago_kst).all()
-            except Exception as e:
-                print(f"Error loading mappings: {e}")
-                mappings = []
+        try:
+            mappings = self.session.query(NewsKeywordMapping).join(NewsKeywordMapping.news).filter(News.write_date >= seven_days_ago_kst).all()
+        except Exception as e:
+            print(f"Error loading mappings: {e}")
+            mappings = []
 
-            try:
-                histories = session.query(NewsKeywordHistory).all()
-            except Exception as e:
-                print(f"Error loading histories: {e}")
-                histories = []
-            
-            self.articles = articles
-            self.users = users
-            self.keywords = keywords
-            self.mappings = mappings
-            self.histories = histories
+        try:
+            histories = self.session.query(NewsKeywordHistory).all()
+        except Exception as e:
+            print(f"Error loading histories: {e}")
+            histories = []
 
         categories = ['SOCIETY', 'BUSINESS', 'POLITICS', 'SCIENCE_CULTURE', 'INTERNATIONAL', 'SPORTS', 'LIFE', 'WEATHER_DISASTER']
         category_kr = ['사회', '경제', '정치', '과학', '국제', '스포츠', '생활', '재난/날씨']
