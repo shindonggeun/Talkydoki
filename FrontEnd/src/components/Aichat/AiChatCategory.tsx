@@ -11,6 +11,11 @@ function AiChatCategory({}: Props) {
       </div>
       <Categorybox>
         <ChatCategory
+          iconId={1}
+          title={"편의점에서 잔돈받기"}
+          Category={"CHANGE_AT_CONVENIENCE_STORE"}
+        ></ChatCategory>
+        <ChatCategory
           iconId={2}
           title={"축구 대화 하기"}
           Category={"SOCCER_CONVERSATION"}
