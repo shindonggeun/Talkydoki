@@ -1,6 +1,6 @@
 import { ReportCard } from "@/styles/Mypage/ui";
 import { useNavigate } from "react-router";
-import ChatReportChart from "@/components/Aichat/ChatReport/ChatReportChart";
+import ChatReportChart from "@/components/ui/ChatReportChart";
 import { Report } from "@/interface/AiChatReportInterface";
 
 type Props = {
@@ -41,7 +41,7 @@ function MyReportCard({ report }: Props) {
       }}
     >
       <div className="chatdiv">
-        <ChatReportChart reportDetail={report} />
+        <ChatReportChart reportDetail={report} showLegend={false} />
       </div>
       <div className="textdiv">
         <div style={{ fontSize: "14pt" }}>{categoryTitle}</div>

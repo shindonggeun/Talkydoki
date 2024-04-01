@@ -146,12 +146,17 @@ export const ReportCard = styled(Card)`
   height: 35vh;
   display: flex;
   align-items: center;
-  padding: 0 50px;
+  justify-content: space-around;
+  padding: 0;
   .chatdiv {
-    width: 45%;
+    height: 100%;
+    width: 50%;
+    @media screen and (max-width: 992px) {
+      height: 80%;
+    }
   }
   .textdiv {
-    width: 55%;
+    width: 50%;
     min-height: 80%;
     font-size: 11.5pt;
     display: flex;
@@ -159,7 +164,6 @@ export const ReportCard = styled(Card)`
     justify-content: space-between;
     font-weight: 500;
     word-break: keep-all;
-    padding-left: 20px;
   }
 
   @media screen and (max-width: 992px) {
