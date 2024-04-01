@@ -35,6 +35,11 @@ function NewsReadLine({ news, now, setNow, idx, newsId, fullNews }: Props) {
 
   useEffect(() => {
     if (!audioRef.current) return;
+    audioRef.current.currentTime = 0;
+  }, [newsSpeed]);
+
+  useEffect(() => {
+    if (!audioRef.current) return;
     if (isPlaying) {
       audioRef.current.playbackRate = newsSpeed;
       setIsPlayingEach(true);
