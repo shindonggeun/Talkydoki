@@ -30,13 +30,13 @@ spring:
     password: ENC(nA/sTfx2u8plMWgVt5MQ3A==)                     # 데이터베이스 계정 비밀번호
 
   # data_테이블명.sql 관련 실행 setting
-#  sql:
-#    init:
-#      mode: always
-#      data-locations:
-#        - 'classpath:/FOREIGN_KEY_CHECKS_0.sql'   # 외래키 제약 조건 비활성화
-#        - 'classpath:/db_backup.sql'              # DB 백업본 실행
-#        - 'classpath:/FOREIGN_KEY_CHECKS_1.sql'   # 외래키 제약 조건 활성화
+  sql:
+    init:
+      mode: always
+      data-locations:
+        - 'classpath:/FOREIGN_KEY_CHECKS_0.sql'   # 외래키 제약 조건 비활성화
+        - 'classpath:/db_backup.sql'              # DB 백업본 실행
+        - 'classpath:/FOREIGN_KEY_CHECKS_1.sql'   # 외래키 제약 조건 활성화
 
 
   # NoSQL setting
@@ -67,11 +67,7 @@ spring:
             enable: true
 
   flyway:
-    enabled: true  # Flyway 활성화
-    locations: classpath:db/migration  # 마이그레이션 파일 위치
-    baseline-on-migrate: true  # 이미 버전 관리가 되지 않는 DB에 Flyway가 첫 마이그레이션을 실행할 때 초기 버전으로 설정
-    # out-of-order: true  # 순서에 맞지 않는 마이그레이션을 허용 (기본값은 false)
-    # validate-on-migrate: true  # 마이그레이션 실행 전 검증 (기본값은 true)
+    enabled: false  # Flyway 활성화
 
 # jwt setting
 jwt:
