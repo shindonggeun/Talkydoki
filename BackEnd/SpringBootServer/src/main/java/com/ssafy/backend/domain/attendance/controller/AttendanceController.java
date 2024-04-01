@@ -26,8 +26,8 @@ public class AttendanceController {
     private final AttendanceService attendanceService;
 
     @Operation(
-            summary = "AI 회화 채팅방 만들기",
-            description = "해당 대화 카테고리를 선택하여 AI 회화 채팅방을 생성하는 기능입니다."
+            summary = "나의 출석 목록 가져오기",
+            description = "나의 출석 목록 (AI 회화 채팅, 뉴스 쉐도잉)을 가져오는 기능입니다."
     )
     @GetMapping("/list/get")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
