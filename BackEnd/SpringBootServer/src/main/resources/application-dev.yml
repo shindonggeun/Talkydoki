@@ -72,7 +72,7 @@ spring:
 jwt:
   accessKey: ENC(V6FVgNoVoFGu9ToZlWzl8KKTUVlltnkhjOb7CsXowIwd5dzgdrmQY54fs81dt4b8k5cg7+etY5Zt1kyJq2XduisXKYMBkhtlNixuHGN8PY4RYeYPSsjdA/e8CkJfFcQoDMs6p63E6B4AXsB4pCwXNq6GK3FChCBHu+ZtwhcS2uvKEBHWZca1D/KZeIvuYBZFu74gDtLXECHQBfUBgGWGqQ==)
   refreshKey: ENC(Ddc9rzvz2gZKRrXxLIROCjj9UJEEmARcByz/2wruK1XhxOW+lwpKdx6f6p71R1SZoNo/A5cbavkpizUt6q7xLTE4jsR1HuzeaLqX9uWuIUcAahCk2iycqN8zetYc+VO1BAGCo8qqJuQ1AnIod/IHd8VQ5l0jLDT0PLz/ifZR/Etcpq7YCqddGhkxfJljkwPGu475yl770UmpZcG4llPR2g==)
-  accessExpiration: PT60M  # 60분 (PT60M)
+  accessExpiration: PT420M  # 60분 (PT420M)
   refreshExpiration: PT10080M  # 10080분 (7일) (PT10080M)
 
 # log 관리
