@@ -61,12 +61,14 @@ function UpdatePasswordSection({ index, value, provider }: Props) {
                 password={oldPassword}
                 setPassword={setOldPassword}
                 isConfirm={false}
+                label="기존 비밀번호"
               />
               <PasswordInput
                 password={newPassword}
                 setPassword={setNewPassword}
                 isConfirm={true}
                 error={changePasswordError}
+                label="신규 비밀번호"
               />
               <PasswordInput
                 password={newPassword2}
@@ -74,6 +76,7 @@ function UpdatePasswordSection({ index, value, provider }: Props) {
                 isConfirm={true}
                 isDefferent={isDefferent}
                 error={changePasswordCheckError}
+                label="신규 비밀번호 확인"
               />
               <Button
                 variant="contained"

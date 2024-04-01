@@ -135,17 +135,12 @@ export const useLogout = () => {
   return useMutation({
     mutationFn: () => customAxios.post(`/member/logout`),
 
-    onSuccess: (res) => {
-      const response = res.data;
-      if (response.dataHeader.successCode === 0) {
-        queryClient.removeQueries(["getMember"] as QueryFilters);
-        setIsLogin(false);
-        setTimeout(() => {
-          navigate("/intro");
-        }, 0);
-      } else {
-        console.log("로그아웃실패");
-      }
+    onSuccess: () => {
+      queryClient.removeQueries(["getMember"] as QueryFilters);
+      setIsLogin(false);
+      setTimeout(() => {
+        navigate("/intro");
+      }, 0);
     },
     onError: (err) => console.error(err),
   });

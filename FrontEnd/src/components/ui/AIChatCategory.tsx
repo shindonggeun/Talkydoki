@@ -1,9 +1,8 @@
 import { AiChatCard } from "@/styles/common/ui/card";
 import { useIsMobile } from "@/stores/displayStore";
-import { useState } from "react";
 import { useCreateChatRoom } from "@/api/chatApi";
-import Loading from "./Loading";
 import { useNavigate } from "react-router";
+
 // 아이콘불러오기
 import LocalConvenienceStoreIcon from "@mui/icons-material/LocalConvenienceStore";
 import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
@@ -38,30 +37,24 @@ type Props = {
 
 function ChatCategory({ iconId, title, Category }: Props) {
   const isMoble = useIsMobile();
-  const [isLoading, setIsLoading] = useState(false);
   const { mutate: createChatRoom } = useCreateChatRoom();
   const navigate = useNavigate();
   const Icon = iconMappings[iconId];
   const handleCategorySelect = (category: string) => {
-    setIsLoading(true);
     createChatRoom(category, {
       onSuccess: (data) => {
-        console.log("data", data);
         const roomId = data.data.dataBody.id; // API 응답 구조에 따라 조정 필요
         console.log("roomId", roomId);
-        setIsLoading(false);
         navigate(`/aichatlist/${category}/${roomId}`);
       },
       onError: (error) => {
         console.error("Error creating chat room:", error);
-        setIsLoading(false);
       },
     });
   };
-  if (isLoading) {
-    return <Loading />;
-  }
+
   if (!Icon) return null;
+
   return (
     <AiChatCard
       onClick={() => {

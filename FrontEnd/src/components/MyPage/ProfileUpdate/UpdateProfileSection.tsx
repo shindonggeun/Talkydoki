@@ -119,6 +119,7 @@ function UpdateProfileSection({ index, value, user }: Props) {
           fullWidth
           onClick={() => {
             // 변경 취소 버튼 (초기 profile Image로 되돌림)
+            newProfForm.current.delete("file");
             setNewProfThumb(originalProfImg);
             setNewProfImg(originalProfImg);
           }}
