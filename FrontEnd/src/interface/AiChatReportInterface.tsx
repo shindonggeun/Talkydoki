@@ -20,3 +20,15 @@ export interface chatReportResponseInterface {
   reportDetail: reportDetailInterface;
   chatsWithFeedback: chatWithFeedbackInterface[];
 }
+
+export interface Report {
+  id: number;
+  category: string;
+  conversationSummary: string;
+  vocabularyScore: number;
+  grammarScore: number;
+  wordScore: number;
+  FluencyScore: number;
+  ContextScore: number;
+  createdAt: string;
+}

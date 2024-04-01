@@ -5,6 +5,8 @@ import InfoDisplay from "./Header/InfoDisplay";
 import Badge from "./Header/Badge";
 import { NegativeTitle } from "@/styles/common/ui/text";
 import { userRank } from "@/interface/UserInterface";
+import { BlueButton } from "@/styles/common/ui/button";
+import { useNavigate } from "react-router";
 
 type Props = {
   totalTalked: number;
@@ -12,6 +14,7 @@ type Props = {
 };
 
 function MypageHeader({ totalShaded, totalTalked }: Props) {
+  const navigate = useNavigate();
   const rank =
     Math.floor((totalShaded + totalTalked) / 15) > 4
       ? 3
@@ -21,6 +24,9 @@ function MypageHeader({ totalShaded, totalTalked }: Props) {
     <HeaderSection>
       <div className="menu">
         <NegativeTitle>마이 데이터</NegativeTitle>
+        <BlueButton onClick={() => navigate("mychatreport")}>
+          AI 채팅 목록
+        </BlueButton>
       </div>
       <div className="achievement">
         <div className="counts">
