@@ -10,4 +10,6 @@ import java.util.Optional;
 @Repository
 public interface AiChatReportRepository extends JpaRepository<AiChatReport, Long > {
     Optional<AiChatReport> findByAiChatRoomId(Long aiChatRoomId);
+
+    Long countByAiChatRoom_MemberId(Long memberId);
 }
