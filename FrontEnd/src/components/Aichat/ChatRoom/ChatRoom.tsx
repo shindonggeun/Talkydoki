@@ -51,7 +51,7 @@ function ChatRoom() {
           if (chat.sender === "USER_TIP") {
             setLastUserTip(chat); // 마지막 USER_TIP 메시지를 저장
           } else if (chat.sender === "GPT") {
-            if (chat.japanese.startsWith("이전에 대화한 내용과 중복됩니다.")) {
+            if (chat.japanese.startsWith("대화가 종료되었습니다.")) {
               setIsEnd(true);
             }
             setIsWaiting(false);
