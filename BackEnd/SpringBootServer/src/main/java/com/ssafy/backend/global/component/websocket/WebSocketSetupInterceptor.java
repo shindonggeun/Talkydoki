@@ -6,6 +6,7 @@ import com.ssafy.backend.global.component.jwt.JwtTokenProvider;
 import com.ssafy.backend.global.component.jwt.exception.JwtErrorCode;
 import com.ssafy.backend.global.component.jwt.exception.JwtException;
 import com.ssafy.backend.global.component.jwt.security.MemberLoginActive;
+import com.ssafy.backend.global.component.openai.repository.OpenAiRepository;
 import com.sun.security.auth.UserPrincipal;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,7 @@ import org.springframework.stereotype.Component;
 public class WebSocketSetupInterceptor implements ChannelInterceptor {
     private final JwtTokenProvider jwtTokenProvider; // JWT 토큰을 검증하는 컴포넌트
     private final AiChatService aiChatService; // AI 채팅 관련 서비스
+    private final OpenAiRepository openAiRepository;
 
     /**
      * 메시지가 전송되기 전에 인증과 초기 설정을 수행합니다.
@@ -59,6 +61,9 @@ public class WebSocketSetupInterceptor implements ChannelInterceptor {
                 Long roomId = Long.parseLong(roomIdStr);
                 AiChatCategory category = AiChatCategory.valueOf(categoryStr.toUpperCase());
 
+                // Redis에서 기존 설정과 히스토리 삭제
+                openAiRepository.deleteAiChatSetupAndHistory(roomId);
+                
                 // GPT 프롬프트 설정을 비동기적으로 호출합니다.
                 aiChatService.setupAiChatBot(roomId, category).subscribe();
             }

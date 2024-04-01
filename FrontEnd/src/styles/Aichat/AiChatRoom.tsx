@@ -36,7 +36,7 @@ export const ChatRoomContainer = styled(Card)`
 `;
 
 export const HeaderContainer = styled.div`
-  height: 9%;
+  height: 50px;
   padding: 3vh 3vw;
   display: flex;
   align-items: center;
@@ -44,9 +44,7 @@ export const HeaderContainer = styled.div`
 `;
 
 export const MainContainer = styled.div`
-  border-top: 3px solid var(--shadow);
-  border-bottom: 3px solid var(--shadow);
-  height: 79%;
+  height: calc(100vh - 130px - 8vh);
   background: var(--shadow);
   overflow-y: auto;
   display: flex;
@@ -54,6 +52,14 @@ export const MainContainer = styled.div`
   flex: 1;
   padding: 3vw;
   font-size: 0.8125rem;
+
+  .loading {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
   .messageContainer {
     transition: opacity 0.6s ease-in-out, max-height 0.5s ease-in-out;
@@ -152,39 +158,60 @@ const pulse = keyframes`
 
 export const FooterContainer = styled.div`
   width: 100%;
-  height: 12%;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   z-index: 1;
+
   .cancel-icon {
     position: absolute;
-    left: 42.5%;
+    left: -50px;
     cursor: pointer;
-    @media screen and (max-width: 992px) {
-      left: 38%;
-    }
+    top: 10px;
   }
+
   .micdiv {
-    border-radius: 50%;
-    width: 3.8rem;
-    height: 3.8rem;
-    background: linear-gradient(180deg, #6744f3 0%, #957df8 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    cursor: pointer;
-    &:hover {
-      background: linear-gradient(180deg, #89abe3ff 0%, #b6d0e2ff 100%);
+    width: 60px;
+    height: 60px;
+    position: relative;
+
+    .mic {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: linear-gradient(180deg, #6744f3 0%, #957df8 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-button);
+
+      &.recording {
+        animation: ${pulse} 1.5s infinite;
+      }
+
+      &:hover {
+        background: linear-gradient(180deg, #89abe3ff 0%, #b6d0e2ff 100%);
+      }
+
+      &.disabled {
+        cursor: inherit;
+        background: none;
+        background-color: var(--grey);
+        color: var(--grey-dark);
+
+        &:hover {
+          background: none;
+          color: var(--grey-dark);
+          background-color: var(--grey);
+        }
+      }
     }
-    @media screen and (max-width: 992px) {
-      width: 45px;
-      height: 45px;
-    }
-    &.recording {
-      animation: ${pulse} 1.5s infinite;
+
+    .icon {
+      font-size: 2rem;
     }
   }
   .transcriptdiv {
@@ -192,7 +219,6 @@ export const FooterContainer = styled.div`
     bottom: 430%;
   }
   .reportdiv {
-    font-family: "Mplus";
     font-weight: 700;
     position: absolute;
     right: 2%;
@@ -213,18 +239,16 @@ const fadeInUp = keyframes`
 
 export const ChatTipContainer = styled.div`
   position: absolute;
-  width: 60%;
-  left: 20%;
-  top: 60%;
+  height: fit-content;
+  width: fit-content;
+  max-width: 80%;
   border-radius: 10px;
-  display: flex;
-  flex-direction: column-reverse;
-  justify-content: flex-start;
-  align-items: center;
+  bottom: 100px;
   background-color: ${(props) =>
-    props.theme.mode == "light" ? "var(--grey-light)" : "var(--shadow-dark)"};
+    props.theme.mode == "light" ? `var(--grey-light)` : `var(--shadow-dark)`};
   padding: 15px 30px;
-  min-height: 5px; // 최소 높이 설정
+  min-height: 5px;
+
   //애니메이션 추가
   animation: ${fadeInUp} 2s ease-out;
   &.isVisible {
@@ -236,13 +260,10 @@ export const ChatTipContainer = styled.div`
     opacity: 0.2; // 투명도 조절
   }
   .message {
-    align-self: flex-start;
     font-size: 15px;
     margin-bottom: 5px;
   }
   .message-record {
-    align-self: flex-start;
-    font-family: "ScoreDream";
     font-weight: 500;
     font-size: 15px;
     margin-bottom: 5px;
@@ -250,9 +271,16 @@ export const ChatTipContainer = styled.div`
       font-size: 12px;
     }
   }
+
+  .flex {
+    display: flex;
+
+    * {
+      margin: 3px;
+    }
+  }
+
   .message-suggest {
-    font-family: "Mplus";
-    align-self: flex-start;
     color: var(--blue);
     font-size: 12px;
     font-weight: 700;
@@ -261,18 +289,14 @@ export const ChatTipContainer = styled.div`
     }
   }
   .message-text {
-    font-family: "Mplus";
-    align-self: flex-start;
-    color: var(--grey-dark);
+    opacity: 0.8;
     font-size: 14px;
     @media screen and (max-width: 992px) {
       font-size: 11px;
     }
   }
-  @media screen and (max-width: 992px) {
-    top: 58%;
-  }
+
   .volume-box {
-    align-self: self-start;
+    /* align-self: self-start; */
   }
 `;

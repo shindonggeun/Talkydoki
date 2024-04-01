@@ -57,7 +57,7 @@ function NewsDetail({}: Props) {
         )}
       </NewsArticleWrapper>
       <SideWidget
-        keywords={data.newsKeywords}
+        keyword={data.newsKeywords}
         isReadMode={isReadMode}
         setIsReadMode={setIsReadMode}
       />

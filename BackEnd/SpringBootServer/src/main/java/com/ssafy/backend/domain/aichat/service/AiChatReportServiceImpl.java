@@ -1,15 +1,11 @@
 package com.ssafy.backend.domain.aichat.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.querydsl.core.types.dsl.CaseBuilder;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.backend.domain.aichat.dto.AiChatAndFeedbackInfo;
 import com.ssafy.backend.domain.aichat.dto.AiChatReportCreateRequest;
 import com.ssafy.backend.domain.aichat.dto.AiChatReportInfo;
 import com.ssafy.backend.domain.aichat.dto.FullReportInfo;
 import com.ssafy.backend.domain.aichat.entity.*;
-import com.ssafy.backend.domain.aichat.entity.enums.AiChatSender;
 import com.ssafy.backend.domain.aichat.repository.AiChatFeedbackRepository;
 import com.ssafy.backend.domain.aichat.repository.AiChatHistoryRepository;
 import com.ssafy.backend.domain.aichat.repository.AiChatReportRepository;
@@ -17,8 +13,7 @@ import com.ssafy.backend.domain.aichat.repository.AiChatRoomRepository;
 import com.ssafy.backend.domain.attendance.entity.enums.AttendanceType;
 import com.ssafy.backend.domain.attendance.service.AttendanceService;
 import com.ssafy.backend.global.component.openai.OpenAiCommunicationProvider;
-import com.ssafy.backend.global.component.openai.dto.GptChatRequest;
-import jakarta.transaction.Transactional;
+import com.ssafy.backend.global.component.openai.dto.GptReportRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -41,8 +36,6 @@ public class AiChatReportServiceImpl implements AiChatReportService {
     private final ObjectMapper objectMapper;
     private final OpenAiCommunicationProvider openAiCommunicationProvider;
 
-    private final JPAQueryFactory jpaQueryFactory;
-
     private final AttendanceService attendanceService;
 
     @Override
@@ -51,9 +44,9 @@ public class AiChatReportServiceImpl implements AiChatReportService {
         return Mono.fromCallable(() -> aiChatHistoryRepository.findByAiChatRoomId(roomId))
                 .subscribeOn(Schedulers.boundedElastic())
                 // 조회된 히스토리를 기반으로 GptChatRequest 생성
-                .map(GptChatRequest::fromAiChatHistories)
+                .map(GptReportRequest::fromAiChatHistories)
                 // GptChatRequest를 사용해 GPT와 통신
-                .flatMap(openAiCommunicationProvider::sendPromptToGpt)
+                .flatMap(openAiCommunicationProvider::sendReportPromptToGPT)
                 // GPT 응답을 AiChatReportCreateRequest 객체로 변환
                 .flatMap(response -> {
                     log.info("GPT 레포트 결과!!!!: {}", response);
@@ -72,7 +65,7 @@ public class AiChatReportServiceImpl implements AiChatReportService {
 
     @Override
     public FullReportInfo getReportDetail(Long reportId) {
-        AiChatReport aiChatReport = aiChatReportRepository.findByAiChatRoomId(reportId).orElseThrow(() -> new IllegalArgumentException("Can't find the report with Id: " + reportId));
+        AiChatReport aiChatReport = aiChatReportRepository.findById(reportId).orElseThrow(() -> new IllegalArgumentException("Can't find the report with Id: " + reportId));
 
         List<AiChatAndFeedbackInfo> aiChatAndFeedbackInfos = aiChatFeedbackRepository.getAiChatFeedbackInfo(aiChatReport.getAiChatRoom().getId());
 
@@ -87,10 +80,10 @@ public class AiChatReportServiceImpl implements AiChatReportService {
         // 각 AiChatRoom에 대한 AiChatReport를 조회하고, AiChatReportInfo로 변환하여 수집
         return aiChatRooms.stream()
                 .map(aiChatRoom -> {
-                    // AiChatRoom ID를 사용하여 각 AiChatRoom에 대응하는 AiChatReport를 조회
-                    AiChatReport aiChatReport = aiChatReportRepository.findByAiChatRoomId(aiChatRoom.getId()).orElseThrow(() -> new IllegalArgumentException("Can't find the report with aiChatRoomId: " + aiChatRoom.getId()));
-                    // AiChatReport가 존재하고, 해당 AiChatRoom의 category 정보를 사용하여 AiChatReportInfo 생성
-                    return (aiChatReport != null) ? new AiChatReportInfo(aiChatReport.getId(), aiChatRoom.getCategory()) : null;
+                    // AiChatRoom ID를 사용하여 각 AiChatRoom에 대응하는 AiChatReport를 조회하고, 존재하지 않으면 null 반환
+                    return aiChatReportRepository.findByAiChatRoomId(aiChatRoom.getId())
+                            .map(AiChatReport::dto)
+                            .orElse(null); // 예외를 던지지 않고, 결과가 없을 경우 null 반환
                 })
                 .filter(Objects::nonNull) // null인 결과 제거
                 .collect(Collectors.toList());

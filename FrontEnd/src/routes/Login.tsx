@@ -54,6 +54,7 @@ function Login({}: Props) {
               password={password}
               setPassword={setPassword}
               isConfirm={false}
+              label="비밀번호"
             />
 
             {/* 회원가입 */}

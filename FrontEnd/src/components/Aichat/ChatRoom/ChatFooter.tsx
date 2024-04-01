@@ -1,30 +1,38 @@
 import React, { useState } from "react";
-import { FooterContainer } from "@/styles/Aichat/AiChatRoom";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import MicIcon from "@mui/icons-material/Mic";
-import SpeechRecognition, {
-  useSpeechRecognition,
-} from "react-speech-recognition";
-import { BlueButton } from "@/styles/common/ui/button";
+import SpeechRecognition from "react-speech-recognition";
 import { useNavigate } from "react-router-dom";
 import { getCookie } from "@/util/auth/userCookie";
-import { useReportCreate, useSendMessage } from "@/api/chatApi";
 import { getStompClient } from "@/util/websocket/stompConnection";
-import { BeatLoader } from "react-spinners";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
-import Loading from "@/components/ui/Loading";
+import { useReportCreate, useSendMessage } from "@/api/chatApi";
+import { Button, CircularProgress } from "@mui/material";
 
 interface ChatFooterProps {
   roomId: string | undefined;
+  transcript: string;
+  resetTranscript: () => void;
+  isRecording: boolean;
+  setIsRecording: (isRecording: boolean) => void;
+  isWaiting: boolean;
+  setIsWaiting: React.Dispatch<React.SetStateAction<boolean>>;
+  isEnd: boolean;
 }
 
-const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
-  const [isRecording, setIsRecording] = useState<boolean>(false);
-  const { transcript, resetTranscript } = useSpeechRecognition();
+const ChatFooter: React.FC<ChatFooterProps> = ({
+  roomId,
+  transcript,
+  resetTranscript,
+  isRecording,
+  setIsRecording,
+  isWaiting,
+  setIsWaiting,
+  isEnd,
+}) => {
   const navigate = useNavigate();
   console.log("transcript", transcript);
   //로딩 추가
-  const [isLoading, setIsLoading] = useState(false);
 
   // 타이머
   const [timer, setTimer] = useState<number | undefined>(undefined);
@@ -40,19 +48,30 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
 
   const handleReportModal = () => {
     setModalContent({
-      message: "리포트를 저장하시겠습니까??",
+      message: "리포트를 작성하시겠습니까?",
       onSuccess: () => {
-        setIsLoading(true);
+        setModalContent({
+          message: <CircularProgress color="purple" />,
+          isReadOnly: true,
+          isInfo: true,
+        });
         reportCreate(roomId, {
           onSuccess: ({
             data: {
               dataBody: { reportId },
             },
+          }: {
+            data: {
+              dataBody: {
+                reportId: number;
+              };
+            };
           }) => {
             console.log("리포트 아이디", reportId);
-            setIsLoading(false);
             setIsModalOn(false);
-            navigate(`/aichatreport/${reportId}`);
+            navigate(`/aichatreport/${reportId}`, {
+              state: { redirect: "/aichatlist" },
+            });
           },
           onError: () => {
             setIsModalOn(false);
@@ -89,7 +108,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
           Authorization: `Bearer ${token}`,
         }
       );
-
+      setIsWaiting(true);
       sendChatMessage(sendpayload);
 
       console.log("보낸메세지~~~", message);
@@ -98,43 +117,38 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
     }
   };
 
-  // 레코딩취소
   const cancelRecording = () => {
     SpeechRecognition.stopListening();
 
     setIsRecording(false);
     resetTranscript();
     clearTimeout(timer);
-    // SpeechRecognition.abortListening();
   };
 
   const toggleRecording = () => {
-    // 음성 인식을 중지하는 경우
+    if (isWaiting || isEnd) return;
     if (isRecording) {
       SpeechRecognition.stopListening();
 
       sendMessage(transcript);
-      resetTranscript(); // 인식된 텍스트 초기화
+      resetTranscript();
 
-      setIsRecording(false); // 음성 인식 상태 업데이트
-      clearTimeout(timer); // 이전 타이머가 있다면 취소
+      setIsRecording(false);
+      clearTimeout(timer);
     } else {
-      // 음성 인식을 시작하기 전에 이전 타이머가 있다면 취소
       if (timer) {
         clearTimeout(timer);
       }
-      resetTranscript(); // 인식된 텍스트 초기화
+      resetTranscript();
 
       SpeechRecognition.startListening({ continuous: true, language: "ja-JP" });
 
-      // 새로운 타이머 설정
       const newTimer = window.setTimeout(() => {
         SpeechRecognition.stopListening();
         resetTranscript();
         setIsRecording(false);
       }, 17000);
 
-      // 새 타이머 상태 업데이트
       setTimer(newTimer as unknown as number);
       setIsRecording(true);
     }
@@ -144,44 +158,39 @@ const ChatFooter: React.FC<ChatFooterProps> = ({ roomId }) => {
     return <span>크롬 브라우저를 사용해주세요.</span>;
   }
 
-  if (isLoading) {
-    return <Loading />;
-  }
   return (
-    <FooterContainer>
-      {isRecording && (
-        <div className="cancel-icon" onClick={cancelRecording}>
-          <HighlightOffIcon
-            style={{
-              fontSize: "2.2rem",
-              color: "#DC143C",
-              marginRight: "10px",
-            }}
-          />
+    <>
+      <div className={`micdiv`}>
+        {isRecording && (
+          <div className="cancel-icon" onClick={cancelRecording}>
+            <HighlightOffIcon
+              style={{
+                fontSize: "2.2rem",
+                color: "var(--red)",
+                marginRight: "10px",
+              }}
+            />
+          </div>
+        )}
+        <div
+          onClick={toggleRecording}
+          className={`mic  ${isRecording && "recording"} ${
+            (isWaiting || isEnd) && "disabled"
+          }`}
+        >
+          <MicIcon className="icon" />
         </div>
-      )}
-      {isRecording && (
-        <div className="transcriptdiv">
-          {transcript ? <p>{transcript}</p> : <BeatLoader />}
-        </div>
-      )}
-
-      <div
-        className={`micdiv ${isRecording ? "recording" : ""}`}
-        onClick={toggleRecording}
-      >
-        <MicIcon style={{ fontSize: "2.5rem", color: "#FFFFFF" }} />
       </div>
       <div className="reportdiv">
-        <BlueButton
-          width="95px"
-          height="33px"
+        <Button
+          variant="text"
+          color="purple"
           onClick={() => handleReportModal()}
         >
           리포트 작성
-        </BlueButton>
+        </Button>
       </div>
-    </FooterContainer>
+    </>
   );
 };
 

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { NegativeTitle } from "../common/ui/text";
-import { AiChatCard } from "../common/ui/card";
+import { AiChatCard, Card } from "../common/ui/card";
 
 export const Flexbox = styled.div`
   width: 100%;
@@ -10,13 +10,10 @@ export const Flexbox = styled.div`
   align-items: center;
   flex-direction: row;
   flex-wrap: wrap;
-  /* border: 1px solid; */
-  /* overflow-y: auto; */
   padding: 3vh 3vw;
   .titleBox {
     width: calc(100% - 3vw);
     height: 10%;
-    /* border: 1px solid; */
   }
 
   .Categorybox {
@@ -25,13 +22,11 @@ export const Flexbox = styled.div`
 
 export const NegativeTiTle = styled(NegativeTitle)`
   margin: 0;
-  /* border: 1px solid; */
 `;
 
 export const Categorybox = styled.div`
   width: calc(100% - 3vw);
   height: 100%;
-  /* border: 1px solid; */
   display: inline-flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -44,5 +39,26 @@ export const Categorybox = styled.div`
     ${AiChatCard} {
       width: calc(50% - 3vw);
     }
+  }
+`;
+
+export const AiCatagoryCard = styled(Card)`
+  width: 28.5%;
+  max-height: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0;
+
+  .inner {
+    margin-right: 13px;
+    margin-bottom: 10px;
+    align-self: flex-end;
+  }
+
+  @media screen and (max-width: 992px) {
+    width: calc(50% - 3vw);
+    aspect-ratio: 1;
   }
 `;

@@ -1,5 +1,6 @@
 server:
   base-url: j10c107.p.ssafy.io
+  https-url: https://j10c107.p.ssafy.io
 
 spring:
   servlet:
@@ -10,8 +11,8 @@ spring:
 
   jpa:
     open-in-view: false
-    defer-datasource-initialization: true
-    generate-ddl: true
+    defer-datasource-initialization: false  # flyway 관련 마이그레이션 이슈 -> false로 변경
+    generate-ddl: false
     hibernate:
       ddl-auto: none
     properties:
@@ -30,15 +31,15 @@ spring:
     password: ENC(pcq3fN0xzVJNEAPYy/U+mQ==)                     # 데이터베이스 계정 비밀번호
 
   # data_테이블명.sql 관련 실행 setting
-  sql:
-    init:
-      mode: never
-      data-locations:
-        - 'classpath:/data_vocabulary.sql'
-        # - 'classpath:/data_news.sql'
-        - 'classpath:/data_member.sql'
-        # - 'classpath:/data_keyword.sql'
-        # - 'classpath:/data_news_keyword_mapping.sql'
+  # sql:
+  #   init:
+  #     mode: never
+  #     data-locations:
+  #       - 'classpath:/data_vocabulary.sql'
+  #       - 'classpath:/data_news.sql'
+  #       - 'classpath:/data_member.sql'
+  #       - 'classpath:/data_keyword.sql'
+  #       - 'classpath:/data_news_keyword_mapping.sql'
 
   # NoSQL setting
   data:
@@ -67,11 +68,18 @@ spring:
           starttls:
             enable: true
 
+  flyway:
+    enabled: true  # Flyway 활성화
+    locations: classpath:db/migration  # 마이그레이션 파일 위치
+    baseline-on-migrate: true  # 이미 버전 관리가 되지 않는 DB에 Flyway가 첫 마이그레이션을 실행할 때 초기 버전으로 설정
+    # out-of-order: true  # 순서에 맞지 않는 마이그레이션을 허용 (기본값은 false)
+    # validate-on-migrate: true  # 마이그레이션 실행 전 검증 (기본값은 true)
+
 # jwt setting
 jwt:
   accessKey: ENC(V6FVgNoVoFGu9ToZlWzl8KKTUVlltnkhjOb7CsXowIwd5dzgdrmQY54fs81dt4b8k5cg7+etY5Zt1kyJq2XduisXKYMBkhtlNixuHGN8PY4RYeYPSsjdA/e8CkJfFcQoDMs6p63E6B4AXsB4pCwXNq6GK3FChCBHu+ZtwhcS2uvKEBHWZca1D/KZeIvuYBZFu74gDtLXECHQBfUBgGWGqQ==)
   refreshKey: ENC(Ddc9rzvz2gZKRrXxLIROCjj9UJEEmARcByz/2wruK1XhxOW+lwpKdx6f6p71R1SZoNo/A5cbavkpizUt6q7xLTE4jsR1HuzeaLqX9uWuIUcAahCk2iycqN8zetYc+VO1BAGCo8qqJuQ1AnIod/IHd8VQ5l0jLDT0PLz/ifZR/Etcpq7YCqddGhkxfJljkwPGu475yl770UmpZcG4llPR2g==)
-  accessExpiration: PT60M  # 60분 (PT60M)
+  accessExpiration: PT420M  # 60분 (PT420M)
   refreshExpiration: PT10080M  # 10080분 (7일) (PT10080M)
 
 # log 관리
@@ -86,7 +94,7 @@ oauth:
   kakao:
     client-id: ENC(BWjHj+A/SJQBzhtK+vutMYiLyOsKAo2lQwFqW2PqRPDxuWfF6Ncx+Qq5piFGk1SY)   # REST API 키
     client-secret: ENC(U2L8zI42xYdW0BrMSGzgJYk5Q+lkgUx2ZowRtdJ1yPTjq+l0VevuR0r9ucPc6ZrL)  # 보안 -> Client Secret 키
-    redirect-uri: ${server.base-url}/member/loading/kakao
+    redirect-uri: ${server.https-url}/member/loading/kakao
     scope:
       - profile_nickname
       - profile_image
@@ -96,7 +104,7 @@ oauth:
   naver:
     client-id: ENC(fgllU6jmkfqSW5Lbet7BdnTta/ycQfTAwj3mVFHrkko=)
     client-secret: ENC(MNZuMPNyaH+s/6Fx8gOKJ2bKC+7tFMMu)
-    redirect_uri: ${server.base-url}/member/loading/naver
+    redirect_uri: ${server.https-url}/member/loading/naver
     scope:
       - nickname
       - name
@@ -106,7 +114,7 @@ oauth:
   google:
     client_id: ENC(QKPQqGiQ64z9Aqor6E4+iqkn9coyITJcZJpnGofHf1rweieZI2PYBd80sfG4sRzJqgkMFqumuuvlHgCXoIZ5n7Ax2Wen8jYzt/9T2WmQ1LfQEdmdhLxaSg==)
     client_secret: ENC(9s47E9126PeDwGGEQ3CEOxgisyvSvZEF8rGmM6ylTJ3YyAAJ4ES/lRkULyEamSgc)
-    redirect_uri: ${server.base-url}/member/loading/google
+    redirect_uri: ${server.https-url}/member/loading/google
     scope:
       - profile
       - email

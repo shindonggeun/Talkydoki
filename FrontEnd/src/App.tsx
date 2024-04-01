@@ -30,6 +30,7 @@ import AiChatReport from "./routes/AiChatReport";
 import MyVoca from "./components/MyPage/MyVoca/MyVoca";
 import ProfileUpdate from "@/routes/ProfileUpdate";
 import NewsDetail from "./routes/NewsDetail";
+import MyChatReport from "./components/MyPage/MyChatReport/MyChatReport";
 
 function App() {
   const isDark = useIsDark();
@@ -63,6 +64,7 @@ function App() {
               />
               <Route path="/mypage" element={<MyPage />} />
               <Route path="/mypage/myvoca" element={<MyVoca />} />
+              <Route path="/mypage/mychatreport" element={<MyChatReport />} />
               <Route path="/userUpdate" element={<ProfileUpdate />} />
               <Route path="/*" element={<Navigate replace to="/main" />} />
             </Routes>

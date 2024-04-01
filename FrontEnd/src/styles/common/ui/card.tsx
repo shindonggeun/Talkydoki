@@ -15,18 +15,25 @@ export const AiChatCard = styled(Card)`
   width: 30%;
   aspect-ratio: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 
   .inner {
     position: relative;
+  }
+  .categoryName {
+    margin-top: 10px;
+    left: 0;
+    bottom: -50%;
+    text-align: center;
+    width: 100%;
+    word-break: keep-all;
 
-    p.categoryName {
-      position: absolute;
-      left: 0;
-      bottom: -40%;
-      width: 100%;
-      text-align: center;
+    @media screen and (max-width: 992px) {
+      width: 100px;
+      bottom: -80%;
+      left: -30%;
     }
   }
 

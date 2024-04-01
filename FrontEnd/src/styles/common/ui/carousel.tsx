@@ -32,10 +32,12 @@ export const CarouselItem = styled.div<{
   $width: number;
   $height: number;
   $bgImg: string;
+  $fallBack?: string;
 }>`
   width: ${(props) => `${props.$width}%`};
   height: ${(props) => `${props.$height}vh`};
-  background-image: ${(props) => `url(${props.$bgImg})`};
+  background-image: ${(props) =>
+    `url(${props.$bgImg}), url(${props.$fallBack})`};
   background-size: cover;
   background-position: center;
   position: relative;

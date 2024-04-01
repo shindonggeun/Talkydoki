@@ -53,6 +53,6 @@ public class News {
     @OneToMany(mappedBy = "news", fetch = FetchType.LAZY)
     private List<NewsKeywordMapping> newsKeywordMappings = new ArrayList<>();
 
-    @OneToOne(mappedBy = "news")
-    private NewsShadowing newsShadowing;
+    @OneToMany(mappedBy = "news", fetch = FetchType.LAZY)
+    private List<NewsShadowing> newsShadowing = new ArrayList<>();
 }

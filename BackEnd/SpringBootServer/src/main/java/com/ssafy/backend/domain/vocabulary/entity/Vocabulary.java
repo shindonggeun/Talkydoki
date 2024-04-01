@@ -28,6 +28,6 @@ public class Vocabulary extends BaseEntity {
     @Column(columnDefinition = "VARCHAR(50)")
     private String type;
 
-    @OneToOne(mappedBy = "vocabulary", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "vocabulary", cascade = CascadeType.ALL, orphanRemoval = true)
     private PersonalVocabulary personalVocabulary;
 }

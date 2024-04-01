@@ -158,7 +158,8 @@ export const hasMeaning = (wordType: string) => {
   if (
     wordType.startsWith("名詞") ||
     wordType.startsWith("動詞") ||
-    wordType.startsWith("接尾辞")
+    wordType.startsWith("接尾辞") ||
+    wordType.startsWith("形状詞")
   ) {
     return true;
   } else {

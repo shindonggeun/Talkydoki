@@ -16,6 +16,7 @@ import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 import ReplayIcon from "@mui/icons-material/Replay";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import StarHalfIcon from "@mui/icons-material/StarHalf";
 import { useIsMobile } from "@/stores/displayStore";
 
 type Props = {
@@ -75,6 +76,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
       scriptRef.current = "";
       stopRecord();
       queryClient.invalidateQueries({ queryKey: ["userAchievement"] });
+      queryClient.invalidateQueries({ queryKey: ["userAttendance"] });
     };
   }, []);
 
@@ -169,8 +171,8 @@ function SpeechBox({ newsId, news, idx }: Props) {
 
   useEffect(() => {
     if (!listening) return;
-    // 5초 이상 말 안하면 자동 종료
-    const autoStop5 = setTimeout(() => stopRecord(), 1000 * 5);
+    // 3초 이상 말 안하면 자동 종료
+    const autoStop5 = setTimeout(() => stopRecord(), 1000 * 3);
     return () => clearTimeout(autoStop5);
   }, [transcript, listening]);
 
@@ -248,7 +250,10 @@ function SpeechBox({ newsId, news, idx }: Props) {
               {[...new Array(Math.floor(similarity))].map((_each, idx) => (
                 <StarIcon key={idx} />
               ))}
-              {similarity - Math.floor(similarity) == 0.5 && <StarBorderIcon />}
+              {similarity - Math.floor(similarity) == 0.5 && <StarHalfIcon />}
+              {[...new Array(5 - Math.ceil(similarity))].map((_each, idx) => (
+                <StarBorderIcon key={idx} />
+              ))}
             </>
           ) : null}
         </div>

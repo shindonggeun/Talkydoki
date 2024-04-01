@@ -10,10 +10,10 @@ spring:
 
   jpa:
     open-in-view: false
-    defer-datasource-initialization: true
-    generate-ddl: true
+    defer-datasource-initialization: false  # flyway 관련 마이그레이션 이슈 -> false로 변경
+    generate-ddl: false
     hibernate:
-      ddl-auto: create-drop                # ddl 자동 작성 여부
+      ddl-auto: none                # ddl 자동 작성 여부
     properties:
       hibernate:
         format_sql: true             # 하이버네이트가 실행한 SQL을 출력할 때 보기 좋게 정렬
@@ -34,11 +34,9 @@ spring:
     init:
       mode: always
       data-locations:
-        - 'classpath:/data_vocabulary.sql'
-        - 'classpath:/data_news.sql'
-        - 'classpath:/data_member.sql'
-        - 'classpath:/data_keyword.sql'
-        - 'classpath:/data_news_keyword_mapping.sql'
+        - 'classpath:/FOREIGN_KEY_CHECKS_0.sql'   # 외래키 제약 조건 비활성화
+        - 'classpath:/db_backup.sql'              # DB 백업본 실행
+        - 'classpath:/FOREIGN_KEY_CHECKS_1.sql'   # 외래키 제약 조건 활성화
 
 
   # NoSQL setting
@@ -68,11 +66,14 @@ spring:
           starttls:
             enable: true
 
+  flyway:
+    enabled: false  # Flyway 활성화
+
 # jwt setting
 jwt:
-  accessKey: TestAccessKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
-  refreshKey: TestRefreshKey111111122222222223333333333333aaaaaaaaabbbbbbbbccccccccdddddddddfqwrqwfqwifjaisfjoihfoiqwflasjdglkkjasdlgjlkasdgjiowejgliasjglasjdgio
-  accessExpiration: PT60M  # 60분 (PT60M)
+  accessKey: ENC(s0vsxAuXmlzr6DjkUVLrlIS+MdTML5arOQyKWar2qbFPkVVJ1zZoR09t83GnhFYhzIvLDaD119HeajudDJS4GXxVTkd+M/zQ/q1ssX4aw00y+52LOysZk/q/I3T4a3zYmOxfYI4aCslih6D5TTl5rQnPeZV2rmjdJXAg1X7owfGsquBPnuUptjuKxteIdEjtFFp1SF9QZ/+TvWyYrlwH1Q==)
+  refreshKey: ENC(gE+DTAeZ7HD32Rd6u5HcfJu+bg4kgdULucqZWVJCbHG5q5SE53YWhNuQcSyE61MVF8Cow5idsgt1RoMi3w0ri7Bq57Fr6+m6qr5bi+kXL+nQOv/GWoPcj2DxteTB5izXHEp5fzC5uq1m8QrltRiQa1WfY8s1w6myZFWqPzn4S8FjoR/7/4oG7XU/Q/+HV1I0viF/51ziOKJFVn0nPAyMnQ==)
+  accessExpiration: PT420M  # 420분 (PT420M)
   refreshExpiration: PT10080M  # 10080분 (7일) (PT10080M)
 
 # log 관리

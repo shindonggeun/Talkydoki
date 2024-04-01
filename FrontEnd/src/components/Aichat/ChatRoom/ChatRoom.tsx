@@ -4,8 +4,8 @@ import ChatHeader from "./ChatHeader";
 import ChatMain from "./ChatMain";
 import ChatFooter from "./ChatFooter";
 import ChatTip from "./ChatTip";
-import { ChatRoomContainer } from "@/styles/Aichat/AiChatRoom";
-
+import { ChatRoomContainer, FooterContainer } from "@/styles/Aichat/AiChatRoom";
+import { useSpeechRecognition } from "react-speech-recognition";
 // 환경변수에서 웹소켓 서버의 URL을 가져옵니다.
 
 // 예시 붙이는용
@@ -29,7 +29,12 @@ function ChatRoom() {
 
   const [chats, setChats] = useState<ChatMessage[]>([]);
   const [lastUserTip, setLastUserTip] = useState<ChatMessage | null>(null);
-  console.log(chats);
+
+  // 추가
+  const { transcript, resetTranscript } = useSpeechRecognition();
+  const [isRecording, setIsRecording] = useState<boolean>(false);
+  const [isWaiting, setIsWaiting] = useState(true);
+  const [isEnd, setIsEnd] = useState(false);
 
   useEffect(() => {
     const serverURL = VITE_REACT_WS_URL as string;
@@ -45,6 +50,13 @@ function ChatRoom() {
           const chat = JSON.parse(message.body) as ChatMessage;
           if (chat.sender === "USER_TIP") {
             setLastUserTip(chat); // 마지막 USER_TIP 메시지를 저장
+          } else if (chat.sender === "GPT") {
+            if (chat.japanese.startsWith("대화가 종료되었습니다.")) {
+              setIsEnd(true);
+            }
+            setIsWaiting(false);
+          } else if (chat.sender === "USER") {
+            setLastUserTip(null);
           }
 
           setChats((prev) => [...prev, chat]);
@@ -82,9 +94,25 @@ function ChatRoom() {
     <>
       <ChatRoomContainer>
         <ChatHeader />
-        <ChatMain messages={chats} />
-        <ChatFooter roomId={roomId} />
-        <ChatTip lastUserTip={lastUserTip} />
+        <ChatMain
+          messages={chats}
+          transcript={transcript}
+          isRecording={isRecording}
+          isWaiting={isWaiting}
+        />
+        <FooterContainer>
+          <ChatFooter
+            roomId={roomId}
+            transcript={transcript}
+            resetTranscript={resetTranscript}
+            isRecording={isRecording}
+            setIsRecording={setIsRecording}
+            isWaiting={isWaiting}
+            setIsWaiting={setIsWaiting}
+            isEnd={isEnd}
+          />
+          {!isWaiting && lastUserTip && <ChatTip lastUserTip={lastUserTip} />}
+        </FooterContainer>
       </ChatRoomContainer>
     </>
   );

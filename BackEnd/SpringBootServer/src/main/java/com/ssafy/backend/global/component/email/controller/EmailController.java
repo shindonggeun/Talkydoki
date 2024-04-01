@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @Tag(name = "이메일", description = "이메일 관련 API 입니다.")
 @RestController
@@ -23,9 +24,9 @@ public class EmailController {
             description = "회원가입 전 해당 이메일에 중복된 이메일 확인 및 인증코드를 발송하는 기능입니다."
     )
     @PostMapping("/send/{memberEmail}")
-    public ResponseEntity<Message<Void>> sendEmailCode(@PathVariable String memberEmail) {
-        emailService.sendEmailCode(memberEmail);
-        return ResponseEntity.ok().body(Message.success());
+    public Mono<ResponseEntity<Message<Void>>> sendEmailCode(@PathVariable String memberEmail) {
+        return emailService.sendEmailCode(memberEmail)
+                .then(Mono.just(ResponseEntity.ok().body(Message.success())));
     }
 
     @Operation(

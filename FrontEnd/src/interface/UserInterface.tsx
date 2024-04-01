@@ -41,11 +41,27 @@ export interface RecordInterface {
   averageScore: number;
 }
 
+export interface UserAttendacneResponseInterface {
+  id: number;
+  dateTime: string;
+  type: string;
+}
+
+export interface UserAttendanceInterface {
+  [date: string]: {
+    date: string;
+    totalCount: number;
+    news: number;
+    chat: number;
+  };
+}
+
 // 유저 티어
 interface userRankInterface {
   icon: string;
   rank: string;
 }
+
 export const userRank: userRankInterface[] = [
   {
     icon: Bronze,

@@ -12,12 +12,14 @@ import {
   sentenceMaker,
   transSplitter,
 } from "@/util/language/format";
+import { KanaToHira } from "@/util/language/japanese";
 import {
   useInfiniteQuery,
   useMutation,
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import DefaultImg from "@/assets/images/default_news_image.jpeg";
 
 // 뉴스 리스트 get 하는 함수
 export const useGetNewsList = (category: categoryInterface[]) => {
@@ -79,11 +81,22 @@ export const useGetArticle = (newsId: number) => {
     select: ({ data }) => {
       if (data.dataHeader.successCode == 0) {
         const news = data.dataBody as newsInterface;
-        const keywords: { [keyword: string]: number } = {};
+        const newsContent = newsSplitter(news.content);
+        const keywords: { [keyword: string]: { count: number; read: string } } =
+          {};
 
-        news.newsKeywords.forEach((each) => {
+        // 키워드 발음 추출
+        news.newsKeywords.forEach((each, idx) => {
+          if (idx > 4) return;
+          const read = newsContent
+            .map((e) => e.filter((word) => word[0] == each))
+            .filter((e) => e.length > 0)[0][0][1];
+
           const regex = new RegExp(`${each}`, "g");
-          keywords[each] = news.content.match(regex)?.length || 0;
+          keywords[each] = {
+            count: news.content.match(regex)?.length || 0,
+            read: KanaToHira(read),
+          };
         });
 
         // 뉴스 변환
@@ -92,13 +105,14 @@ export const useGetArticle = (newsId: number) => {
           title: newsSplitter(news.title)[0],
           titleTranslated: transSplitter(news.titleTranslated)[0],
           category: news.category,
-          content: newsSplitter(news.content),
+          content: newsContent,
           contentTranslated: transSplitter(news.contentTranslated),
           summary: newsSplitter(news.summary),
           summaryTranslated: transSplitter(news.summaryTranslated),
           writeDate: news.writeDate,
           srcOrigin: news.srcOrigin,
-          newsImages: news.newsImages,
+          newsImages:
+            news.newsImages.length > 0 ? news.newsImages : [DefaultImg],
           newsKeywords: keywords,
           fullTitle: sentenceMaker(newsSplitter(news.title)[0]),
           fullNews: newsSplitter(news.content).map((each) =>
