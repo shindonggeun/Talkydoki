@@ -35,7 +35,6 @@ export const useGetNewsList = (category: categoryInterface[]) => {
   return useInfiniteQuery({
     queryKey: ["getNewsList", catKeys],
     queryFn: ({ pageParam }) => {
-      console.log("getNewsList 실행");
       if (pageParam != 0) params.append("lastNewsId", pageParam.toString());
 
       return customAxios
@@ -85,7 +84,6 @@ export const useGetArticle = (newsId: number) => {
         const newsContent = newsSplitter(news.content);
         const newsTitle = newsSplitter(news.title);
         const newsSummary = newsSplitter(news.summary);
-        console.log(news);
 
         const keywords: { [keyword: string]: { count: number; read: string } } =
           {};
