@@ -18,7 +18,8 @@ public record KakaoMemberResponse(
     public Member toDomain() {
         return Member.builder()
                 .email(kakaoAccount.email())
-                .name(kakaoAccount.name())
+//                .name(kakaoAccount.name())
+                .name(kakaoAccount().profile.nickname)
                 .nickname(kakaoAccount.profile.nickname)
                 .profileImage(kakaoAccount.profile.profileImageUrl)
                 .role(MemberRole.USER)

@@ -32,9 +32,19 @@ public class VocabularyServiceImpl implements VocabularyService {
 
     @Override
     @Transactional(readOnly = true)
-    public VocabularyInfo getDailyVocabulary() {
-        Vocabulary vocabulary = vocabularyRepository.findRandom().orElseThrow(()
-        -> new VocabularyException(VocabularyErrorCode.NOT_EXIST_VOCABULARY));
+    public VocabularyInfo getDailyVocabulary(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+        Vocabulary vocabulary = vocabularyRepository.findRandom()
+                .orElseThrow(() -> new VocabularyException(VocabularyErrorCode.NOT_EXIST_VOCABULARY));
+
+        boolean exists = personalVocabularyRepository.existsByMemberAndVocabulary(member, vocabulary);
+        Long personalVocabularyId = null;
+        if (exists) {
+            PersonalVocabulary personalVocabulary = personalVocabularyRepository.findByMemberAndVocabulary(member, vocabulary);
+            personalVocabularyId = personalVocabulary.getId();
+        }
 
         return VocabularyInfo.builder()
                 .id(vocabulary.getId())
@@ -42,6 +52,7 @@ public class VocabularyServiceImpl implements VocabularyService {
                 .japaneseRead(vocabulary.getJapaneseRead())
                 .korean(vocabulary.getKorean())
                 .type(vocabulary.getType())
+                .personalVocabularyId(personalVocabularyId)
                 .build();
     }
 
@@ -92,12 +103,20 @@ public class VocabularyServiceImpl implements VocabularyService {
         Vocabulary vocabulary = vocabularyRepository.findByJapanese(japanese).orElseThrow(()
         -> new VocabularyException(VocabularyErrorCode.NOT_EXIST_VOCABULARY));
 
+        boolean exists = personalVocabularyRepository.existsByMemberAndVocabulary(member, vocabulary);
+        Long personalVocabularyId = null;
+        if (exists) {
+            PersonalVocabulary personalVocabulary = personalVocabularyRepository.findByMemberAndVocabulary(member, vocabulary);
+            personalVocabularyId = personalVocabulary.getId();
+        }
+
         return VocabularyInfo.builder()
                 .id(vocabulary.getId())
                 .japanese(vocabulary.getJapanese())
                 .japaneseRead(vocabulary.getJapaneseRead())
                 .korean(vocabulary.getKorean())
                 .type(vocabulary.getType())
+                .personalVocabularyId(personalVocabularyId)
                 .build();
     }
 

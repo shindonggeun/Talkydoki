@@ -8,6 +8,7 @@ public record VocabularyInfo(
         String japanese,
         String japaneseRead,
         String korean,
-        String type
+        String type,
+        Long personalVocabularyId
 ) {
 }

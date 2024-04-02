@@ -91,14 +91,14 @@ logging:
 # OAUTH2.0 Setting
 oauth:
   kakao:
-    client-id: ENC(BWjHj+A/SJQBzhtK+vutMYiLyOsKAo2lQwFqW2PqRPDxuWfF6Ncx+Qq5piFGk1SY)   # REST API 키
-    client-secret: ENC(U2L8zI42xYdW0BrMSGzgJYk5Q+lkgUx2ZowRtdJ1yPTjq+l0VevuR0r9ucPc6ZrL)  # 보안 -> Client Secret 키
+    client-id: ENC(E3lOnslHCdphnWGsPFa1Hm5QFIrmkY1zPXzHgHUA3YsAzvFGrBttgVsB9JXzynNY)   # REST API 키
+    client-secret: ENC(TYqE7s5TCJUb8/g+bxw/RWGWNJCGdmkVZbkQ969vCyq/l3B2rDRK3OsKf1dyuqUM)  # 보안 -> Client Secret 키
     redirect-uri: ${server.https-url}/member/loading/kakao
     scope:
       - profile_nickname
       - profile_image
       - account_email
-      - name
+#      - name
 
   naver:
     client-id: ENC(fgllU6jmkfqSW5Lbet7BdnTta/ycQfTAwj3mVFHrkko=)
