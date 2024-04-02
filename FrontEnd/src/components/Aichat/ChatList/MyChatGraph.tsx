@@ -24,7 +24,7 @@ const categoryTitles: { [key: string]: string } = {
 
 function MyChatGraph({}: Props) {
   const { data } = useGetAllReport();
-  const [series, setSeries] = useState<number[]>();
+  const [series, setSeries] = useState<number[]>([0, 0, 0, 0, 0]);
   const theme = useTheme();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -32,27 +32,17 @@ function MyChatGraph({}: Props) {
   useEffect(() => {
     if (!data || data == undefined) return;
     const count = data.length;
-    let ContextScore = 0;
-    let FluencyScore = 0;
-    let grammarScore = 0;
-    let vocabularyScore = 0;
-    let wordScore = 0;
+    if (count > 0) {
+      data.forEach((each) => {
+        series[0] += each.ContextScore;
+        series[1] += each.FluencyScore;
+        series[2] += each.grammarScore;
+        series[3] += each.vocabularyScore;
+        series[4] += each.wordScore;
+      });
 
-    data.forEach((each) => {
-      ContextScore += each.ContextScore;
-      FluencyScore += each.FluencyScore;
-      grammarScore += each.grammarScore;
-      vocabularyScore += each.vocabularyScore;
-      wordScore += each.wordScore;
-    });
-
-    setSeries(() => [
-      vocabularyScore / count,
-      grammarScore / count,
-      wordScore / count,
-      FluencyScore / count,
-      ContextScore / count,
-    ]);
+      setSeries((prev) => prev.map((e) => e / 5));
+    }
   }, [data]);
 
   const options: ApexOptions = {
@@ -64,15 +54,15 @@ function MyChatGraph({}: Props) {
     },
     yaxis: {
       stepSize: 1,
+      min: 0,
+      max: 5,
     },
     labels: ["어휘력", "문법", "단어", "문맥 이해도", "유창성"],
     legend: {
       show: true,
       position: isMobile ? "bottom" : "right",
       formatter: (val: string, opts: any) =>
-        val +
-        " : " +
-        `${Math.round(opts.w.globals.series[opts.seriesIndex] * 10) / 10}점`,
+        val + " : " + `${Math.round(series[opts.seriesIndex] * 10) / 10}점`,
       fontSize: "14pt",
     },
     theme: {
@@ -91,8 +81,6 @@ function MyChatGraph({}: Props) {
     },
   };
 
-  console.log(data);
-
   return (
     <MyGraphWrapper>
       <div className="chartBox">
@@ -100,7 +88,7 @@ function MyChatGraph({}: Props) {
         <div className="chart">
           <ReactApexChart
             options={options}
-            series={series ? series : []}
+            series={series}
             type="polarArea"
             width={"100%"}
             height={"100%"}
@@ -117,6 +105,9 @@ function MyChatGraph({}: Props) {
             더보기
           </div>
         </div>
+        {data && data.length === 0 && (
+          <div className="nodata">진행한 회화가 없습니다.</div>
+        )}
         {data &&
           data.map((each, idx) => {
             if (idx < 4) {

@@ -27,8 +27,16 @@ export const NegativeTiTle = styled(NegativeTitle)`
 `;
 
 export const Categorybox = styled.div`
+  .titleBox {
+    width: 100%;
+    height: 10%;
+    margin: 2vh 0;
+    font-size: 20pt;
+    font-weight: 500;
+  }
+
   width: calc(100% - 3vw);
-  margin: 3vh 1.5vw;
+  margin: 1vh 1.5vw;
   height: 100%;
   display: inline-flex;
   flex-wrap: wrap;
@@ -39,6 +47,9 @@ export const Categorybox = styled.div`
     width: 30%;
   }
   @media screen and (max-width: 992px) {
+    width: 100%;
+    margin: 0;
+
     ${AiChatCard} {
       width: calc(50% - 3vw);
     }
@@ -67,7 +78,7 @@ export const AiCatagoryCard = styled(Card)`
 `;
 
 export const MyGraphWrapper = styled(Card)`
-  width: 100%;
+  width: calc(100% - 3vw);
   min-height: 50vh;
   display: flex;
 
@@ -109,6 +120,15 @@ export const MyGraphWrapper = styled(Card)`
     width: 40%;
     padding: 0 2vw;
 
+    .nodata {
+      width: 100%;
+      height: 80%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0.5;
+    }
+
     .recent {
       display: flex;
       justify-content: space-between;
@@ -127,6 +147,7 @@ export const MyGraphWrapper = styled(Card)`
   @media screen and (max-width: 992px) {
     margin: 0;
     flex-direction: column;
+    width: 100%;
 
     .chartBox {
       width: 100%;

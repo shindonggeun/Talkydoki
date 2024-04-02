@@ -1,15 +1,17 @@
-import { Categorybox, NegativeTiTle } from "@/styles/Aichat/AiChatList";
+import { Categorybox } from "@/styles/Aichat/AiChatList";
 import ChatCategory from "../ui/AIChatCategory";
+import { Divider } from "@mui/material";
 
 type Props = {};
 
 function AiChatCategory({}: Props) {
   return (
     <>
-      <div className="titleBox">
-        <NegativeTiTle>초급 회화</NegativeTiTle>
-      </div>
       <Categorybox>
+        <div className="titleBox">
+          <div>초급 회화</div>
+          <Divider />
+        </div>
         <ChatCategory
           iconId={1}
           title={"편의점에서 잔돈받기"}
@@ -27,10 +29,11 @@ function AiChatCategory({}: Props) {
         ></ChatCategory>
       </Categorybox>
 
-      <div className="titleBox">
-        <NegativeTiTle>중급 회화</NegativeTiTle>
-      </div>
       <Categorybox>
+        <div className="titleBox">
+          <div>중급 회화</div>
+          <Divider />
+        </div>
         <ChatCategory
           iconId={4}
           title={"미용실에서 머리자르기"}
@@ -48,10 +51,11 @@ function AiChatCategory({}: Props) {
         ></ChatCategory>
       </Categorybox>
 
-      <div className="titleBox">
-        <NegativeTiTle>상급 회화</NegativeTiTle>
-      </div>
       <Categorybox>
+        <div className="titleBox">
+          <div>상급 회화</div>
+          <Divider />
+        </div>
         <ChatCategory
           iconId={7}
           title={"사회적 토론하기"}
