@@ -6,6 +6,7 @@ export interface VocaInterface {
   japaneseRead: string;
   korean: string;
   type: string;
+  personalVocabularyId: number;
 }
 
 export interface PersonalVocaInterface {

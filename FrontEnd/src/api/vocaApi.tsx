@@ -11,6 +11,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { AxiosResponse } from "axios";
 
 // 랜덤단어
 export const useGetVoca = () => {
@@ -48,6 +49,11 @@ export const useAddVoca = () => {
       const { dataHeader } = data;
       if (dataHeader.successCode == 0) {
         queryClient.invalidateQueries({ queryKey: ["getVocaList"] });
+        queryClient.setQueryData(["getVoca"], (prev: AxiosResponse) => {
+          prev.data.dataBody.personalVocabularyId =
+            data.dataBody.personalVocabularyId;
+          return prev;
+        });
       } else {
         setModalContent({
           message: dataHeader.resultMessage,

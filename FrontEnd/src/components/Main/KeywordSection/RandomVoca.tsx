@@ -6,10 +6,12 @@ import { useState } from "react";
 import CircularProgress from "@mui/material/CircularProgress";
 import StarIcon from "@mui/icons-material/Star";
 import { JptoKor } from "@/util/language/japanese";
+import { useQueryClient } from "@tanstack/react-query";
 
 function RandomVoca() {
   const [isAdded, setIsAdded] = useState(false);
   const { data, isLoading } = useGetVoca();
+  const queryClient = useQueryClient();
   const { mutate: addVoca } = useAddVoca();
 
   if (!data) return <VocaCard></VocaCard>;
@@ -27,6 +29,7 @@ function RandomVoca() {
   const handleAddVoca = (id: number) => {
     addVoca(id);
     setIsAdded(true);
+    queryClient.getQueryData(["getVoca"]);
   };
 
   return (

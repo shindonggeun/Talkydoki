@@ -20,8 +20,6 @@ function NewsItem({ news, isShowKor, idx }: Props) {
     news.newsImages.length > 0 ? news.newsImages : [DefaultImg];
 
   const prefetchArticle = () => {
-    console.log("실행중");
-
     return queryClient.prefetchQuery({
       queryKey: ["getArticle", news.newsId],
       queryFn: () => customAxios.get(`/news/get/${news.newsId}`),

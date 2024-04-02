@@ -7,7 +7,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { Fonts } from "@/styles/common/fonts";
 import { dark, light } from "@/styles/common/themes";
 import { muiDarkTheme, muiTheme } from "./styles/common/muiTheme";
-import { useIsDark } from "@/stores/displayStore";
+import { useIsDark, useSetIsMobile } from "@/stores/displayStore";
 import { useIsModalOn } from "@/stores/modalStore";
 import { useAuthStore } from "@/stores/userStore";
 import Protected from "./components/Protect/Protect";
@@ -31,11 +31,22 @@ import MyVoca from "./components/MyPage/MyVoca/MyVoca";
 import ProfileUpdate from "@/routes/ProfileUpdate";
 import NewsDetail from "./routes/NewsDetail";
 import MyChatReport from "./components/MyPage/MyChatReport/MyChatReport";
+import { useEffect } from "react";
 
 function App() {
   const isDark = useIsDark();
   const isModalOn = useIsModalOn();
   const isLogin = useAuthStore((state) => state.isLogin);
+  const setIsMobile = useSetIsMobile();
+
+  useEffect(() => {
+    window.onresize = () => {
+      setIsMobile(window.innerWidth < 992 ? true : false);
+    };
+    return () => {
+      window.onresize = () => {};
+    };
+  }, []);
 
   return (
     <ThemeProvider theme={isDark ? dark : light}>
