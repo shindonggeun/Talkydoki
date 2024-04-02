@@ -27,6 +27,4 @@ public class AiChatRoom {
     @Column(nullable = false)
     private AiChatCategory category;
 
-//    @Column(nullable = false)
-//    private String threadId;
 }
