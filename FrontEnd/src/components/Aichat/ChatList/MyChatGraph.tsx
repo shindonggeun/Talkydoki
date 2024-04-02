@@ -132,7 +132,14 @@ function MyChatGraph({}: Props) {
                 <div
                   key={idx}
                   className="recent"
-                  onClick={() => navigate(`/aichatreport/${each.id}`)}
+                  onClick={() =>
+                    navigate(`/aichatreport`, {
+                      state: {
+                        redirect: "/mypage/mychatreport",
+                        reportId: `${each.id}`,
+                      },
+                    })
+                  }
                 >
                   <div>{categoryTitles[each.category]}</div>
                   <div>{each.createdAt.slice(0, 10)}</div>

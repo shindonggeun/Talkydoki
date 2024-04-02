@@ -77,9 +77,8 @@ function UpdateProfileSection({ index, value, user }: Props) {
   return (
     <UpdateProfileContext role="tabpanel">
       {/* 프로필사진 수정 section */}
-      <div className="imageSection">
+      <form className="imageSection">
         <img src={newProfThumb} alt="프로필 이미지" />
-
         {/* 프로필 사진 변경 폼 */}
         <Button component="label" color="purple" variant="contained" fullWidth>
           파일 업로드
@@ -105,6 +104,7 @@ function UpdateProfileSection({ index, value, user }: Props) {
               // 썸네일 미리보기 변경
               setNewProfThumb(thumbnail);
               newProfForm.current.delete("file");
+              newProfForm.current.delete("fileName");
               newProfForm.current.append("file", e.target.files[0]);
               newProfForm.current.append(
                 "fileName",
@@ -117,8 +117,10 @@ function UpdateProfileSection({ index, value, user }: Props) {
           variant="outlined"
           color="error"
           fullWidth
+          type="reset"
           onClick={() => {
             // 변경 취소 버튼 (초기 profile Image로 되돌림)
+            newProfForm.current.delete("fileName");
             newProfForm.current.delete("file");
             setNewProfThumb(originalProfImg);
             setNewProfImg(originalProfImg);
@@ -127,7 +129,7 @@ function UpdateProfileSection({ index, value, user }: Props) {
           되돌리기
         </Button>
         <div className="label">.jpg, .jpeg, .png 확장자만 사용 가능</div>
-      </div>
+      </form>
 
       {/* 닉네임 수정칸 */}
       <div className="infoSection">
