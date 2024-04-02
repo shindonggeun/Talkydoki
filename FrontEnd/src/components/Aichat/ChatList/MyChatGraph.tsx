@@ -32,16 +32,25 @@ function MyChatGraph({}: Props) {
   useEffect(() => {
     if (!data || data == undefined) return;
     const count = data.length;
+
     if (count > 0) {
+      setSeries([0, 0, 0, 0, 0]);
+
       data.forEach((each) => {
-        series[0] += each.ContextScore;
-        series[1] += each.FluencyScore;
-        series[2] += each.grammarScore;
-        series[3] += each.vocabularyScore;
-        series[4] += each.wordScore;
+        setSeries((prev) => [
+          prev[0] + each.vocabularyScore,
+          prev[1] + each.grammarScore,
+          prev[2] + each.wordScore,
+          prev[3] + each.FluencyScore,
+          prev[4] + each.ContextScore,
+        ]);
       });
 
-      setSeries((prev) => prev.map((e) => e / 5));
+      setSeries((prev) =>
+        prev.map((e) => {
+          return e / count;
+        })
+      );
     }
   }, [data]);
 
@@ -62,7 +71,9 @@ function MyChatGraph({}: Props) {
       show: true,
       position: isMobile ? "bottom" : "right",
       formatter: (val: string, opts: any) =>
-        val + " : " + `${Math.round(series[opts.seriesIndex] * 10) / 10}점`,
+        val +
+        " : " +
+        `${Math.round(opts.w.globals.series[opts.seriesIndex] * 10) / 10}점`,
       fontSize: "14pt",
     },
     theme: {
@@ -113,6 +124,7 @@ function MyChatGraph({}: Props) {
             if (idx < 4) {
               return (
                 <div
+                  key={idx}
                   className="recent"
                   onClick={() => navigate(`/aichatreport/${each.id}`)}
                 >
