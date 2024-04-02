@@ -31,6 +31,9 @@ function MyVocaSimple({}: Props) {
           더보기
         </div>
       </div>
+      {vocaList.length === 0 && (
+        <div className="nodata">등록된 단어가 없습니다.</div>
+      )}
       {vocaList.map((each) => (
         <div key={each.personalVocabularyId}>
           <div className="voca">

@@ -16,6 +16,10 @@ public class OpenAiCommunicationProvider {
         return sendRequestToGpt(gptChatRequest);
     }
 
+    public Mono<String> sendReportPromptToGPT(GptReportRequest gptReportRequest) {
+        return sendRequestToGpt(gptReportRequest);
+    }
+
     public Mono<String> setupPromptToGpt(AiChatCategory aiChatCategory) {
         GptSetupRequest gptSetupRequest = GptSetupRequest.from(aiChatCategory);
         return sendRequestToGpt(gptSetupRequest);

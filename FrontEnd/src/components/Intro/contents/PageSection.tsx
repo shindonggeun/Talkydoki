@@ -1,8 +1,9 @@
 import { PageSectionWrapper } from "@/styles/Intro/containers";
 import { SectionTitle } from "@/styles/Intro/ui";
 import { useEffect, useRef } from "react";
-import News from "@/assets/images/samples/news2.png";
+import News from "@/assets/images/samples/news1.png";
 import MyPage from "@/assets/images/samples/mypage.png";
+import Chat from "@/assets/images/samples/chat.png";
 import Logo from "@/assets/images/logo_text_light.png";
 
 type Props = {};
@@ -68,7 +69,7 @@ function PageSection({}: Props) {
           <SectionTitle style={{ left: "inherit", right: "10px" }}>
             회화 연습
           </SectionTitle>
-          <img src={News} alt="news" className="image" />
+          <img src={Chat} alt="news" className="image" />
           <div className="desc">
             <h1>테마별 회화</h1>
             <div>

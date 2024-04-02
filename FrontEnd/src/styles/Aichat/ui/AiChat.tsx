@@ -44,9 +44,7 @@ export const HeaderContainer = styled.div`
 `;
 
 export const MainContainer = styled.div`
-  flex-grow: 1;
-  border-top: 3px solid var(--shadow);
-  border-bottom: 3px solid var(--shadow);
+  height: 100%;
   background: var(--shadow);
   overflow-y: auto;
   display: flex;
@@ -54,6 +52,14 @@ export const MainContainer = styled.div`
   flex: 1;
   padding: 3vw;
   font-size: 0.8125rem;
+
+  .loading {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
   .messageContainer {
     transition: opacity 0.6s ease-in-out, max-height 0.5s ease-in-out;

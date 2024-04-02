@@ -1,7 +1,6 @@
 package com.ssafy.backend.domain.aichat.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.backend.domain.aichat.dto.AiChatAndFeedbackInfo;
 import com.ssafy.backend.domain.aichat.dto.AiChatReportCreateRequest;
 import com.ssafy.backend.domain.aichat.dto.AiChatReportInfo;
@@ -14,7 +13,7 @@ import com.ssafy.backend.domain.aichat.repository.AiChatRoomRepository;
 import com.ssafy.backend.domain.attendance.entity.enums.AttendanceType;
 import com.ssafy.backend.domain.attendance.service.AttendanceService;
 import com.ssafy.backend.global.component.openai.OpenAiCommunicationProvider;
-import com.ssafy.backend.global.component.openai.dto.GptChatRequest;
+import com.ssafy.backend.global.component.openai.dto.GptReportRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,9 +44,9 @@ public class AiChatReportServiceImpl implements AiChatReportService {
         return Mono.fromCallable(() -> aiChatHistoryRepository.findByAiChatRoomId(roomId))
                 .subscribeOn(Schedulers.boundedElastic())
                 // 조회된 히스토리를 기반으로 GptChatRequest 생성
-                .map(GptChatRequest::fromAiChatHistories)
+                .map(GptReportRequest::fromAiChatHistories)
                 // GptChatRequest를 사용해 GPT와 통신
-                .flatMap(openAiCommunicationProvider::sendPromptToGpt)
+                .flatMap(openAiCommunicationProvider::sendReportPromptToGPT)
                 // GPT 응답을 AiChatReportCreateRequest 객체로 변환
                 .flatMap(response -> {
                     log.info("GPT 레포트 결과!!!!: {}", response);

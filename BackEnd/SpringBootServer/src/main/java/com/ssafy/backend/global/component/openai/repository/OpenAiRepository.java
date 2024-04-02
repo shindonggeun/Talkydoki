@@ -65,4 +65,9 @@ public class OpenAiRepository {
         return Mono.just(history);
     }
 
+    public void deleteAiChatSetupAndHistory(Long roomId) {
+        redisTemplate.delete(OPEN_AI_SETUP_KEY_PREFIX + roomId);
+        redisTemplate.delete(AI_CHAT_HISTORY_KEY_PREFIX + roomId);
+    }
+
 }

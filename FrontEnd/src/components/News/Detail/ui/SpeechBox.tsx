@@ -16,6 +16,7 @@ import VolumeOffIcon from "@mui/icons-material/VolumeOff";
 import ReplayIcon from "@mui/icons-material/Replay";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
+import StarHalfIcon from "@mui/icons-material/StarHalf";
 import { useIsMobile } from "@/stores/displayStore";
 
 type Props = {
@@ -249,7 +250,10 @@ function SpeechBox({ newsId, news, idx }: Props) {
               {[...new Array(Math.floor(similarity))].map((_each, idx) => (
                 <StarIcon key={idx} />
               ))}
-              {similarity - Math.floor(similarity) == 0.5 && <StarBorderIcon />}
+              {similarity - Math.floor(similarity) == 0.5 && <StarHalfIcon />}
+              {[...new Array(5 - Math.ceil(similarity))].map((_each, idx) => (
+                <StarBorderIcon key={idx} />
+              ))}
             </>
           ) : null}
         </div>
