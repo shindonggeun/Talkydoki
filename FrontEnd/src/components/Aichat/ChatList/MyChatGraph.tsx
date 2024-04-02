@@ -12,7 +12,7 @@ import { useTheme } from "styled-components";
 type Props = {};
 
 const categoryTitles: { [key: string]: string } = {
-  CHANGE_AT_CONVENIENCE_STORE: "편의점에서 잔돈받기",
+  HOTEL_CHECK_IN: "호텔 체크인하기",
   SOCCER_CONVERSATION: "축구 대화 하기",
   ORDER_HAMBURGER: "햄버거 주문하기",
   HAIRCUT_AT_SALON: "미용실에서 머리자르기",
