@@ -57,6 +57,7 @@ public record GptReportRequest(
         // 카테고리에 따른 대화 설정 로직 구현
         ArrayList<GptDialogueMessage> messageList = new ArrayList<>();
         messageList.add(new GptDialogueMessage("system", systemMessage));
+        messageList.add(new GptDialogueMessage("system", systemMessage2));
 
         for (AiChatHistory chatHistory: conversation) {
             String role = switch (chatHistory.getSender()) {
