@@ -10,8 +10,8 @@ type Props = {};
 const categories = [
   {
     iconId: 1,
-    title: "편의점에서 잔돈받기",
-    category: "CHANGE_AT_CONVENIENCE_STORE",
+    title: "호텔 체크인하기",
+    category: "HOTEL_CHECK_IN",
   },
   { iconId: 2, title: "축구 대화 하기", category: "SOCCER_CONVERSATION" },
   { iconId: 3, title: "햄버거 주문하기", category: "ORDER_HAMBURGER" },
@@ -59,7 +59,6 @@ function ChatIcons({}: Props) {
             </>
           )}
 
-          {/* 사람 아이콘 */}
           <div className="icon">
             <svg width={0} height={0}>
               <radialGradient id="gradient_shadow">
