@@ -17,4 +17,6 @@ public interface PersonalVocabularyRepository extends JpaRepository<PersonalVoca
     @Modifying
     @Query("delete from PersonalVocabulary pv where pv.id = :personalVocabularyId and pv.member.id = :memberId")
     int deleteByIdAndMemberId(Long personalVocabularyId, Long memberId);
+
+    PersonalVocabulary findByMemberAndVocabulary(Member member, Vocabulary vocabulary);
 }

@@ -27,8 +27,9 @@ public class VocabularyController {
             description = "메인페이지에 사용할 오늘의 단어를 가져오는 기능입니다."
     )
     @GetMapping("/daily/get")
-    public ResponseEntity<Message<VocabularyInfo>> getDailyVocabulary() {
-        VocabularyInfo vocabulary = vocabularyService.getDailyVocabulary();
+    @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
+    public ResponseEntity<Message<VocabularyInfo>> getDailyVocabulary(@AuthenticationPrincipal MemberLoginActive loginActive) {
+        VocabularyInfo vocabulary = vocabularyService.getDailyVocabulary(loginActive.id());
         return ResponseEntity.ok().body(Message.success(vocabulary));
     }
 
