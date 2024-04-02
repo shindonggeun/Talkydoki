@@ -35,6 +35,6 @@ for file_name in file_list:
         os.makedirs(os.path.dirname(output_file_path), exist_ok=True)
         
         # 새로운 데이터를 기존 형식에 맞게 파일에 쓰기
-        with open(output_file_path, "w", encoding="utf-8") as file:
+        with open(output_file_path, "a", encoding="utf-8") as file:
             for news_item in new_data:
-                file.write(f"ID\n{news_item['newsId']}\nTITLE\n{news_item['title']}\nSUMMARY\n{news_item['summary']}\nCONTENT\n{news_item['content']}\n")
+                file.write(f"&NEWSID&\n{news_item['newsId']}\nTITLE\n{news_item['title']}\nSUMMARY\n{news_item['summary']}\nCONTENT\n{news_item['content']}\n")

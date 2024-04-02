@@ -16,7 +16,7 @@ for line in sys.stdin:
     words = line.split()
 
      # 첫 번째 단어가 "ID"와 일치하면, 다음 라인에서 실제 문서 ID를 추출
-    if words[0] == "ID":
+    if words[0] == "&NEWSID&":
         # 다음 라인에서 실제 문서 ID를 추출
         next_line = sys.stdin.readline().strip()
         document_id = next_line.split()[0]  # 다음 라인의 첫 번째 단어가 문서 ID
