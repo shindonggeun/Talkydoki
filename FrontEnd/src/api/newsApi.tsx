@@ -85,6 +85,7 @@ export const useGetArticle = (newsId: number) => {
         const newsContent = newsSplitter(news.content);
         const newsTitle = newsSplitter(news.title);
         const newsSummary = newsSplitter(news.summary);
+        console.log(news);
 
         const keywords: { [keyword: string]: { count: number; read: string } } =
           {};
