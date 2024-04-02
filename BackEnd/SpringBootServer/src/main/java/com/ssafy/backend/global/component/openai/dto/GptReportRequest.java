@@ -35,7 +35,7 @@ public record GptReportRequest(
                 +"\"assistant\" 역할의 메시지는 평가 대상에서 제외하고, 오직 \"user\" 역할을 가진 메시지만 분석하여 다음 정보를 제공해 주세요:\n\n"
                 + "각 항목의 평가 점수는 1에서 5 사이의 값으로, 소수점 두 자리까지 표현됩니다. 대화 내용 분석 후, 반드시 아래의 예시처럼 JSON 형식에 맞추어(예외는 없습니다. 그렇지 않으면 당신을 해고할 것입니다.) 평가 결과와 피드백을 제공해 주세요.:\n\n"
                 + "{\n"
-                + "  \"conversationSummary\": <대화 내용의 요약 + 점수의 근거. (주의! : 한국어로 작성합니다.)>,\n"
+                + "  \"conversationSummary\": <대화 내용의 요약 + 점수의 근거. (주의! : 한국어로 작성합니다. 그리고 최대 70자를 넘지 않습니다. 도중에 내용이 끊기지 않게 잘 정리해서 생성해주세요.)>,\n"
                 + "  \"vocabularyScore\": 3.25,\n"
                 + "  \"wordScore\": 3.75,\n"
                 + "  \"fluencyScore\": 4.00,\n"
@@ -91,7 +91,7 @@ public record GptReportRequest(
         // tokenSize 계산 로직 유지 및 필요에 따라 수정
         if (messageCount <= 10) return 2000;
         else if (messageCount <= 30) return 3000;
-        else if (messageCount <= 45) return 4000;
+        else if (messageCount <= 60) return 4000;
         else throw new RuntimeException("Conversation's too long to service.");
     }
 }
