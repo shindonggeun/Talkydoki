@@ -1,4 +1,5 @@
 import { useGetAllReport } from "@/api/aiChatReportApi";
+import { Report } from "@/interface/AiChatReportInterface";
 import { useIsMobile } from "@/stores/displayStore";
 import { MyGraphWrapper } from "@/styles/Aichat/AiChatList";
 
@@ -25,6 +26,7 @@ const categoryTitles: { [key: string]: string } = {
 function MyChatGraph({}: Props) {
   const { data } = useGetAllReport();
   const [series, setSeries] = useState<number[]>([0, 0, 0, 0, 0]);
+  const [newReports, setNewReports] = useState<Report[]>([]);
   const theme = useTheme();
   const isMobile = useIsMobile();
   const navigate = useNavigate();
@@ -34,6 +36,10 @@ function MyChatGraph({}: Props) {
     const count = data.length;
 
     if (count > 0) {
+      for (let i = count - 1; i >= 0; i--) {
+        setNewReports((prev) => [...prev, data[i]]);
+      }
+
       setSeries([0, 0, 0, 0, 0]);
 
       data.forEach((each) => {
@@ -120,7 +126,7 @@ function MyChatGraph({}: Props) {
           <div className="nodata">진행한 회화가 없습니다.</div>
         )}
         {data &&
-          data.map((each, idx) => {
+          newReports.map((each, idx) => {
             if (idx < 4) {
               return (
                 <div

@@ -139,7 +139,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
         newsId,
         idx,
       ]) as number;
-      if (data) {
+      if (data !== null && data !== undefined) {
         setSimilarity(data);
       }
     }
@@ -245,7 +245,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
         )}
         {/* 읽은 내용 + 점수 표시 */}
         <div className="similarity">
-          {similarity ? (
+          {similarity !== null ? (
             <>
               {[...new Array(Math.floor(similarity))].map((_each, idx) => (
                 <StarIcon key={idx} />

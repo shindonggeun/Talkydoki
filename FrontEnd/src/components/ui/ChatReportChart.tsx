@@ -21,7 +21,7 @@ function ChatReportChart({
         .trim()
     );
   }, [textColor, isDark]);
-  console.log(textColor);
+
   const scoreName = ["어휘력", "문법", "단어", "문맥 이해도", "유창성"];
   const scoresArray = [
     reportDetail.vocabularyScore,
