@@ -50,20 +50,19 @@ public class KeywordServiceImpl implements KeywordService {
                 .orElseThrow(() -> new NewsException(NewsErrorCode.NOT_FOUND_NEWS));
         Keyword keyword = keywordRepository.findByJapanese(keywordMappingRequest.getJapanese())
                 .orElseThrow(() -> new KeywordException(KeywordErrorCode.NOT_FOUND_KEYWORD));
-        Optional<NewsKeywordMapping> existingMapping = newsKeywordMappingRepository.findByNewsAndKeyword(news, keyword);
 
-        if (existingMapping.isPresent()) {
-            NewsKeywordMapping mapping = existingMapping.get();
-            mapping.setWeight(keywordMappingRequest.getWeight());
-            newsKeywordMappingRepository.save(mapping);
-        } else {
-            NewsKeywordMapping mapping = NewsKeywordMapping.builder()
-                    .news(news)
-                    .keyword(keyword)
-                    .weight(keywordMappingRequest.getWeight())
-                    .build();
-            newsKeywordMappingRepository.save(mapping);
+        List<NewsKeywordMapping> existingMappings = newsKeywordMappingRepository.findByNews(news);
+
+        if (!existingMappings.isEmpty()) {
+            newsKeywordMappingRepository.deleteAll(existingMappings);
         }
+
+        NewsKeywordMapping newMapping = NewsKeywordMapping.builder()
+                .news(news)
+                .keyword(keyword)
+                .weight(keywordMappingRequest.getWeight())
+                .build();
+        newsKeywordMappingRepository.save(newMapping);
     }
 
     @Override
