@@ -35,8 +35,8 @@ function MyReportCard({ report }: Props) {
   return (
     <ReportCard
       onClick={() => {
-        navigate(`/aichatreport/${report.id}`, {
-          state: { redirect: "/mypage/mychatreport" },
+        navigate(`/aichatreport`, {
+          state: { redirect: "/mypage/mychatreport", reportId: `${report.id}` },
         });
       }}
     >
