@@ -18,6 +18,7 @@ interface ChatFooterProps {
   isWaiting: boolean;
   setIsWaiting: React.Dispatch<React.SetStateAction<boolean>>;
   isEnd: boolean;
+  isReady: boolean;
 }
 
 const ChatFooter: React.FC<ChatFooterProps> = ({
@@ -29,6 +30,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
   isWaiting,
   setIsWaiting,
   isEnd,
+  isReady,
 }) => {
   const navigate = useNavigate();
   console.log("transcript", transcript);
@@ -181,7 +183,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
           <MicIcon className="icon" />
         </div>
       </div>
-      <div className="reportdiv">
+      <div className={`reportdiv ${!isReady && "disabled"}`}>
         <Button
           variant="text"
           color="purple"

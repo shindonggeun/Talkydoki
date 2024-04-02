@@ -222,6 +222,20 @@ export const FooterContainer = styled.div`
     font-weight: 700;
     position: absolute;
     right: 2%;
+    border-radius: 4px;
+
+    &.disabled {
+      pointer-events: none;
+      background: none;
+      background-color: var(--grey);
+      color: var(--grey-dark);
+
+      &:hover {
+        background: none;
+        color: var(--grey-dark);
+        background-color: var(--grey);
+      }
+    }
   }
 `;
 

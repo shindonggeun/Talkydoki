@@ -35,6 +35,8 @@ function ChatRoom() {
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isWaiting, setIsWaiting] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const [flag, setFlag] = useState(0);
 
   useEffect(() => {
     const serverURL = VITE_REACT_WS_URL as string;
@@ -56,6 +58,8 @@ function ChatRoom() {
             }
             setIsWaiting(false);
           } else if (chat.sender === "USER") {
+            setFlag((prevFlag) => prevFlag + 1);
+
             setLastUserTip(null);
           }
 
@@ -90,6 +94,12 @@ function ChatRoom() {
     };
   }, [roomId]);
 
+  useEffect(() => {
+    if (flag === 2) {
+      setIsReady(true);
+    }
+  }, [flag]);
+
   return (
     <>
       <ChatRoomContainer>
@@ -110,6 +120,7 @@ function ChatRoom() {
             isWaiting={isWaiting}
             setIsWaiting={setIsWaiting}
             isEnd={isEnd}
+            isReady={isReady}
           />
           {!isWaiting && lastUserTip && <ChatTip lastUserTip={lastUserTip} />}
         </FooterContainer>
