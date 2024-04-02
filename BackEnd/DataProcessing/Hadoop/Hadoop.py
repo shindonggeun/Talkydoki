@@ -7,7 +7,7 @@ def make_input_data():
     # 기준 날짜 설정 (오늘부터 5일 전까지의 데이터를 모을 것이므로)
     kst = pytz.timezone('Asia/Seoul')
     end_date = datetime.now(kst).date()
-    start_date = end_date - timedelta(days=5)
+    start_date = end_date - timedelta(days=7)
 
     # 파일들을 저장할 리스트
     file_contents = []
