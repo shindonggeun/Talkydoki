@@ -65,14 +65,8 @@ function App() {
               <Route path="/news" element={<News />} />
               <Route path="/news/detail" element={<NewsDetail />} />
               <Route path="/aichatlist" element={<AiChatList />} />
-              <Route
-                path="/aichatlist/:catagory/:roomId"
-                element={<AiChatRoom />}
-              />
-              <Route
-                path="/aichatreport/:reportId"
-                element={<AiChatReport />}
-              />
+              <Route path="/aichatlist/:catagory/" element={<AiChatRoom />} />
+              <Route path="/aichatreport/" element={<AiChatReport />} />
               <Route path="/mypage" element={<MyPage />} />
               <Route path="/mypage/myvoca" element={<MyVoca />} />
               <Route path="/mypage/mychatreport" element={<MyChatReport />} />

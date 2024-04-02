@@ -71,8 +71,8 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
           }) => {
             console.log("리포트 아이디", reportId);
             setIsModalOn(false);
-            navigate(`/aichatreport/${reportId}`, {
-              state: { redirect: "/aichatlist" },
+            navigate(`/aichatreport`, {
+              state: { redirect: "/aichatlist", reportId: reportId },
             });
           },
           onError: () => {

@@ -45,7 +45,7 @@ function ChatCategory({ iconId, title, Category }: Props) {
       onSuccess: (data) => {
         const roomId = data.data.dataBody.id; // API 응답 구조에 따라 조정 필요
         console.log("roomId", roomId);
-        navigate(`/aichatlist/${category}/${roomId}`);
+        navigate(`/aichatlist/${category}`, { state: { roomId: roomId } });
       },
       onError: (error) => {
         console.error("Error creating chat room:", error);
