@@ -57,7 +57,7 @@ public class VocabularyServiceImpl implements VocabularyService {
     }
 
     @Override
-    public void createPersonalVocabulary(Long memberId, Long vocabularyId) {
+    public PersonalVocabularyInfo createPersonalVocabulary(Long memberId, Long vocabularyId) {
         Member member = memberRepository.findById(memberId).orElseThrow(()
         -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
@@ -70,12 +70,18 @@ public class VocabularyServiceImpl implements VocabularyService {
             throw new VocabularyException(VocabularyErrorCode.DUPLICATE_PERSONAL_VOCABULARY);
         }
 
-        PersonalVocabulary personalVocabulary = PersonalVocabulary.builder()
+        PersonalVocabulary tempPersonalVocabulary = PersonalVocabulary.builder()
                 .member(member)
                 .vocabulary(vocabulary)
                 .build();
 
-        personalVocabularyRepository.save(personalVocabulary);
+        PersonalVocabulary personalVocabulary = personalVocabularyRepository.save(tempPersonalVocabulary);
+
+        return new PersonalVocabularyInfo(personalVocabulary.getId(),
+                personalVocabulary.getVocabulary().getJapanese(),
+                personalVocabulary.getVocabulary().getJapaneseRead(),
+                personalVocabulary.getVocabulary().getKorean(),
+                personalVocabulary.getVocabulary().getType());
     }
 
     @Override

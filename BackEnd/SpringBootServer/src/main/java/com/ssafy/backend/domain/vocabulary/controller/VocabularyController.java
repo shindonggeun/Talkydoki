@@ -39,9 +39,9 @@ public class VocabularyController {
     )
     @PostMapping("/personal/create/{vocabularyId}")
     @PreAuthorize("hasAuthority('USER') or hasAuthority('ADMIN')")
-    public ResponseEntity<Message<Void>> createPersonalVocabulary(@AuthenticationPrincipal MemberLoginActive loginActive, @PathVariable Long vocabularyId) {
-        vocabularyService.createPersonalVocabulary(loginActive.id(), vocabularyId);
-        return ResponseEntity.ok().body(Message.success());
+    public ResponseEntity<Message<PersonalVocabularyInfo>> createPersonalVocabulary(@AuthenticationPrincipal MemberLoginActive loginActive, @PathVariable Long vocabularyId) {
+        PersonalVocabularyInfo personalVocabularyInfo = vocabularyService.createPersonalVocabulary(loginActive.id(), vocabularyId);
+        return ResponseEntity.ok().body(Message.success(personalVocabularyInfo));
     }
 
     @Operation(

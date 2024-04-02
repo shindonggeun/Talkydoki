@@ -11,7 +11,7 @@ public interface VocabularyService {
     VocabularyInfo getDailyVocabulary(Long memberId);
 
     // 나만의 단어장에 해당 단어 추가하기
-    void createPersonalVocabulary(Long memberId, Long vocabularyId);
+    PersonalVocabularyInfo createPersonalVocabulary(Long memberId, Long vocabularyId);
 
     // 나만의 단어장 가져오기 (페이지네이션 적용 - offset 방식)
     SliceResponse<PersonalVocabularyInfo> getPersonalVocabularyList(Long memberId, Pageable pageable);
