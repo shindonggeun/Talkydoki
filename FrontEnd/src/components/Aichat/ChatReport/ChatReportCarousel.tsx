@@ -11,7 +11,7 @@ import ArrowCircleRightOutlinedIcon from "@mui/icons-material/ArrowCircleRightOu
 import ChatReportChatFeadback from "./ChatReportChatFeadback";
 import { useGetReport } from "@/api/aiChatReportApi";
 import { useAiChatStore } from "@/stores/aichatStore";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { ChatContainer } from "@/styles/Aichat/ui/AiChat";
 import { HeaderContainer } from "@/styles/Aichat/AiChatRoom";
 import { Switch } from "@mui/material";
@@ -20,7 +20,7 @@ function ChatReportCarousel() {
   const navigate = useNavigate();
   const location = useLocation();
   const redirect = location.state?.redirect || "/main";
-  const { reportId } = useParams<{ reportId: string | undefined }>();
+  const reportId = location.state?.reportId;
   const [now, setNow] = useState(0);
   const { data } = useGetReport(Number(reportId));
   const changeCarousel = (pageNum: number) => {
