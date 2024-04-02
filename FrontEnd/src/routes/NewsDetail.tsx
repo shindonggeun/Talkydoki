@@ -12,6 +12,9 @@ import WordSearch from "@/components/News/Detail/ui/WordSearch";
 import { useEffect, useState } from "react";
 import ArticleSpeak from "@/components/News/Detail/ArticleSpeak";
 import { useButtonActions } from "@/stores/newsStore";
+import { CircularProgress } from "@mui/material";
+import { BeatLoader } from "react-spinners";
+import { useTheme } from "styled-components";
 
 type Props = {};
 
@@ -21,12 +24,20 @@ function NewsDetail({}: Props) {
   const [isReadMode, setIsReadMode] = useState(true);
   const { data, isFetching } = useGetArticle(newsId);
   const { setIsPlaying } = useButtonActions();
+  const theme = useTheme();
 
   useEffect(() => {
     setIsPlaying(false);
   }, [isReadMode]);
 
-  if (isFetching || !data) return <></>;
+  if (isFetching || !data)
+    return (
+      <NewsWrapper>
+        <div className="loading">
+          <BeatLoader color={theme.grey.color} />
+        </div>
+      </NewsWrapper>
+    );
 
   return (
     <NewsWrapper>

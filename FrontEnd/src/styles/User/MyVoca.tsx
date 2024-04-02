@@ -69,7 +69,7 @@ export const VocaCard = styled(Card)`
   }
 
   .readNmean {
-    width: 70%;
+    width: 60%;
 
     .read {
       display: flex;

@@ -5,6 +5,14 @@ import styled from "styled-components";
 export const NewsWrapper = styled(Wrapper)`
   display: flex;
 
+  .loading {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   @media screen and (max-width: 992px) {
     flex-direction: column-reverse;
     justify-content: start;
