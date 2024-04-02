@@ -7,8 +7,10 @@ import {
   SynthesizeSpeechCommandInput,
 } from "@aws-sdk/client-polly";
 import env from "@/interface/SttInterface";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAiChatStore } from "@/stores/aichatStore";
+import StopCircleOutlinedIcon from "@mui/icons-material/StopCircleOutlined";
+
 type Props = {
   japanese: string;
   text?: string | null | undefined;
@@ -16,17 +18,46 @@ type Props = {
 };
 
 function ChatMessage({ japanese, text, feadback }: Props) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const globalIsTranslate = useAiChatStore((state) => state.globalIsTranslate);
   const globalIsFeadback = useAiChatStore((state) => state.globalIsFeadback);
   const [isTranslate, setTranslate] = useState<boolean>(globalIsTranslate);
   const [isFeadback, setFeadback] = useState<boolean>(globalIsFeadback);
   console.log("isTranslate", isTranslate);
 
+  const toggleAudioPlay = () => {
+    // 오디오가 아직 로드되지 않았다면, 오디오 로드
+    if (!audioRef.current?.src) {
+      // text가 undefined 또는 빈 문자열인 경우 함수 종료
+      if (japanese) return;
+
+      // 오디오 로드 및 재생
+      synthesizeSpeech(japanese).then(() => {
+        setIsPlaying(true);
+      });
+    } else {
+      // 오디오가 이미 로드되어 있다면, 재생 또는 일시 정지
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying); // 재생 상태 토글
+    }
+  };
   useEffect(() => {
     setTranslate(globalIsTranslate);
   }, [globalIsTranslate]);
+  const synthesizeSpeech = async (text: string | undefined) => {
+    if (isPlaying) {
+      audioRef.current?.pause();
+      setIsPlaying(false);
+      return;
+    }
 
-  const synthesizeSpeech = async (text: string) => {
+    if (!text) return; // text가 undefined 또는 빈 문자열인 경우 함수 종료
+
     const client = new PollyClient({
       region: env.awsRegion,
       credentials: {
@@ -34,6 +65,7 @@ function ChatMessage({ japanese, text, feadback }: Props) {
         secretAccessKey: env.awsSecretAccessKey,
       },
     });
+
     const params: SynthesizeSpeechCommandInput = {
       Text: text,
       OutputFormat: "mp3",
@@ -45,23 +77,27 @@ function ChatMessage({ japanese, text, feadback }: Props) {
         new SynthesizeSpeechCommand(params)
       );
       if (AudioStream) {
-        console.log("AudioStream", AudioStream);
         const webStream = AudioStream.transformToWebStream();
-
         const response = new Response(webStream);
         const audioBlob = await response.blob();
-
         const audioUrl = URL.createObjectURL(audioBlob);
 
-        const audio = new Audio(audioUrl);
-        audio.play();
+        if (!audioRef.current) {
+          audioRef.current = new Audio(audioUrl);
+        } else {
+          audioRef.current.src = audioUrl;
+        }
 
-        audio.onended = () => {
+        audioRef.current.onended = () => {
+          setIsPlaying(false);
           URL.revokeObjectURL(audioUrl);
         };
+
+        audioRef.current.play();
+        setIsPlaying(true);
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error synthesizing speech:", err);
     }
   };
   return (
@@ -69,10 +105,23 @@ function ChatMessage({ japanese, text, feadback }: Props) {
       <div className="message-text">{japanese}</div>
       <div className="buttonbox">
         {" "}
-        <VolumeUpIcon
-          style={{ fontSize: "17px", cursor: "pointer" }}
-          onClick={() => synthesizeSpeech(japanese)}
-        />
+        {isPlaying ? (
+          <StopCircleOutlinedIcon
+            style={{ fontSize: "17px", cursor: "pointer" }}
+            onClick={(event) => {
+              event.stopPropagation();
+              toggleAudioPlay();
+            }}
+          />
+        ) : (
+          <VolumeUpIcon
+            style={{ fontSize: "17px", cursor: "pointer" }}
+            onClick={(event) => {
+              event.stopPropagation(); // 이벤트 버블링 방지
+              synthesizeSpeech(japanese ?? ""); // 오디오 재생
+            }}
+          />
+        )}
         {text && (
           <TranslateIcon
             style={{ fontSize: "17px", cursor: "pointer" }}
