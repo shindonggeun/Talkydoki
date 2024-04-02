@@ -12,7 +12,6 @@ import WordSearch from "@/components/News/Detail/ui/WordSearch";
 import { useEffect, useState } from "react";
 import ArticleSpeak from "@/components/News/Detail/ArticleSpeak";
 import { useButtonActions } from "@/stores/newsStore";
-import { CircularProgress } from "@mui/material";
 import { BeatLoader } from "react-spinners";
 import { useTheme } from "styled-components";
 
