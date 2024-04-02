@@ -128,3 +128,45 @@ export const SimpleVocaContainer = styled(Card)`
     width: 100%;
   }
 `;
+export const ReportContainer = styled.div`
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+
+  div.options {
+    width: 100%;
+    text-align: end;
+    padding: 0 3vw;
+  }
+`;
+
+export const ReportCard = styled(Card)`
+  margin: 2vh 1vw;
+  width: calc(50% - 2vw);
+  height: 35vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0;
+  .chatdiv {
+    height: 100%;
+    width: 50%;
+    @media screen and (max-width: 992px) {
+      height: 80%;
+    }
+  }
+  .textdiv {
+    width: 50%;
+    min-height: 80%;
+    font-size: 11.5pt;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-weight: 500;
+    word-break: keep-all;
+  }
+
+  @media screen and (max-width: 992px) {
+    width: 100%;
+  }
+`;
