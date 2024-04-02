@@ -20,6 +20,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import DefaultImg from "@/assets/images/default_news_image.jpeg";
+import { WordSearchInterface } from "@/interface/VocaInterface";
 
 // 뉴스 리스트 get 하는 함수
 export const useGetNewsList = (category: categoryInterface[]) => {
@@ -138,11 +139,11 @@ export const useSearchWordApi = (word: string) => {
   const isSearchOn = useIsSearchOn();
 
   return useQuery({
-    queryKey: ["serchWord", word],
+    queryKey: ["searchWord", word],
     queryFn: () => customAxios.get(`/vocabulary/search/${word}`),
     select: ({ data }) => {
       if (data.dataHeader.successCode == 0) {
-        return data.dataBody;
+        return data.dataBody as WordSearchInterface;
       } else {
         return "nodata";
       }

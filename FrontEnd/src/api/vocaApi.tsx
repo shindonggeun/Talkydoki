@@ -36,7 +36,7 @@ export const useGetVoca = () => {
 };
 
 // 단어장에 추가
-export const useAddVoca = () => {
+export const useAddVoca = (querykey: string, word: string) => {
   const setIsModalOn = useSetISModalOn();
   const setModalContent = useSetModalContent();
   const queryClient = useQueryClient();
@@ -49,11 +49,22 @@ export const useAddVoca = () => {
       const { dataHeader } = data;
       if (dataHeader.successCode == 0) {
         queryClient.invalidateQueries({ queryKey: ["getVocaList"] });
-        queryClient.setQueryData(["getVoca"], (prev: AxiosResponse) => {
-          prev.data.dataBody.personalVocabularyId =
-            data.dataBody.personalVocabularyId;
-          return prev;
-        });
+        if (querykey == "getVoca") {
+          queryClient.setQueryData(["getVoca"], (prev: AxiosResponse) => {
+            prev.data.dataBody.personalVocabularyId =
+              data.dataBody.personalVocabularyId;
+            return prev;
+          });
+        } else if (querykey == "searchWord") {
+          queryClient.setQueryData(
+            ["searchWord", word],
+            (prev: AxiosResponse) => {
+              prev.data.dataBody.personalVocabularyId =
+                data.dataBody.personalVocabularyId;
+              return prev;
+            }
+          );
+        }
       } else {
         setModalContent({
           message: dataHeader.resultMessage,
@@ -114,7 +125,7 @@ export const useDeleteMyVoca = () => {
 
       // 이전 데이터 백업
       const previousWords = queryClient.getQueryData(["getVocaList"]);
-
+      if (previousWords === undefined) return;
       // 낙관적 업데이트
       queryClient.setQueryData(
         ["getVocaList"],
@@ -144,7 +155,9 @@ export const useDeleteMyVoca = () => {
       }
     },
     onError: (_err, _id, context) => {
-      queryClient.setQueryData(["getVocaList"], context?.previousWords);
+      if (context?.previousWords) {
+        queryClient.setQueryData(["getVocaList"], context.previousWords);
+      }
     },
   });
 };

@@ -183,7 +183,7 @@ export const WordSearchWrapper = styled.div`
       }
 
       &:active {
-        transform: scale(0.7);
+        transform: scale(0.9);
       }
 
       &.added {
@@ -200,7 +200,7 @@ export const WordSearchWrapper = styled.div`
 
   @-webkit-keyframes clickAnimation {
     0% {
-      transform: scale(0.7);
+      transform: scale(0.9);
     }
     50% {
       transform: scale(1.2);

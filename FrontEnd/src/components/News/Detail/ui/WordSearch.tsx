@@ -1,5 +1,5 @@
 import { useSearchWordApi } from "@/api/newsApi";
-import { useAddVoca } from "@/api/vocaApi";
+import { useAddVoca, useDeleteMyVoca } from "@/api/vocaApi";
 import { WordSearchInterface } from "@/interface/VocaInterface";
 import { useIsMobile } from "@/stores/displayStore";
 import {
@@ -12,16 +12,21 @@ import { splitMeaning } from "@/util/language/voca";
 import CircularProgress from "@mui/material/CircularProgress";
 import { useEffect, useRef, useState } from "react";
 import StarIcon from "@mui/icons-material/Star";
+import { useQueryClient } from "@tanstack/react-query";
+import { AxiosResponse } from "axios";
 
 function WordSearch() {
   const isSearchOn = useIsSearchOn();
   const setIsSearchOn = useSetIsSearchOn();
   const searchWord = useSearchWord();
-  const searchRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
-  const [isAdd, setIsAdd] = useState(false);
-  const [xy, setXy] = useState({ x: 0, y: 0 });
+  const queryClient = useQueryClient();
 
+  const searchRef = useRef<HTMLDivElement>(null);
+  const [isAdd, setIsAdd] = useState(false);
+  const [myVocaId, setMyVocaId] = useState<null | number>(null);
+  const [xy, setXy] = useState({ x: 0, y: 0 });
+  const [isActing, setIsActing] = useState(false);
   const [word, setWord] = useState<WordSearchInterface>({
     japanese: "",
     japaneseRead: "",
@@ -83,7 +88,48 @@ function WordSearch() {
   }, [searchWord]);
 
   const { data, isFetching, isError } = useSearchWordApi(searchWord.word);
-  const { mutate: addVoca } = useAddVoca();
+  const {
+    mutate: addVoca,
+    isSuccess: isAddVocaSuccess,
+    reset: resetAddVoca,
+  } = useAddVoca("searchWord", searchWord.word);
+  const {
+    mutate: deleteVoca,
+    isSuccess: isDeleteVocaSuccess,
+    reset: resetDeleteVoca,
+  } = useDeleteMyVoca();
+
+  // 단어장에 단어 추가 함수
+  useEffect(() => {
+    if (isAddVocaSuccess) {
+      const updatedData = queryClient.getQueryData([
+        "searchWord",
+        word.japanese,
+      ]) as AxiosResponse;
+      if (!updatedData) return;
+      setMyVocaId(updatedData.data.dataBody.personalVocabularyId);
+      setIsAdd(true);
+      resetAddVoca();
+      setIsActing(false);
+    }
+  }, [isAddVocaSuccess]);
+
+  // 단어장 단어 삭제 함수
+  useEffect(() => {
+    if (isDeleteVocaSuccess) {
+      queryClient.setQueryData(
+        ["searchWord", word.japanese],
+        (prev: AxiosResponse) => {
+          prev.data.dataBody.personalVocabularyId = null;
+          return prev;
+        }
+      );
+      setIsAdd(false);
+      setMyVocaId(null);
+      resetDeleteVoca();
+      setIsActing(false);
+    }
+  }, [isDeleteVocaSuccess]);
 
   // 검색
   useEffect(() => {
@@ -92,8 +138,24 @@ function WordSearch() {
       setWord({ japanese: searchWord.word, japaneseRead: searchWord.read });
     } else {
       setWord({ ...data });
+      setIsAdd(Boolean(data.personalVocabularyId));
+      if (data.personalVocabularyId) setMyVocaId(data.personalVocabularyId);
     }
   }, [data, searchWord]);
+
+  // 단어장 단어 추가/삭제
+  const addVocaHandler = (id: number) => {
+    if (isActing) return;
+    if (word.id === undefined) return;
+    if (!isAdd) {
+      addVoca(id);
+      setIsActing(true);
+    } else {
+      if (!myVocaId) return;
+      deleteVoca(myVocaId);
+      setIsActing(true);
+    }
+  };
 
   if (!isSearchOn) return <></>;
   return (
@@ -116,7 +178,7 @@ function WordSearch() {
                 onClick={() => {
                   setIsAdd(true);
                   if (word.id != undefined) {
-                    return addVoca(word.id);
+                    return addVocaHandler(word.id);
                   }
                 }}
                 fontSize="large"
