@@ -142,13 +142,7 @@ export const useLogout = () => {
         navigate("/intro");
       }, 0);
     },
-    onError: () => {
-      queryClient.removeQueries(["getMember"] as QueryFilters);
-      setIsLogin(false);
-      setTimeout(() => {
-        navigate("/intro");
-      }, 0);
-    },
+    onError: (err) => console.error(err),
   });
 };
 
@@ -219,13 +213,20 @@ export const useDeleteAccount = () => {
 // 이메일인증
 
 export const useEmailSend = () => {
+  const { setSendEmailVerifyMessage } = useEmailVerifyActions();
   return useMutation({
     mutationFn: (payload: string) => customAxios.post(`/email/send/${payload}`),
     onSuccess: (res) => {
       console.log(res);
+      if (res.data.dataHeader.successCode === 0) {
+        setSendEmailVerifyMessage("인증번호 발송 성공");
+      } else if (res.data.dataHeader.successCode === 1) {
+        setSendEmailVerifyMessage("유효하지 않은 이메일 주소입니다.");
+      }
     },
     onError: (err) => {
       console.log(err);
+      setSendEmailVerifyMessage("오류가 발생했습니다.");
     },
   });
 };

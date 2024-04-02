@@ -17,6 +17,7 @@ import {
   useEmailVerifyActions,
   useEmailVerifyMessage,
   useEmailVerifyStatus,
+  useSendEmailVerifyMessage,
 } from "@/stores/userStore";
 
 const SignUp: React.FC = () => {
@@ -34,7 +35,7 @@ const SignUp: React.FC = () => {
   const { setEmailVerifyStatus } = useEmailVerifyActions();
   const emailVerifyStatus = useEmailVerifyStatus();
   const emailVerifyMessage = useEmailVerifyMessage();
-
+  const emailSendVerifyMessage = useSendEmailVerifyMessage();
   const { emailError, nameError, nicknameError, passwordError } =
     useSignupErrors();
 
@@ -78,7 +79,7 @@ const SignUp: React.FC = () => {
                   emailError
                     ? emailError
                     : sendCheck
-                    ? "인증번호 전송완료"
+                    ? emailSendVerifyMessage
                     : null
                 }
               />
