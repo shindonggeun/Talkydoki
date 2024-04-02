@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -48,21 +49,23 @@ public class KeywordServiceImpl implements KeywordService {
     public void insertWeight(KeywordMappingRequest keywordMappingRequest) {
         News news = newsRepository.findById(keywordMappingRequest.getNewsId())
                 .orElseThrow(() -> new NewsException(NewsErrorCode.NOT_FOUND_NEWS));
-        Keyword keyword = keywordRepository.findByJapanese(keywordMappingRequest.getJapanese())
-                .orElseThrow(() -> new KeywordException(KeywordErrorCode.NOT_FOUND_KEYWORD));
 
         List<NewsKeywordMapping> existingMappings = newsKeywordMappingRepository.findByNews(news);
-
         if (!existingMappings.isEmpty()) {
             newsKeywordMappingRepository.deleteAll(existingMappings);
         }
 
-        NewsKeywordMapping newMapping = NewsKeywordMapping.builder()
-                .news(news)
-                .keyword(keyword)
-                .weight(keywordMappingRequest.getWeight())
-                .build();
-        newsKeywordMappingRepository.save(newMapping);
+        List<NewsKeywordMapping> newMappings = keywordMappingRequest.getKeywords().stream().map(kw -> {
+            Keyword keyword = keywordRepository.findByJapanese(kw.getJapanese())
+                    .orElseThrow(() -> new KeywordException(KeywordErrorCode.NOT_FOUND_KEYWORD));
+            return NewsKeywordMapping.builder()
+                    .news(news)
+                    .keyword(keyword)
+                    .weight(kw.getWeight())
+                    .build();
+        }).collect(Collectors.toList());
+
+        newsKeywordMappingRepository.saveAll(newMappings);
     }
 
     @Override

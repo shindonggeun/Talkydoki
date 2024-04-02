@@ -58,18 +58,16 @@ try:
                 news_data[news_id] = []
             news_data[news_id].append((japanese, float(weight)))
 
-    for news_id, words in news_data.items():
-        top_5_words = sorted(words, key=lambda x: x[1], reverse=True)[:5]
-        for japanese, weight in top_5_words:
-            data = {
-                "newsId": int(news_id),
-                "japanese": japanese,
-                "weight": weight
-            }
-            try:
-                response = requests.post(f'{KEYWORDS_API_URL}/weight', json=data)
-            except Exception as e:
-                print(f"Failed to send data for news ID {news_id}, Error: {str(e)}\n")
+    for news_id, keywords in news_data.items():
+        top_5_keywords = sorted(keywords, key=lambda x: x[1], reverse=True)[:5]
+        data = {
+            "newsId": int(news_id),
+            "keywords": [{"japanese": japanese, "weight": weight} for japanese, weight in top_5_keywords]
+        }
+        try:
+            response = requests.post(f'{KEYWORDS_API_URL}/weight', json=data)
+        except Exception as e:
+            print(f"Failed to send data for news ID {news_id}, Error: {str(e)}\n")
 
 except FileNotFoundError:
     print("File not found\n")
