@@ -98,7 +98,7 @@ oauth:
       - profile_nickname
       - profile_image
       - account_email
-      - name
+#      - name
 
   naver:
     client-id: ENC(fgllU6jmkfqSW5Lbet7BdnTta/ycQfTAwj3mVFHrkko=)
