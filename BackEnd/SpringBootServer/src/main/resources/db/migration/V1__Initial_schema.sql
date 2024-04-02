@@ -103,7 +103,7 @@ CREATE TABLE `shadowing_evaluation` (
 
 CREATE TABLE `ai_chat_room` (
                                 `id` int unsigned NOT NULL AUTO_INCREMENT,
-                                `category` enum('CHANGE_AT_CONVENIENCE_STORE','SOCCER_CONVERSATION','ORDER_HAMBURGER','HAIRCUT_AT_SALON','DESCRIBE_HEALTH_CONDITION_AT_HOSPITAL','FIND_LOST_ITEM_AT_POLICE_STATION','ENGAGE_IN_SOCIAL_DISCUSSION','BEFRIEND_A_COLLEAGUE','BRUNCH_CONVERSATION') NOT NULL,
+                                `category` enum('HOTEL_CHECK_IN', 'CHANGE_AT_CONVENIENCE_STORE','SOCCER_CONVERSATION','ORDER_HAMBURGER','HAIRCUT_AT_SALON','DESCRIBE_HEALTH_CONDITION_AT_HOSPITAL','FIND_LOST_ITEM_AT_POLICE_STATION','ENGAGE_IN_SOCIAL_DISCUSSION','BEFRIEND_A_COLLEAGUE','BRUNCH_CONVERSATION') NOT NULL,
                                 `member_id` int unsigned DEFAULT NULL,
                                 PRIMARY KEY (`id`),
                                 KEY `FK_ai_chat_room_member_id` (`member_id`),
