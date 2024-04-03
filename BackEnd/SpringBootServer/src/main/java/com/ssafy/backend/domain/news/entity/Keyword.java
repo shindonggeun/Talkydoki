@@ -26,6 +26,6 @@ public class Keyword {
     @OneToMany(mappedBy = "keyword")
     private List<NewsKeywordMapping> newsKeywordMappings = new ArrayList<>();
 
-    @OneToOne(mappedBy = "keyword")
-    private NewsKeywordHistory newsKeywordHistory;
+    @OneToMany(mappedBy = "keyword")
+    private List<NewsKeywordHistory> newsKeywordHistories = new ArrayList<>();
 }

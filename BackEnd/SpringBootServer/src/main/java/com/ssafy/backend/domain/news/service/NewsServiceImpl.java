@@ -122,10 +122,10 @@ public class NewsServiceImpl implements NewsService {
         for (String newsKeyword : newsInfo.getNewsKeywords()) {
             Keyword keyword = keywordRepository.findByJapanese(newsKeyword).orElseThrow(()
                     -> new KeywordException(KeywordErrorCode.NOT_FOUND_KEYWORD));
-            boolean exists = newsKeywordHistoryRepository.existsByKeywordId(keyword.getId());
+            boolean exists = newsKeywordHistoryRepository.existsByKeywordIdAndMemberId(keyword.getId(), memberId);
             NewsKeywordHistory newsKeywordHistory;
             if (exists) {
-                newsKeywordHistory = newsKeywordHistoryRepository.findByKeywordId(keyword.getId());
+                newsKeywordHistory = newsKeywordHistoryRepository.findByKeywordIdAndMemberId(keyword.getId(), memberId);
                 newsKeywordHistory.setReadCount(newsKeywordHistory.getReadCount() + 1);
             }
             else {

@@ -1,5 +1,6 @@
 server:
-  base-url: localhost
+  base-url: j10c107.p.ssafy.io
+  https-url: https://j10c107.p.ssafy.io
 
 spring:
   servlet:
@@ -13,7 +14,7 @@ spring:
     defer-datasource-initialization: false  # flyway 관련 마이그레이션 이슈 -> false로 변경
     generate-ddl: false
     hibernate:
-      ddl-auto: none                # ddl 자동 작성 여부
+      ddl-auto: none
     properties:
       hibernate:
         format_sql: true             # 하이버네이트가 실행한 SQL을 출력할 때 보기 좋게 정렬
@@ -26,18 +27,19 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver  # DB 드라이버
     url: jdbc:mysql://${server.base-url}:3306/talkydoki?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Seoul&zeroDateTimeBehavior=convertToNull&rewriteBatchedStatements=true       # 데이터베이스 URL
-    username: ENC(oIucHTMgwwzUiBqlBzyB9g==)                     # 데이터베이스 계정명
-    password: ENC(nA/sTfx2u8plMWgVt5MQ3A==)                     # 데이터베이스 계정 비밀번호
+    username: ENC(f0r0VaK09iSvSITZnTanow==)                     # 데이터베이스 계정명
+    password: ENC(pcq3fN0xzVJNEAPYy/U+mQ==)                     # 데이터베이스 계정 비밀번호
 
   # data_테이블명.sql 관련 실행 setting
-  sql:
-    init:
-      mode: always
-      data-locations:
-        - 'classpath:/FOREIGN_KEY_CHECKS_0.sql'   # 외래키 제약 조건 비활성화
-        - 'classpath:/db_backup.sql'              # DB 백업본 실행
-        - 'classpath:/FOREIGN_KEY_CHECKS_1.sql'   # 외래키 제약 조건 활성화
-
+  # sql:
+  #   init:
+  #     mode: never
+  #     data-locations:
+  #       - 'classpath:/data_vocabulary.sql'
+  #       - 'classpath:/data_news.sql'
+  #       - 'classpath:/data_member.sql'
+  #       - 'classpath:/data_keyword.sql'
+  #       - 'classpath:/data_news_keyword_mapping.sql'
 
   # NoSQL setting
   data:
@@ -67,13 +69,16 @@ spring:
             enable: true
 
   flyway:
-    enabled: false  # Flyway 활성화
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    out-of-order: false
 
 # jwt setting
 jwt:
-  accessKey: ENC(s0vsxAuXmlzr6DjkUVLrlIS+MdTML5arOQyKWar2qbFPkVVJ1zZoR09t83GnhFYhzIvLDaD119HeajudDJS4GXxVTkd+M/zQ/q1ssX4aw00y+52LOysZk/q/I3T4a3zYmOxfYI4aCslih6D5TTl5rQnPeZV2rmjdJXAg1X7owfGsquBPnuUptjuKxteIdEjtFFp1SF9QZ/+TvWyYrlwH1Q==)
-  refreshKey: ENC(gE+DTAeZ7HD32Rd6u5HcfJu+bg4kgdULucqZWVJCbHG5q5SE53YWhNuQcSyE61MVF8Cow5idsgt1RoMi3w0ri7Bq57Fr6+m6qr5bi+kXL+nQOv/GWoPcj2DxteTB5izXHEp5fzC5uq1m8QrltRiQa1WfY8s1w6myZFWqPzn4S8FjoR/7/4oG7XU/Q/+HV1I0viF/51ziOKJFVn0nPAyMnQ==)
-  accessExpiration: PT420M  # 420분 (PT420M)
+  accessKey: ENC(V6FVgNoVoFGu9ToZlWzl8KKTUVlltnkhjOb7CsXowIwd5dzgdrmQY54fs81dt4b8k5cg7+etY5Zt1kyJq2XduisXKYMBkhtlNixuHGN8PY4RYeYPSsjdA/e8CkJfFcQoDMs6p63E6B4AXsB4pCwXNq6GK3FChCBHu+ZtwhcS2uvKEBHWZca1D/KZeIvuYBZFu74gDtLXECHQBfUBgGWGqQ==)
+  refreshKey: ENC(Ddc9rzvz2gZKRrXxLIROCjj9UJEEmARcByz/2wruK1XhxOW+lwpKdx6f6p71R1SZoNo/A5cbavkpizUt6q7xLTE4jsR1HuzeaLqX9uWuIUcAahCk2iycqN8zetYc+VO1BAGCo8qqJuQ1AnIod/IHd8VQ5l0jLDT0PLz/ifZR/Etcpq7YCqddGhkxfJljkwPGu475yl770UmpZcG4llPR2g==)
+  accessExpiration: PT420M  # 60분 (PT420M)
   refreshExpiration: PT10080M  # 10080분 (7일) (PT10080M)
 
 # log 관리
@@ -86,19 +91,19 @@ logging:
 # OAUTH2.0 Setting
 oauth:
   kakao:
-    client-id: ENC(BWjHj+A/SJQBzhtK+vutMYiLyOsKAo2lQwFqW2PqRPDxuWfF6Ncx+Qq5piFGk1SY)   # REST API 키
-    client-secret: ENC(BWjHj+A/SJQBzhtK+vutMYiLyOsKAo2lQwFqW2PqRPDxuWfF6Ncx+Qq5piFGk1SY) # 보안 -> Client Secret 키
-    redirect-uri: http://${server.base-url}:5173/member/loading/kakao
+    client-id: ENC(E3lOnslHCdphnWGsPFa1Hm5QFIrmkY1zPXzHgHUA3YsAzvFGrBttgVsB9JXzynNY)   # REST API 키
+    client-secret: ENC(TYqE7s5TCJUb8/g+bxw/RWGWNJCGdmkVZbkQ969vCyq/l3B2rDRK3OsKf1dyuqUM)  # 보안 -> Client Secret 키
+    redirect-uri: ${server.https-url}/member/loading/kakao
     scope:
       - profile_nickname
       - profile_image
       - account_email
-      - name
+  #      - name
 
   naver:
-    client-id: ENC(yyBV/ueEBgJtvkDlLenjkPwTcYy1AYXQuIDYlVxrVZE=)
-    client-secret: ENC(4zsZi9kyz8gJf75VByLo4PtdGuq9iqfS)
-    redirect_uri: http://${server.base-url}:5173/member/loading/naver
+    client-id: ENC(fgllU6jmkfqSW5Lbet7BdnTta/ycQfTAwj3mVFHrkko=)
+    client-secret: ENC(MNZuMPNyaH+s/6Fx8gOKJ2bKC+7tFMMu)
+    redirect_uri: ${server.https-url}/member/loading/naver
     scope:
       - nickname
       - name
@@ -106,9 +111,9 @@ oauth:
       - profile_image
 
   google:
-    client_id: ENC(rg6zRGzhH2As0ap38BB/G74FEw8/Q1aHOPqsEdASNH/yO35xyN3j5J/gjwvLQlKfWVT3xDB+JNjrOBSmd927lDLW+gK69XthjXyFrbN087NzYTHPKjCXaw==)
-    client_secret: ENC(i19O1JCsABZV+KTXIz0B5CT4VuO3YMEPd7JkxLsTrbhiYxFzOD4JSYDFnx+IbOxb)
-    redirect_uri: http://${server.base-url}:5173/member/loading/google
+    client_id: ENC(QKPQqGiQ64z9Aqor6E4+iqkn9coyITJcZJpnGofHf1rweieZI2PYBd80sfG4sRzJqgkMFqumuuvlHgCXoIZ5n7Ax2Wen8jYzt/9T2WmQ1LfQEdmdhLxaSg==)
+    client_secret: ENC(9s47E9126PeDwGGEQ3CEOxgisyvSvZEF8rGmM6ylTJ3YyAAJ4ES/lRkULyEamSgc)
+    redirect_uri: ${server.https-url}/member/loading/google
     scope:
       - profile
       - email
@@ -116,9 +121,8 @@ oauth:
 # firebase setting
 app:
   firebase-configuration-file: classpath:serviceAccountKey.json
-  firebase-bucket: ENC(web/1dqCEyq3z3sEPNyoxYLJJD87LW/MD7nkwKabmuE=)
+  firebase-bucket: ENC(SLVtdlieYMj0aGKJbbtcNZ7jAOk5GmHVdu8mazNsH18=)
 
 # gpt-api setting
 openai:
-  key: ENC(ERakHHzDWQNw7FjB5uddrBvQOp1I3lkdduXwNNo6NEzVAc8j95S2es1zucq2Uvn64XkKemS4SggLxPSAVz/+Hw==)
-
+  key: ENC(QrUxpVFQUVlQx9zGMdFKUh4+HMsOPwGBmyzriWx3o/UydA9H7vqDwqmH2hq82b5S9H7tuV+/SFYyxiXOWFI7+A==)

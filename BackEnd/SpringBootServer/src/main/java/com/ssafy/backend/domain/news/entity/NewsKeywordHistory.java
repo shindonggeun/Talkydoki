@@ -25,7 +25,7 @@ public class NewsKeywordHistory extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "keyword_id")
     private Keyword keyword;
 }

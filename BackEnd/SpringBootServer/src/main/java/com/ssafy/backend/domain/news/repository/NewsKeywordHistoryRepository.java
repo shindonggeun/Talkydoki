@@ -8,9 +8,9 @@ import java.util.List;
 
 @Repository
 public interface NewsKeywordHistoryRepository extends JpaRepository<NewsKeywordHistory, Long> {
-    boolean existsByKeywordId(Long keywordId);
+    boolean existsByKeywordIdAndMemberId(Long keywordId, Long memberId);
 
-    NewsKeywordHistory findByKeywordId(Long keywordId);
+    NewsKeywordHistory findByKeywordIdAndMemberId(Long keywordId, Long memberId);
 
     List<NewsKeywordHistory> findByMemberIdOrderByReadCountDesc(Long memberID);
 }
