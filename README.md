@@ -102,8 +102,10 @@
 - scikit-learn `1.4.1`
 
 ## 기능 명세
+[기능 명세](https://www.notion.so/3754b9a4e4bf49519f1c5eab99fe4415?pvs=4)
 
 ## ERD
+![ERD](./exec/C107_ERD.png)
 
 ## System Architecture
 ![System Architecture](./exec/C107_System_Architecture.png)
