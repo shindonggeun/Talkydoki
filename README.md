@@ -106,6 +106,7 @@
 ## ERD
 
 ## System Architecture
+![System Architecture](./exec/C107_System_Architecture.png)
 
 ## 역할 분담
 | 이름 | 역할 | 업무 |
