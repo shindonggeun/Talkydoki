@@ -30,7 +30,6 @@ export const useLogin = () => {
   const navigate = useNavigate();
   const setIsLogin = useAuthStore((state) => state.setIsLogin);
   // 로그인시 되는지 전역 확인용 후에 삭제 예정
-  const isLogin = useAuthStore((state) => state.isLogin);
   const setMemberEmail = useSetMemberEmail();
   const queryClient = useQueryClient();
 
