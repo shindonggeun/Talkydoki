@@ -1,5 +1,5 @@
 import { useGetNewsList } from "@/api/newsApi";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Wrapper } from "@/styles/common/ui/container";
 import InfiniteObserver from "@/components/ui/InfiniteObserver";
 import { category, categoryInterface } from "@/interface/NewsInterface";
@@ -17,10 +17,12 @@ import { FormControlLabel, Switch } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { useIsDark } from "@/stores/displayStore";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
+import { useSelectedAction, useSelectedCateogires } from "@/stores/newsStore";
 
 function News() {
   const [isShowKor, setIsShowKor] = useState(true);
-  const [selected, setSelected] = useState<categoryInterface[]>([]);
+  const selected = useSelectedCateogires();
+  const { addSelected, removeSelected } = useSelectedAction();
   const categories = category;
 
   const isDark = useIsDark();
@@ -38,10 +40,6 @@ function News() {
     }
   };
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
-
   const addCategory = (category: categoryInterface) => {
     if (selected.length == 3) {
       setModalContent({
@@ -51,11 +49,11 @@ function News() {
       setIsModalOn(true);
       return;
     }
-    setSelected((prev) => [...prev, category]);
+    addSelected(category);
   };
 
   const removeCategory = (category: categoryInterface) => {
-    setSelected((prev) => prev.filter((each) => each.id != category.id));
+    removeSelected(category);
   };
 
   if (isLoading) return <></>;
