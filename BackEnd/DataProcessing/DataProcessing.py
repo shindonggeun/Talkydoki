@@ -16,38 +16,6 @@ try:
     with open(DOCKER_OUTPUT_PATH, "r", encoding="utf-8") as file:
         content = file.readlines()
 
-except FileNotFoundError:
-    print("File not found\n")
-
-unique_words = set()
-for line in content:
-    words = line.split()
-    if len(words) > 2:
-        japanese_word = words[1]
-        unique_words.add(japanese_word)
-
-result_filename = "japanese.txt"
-with open(result_filename, "w", encoding="utf-8") as file:
-    for word in sorted(unique_words):
-        file.write(word + "\n")
-
-input_filename = "japanese.txt"
-if not os.path.exists(input_filename):
-    print("japanese.txt file not found\n")
-
-with open(input_filename, "r", encoding="utf-8") as file:
-    for line in file:
-        japanese = line.strip()
-        keyword_data = {"japanese": japanese}
-        try:
-            response = requests.post(f'{KEYWORDS_API_URL}/post', json=keyword_data)
-        except Exception as e:
-            print(f"Error while inserting keyword: {japanese}, Error: {str(e)}\n")
-        
-try:
-    with open(DOCKER_OUTPUT_PATH, "r", encoding="utf-8") as file:
-        content = file.readlines()
-
     news_data = {}
 
     for line in content:
