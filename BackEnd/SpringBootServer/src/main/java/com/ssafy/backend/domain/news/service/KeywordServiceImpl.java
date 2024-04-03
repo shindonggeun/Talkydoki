@@ -57,7 +57,13 @@ public class KeywordServiceImpl implements KeywordService {
 
         List<NewsKeywordMapping> newMappings = keywordMappingRequest.getKeywords().stream().map(kw -> {
             Keyword keyword = keywordRepository.findByJapanese(kw.getJapanese())
-                    .orElseThrow(() -> new KeywordException(KeywordErrorCode.NOT_FOUND_KEYWORD));
+                    .orElseGet(() -> {
+                        Keyword newKeyword = Keyword.builder()
+                                .japanese(kw.getJapanese())
+                                .build();
+                        return keywordRepository.save(newKeyword);
+                    });
+
             return NewsKeywordMapping.builder()
                     .news(news)
                     .keyword(keyword)
