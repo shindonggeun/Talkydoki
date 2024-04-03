@@ -17,7 +17,7 @@ public class AiChatHistory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ai_chat_room_id")
     private AiChatRoom aiChatRoom;
 
