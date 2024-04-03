@@ -88,61 +88,81 @@
 
 ### OpenAI API
 
+- OpenAI의 chat completion api를 활용한 인공 지능 챗봇 시스템 구축
+- 프롬프트 엔지니어링 :
+  <br> OpenAI 머신의 응답 형식을 프롬프트 엔지니어링으로 고정하여 객체 데이터를 생성하고 이를 파싱하여 활용함
+
+### WebSocket with STOMP & RabbitMQ
+
+- WebSocket 연결을 통해 서버와 클라이언트 간의 지속적이고 실시간의 양방향 통신 채널을 구축하였으며, STOMP 프로토콜을 사용하여 이러한 통신을 구조화하고 메시지 교환을 명확하게 관리
+- RabbitMQ 메시지 브로커를 도입하여 메시지를 효율적으로 라우팅하고 분산 처리함으로써, 시스템 전반의 메시지 전달 유연성과 확장성을 향상
+
+### Spring WebFlux
+
+- Spring WebFlux 라이브러리의 WebClient, Mono, Flux 를 사용하여 반응형으로 프로그래밍
+- 비동기적이고 비차단적(non-blocking) I/O를 사용하여 스레드 차단을 방지하고 높은 동시성을 지원
+- 비차단 I/O로 인해 더 적은 리소스를 사용하여 더 많은 요청을 동시에 처리
+- 요청이 I/O를 기다리면서 차단되지 않으므로 로드가 심한 경우에도 애플리케이션의 응답성을 높임
+
 ## ✨ 서비스 화면
 
-인트로화면
+### 인트로화면
 
 <div width="100%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/8762558d-1a59-4bc5-8245-86bfbea43228" width="75%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/db805fa2-c740-44fd-a9a9-196ce495f432" width="20%">
 </div>
-메인화면
+
+### 메인화면
+
 <div width="100%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/0655af22-7f2d-4d88-a8c4-9b0553f7b23d" width="75%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/d3be5517-91b5-437c-9808-e31dad122c9b" width="20%">
 </div>
 
-뉴스 리스트
+### 뉴스 리스트
 
 <div width="100%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/6b546cbc-48ad-49e4-b41c-d754cfaeb580" width="75%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/88ddea47-b9af-444a-a1a5-168848db9fd2" width="20%">
 </div>
 
-뉴스 디테일
+### 뉴스 디테일
 
 <div width="100%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/5794b60c-69ac-4100-94cf-08145dc79f45" width="75%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/857ed6db-61b9-49b1-8f67-81713ea0c2ef" width="20%">
 </div>
 
-뉴스 학습모드
+### 뉴스 학습모드
 
 <div width="100%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/7e525e3c-b247-473a-8561-b8903ae32fe6" width="75%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/4a43ceb2-7409-4fb3-ada4-0f8242d24956" width="20%">
 </div>
 
-채팅 디테일
+### 채팅 디테일
 
 <div width="100%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/611b1b63-524c-470b-86ae-13026a324771" width="75%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/870e5f46-373e-4e26-bd0d-22d9f06c2308" width="20%">
 </div>
-채팅레포트
+
+### 채팅 레포트
+
 <div width="100%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/09745b25-2bc4-40a2-9531-a3d688908de9" width="75%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/4ece02c6-3c9b-48e7-8c96-7649b9b27a19" width="20%">
 </div>
 
-마이데이터
+### 마이데이터
 
 <div width="100%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/13816b75-f0cd-4d1a-85c3-eec1f0fe9359" width="75%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/0974c960-50fd-42fa-8937-dbeab52557ac" width="20%">
 </div>
 
-소셜로그인
+### 소셜로그인
 
 <div width="100%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/e199b36d-bf4c-438e-a75f-06b7feb139b0" width="50%">
