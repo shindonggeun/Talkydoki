@@ -100,9 +100,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     @Transactional
-    public void deleteMember(Long memberId) {
-        memberRepository.deleteById(memberId);
-    }
+    public void deleteMember(Long memberId) { memberRepository.deleteById(memberId);}
 
     @Override
     public void updateProfileImageAndNickNameMember(Long memberId, MemberUpdateRequest updateRequest) {

@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 
+
 @Repository
 public interface PersonalVocabularyRepository extends JpaRepository<PersonalVocabulary, Long>, PersonalVocabularyRepositoryCustom {
     boolean existsByMemberAndVocabulary(Member member, Vocabulary vocabulary);
