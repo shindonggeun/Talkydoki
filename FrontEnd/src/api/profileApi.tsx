@@ -207,5 +207,7 @@ export const useUserAttendance = () => {
         return newData as UserAttendanceInterface;
       }
     },
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };

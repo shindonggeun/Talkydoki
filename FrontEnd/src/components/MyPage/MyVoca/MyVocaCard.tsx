@@ -15,7 +15,7 @@ type Props = {
 
 function MyVocaCard({ voca, isReadOn, isMeaningOn }: Props) {
   const { personalVocabularyId, japanese, type, japaneseRead, korean } = voca;
-  const { mutate: deleteVoca } = useDeleteMyVoca();
+  const { mutate: deleteVoca } = useDeleteMyVoca(japanese);
 
   return (
     <VocaCard key={personalVocabularyId}>

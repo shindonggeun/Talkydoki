@@ -24,7 +24,7 @@ function RandomVoca() {
     mutate: deleteVoca,
     reset: resetDeleteVoca,
     isSuccess: isDeleteVocaSuccess,
-  } = useDeleteMyVoca();
+  } = useDeleteMyVoca(data ? data.japanese : "");
 
   // 단어장에 단어 추가 성공 시 실행 함수
   useEffect(() => {
@@ -43,10 +43,6 @@ function RandomVoca() {
   // 단어장 단어 삭제 성공 시 실행 함수
   useEffect(() => {
     if (isDeleteVocaSuccess) {
-      queryClient.setQueryData(["getVoca"], (prev: AxiosResponse) => {
-        prev.data.dataBody.personalVocabularyId = null;
-        return prev;
-      });
       setIsAdded(false);
       setIsActing(false);
       setMyVocaId(null);

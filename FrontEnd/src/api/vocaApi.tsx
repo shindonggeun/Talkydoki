@@ -113,7 +113,7 @@ export const useMyVoca = () => {
 };
 
 // 단어 삭제
-export const useDeleteMyVoca = () => {
+export const useDeleteMyVoca = (word: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -152,6 +152,24 @@ export const useDeleteMyVoca = () => {
     onSuccess: ({ data }) => {
       if (data.dataHeader.successCode == 0) {
         queryClient.invalidateQueries({ queryKey: ["getVocaList"] });
+
+        const todayVoca = queryClient.getQueryData([
+          "getVoca",
+        ]) as AxiosResponse;
+        if (todayVoca && todayVoca.data.dataBody.japanese == word) {
+          queryClient.setQueryData(["getVoca"], (prev: AxiosResponse) => {
+            prev.data.dataBody.personalVocabularyId = null;
+            return prev;
+          });
+        }
+        queryClient.setQueryData(
+          ["searchWord", word],
+          (prev: AxiosResponse) => {
+            if (!prev) return;
+            prev.data.dataBody.personalVocabularyId = null;
+            return prev;
+          }
+        );
       }
     },
     onError: (_err, _id, context) => {

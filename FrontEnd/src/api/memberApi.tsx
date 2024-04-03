@@ -142,7 +142,13 @@ export const useLogout = () => {
         navigate("/intro");
       }, 0);
     },
-    onError: (err) => console.error(err),
+    onError: () => {
+      queryClient.removeQueries(["getMember"] as QueryFilters);
+      setIsLogin(false);
+      setTimeout(() => {
+        navigate("/intro");
+      }, 0);
+    },
   });
 };
 

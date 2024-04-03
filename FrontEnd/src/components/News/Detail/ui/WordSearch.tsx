@@ -97,7 +97,7 @@ function WordSearch() {
     mutate: deleteVoca,
     isSuccess: isDeleteVocaSuccess,
     reset: resetDeleteVoca,
-  } = useDeleteMyVoca();
+  } = useDeleteMyVoca(searchWord.word);
 
   // 단어장에 단어 추가 함수
   useEffect(() => {
@@ -117,13 +117,6 @@ function WordSearch() {
   // 단어장 단어 삭제 함수
   useEffect(() => {
     if (isDeleteVocaSuccess) {
-      queryClient.setQueryData(
-        ["searchWord", word.japanese],
-        (prev: AxiosResponse) => {
-          prev.data.dataBody.personalVocabularyId = null;
-          return prev;
-        }
-      );
       setIsAdd(false);
       setMyVocaId(null);
       resetDeleteVoca();
