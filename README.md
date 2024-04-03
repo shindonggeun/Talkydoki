@@ -104,6 +104,9 @@
 ## 기능 명세
 [기능 명세](https://www.notion.so/3754b9a4e4bf49519f1c5eab99fe4415?pvs=4)
 
+## API 명세
+[API 명세](https://translucent-polish-c76.notion.site/API-9e9953ecc90f492f9efed251e04c6f49?pvs=4)
+
 ## ERD
 ![ERD](./exec/C107_ERD.png)
 
