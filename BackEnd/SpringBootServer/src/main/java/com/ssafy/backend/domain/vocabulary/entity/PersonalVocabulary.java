@@ -30,9 +30,8 @@ public class PersonalVocabulary {
      * 이 필드는 'Member' 테이블과의 외래키 관계를 형성하며,
      * 'member_id'라는 이름의 컬럼에 매핑됩니다.
      * FetchType.LAZY를 설정함으로써, 회원 엔티티의 로딩을 필요할 때까지 지연시킵니다.
-     * {@code optional = false} 속성은 이 필드의 값이 항상 존재해야 함을 의미합니다. 즉, null이 될 수 없습니다.
      */
-    @ManyToOne(fetch = FetchType.LAZY, optional = false, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
