@@ -69,18 +69,18 @@
 
 ### 뉴스 데이터 크롤링
 
-### 자연어 처리(NLP) 기술
+### 자연어 처리(NLP)
 
 - 자연어 처리 기술을 활용하여 일본어 뉴스 데이터 형태소 분석 및 처리 진행
 
-### 빅데이터 분산 기술
+### 빅데이터 분산
 
 - Hadoop을 통한 뉴스 데이터 분산 처리
   - 뉴스 크롤링 후, AWS EC2 서버에서 Hadoop Streaming을 사용하여 뉴스 데이터 내 단어의 TF-IDF 값 계산
   - 기사 내 단어에 대한 WordCount 계산 후 그에 기반하여 TF-IDF 값을 도출하는 MapReduce 과정 수행
   - 각 기사에서 TF-IDF 값이 높은 상위 5개의 단어를 선별하여 뉴스를 조회할 때 중요 단어 표시 기능 제공
 
-### 빅데이터 추천 기술
+### 빅데이터 추천
 
 - Content-Based Filtering Algorithm
   - 사용자의 선호도를 반영하여 선호하는 카테고리의 단어에 대해 더 많은 학습을 진행하는 사용자 더미 데이터 300개 생성
@@ -88,7 +88,7 @@
   - Cosine Similarity를 기준으로, 사용자와 가장 관련성이 높은 상위 3개의 뉴스 추천
   - 신규 사용자나 데이터가 없는 사용자를 위해, 다른 사용자들에게 가장 많이 추천된 상위 3개의 뉴스를 추천하는 대체 알고리즘 구현을 통해 Content-Based Filtering Algorithm의 단점인 Cold-Start 문제 해결
 
-### TTS / STT 기술
+### TTS / STT
 
 - TTS(Text-to-Speech)를 통해 사용자가 뉴스를 들을 수 있는 기능 제공
 - STT(Speech-to-Text)를 통해 사용자의 음성을 텍스트로 변환 후 쉐도잉 평가 기능과 AI와의 회화 기능 제공
@@ -193,22 +193,43 @@
 
 - React
 - Typescript
+- axios
+- zustand
+- React Query
+- MUI
+- Styled Components
+- React-router-dom
+- AWS Polly
+- React-speech-recognition
+- STOMP
+- ApexCharts
 
 ### Back-End
 
 - Java `17.0.10`
 - Spring Boot `3.2.3`
+- Lombok
+- openAPI `(Swagger 3.0)`
+- OAUTH `2.0`
 - Gradle `8.5`
+- JWT
 - Spring Security
+- Spring Data JPA
+- QueryDSL
+- WebFlux
 - WebSocket
-- STOMP
+- Firebase Storage
 - RabbitMQ
+- Jasypt
+- Java Mail Sender
+- Flyway
+- OpenAI API `(GPT)`
 - Python `3.8.10`
 - FastAPI `0.110.0`
 
 ### DB
 
-- MySQL
+- MySQL `8.0.36`
 - Redis
 
 ### Infra
@@ -221,17 +242,25 @@
 
 ### Data
 
-- selenium `4.18.1`
+- selenium `4.19.0`
 - Hadoop `3.3.6`
 - Crontab
 - Mecab
 - scikit-learn `1.4.1`
+- webdriver-manager `4.0.1`
+- googletrans `4.0.0rc1`
+- requests `2.31.0`
+- paramiko `3.4.0`
+- pytz `2024.1`
+- unidic-lite
+- SQLAlchemy `2.0.28`
 
 ## 기능 명세
 
-[기능 명세](https://www.notion.so/3754b9a4e4bf49519f1c5eab99fe4415?pvs=4)
+[기능 명세](https://translucent-polish-c76.notion.site/3754b9a4e4bf49519f1c5eab99fe4415)
 
 ## API 명세
+
 [API 명세](https://translucent-polish-c76.notion.site/API-9e9953ecc90f492f9efed251e04c6f49?pvs=4)
 
 ## ERD
