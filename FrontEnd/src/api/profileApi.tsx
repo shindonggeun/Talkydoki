@@ -23,7 +23,7 @@ export const useUploadImageFile = () => {
           "Content-Type": "multipart/form-data",
         },
       }),
-    onSuccess: () => console.log("이미지 업로드 완료"),
+    onSuccess: () => {},
   });
 };
 
@@ -137,8 +137,8 @@ export const useUserKeyword = () => {
         return [] as UserKeywordInterface[];
       }
     },
-    staleTime: 1000 * 60 * 60, // 1시간
-    gcTime: 1000 * 60 * 60, // 1시간
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };
 
@@ -207,5 +207,7 @@ export const useUserAttendance = () => {
         return newData as UserAttendanceInterface;
       }
     },
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };

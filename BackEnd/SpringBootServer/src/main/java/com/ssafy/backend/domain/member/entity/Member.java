@@ -1,5 +1,6 @@
 package com.ssafy.backend.domain.member.entity;
 
+import com.ssafy.backend.domain.aichat.entity.AiChatRoom;
 import com.ssafy.backend.domain.attendance.entity.Attendance;
 import com.ssafy.backend.domain.member.dto.MemberUpdateRequest;
 import com.ssafy.backend.domain.member.entity.enums.MemberRole;
@@ -97,6 +98,13 @@ public class Member extends BaseEntity {
      */
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<NewsShadowing> newsShadowing = new ArrayList<>();
+
+    /**
+     * 회원과 관련된 AI 회화 채팅에 사용되는 채팅방 목록과의 일대다 관계를 정의합니다.
+     * 회원이 삭제되면 관련된 모든 채팅방 기록도 함께 삭제됩니다. (cascade = CascadeType.ALL, orphanRemoval = true)
+     */
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AiChatRoom> aiChatRooms = new ArrayList<>();
 
     /**
      * 회원과 관련된 출석 기록 목록과의 일대다 관계를 정의합니다.

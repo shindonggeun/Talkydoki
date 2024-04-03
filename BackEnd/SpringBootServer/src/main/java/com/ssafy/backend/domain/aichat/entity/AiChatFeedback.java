@@ -16,10 +16,6 @@ public class AiChatFeedback {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "ai_chat_room_id")
-//    private AiChatRoom aiChatRoom;
-
     @OneToOne
     @JoinColumn(name = "ai_chat_history_id") // nullable = false?
     private AiChatHistory aiChatHistory;

@@ -33,8 +33,6 @@ function ChatTip({ lastUserTip }: ChatTipProps) {
   const handleTipClick = () => {
     setIsBehind((prev) => !prev); // 클릭 시 상태 토글 투명해지고 뒤로 보내기
   };
-  console.log("isTip:", isTip);
-  console.log("lastUserTip", lastUserTip);
   useEffect(() => {
     setIstip(globalIsTip);
   }, [globalIsTip]);

@@ -11,7 +11,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   useAuthStore,
   useEmailVerifyActions,
@@ -23,13 +23,13 @@ import {
 import { UserInterface } from "@/interface/UserInterface";
 import { useSetSignupErrors } from "@/stores/signUpStore";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
+import { Cookies } from "react-cookie";
 
 // 일반 로그인
 export const useLogin = () => {
   const navigate = useNavigate();
   const setIsLogin = useAuthStore((state) => state.setIsLogin);
   // 로그인시 되는지 전역 확인용 후에 삭제 예정
-  const isLogin = useAuthStore((state) => state.isLogin);
   const setMemberEmail = useSetMemberEmail();
   const queryClient = useQueryClient();
 
@@ -41,12 +41,8 @@ export const useLogin = () => {
       customAxios.post(`/member/login`, payload),
 
     onSuccess: (res) => {
-      // console.log(res);
       const { data } = res;
       if (data.dataHeader.successCode === 0) {
-        console.log("로그인 성공");
-        console.log("전역 로그인 확인", isLogin);
-
         // 로그인 후 반환된 email memberEmail에 저장
         setMemberEmail(data.dataBody.memberInfo.email);
 
@@ -82,7 +78,6 @@ export const useSignup = () => {
       if (data.dataHeader.successCode === 0) {
         // 성공했을 때 로직 처리
         setEmailVerifyStatus("none");
-        console.log("회원가입 성공!!");
         navigate("/login");
       } else {
         if (data.dataHeader.resultCode) {
@@ -100,12 +95,10 @@ export const useSignup = () => {
 // 회원정보 가져오기
 export const useGetMember = () => {
   const isLogin = useIsLogin();
-  const { pathname } = useLocation();
 
   return useQuery({
     queryKey: ["getMember"],
     queryFn: () => {
-      console.log(`${pathname}에서 getMember 실행`);
       return customAxios.get(`/member/get`).then((res) => res.data);
     },
     select: (data) => {
@@ -136,13 +129,23 @@ export const useLogout = () => {
     mutationFn: () => customAxios.post(`/member/logout`),
 
     onSuccess: () => {
+      const cookies = new Cookies();
+      cookies.remove("accessToken");
       queryClient.removeQueries(["getMember"] as QueryFilters);
       setIsLogin(false);
       setTimeout(() => {
         navigate("/intro");
       }, 0);
     },
-    onError: (err) => console.error(err),
+    onError: () => {
+      const cookies = new Cookies();
+      cookies.remove("accessToken");
+      queryClient.removeQueries(["getMember"] as QueryFilters);
+      setIsLogin(false);
+      setTimeout(() => {
+        navigate("/intro");
+      }, 0);
+    },
   });
 };
 
@@ -153,7 +156,6 @@ export const useSocialLogin = () => {
     mutationFn: (payload: string) => customAxios.get(`/oauth/${payload}`),
     onSuccess: (res) => {
       const { data } = res;
-      console.log(data);
       if (data.dataHeader.successCode === 0) {
         window.location.href = data.dataBody;
       } else {
@@ -177,7 +179,6 @@ export const useFinishSocialLogin = () => {
       }),
     onSuccess: (res) => {
       const { data } = res;
-      console.log("소셜로그인  데이터:", data);
       if (data.dataHeader.successCode === 0) {
         setIsLogin(true);
         navigate("/main");
@@ -217,7 +218,6 @@ export const useEmailSend = () => {
   return useMutation({
     mutationFn: (payload: string) => customAxios.post(`/email/send/${payload}`),
     onSuccess: (res) => {
-      console.log(res);
       if (res.data.dataHeader.successCode === 0) {
         setSendEmailVerifyMessage("인증번호 발송 성공");
       } else if (res.data.dataHeader.successCode === 1) {
@@ -239,7 +239,6 @@ export const useEmailVerify = () => {
     mutationFn: (payload: EmailVerifyPayload) =>
       customAxios.post(`email/verify/${payload.email}/${payload.code}`),
     onSuccess: (res) => {
-      console.log(res);
       if (res.data.dataHeader.successCode === 0) {
         setEmailVerifyStatus("success");
         setEmailVerifyMessage("이메일 인증에 성공했습니다.");
@@ -248,10 +247,9 @@ export const useEmailVerify = () => {
         setEmailVerifyMessage("이메일 인증코드를 잘못 입력하였습니다.");
       }
     },
-    onError: (res) => {
+    onError: () => {
       setEmailVerifyStatus("error");
       setEmailVerifyMessage("인증 과정 중 오류가 발생했습니다.");
-      console.log("에러:", res);
     },
   });
 };

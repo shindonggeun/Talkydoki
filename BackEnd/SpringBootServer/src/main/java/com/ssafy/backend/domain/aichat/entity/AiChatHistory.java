@@ -27,4 +27,8 @@ public class AiChatHistory {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
+
+    @OneToOne(mappedBy = "aiChatHistory", cascade = CascadeType.ALL, orphanRemoval = true)
+    private AiChatFeedback aiChatFeedback;
+
 }
