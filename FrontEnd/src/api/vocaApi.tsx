@@ -18,7 +18,6 @@ export const useGetVoca = () => {
   return useQuery({
     queryKey: ["getVoca"],
     queryFn: () => {
-      console.log("getVoca 실행");
       return customAxios.get("/vocabulary/daily/get");
     },
     staleTime: Infinity,
@@ -81,7 +80,6 @@ export const useMyVoca = () => {
   return useInfiniteQuery({
     queryKey: ["getVocaList"],
     queryFn: ({ pageParam }) => {
-      console.log("getVocaList 실행");
       return customAxios
         .get("/vocabulary/personal/list/get", {
           params: {

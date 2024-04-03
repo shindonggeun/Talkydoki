@@ -6,7 +6,6 @@ import { useMutation } from "@tanstack/react-query";
 export const useSendMessage = () => {
   return useMutation({
     mutationFn: (payload: SendMessagePayload) => {
-      console.log("Sending payload:", payload);
       return customAxios.post(`ai/chat/gpt/${payload.roomId}`, payload.data);
     },
     onSuccess: (res) => {

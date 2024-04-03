@@ -64,9 +64,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
         });
         setPermission(true);
         setStream(streamData);
-      } catch (e) {
-        console.log("권한이 없습니다");
-      }
+      } catch (e) {}
     }
   };
 
@@ -120,9 +118,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
       /[^ぁ-んァ-ヶｱ-ﾝﾞﾟ一-龠0-9a-zA-Zー]/g,
       ""
     );
-    console.log("평가시도");
     if (userText.length > 0) {
-      console.log("평가진행");
       sendSpeech({ newsId, original, userText });
     }
     stopRecordVoice();

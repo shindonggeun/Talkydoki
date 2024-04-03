@@ -33,13 +33,10 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
   isReady,
 }) => {
   const navigate = useNavigate();
-  console.log("transcript", transcript);
   //로딩 추가
 
   // 타이머
   const [timer, setTimer] = useState<number | undefined>(undefined);
-  console.log("시각화 확인 콘솔:isRecording", isRecording);
-
   const [chatText, setChatText] = useState<string>("");
   const { mutate: sendChatMessage } = useSendMessage();
 
@@ -69,7 +66,6 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
               };
             };
           }) => {
-            console.log("리포트 아이디", reportId);
             setIsModalOn(false);
             navigate(`/aichatreport`, {
               state: { redirect: "/aichatlist", reportId: reportId },
@@ -89,7 +85,6 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
   };
 
   const sendMessage = (text = chatText) => {
-    console.log("메세지 전송");
     const token = getCookie();
     if (text.trim() !== "") {
       const message = {
@@ -112,9 +107,6 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
       );
       setIsWaiting(true);
       sendChatMessage(sendpayload);
-
-      console.log("보낸메세지~~~", message);
-
       setChatText("");
     }
   };

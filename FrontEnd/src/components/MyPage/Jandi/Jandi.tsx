@@ -31,7 +31,6 @@ function Jandi() {
     setGraphData(data);
   }, [data]);
 
-  // console;
   const year = new Date().getFullYear();
   const startDate = new Date(`${year}-01-01`);
   const endDate = new Date(`${year}-12-31`);

@@ -42,12 +42,9 @@ function ChatRoom() {
     const serverURL = VITE_REACT_WS_URL as string;
     const token = getCookie();
     const onConnected = (client: Client) => {
-      console.log("연결성공");
-
       const subscription = client.subscribe(
         `/topic/room.${roomId}`,
         (message) => {
-          console.log("오고가는 메세지", message);
           const chat = JSON.parse(message.body) as ChatMessage;
           if (chat.sender === "USER_TIP") {
             setLastUserTip(chat); // 마지막 USER_TIP 메시지를 저장
@@ -63,7 +60,6 @@ function ChatRoom() {
           }
 
           setChats((prev) => [...prev, chat]);
-          console.log("갱신된 채팅 리스트", chats);
         }
       );
 

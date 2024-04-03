@@ -23,7 +23,7 @@ export const useUploadImageFile = () => {
           "Content-Type": "multipart/form-data",
         },
       }),
-    onSuccess: () => console.log("이미지 업로드 완료"),
+    onSuccess: () => {},
   });
 };
 

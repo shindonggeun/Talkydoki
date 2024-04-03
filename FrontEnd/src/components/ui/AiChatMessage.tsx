@@ -20,7 +20,6 @@ function ChatMessage({ japanese, text, feadback }: Props) {
   const globalIsFeadback = useAiChatStore((state) => state.globalIsFeadback);
   const [isTranslate, setTranslate] = useState<boolean>(globalIsTranslate);
   const [isFeadback, setFeadback] = useState<boolean>(globalIsFeadback);
-  console.log("isTranslate", isTranslate);
 
   useEffect(() => {
     setTranslate(globalIsTranslate);
@@ -48,7 +47,6 @@ function ChatMessage({ japanese, text, feadback }: Props) {
         new SynthesizeSpeechCommand(params)
       );
       if (AudioStream) {
-        console.log("AudioStream", AudioStream);
         const webStream = AudioStream.transformToWebStream();
 
         const response = new Response(webStream);
@@ -57,7 +55,6 @@ function ChatMessage({ japanese, text, feadback }: Props) {
         const audioUrl = URL.createObjectURL(audioBlob);
 
         const audio = new Audio(audioUrl);
-        console.log(audio);
         audio.play();
 
         audio.onended = () => {

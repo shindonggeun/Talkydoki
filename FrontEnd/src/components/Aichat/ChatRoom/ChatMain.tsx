@@ -25,7 +25,6 @@ function ChatMain({
   isWaiting,
 }: ChatMainProps) {
   const endOfMessagesRef = useRef<HTMLDivElement | null>(null);
-  console.log("isRecording", isRecording);
   const theme = useTheme();
 
   useEffect(() => {
