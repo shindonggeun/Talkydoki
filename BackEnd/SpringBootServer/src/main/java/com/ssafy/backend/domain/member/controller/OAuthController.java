@@ -41,7 +41,7 @@ public class OAuthController {
         // JWT 토큰을 쿠키에 저장
         Cookie accessTokenCookie = new Cookie("accessToken", loginResponse.jwtToken().accessToken());
         accessTokenCookie.setPath("/");
-        accessTokenCookie.setMaxAge(3600); // 60분(3600초)으로 설정
+        accessTokenCookie.setMaxAge(25200); // 4200분(25200초)으로 설정 (25200)
         response.addCookie(accessTokenCookie);
         return ResponseEntity.ok().body(Message.success(loginResponse));
     }
