@@ -77,6 +77,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
       stopRecord();
       queryClient.invalidateQueries({ queryKey: ["userAchievement"] });
       queryClient.invalidateQueries({ queryKey: ["userAttendance"] });
+      queryClient.invalidateQueries({ queryKey: ["userKeywords"] });
     };
   }, []);
 

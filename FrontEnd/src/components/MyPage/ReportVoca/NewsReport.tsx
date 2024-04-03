@@ -72,6 +72,9 @@ function NewsReport({ user, average }: Props) {
         chart: {
           height: 350,
           type: "area",
+          zoom: {
+            enabled: false,
+          },
           toolbar: {
             show: false,
           },

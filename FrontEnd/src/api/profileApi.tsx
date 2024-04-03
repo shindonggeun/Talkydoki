@@ -137,8 +137,8 @@ export const useUserKeyword = () => {
         return [] as UserKeywordInterface[];
       }
     },
-    staleTime: 1000 * 60 * 60, // 1시간
-    gcTime: 1000 * 60 * 60, // 1시간
+    staleTime: Infinity,
+    gcTime: Infinity,
   });
 };
 
