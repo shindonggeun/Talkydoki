@@ -302,7 +302,7 @@
 - React-router-dom
 - AWS Polly
 - React-speech-recognition
-- STOMP
+- webStomp-client
 - ApexCharts
 
 ### Back-End
@@ -313,14 +313,15 @@
 - openAPI `(Swagger 3.0)`
 - OAUTH `2.0`
 - Gradle `8.5`
-- JWT
 - Spring Security
+- JWT
 - Spring Data JPA
 - QueryDSL
 - WebFlux
 - WebSocket
-- Firebase Storage
+- STOMP
 - RabbitMQ
+- Firebase Storage
 - Jasypt
 - Java Mail Sender
 - Flyway
