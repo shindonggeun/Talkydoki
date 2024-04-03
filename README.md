@@ -145,7 +145,7 @@
 소셜로그인
 
 <div width="100%">
-<img src="https://github.com/gisun55555/reactshop2/assets/139519062/04635180-8679-4378-a36c-faf10a4c6bc8" width="100%">
+<img src="https://github.com/gisun55555/reactshop2/assets/139519062/e199b36d-bf4c-438e-a75f-06b7feb139b0" width="50%">
 </div>
 
 ## 🚀 기술 스택
