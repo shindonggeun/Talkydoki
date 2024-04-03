@@ -17,6 +17,7 @@ const Protected = () => {
 
   useEffect(() => {
     const accessToken = getCookie();
+    window.scrollTo(0, 0);
     if (accessToken != undefined) {
       setIsLogin(true);
     } else {
