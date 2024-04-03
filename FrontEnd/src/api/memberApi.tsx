@@ -23,6 +23,7 @@ import {
 import { UserInterface } from "@/interface/UserInterface";
 import { useSetSignupErrors } from "@/stores/signUpStore";
 import { useSetISModalOn, useSetModalContent } from "@/stores/modalStore";
+import { Cookies } from "react-cookie";
 
 // 일반 로그인
 export const useLogin = () => {
@@ -136,6 +137,8 @@ export const useLogout = () => {
     mutationFn: () => customAxios.post(`/member/logout`),
 
     onSuccess: () => {
+      const cookies = new Cookies();
+      cookies.remove("accessToken");
       queryClient.removeQueries(["getMember"] as QueryFilters);
       setIsLogin(false);
       setTimeout(() => {
@@ -143,6 +146,8 @@ export const useLogout = () => {
       }, 0);
     },
     onError: () => {
+      const cookies = new Cookies();
+      cookies.remove("accessToken");
       queryClient.removeQueries(["getMember"] as QueryFilters);
       setIsLogin(false);
       setTimeout(() => {
