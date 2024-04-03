@@ -33,7 +33,6 @@ export const connectStompClient = (
   client.connect(
     headers,
     (frame?: Frame) => {
-      console.log("WebSocket Stomp 연결: ", frame);
       if (frame) {
         onConnected(client);
       }

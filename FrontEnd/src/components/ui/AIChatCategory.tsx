@@ -4,7 +4,7 @@ import { useCreateChatRoom } from "@/api/chatApi";
 import { useNavigate } from "react-router";
 
 // 아이콘불러오기
-import LocalConvenienceStoreIcon from "@mui/icons-material/LocalConvenienceStore";
+import HotelIcon from "@mui/icons-material/Hotel";
 import SportsSoccerIcon from "@mui/icons-material/SportsSoccer";
 import FastfoodIcon from "@mui/icons-material/Fastfood";
 import ContentCutIcon from "@mui/icons-material/ContentCut";
@@ -16,7 +16,7 @@ import BrunchDiningIcon from "@mui/icons-material/BrunchDining";
 
 const iconMappings = [
   null,
-  LocalConvenienceStoreIcon,
+  HotelIcon,
   SportsSoccerIcon,
   FastfoodIcon,
   ContentCutIcon,
@@ -44,8 +44,7 @@ function ChatCategory({ iconId, title, Category }: Props) {
     createChatRoom(category, {
       onSuccess: (data) => {
         const roomId = data.data.dataBody.id; // API 응답 구조에 따라 조정 필요
-        console.log("roomId", roomId);
-        navigate(`/aichatlist/${category}/${roomId}`);
+        navigate(`/aichatlist/${category}`, { state: { roomId: roomId } });
       },
       onError: (error) => {
         console.error("Error creating chat room:", error);

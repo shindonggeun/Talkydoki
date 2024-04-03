@@ -31,7 +31,6 @@ function Login({}: Props) {
   };
 
   const socialLogin = (platform: string) => {
-    console.log(platform);
     startSocial(platform);
   };
 

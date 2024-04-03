@@ -20,6 +20,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import DefaultImg from "@/assets/images/default_news_image.jpeg";
+import { WordSearchInterface } from "@/interface/VocaInterface";
 
 // 뉴스 리스트 get 하는 함수
 export const useGetNewsList = (category: categoryInterface[]) => {
@@ -34,7 +35,6 @@ export const useGetNewsList = (category: categoryInterface[]) => {
   return useInfiniteQuery({
     queryKey: ["getNewsList", catKeys],
     queryFn: ({ pageParam }) => {
-      console.log("getNewsList 실행");
       if (pageParam != 0) params.append("lastNewsId", pageParam.toString());
 
       return customAxios
@@ -82,32 +82,51 @@ export const useGetArticle = (newsId: number) => {
       if (data.dataHeader.successCode == 0) {
         const news = data.dataBody as newsInterface;
         const newsContent = newsSplitter(news.content);
+        const newsTitle = newsSplitter(news.title);
+        const newsSummary = newsSplitter(news.summary);
+
         const keywords: { [keyword: string]: { count: number; read: string } } =
           {};
+
+        let allNews: string[][][] = [];
+        allNews = allNews.concat(newsContent);
+        allNews = allNews.concat(newsTitle);
+        allNews = allNews.concat(newsSummary);
 
         // 키워드 발음 추출
         news.newsKeywords.forEach((each, idx) => {
           if (idx > 4) return;
-          const read = newsContent
-            .map((e) => e.filter((word) => word[0] == each))
-            .filter((e) => e.length > 0)[0][0][1];
+          let read: string;
 
-          const regex = new RegExp(`${each}`, "g");
+          const filteredNews = allNews.map((e) =>
+            e.filter((word) => word[0] == each)
+          );
+
+          const count = filteredNews.reduce((total, cur) => {
+            return total + cur.length;
+          }, 0);
+
+          if (filteredNews.length > 0 && count > 0) {
+            read = filteredNews.filter((e) => e.length > 0)[0][0][1];
+          } else {
+            read = each;
+          }
+
           keywords[each] = {
-            count: news.content.match(regex)?.length || 0,
-            read: KanaToHira(read),
+            count: count,
+            read: /[一-龠]/.test(read) ? read : KanaToHira(read),
           };
         });
 
         // 뉴스 변환
         const newNews = {
           newsId: news.newsId,
-          title: newsSplitter(news.title)[0],
+          title: newsTitle[0],
           titleTranslated: transSplitter(news.titleTranslated)[0],
           category: news.category,
           content: newsContent,
           contentTranslated: transSplitter(news.contentTranslated),
-          summary: newsSplitter(news.summary),
+          summary: newsSummary,
           summaryTranslated: transSplitter(news.summaryTranslated),
           writeDate: news.writeDate,
           srcOrigin: news.srcOrigin,
@@ -132,11 +151,11 @@ export const useSearchWordApi = (word: string) => {
   const isSearchOn = useIsSearchOn();
 
   return useQuery({
-    queryKey: ["serchWord", word],
+    queryKey: ["searchWord", word],
     queryFn: () => customAxios.get(`/vocabulary/search/${word}`),
     select: ({ data }) => {
       if (data.dataHeader.successCode == 0) {
-        return data.dataBody;
+        return data.dataBody as WordSearchInterface;
       } else {
         return "nodata";
       }

@@ -5,6 +5,14 @@ import styled from "styled-components";
 export const NewsWrapper = styled(Wrapper)`
   display: flex;
 
+  .loading {
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   @media screen and (max-width: 992px) {
     flex-direction: column-reverse;
     justify-content: start;
@@ -183,7 +191,7 @@ export const WordSearchWrapper = styled.div`
       }
 
       &:active {
-        transform: scale(0.7);
+        transform: scale(0.9);
       }
 
       &.added {
@@ -200,7 +208,7 @@ export const WordSearchWrapper = styled.div`
 
   @-webkit-keyframes clickAnimation {
     0% {
-      transform: scale(0.7);
+      transform: scale(0.9);
     }
     50% {
       transform: scale(1.2);

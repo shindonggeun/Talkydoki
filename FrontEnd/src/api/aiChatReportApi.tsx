@@ -3,14 +3,26 @@ import {
   Report,
 } from "@/interface/AiChatReportInterface";
 import { customAxios } from "@/util/auth/customAxios";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+
 // 레포트 디테일 조회 하는 함수
 export const useGetReport = (reportId?: number) => {
+  const queryClient = useQueryClient();
+
   return useQuery({
     queryKey: ["getArticle", reportId],
     queryFn: () => customAxios.get(`/report/detail/get/${reportId}`),
     select: ({ data }) => {
       if (data.dataHeader.successCode == 0) {
+        queryClient.invalidateQueries({
+          queryKey: ["getAllReport"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["userAchievement"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["userAttendance"],
+        });
         return data.dataBody as chatReportResponseInterface;
       }
     },
@@ -30,6 +42,7 @@ export const useGetAllReport = () => {
       }
       return [];
     },
+    staleTime: Infinity,
     gcTime: Infinity,
   });
 };

@@ -32,9 +32,19 @@ public class VocabularyServiceImpl implements VocabularyService {
 
     @Override
     @Transactional(readOnly = true)
-    public VocabularyInfo getDailyVocabulary() {
-        Vocabulary vocabulary = vocabularyRepository.findRandom().orElseThrow(()
-        -> new VocabularyException(VocabularyErrorCode.NOT_EXIST_VOCABULARY));
+    public VocabularyInfo getDailyVocabulary(Long memberId) {
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
+
+        Vocabulary vocabulary = vocabularyRepository.findRandom()
+                .orElseThrow(() -> new VocabularyException(VocabularyErrorCode.NOT_EXIST_VOCABULARY));
+
+        boolean exists = personalVocabularyRepository.existsByMemberAndVocabulary(member, vocabulary);
+        Long personalVocabularyId = null;
+        if (exists) {
+            PersonalVocabulary personalVocabulary = personalVocabularyRepository.findByMemberAndVocabulary(member, vocabulary);
+            personalVocabularyId = personalVocabulary.getId();
+        }
 
         return VocabularyInfo.builder()
                 .id(vocabulary.getId())
@@ -42,11 +52,12 @@ public class VocabularyServiceImpl implements VocabularyService {
                 .japaneseRead(vocabulary.getJapaneseRead())
                 .korean(vocabulary.getKorean())
                 .type(vocabulary.getType())
+                .personalVocabularyId(personalVocabularyId)
                 .build();
     }
 
     @Override
-    public void createPersonalVocabulary(Long memberId, Long vocabularyId) {
+    public PersonalVocabularyInfo createPersonalVocabulary(Long memberId, Long vocabularyId) {
         Member member = memberRepository.findById(memberId).orElseThrow(()
         -> new MemberException(MemberErrorCode.NOT_FOUND_MEMBER));
 
@@ -59,12 +70,18 @@ public class VocabularyServiceImpl implements VocabularyService {
             throw new VocabularyException(VocabularyErrorCode.DUPLICATE_PERSONAL_VOCABULARY);
         }
 
-        PersonalVocabulary personalVocabulary = PersonalVocabulary.builder()
+        PersonalVocabulary tempPersonalVocabulary = PersonalVocabulary.builder()
                 .member(member)
                 .vocabulary(vocabulary)
                 .build();
 
-        personalVocabularyRepository.save(personalVocabulary);
+        PersonalVocabulary personalVocabulary = personalVocabularyRepository.save(tempPersonalVocabulary);
+
+        return new PersonalVocabularyInfo(personalVocabulary.getId(),
+                personalVocabulary.getVocabulary().getJapanese(),
+                personalVocabulary.getVocabulary().getJapaneseRead(),
+                personalVocabulary.getVocabulary().getKorean(),
+                personalVocabulary.getVocabulary().getType());
     }
 
     @Override
@@ -92,12 +109,20 @@ public class VocabularyServiceImpl implements VocabularyService {
         Vocabulary vocabulary = vocabularyRepository.findByJapanese(japanese).orElseThrow(()
         -> new VocabularyException(VocabularyErrorCode.NOT_EXIST_VOCABULARY));
 
+        boolean exists = personalVocabularyRepository.existsByMemberAndVocabulary(member, vocabulary);
+        Long personalVocabularyId = null;
+        if (exists) {
+            PersonalVocabulary personalVocabulary = personalVocabularyRepository.findByMemberAndVocabulary(member, vocabulary);
+            personalVocabularyId = personalVocabulary.getId();
+        }
+
         return VocabularyInfo.builder()
                 .id(vocabulary.getId())
                 .japanese(vocabulary.getJapanese())
                 .japaneseRead(vocabulary.getJapaneseRead())
                 .korean(vocabulary.getKorean())
                 .type(vocabulary.getType())
+                .personalVocabularyId(personalVocabularyId)
                 .build();
     }
 

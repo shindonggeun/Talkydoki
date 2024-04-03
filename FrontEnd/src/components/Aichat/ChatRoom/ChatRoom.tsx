@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import ChatHeader from "./ChatHeader";
 import ChatMain from "./ChatMain";
 import ChatFooter from "./ChatFooter";
@@ -24,29 +24,27 @@ export type ChatMessage = {
   korean?: string | null;
 };
 function ChatRoom() {
-  const { roomId } = useParams<{ roomId: string | undefined }>();
+  const { state } = useLocation();
+  const { roomId } = state;
   const { catagory } = useParams<{ catagory: string | undefined }>();
 
   const [chats, setChats] = useState<ChatMessage[]>([]);
   const [lastUserTip, setLastUserTip] = useState<ChatMessage | null>(null);
-
   // 추가
   const { transcript, resetTranscript } = useSpeechRecognition();
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [isWaiting, setIsWaiting] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
+  const [isReady, setIsReady] = useState(false);
+  const [flag, setFlag] = useState(0);
 
   useEffect(() => {
     const serverURL = VITE_REACT_WS_URL as string;
     const token = getCookie();
-
     const onConnected = (client: Client) => {
-      console.log("연결성공");
-
       const subscription = client.subscribe(
         `/topic/room.${roomId}`,
         (message) => {
-          console.log("오고가는 메세지", message);
           const chat = JSON.parse(message.body) as ChatMessage;
           if (chat.sender === "USER_TIP") {
             setLastUserTip(chat); // 마지막 USER_TIP 메시지를 저장
@@ -56,11 +54,12 @@ function ChatRoom() {
             }
             setIsWaiting(false);
           } else if (chat.sender === "USER") {
+            setFlag((prevFlag) => prevFlag + 1);
+
             setLastUserTip(null);
           }
 
           setChats((prev) => [...prev, chat]);
-          console.log("갱신된 채팅 리스트", chats);
         }
       );
 
@@ -90,6 +89,12 @@ function ChatRoom() {
     };
   }, [roomId]);
 
+  useEffect(() => {
+    if (flag === 2) {
+      setIsReady(true);
+    }
+  }, [flag]);
+
   return (
     <>
       <ChatRoomContainer>
@@ -110,6 +115,7 @@ function ChatRoom() {
             isWaiting={isWaiting}
             setIsWaiting={setIsWaiting}
             isEnd={isEnd}
+            isReady={isReady}
           />
           {!isWaiting && lastUserTip && <ChatTip lastUserTip={lastUserTip} />}
         </FooterContainer>

@@ -11,13 +11,13 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { AxiosResponse } from "axios";
 
 // 랜덤단어
 export const useGetVoca = () => {
   return useQuery({
     queryKey: ["getVoca"],
     queryFn: () => {
-      console.log("getVoca 실행");
       return customAxios.get("/vocabulary/daily/get");
     },
     staleTime: Infinity,
@@ -35,7 +35,7 @@ export const useGetVoca = () => {
 };
 
 // 단어장에 추가
-export const useAddVoca = () => {
+export const useAddVoca = (querykey: string, word: string) => {
   const setIsModalOn = useSetISModalOn();
   const setModalContent = useSetModalContent();
   const queryClient = useQueryClient();
@@ -48,6 +48,22 @@ export const useAddVoca = () => {
       const { dataHeader } = data;
       if (dataHeader.successCode == 0) {
         queryClient.invalidateQueries({ queryKey: ["getVocaList"] });
+        if (querykey == "getVoca") {
+          queryClient.setQueryData(["getVoca"], (prev: AxiosResponse) => {
+            prev.data.dataBody.personalVocabularyId =
+              data.dataBody.personalVocabularyId;
+            return prev;
+          });
+        } else if (querykey == "searchWord") {
+          queryClient.setQueryData(
+            ["searchWord", word],
+            (prev: AxiosResponse) => {
+              prev.data.dataBody.personalVocabularyId =
+                data.dataBody.personalVocabularyId;
+              return prev;
+            }
+          );
+        }
       } else {
         setModalContent({
           message: dataHeader.resultMessage,
@@ -64,7 +80,6 @@ export const useMyVoca = () => {
   return useInfiniteQuery({
     queryKey: ["getVocaList"],
     queryFn: ({ pageParam }) => {
-      console.log("getVocaList 실행");
       return customAxios
         .get("/vocabulary/personal/list/get", {
           params: {
@@ -96,7 +111,7 @@ export const useMyVoca = () => {
 };
 
 // 단어 삭제
-export const useDeleteMyVoca = () => {
+export const useDeleteMyVoca = (word: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -108,7 +123,7 @@ export const useDeleteMyVoca = () => {
 
       // 이전 데이터 백업
       const previousWords = queryClient.getQueryData(["getVocaList"]);
-
+      if (previousWords === undefined) return;
       // 낙관적 업데이트
       queryClient.setQueryData(
         ["getVocaList"],
@@ -135,10 +150,30 @@ export const useDeleteMyVoca = () => {
     onSuccess: ({ data }) => {
       if (data.dataHeader.successCode == 0) {
         queryClient.invalidateQueries({ queryKey: ["getVocaList"] });
+
+        const todayVoca = queryClient.getQueryData([
+          "getVoca",
+        ]) as AxiosResponse;
+        if (todayVoca && todayVoca.data.dataBody.japanese == word) {
+          queryClient.setQueryData(["getVoca"], (prev: AxiosResponse) => {
+            prev.data.dataBody.personalVocabularyId = null;
+            return prev;
+          });
+        }
+        queryClient.setQueryData(
+          ["searchWord", word],
+          (prev: AxiosResponse) => {
+            if (!prev) return;
+            prev.data.dataBody.personalVocabularyId = null;
+            return prev;
+          }
+        );
       }
     },
     onError: (_err, _id, context) => {
-      queryClient.setQueryData(["getVocaList"], context?.previousWords);
+      if (context?.previousWords) {
+        queryClient.setQueryData(["getVocaList"], context.previousWords);
+      }
     },
   });
 };

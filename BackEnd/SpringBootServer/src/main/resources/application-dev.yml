@@ -45,12 +45,12 @@ spring:
   data:
     # Redis setting
     redis:
-      host: talkydoki_redis
+      host: ${server.base-url}
       port: 6379
 
   # rabbitMQ setting
   rabbitmq:
-    host: talkydoki_rabbitmq
+    host: ${server.base-url}
     port: 15672
     username: guest
     password: guest
@@ -69,11 +69,10 @@ spring:
             enable: true
 
   flyway:
-    enabled: true  # Flyway 활성화
-    locations: classpath:db/migration  # 마이그레이션 파일 위치
-    baseline-on-migrate: true  # 이미 버전 관리가 되지 않는 DB에 Flyway가 첫 마이그레이션을 실행할 때 초기 버전으로 설정
-    # out-of-order: true  # 순서에 맞지 않는 마이그레이션을 허용 (기본값은 false)
-    # validate-on-migrate: true  # 마이그레이션 실행 전 검증 (기본값은 true)
+      enabled: true
+      locations: classpath:db/migration
+      baseline-on-migrate: true
+      out-of-order: false
 
 # jwt setting
 jwt:
@@ -92,14 +91,14 @@ logging:
 # OAUTH2.0 Setting
 oauth:
   kakao:
-    client-id: ENC(BWjHj+A/SJQBzhtK+vutMYiLyOsKAo2lQwFqW2PqRPDxuWfF6Ncx+Qq5piFGk1SY)   # REST API 키
-    client-secret: ENC(U2L8zI42xYdW0BrMSGzgJYk5Q+lkgUx2ZowRtdJ1yPTjq+l0VevuR0r9ucPc6ZrL)  # 보안 -> Client Secret 키
+    client-id: ENC(E3lOnslHCdphnWGsPFa1Hm5QFIrmkY1zPXzHgHUA3YsAzvFGrBttgVsB9JXzynNY)   # REST API 키
+    client-secret: ENC(TYqE7s5TCJUb8/g+bxw/RWGWNJCGdmkVZbkQ969vCyq/l3B2rDRK3OsKf1dyuqUM)  # 보안 -> Client Secret 키
     redirect-uri: ${server.https-url}/member/loading/kakao
     scope:
       - profile_nickname
       - profile_image
       - account_email
-      - name
+#      - name
 
   naver:
     client-id: ENC(fgllU6jmkfqSW5Lbet7BdnTta/ycQfTAwj3mVFHrkko=)

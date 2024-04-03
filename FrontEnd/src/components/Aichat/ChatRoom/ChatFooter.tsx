@@ -18,6 +18,7 @@ interface ChatFooterProps {
   isWaiting: boolean;
   setIsWaiting: React.Dispatch<React.SetStateAction<boolean>>;
   isEnd: boolean;
+  isReady: boolean;
 }
 
 const ChatFooter: React.FC<ChatFooterProps> = ({
@@ -29,15 +30,13 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
   isWaiting,
   setIsWaiting,
   isEnd,
+  isReady,
 }) => {
   const navigate = useNavigate();
-  console.log("transcript", transcript);
   //로딩 추가
 
   // 타이머
   const [timer, setTimer] = useState<number | undefined>(undefined);
-  console.log("시각화 확인 콘솔:isRecording", isRecording);
-
   const [chatText, setChatText] = useState<string>("");
   const { mutate: sendChatMessage } = useSendMessage();
 
@@ -67,10 +66,9 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
               };
             };
           }) => {
-            console.log("리포트 아이디", reportId);
             setIsModalOn(false);
-            navigate(`/aichatreport/${reportId}`, {
-              state: { redirect: "/aichatlist" },
+            navigate(`/aichatreport`, {
+              state: { redirect: "/aichatlist", reportId: reportId },
             });
           },
           onError: () => {
@@ -87,7 +85,6 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
   };
 
   const sendMessage = (text = chatText) => {
-    console.log("메세지 전송");
     const token = getCookie();
     if (text.trim() !== "") {
       const message = {
@@ -110,9 +107,6 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
       );
       setIsWaiting(true);
       sendChatMessage(sendpayload);
-
-      console.log("보낸메세지~~~", message);
-
       setChatText("");
     }
   };
@@ -181,7 +175,7 @@ const ChatFooter: React.FC<ChatFooterProps> = ({
           <MicIcon className="icon" />
         </div>
       </div>
-      <div className="reportdiv">
+      <div className={`reportdiv ${!isReady && "disabled"}`}>
         <Button
           variant="text"
           color="purple"

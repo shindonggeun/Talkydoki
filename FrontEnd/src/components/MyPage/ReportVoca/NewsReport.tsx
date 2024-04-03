@@ -66,12 +66,19 @@ function NewsReport({ user, average }: Props) {
         },
       ],
       options: {
+        theme: {
+          mode: theme.mode,
+        },
         chart: {
           height: 350,
           type: "area",
+          zoom: {
+            enabled: false,
+          },
           toolbar: {
             show: false,
           },
+          background: "transparent",
         },
         colors: [theme.main.color, theme.green.color],
         dataLabels: {

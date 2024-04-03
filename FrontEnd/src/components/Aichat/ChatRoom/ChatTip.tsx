@@ -1,6 +1,6 @@
 import { useAiChatStore } from "@/stores/aichatStore";
 import { ChatTipContainer } from "@/styles/Aichat/AiChatRoom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChatMessage } from "./ChatRoom";
 import VolumeUpIcon from "@mui/icons-material/VolumeUp";
 import {
@@ -9,6 +9,7 @@ import {
   SynthesizeSpeechCommandInput,
 } from "@aws-sdk/client-polly";
 import env from "@/interface/SttInterface";
+import StopCircleOutlinedIcon from "@mui/icons-material/StopCircleOutlined";
 
 type ChatTipProps = {
   lastUserTip: ChatMessage | null; // lastUserTip props로 받음
@@ -19,7 +20,8 @@ function ChatTip({ lastUserTip }: ChatTipProps) {
   const [isTip, setIstip] = useState(globalIsTip);
   //등장애니메이션 상태
   const [isVisible, setIsVisible] = useState(false);
-
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   // 투명도 조절
   const [isBehind, setIsBehind] = useState(false);
 
@@ -31,14 +33,40 @@ function ChatTip({ lastUserTip }: ChatTipProps) {
   const handleTipClick = () => {
     setIsBehind((prev) => !prev); // 클릭 시 상태 토글 투명해지고 뒤로 보내기
   };
-  console.log("isTip:", isTip);
-  console.log("lastUserTip", lastUserTip);
   useEffect(() => {
     setIstip(globalIsTip);
   }, [globalIsTip]);
 
   // 추가
+  const toggleAudioPlay = () => {
+    // 오디오가 아직 로드되지 않았다면, 오디오 로드
+    if (!audioRef.current?.src) {
+      // text가 undefined 또는 빈 문자열인 경우 함수 종료
+      if (!lastUserTip?.japanese) return;
+
+      // 오디오 로드 및 재생
+      synthesizeSpeech(lastUserTip.japanese).then(() => {
+        setIsPlaying(true);
+      });
+    } else {
+      // 오디오가 이미 로드되어 있다면, 재생 또는 일시 정지
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play();
+      }
+      setIsPlaying(!isPlaying); // 재생 상태 토글
+    }
+  };
   const synthesizeSpeech = async (text: string | undefined) => {
+    if (isPlaying) {
+      audioRef.current?.pause();
+      setIsPlaying(false);
+      return;
+    }
+
+    if (!text) return; // text가 undefined 또는 빈 문자열인 경우 함수 종료
+
     const client = new PollyClient({
       region: env.awsRegion,
       credentials: {
@@ -46,6 +74,7 @@ function ChatTip({ lastUserTip }: ChatTipProps) {
         secretAccessKey: env.awsSecretAccessKey,
       },
     });
+
     const params: SynthesizeSpeechCommandInput = {
       Text: text,
       OutputFormat: "mp3",
@@ -57,24 +86,27 @@ function ChatTip({ lastUserTip }: ChatTipProps) {
         new SynthesizeSpeechCommand(params)
       );
       if (AudioStream) {
-        console.log("AudioStream", AudioStream);
         const webStream = AudioStream.transformToWebStream();
-
         const response = new Response(webStream);
         const audioBlob = await response.blob();
-
         const audioUrl = URL.createObjectURL(audioBlob);
 
-        const audio = new Audio(audioUrl);
-        console.log(audio);
-        audio.play();
+        if (!audioRef.current) {
+          audioRef.current = new Audio(audioUrl);
+        } else {
+          audioRef.current.src = audioUrl;
+        }
 
-        audio.onended = () => {
+        audioRef.current.onended = () => {
+          setIsPlaying(false);
           URL.revokeObjectURL(audioUrl);
         };
+
+        audioRef.current.play();
+        setIsPlaying(true);
       }
     } catch (err) {
-      console.error(err);
+      console.error("Error synthesizing speech:", err);
     }
   };
 
@@ -91,13 +123,23 @@ function ChatTip({ lastUserTip }: ChatTipProps) {
           <div className="message-suggest">TIP: 다음과 같이 말해보세요</div>
           <div className="flex">
             <div className="volume-box">
-              <VolumeUpIcon
-                style={{ fontSize: "17px", cursor: "pointer" }}
-                onClick={(event) => {
-                  event.stopPropagation();
-                  synthesizeSpeech(lastUserTip?.japanese);
-                }}
-              />
+              {isPlaying ? (
+                <StopCircleOutlinedIcon
+                  style={{ fontSize: "17px", cursor: "pointer" }}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    toggleAudioPlay();
+                  }}
+                />
+              ) : (
+                <VolumeUpIcon
+                  style={{ fontSize: "17px", cursor: "pointer" }}
+                  onClick={(event) => {
+                    event.stopPropagation(); // 이벤트 버블링 방지
+                    synthesizeSpeech(lastUserTip?.japanese ?? ""); // 오디오 재생
+                  }}
+                />
+              )}
             </div>
             <div>
               <div className="message-text">{lastUserTip?.japanese}</div>

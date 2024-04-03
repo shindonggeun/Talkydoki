@@ -13,6 +13,7 @@ function UserKeywordChart() {
 
   useEffect(() => {
     if (data) {
+      setKeywords([]);
       data.forEach((each, idx) => {
         if (idx < 10) {
           const newValue: { x: string; y: number } = { x: "", y: 0 };

@@ -64,9 +64,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
         });
         setPermission(true);
         setStream(streamData);
-      } catch (e) {
-        console.log("권한이 없습니다");
-      }
+      } catch (e) {}
     }
   };
 
@@ -77,6 +75,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
       stopRecord();
       queryClient.invalidateQueries({ queryKey: ["userAchievement"] });
       queryClient.invalidateQueries({ queryKey: ["userAttendance"] });
+      queryClient.invalidateQueries({ queryKey: ["userKeywords"] });
     };
   }, []);
 
@@ -119,9 +118,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
       /[^ぁ-んァ-ヶｱ-ﾝﾞﾟ一-龠0-9a-zA-Zー]/g,
       ""
     );
-    console.log("평가시도");
     if (userText.length > 0) {
-      console.log("평가진행");
       sendSpeech({ newsId, original, userText });
     }
     stopRecordVoice();
@@ -139,7 +136,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
         newsId,
         idx,
       ]) as number;
-      if (data) {
+      if (data !== null && data !== undefined) {
         setSimilarity(data);
       }
     }
@@ -171,8 +168,8 @@ function SpeechBox({ newsId, news, idx }: Props) {
 
   useEffect(() => {
     if (!listening) return;
-    // 3초 이상 말 안하면 자동 종료
-    const autoStop5 = setTimeout(() => stopRecord(), 1000 * 3);
+    // 5초 이상 말 안하면 자동 종료
+    const autoStop5 = setTimeout(() => stopRecord(), 1000 * 5);
     return () => clearTimeout(autoStop5);
   }, [transcript, listening]);
 
@@ -245,7 +242,7 @@ function SpeechBox({ newsId, news, idx }: Props) {
         )}
         {/* 읽은 내용 + 점수 표시 */}
         <div className="similarity">
-          {similarity ? (
+          {similarity !== null ? (
             <>
               {[...new Array(Math.floor(similarity))].map((_each, idx) => (
                 <StarIcon key={idx} />

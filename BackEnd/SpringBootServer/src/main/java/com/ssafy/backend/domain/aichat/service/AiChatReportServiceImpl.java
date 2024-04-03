@@ -62,7 +62,6 @@ public class AiChatReportServiceImpl implements AiChatReportService {
                 });
     }
 
-
     @Override
     public FullReportInfo getReportDetail(Long reportId) {
         AiChatReport aiChatReport = aiChatReportRepository.findById(reportId).orElseThrow(() -> new IllegalArgumentException("Can't find the report with Id: " + reportId));

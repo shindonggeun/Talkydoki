@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -48,22 +49,29 @@ public class KeywordServiceImpl implements KeywordService {
     public void insertWeight(KeywordMappingRequest keywordMappingRequest) {
         News news = newsRepository.findById(keywordMappingRequest.getNewsId())
                 .orElseThrow(() -> new NewsException(NewsErrorCode.NOT_FOUND_NEWS));
-        Keyword keyword = keywordRepository.findByJapanese(keywordMappingRequest.getJapanese())
-                .orElseThrow(() -> new KeywordException(KeywordErrorCode.NOT_FOUND_KEYWORD));
-        Optional<NewsKeywordMapping> existingMapping = newsKeywordMappingRepository.findByNewsAndKeyword(news, keyword);
 
-        if (existingMapping.isPresent()) {
-            NewsKeywordMapping mapping = existingMapping.get();
-            mapping.setWeight(keywordMappingRequest.getWeight());
-            newsKeywordMappingRepository.save(mapping);
-        } else {
-            NewsKeywordMapping mapping = NewsKeywordMapping.builder()
+        List<NewsKeywordMapping> existingMappings = newsKeywordMappingRepository.findByNews(news);
+        if (!existingMappings.isEmpty()) {
+            newsKeywordMappingRepository.deleteAll(existingMappings);
+        }
+
+        List<NewsKeywordMapping> newMappings = keywordMappingRequest.getKeywords().stream().map(kw -> {
+            Keyword keyword = keywordRepository.findByJapanese(kw.getJapanese())
+                    .orElseGet(() -> {
+                        Keyword newKeyword = Keyword.builder()
+                                .japanese(kw.getJapanese())
+                                .build();
+                        return keywordRepository.save(newKeyword);
+                    });
+
+            return NewsKeywordMapping.builder()
                     .news(news)
                     .keyword(keyword)
-                    .weight(keywordMappingRequest.getWeight())
+                    .weight(kw.getWeight())
                     .build();
-            newsKeywordMappingRepository.save(mapping);
-        }
+        }).collect(Collectors.toList());
+
+        newsKeywordMappingRepository.saveAll(newMappings);
     }
 
     @Override

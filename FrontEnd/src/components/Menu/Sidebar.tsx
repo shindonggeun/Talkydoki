@@ -6,7 +6,6 @@ import { SidebarBackground } from "@/styles/Menu/sidebar";
 import {
   useIsMobile,
   useIsSidebarOpen,
-  useSetIsMobile,
   useSetIsSidebarOpen,
 } from "@/stores/displayStore";
 import Menus from "./SidebarItems/Menus";
@@ -16,17 +15,6 @@ function Sidebar() {
   const isSidebarOpen = useIsSidebarOpen();
   const setIsSidebarOpen = useSetIsSidebarOpen();
   const isMobile = useIsMobile();
-  const setIsMobile = useSetIsMobile();
-
-  // 화면 폭 줄어들면 접히는 함수
-  const resizeHandler = () => {
-    setIsMobile(window.innerWidth < 992 ? true : false);
-  };
-
-  useEffect(() => {
-    window.addEventListener("resize", resizeHandler);
-    return () => window.removeEventListener("resize", resizeHandler);
-  }, []);
 
   useEffect(() => {
     if (!isMobile) {

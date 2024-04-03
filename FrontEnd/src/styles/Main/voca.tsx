@@ -77,18 +77,18 @@ export const AddVocaBtn = styled.div`
   }
 
   &:active {
-    transform: scale(0.7);
-  }
-
-  &.added {
-    color: var(--main);
+    transform: scale(0.9);
     animation: clickAnimation 0.3s ease;
     -webkit-animation: clickAnimation 0.3s ease;
   }
 
+  &.added {
+    color: var(--main);
+  }
+
   @-webkit-keyframes clickAnimation {
     0% {
-      transform: scale(0.7);
+      transform: scale(0.9);
     }
     50% {
       transform: scale(1.2);

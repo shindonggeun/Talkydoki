@@ -23,6 +23,7 @@ public class OpenAiRepository {
     private final RedisTemplate<String, Object> redisTemplate;
     private static final String OPEN_AI_SETUP_KEY_PREFIX = "openAiSetup::";
     private static final String AI_CHAT_HISTORY_KEY_PREFIX = "aiChatHistory::";
+
     private static final int EXPIRES_MIN = 30;	// 해당 채팅 제한시간 30분
 
     /**

@@ -1,3 +1,4 @@
+import { categoryInterface } from "@/interface/NewsInterface";
 import { create } from "zustand";
 
 interface NewsButtonProps {
@@ -91,3 +92,30 @@ export const useSetSearchWord = () => useSearchStore((state) => state.setWord);
 export const useIsSearchOn = () => useSearchStore((state) => state.isSearchOn);
 export const useSetIsSearchOn = () =>
   useSearchStore((state) => state.setIsSearchOn);
+
+// 뉴스 카테고리 store
+
+interface SelectedCategoryInterface {
+  selected: categoryInterface[];
+  action: {
+    addSelected: (by: categoryInterface) => void;
+    removeSelected: (by: categoryInterface) => void;
+  };
+}
+
+const useSelectedCategoryStore = create<SelectedCategoryInterface>((set) => ({
+  selected: [],
+  action: {
+    addSelected: (by) =>
+      set((state) => ({ selected: [...state.selected, by] })),
+    removeSelected: (by) =>
+      set((state) => ({
+        selected: state.selected.filter((each) => each.id != by.id),
+      })),
+  },
+}));
+
+export const useSelectedCateogires = () =>
+  useSelectedCategoryStore((state) => state.selected);
+export const useSelectedAction = () =>
+  useSelectedCategoryStore((state) => state.action);

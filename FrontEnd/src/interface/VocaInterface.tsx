@@ -6,6 +6,7 @@ export interface VocaInterface {
   japaneseRead: string;
   korean: string;
   type: string;
+  personalVocabularyId: number;
 }
 
 export interface PersonalVocaInterface {
@@ -22,4 +23,5 @@ export interface WordSearchInterface {
   japaneseRead: string;
   korean?: string;
   type?: string;
+  personalVocabularyId?: null | number;
 }

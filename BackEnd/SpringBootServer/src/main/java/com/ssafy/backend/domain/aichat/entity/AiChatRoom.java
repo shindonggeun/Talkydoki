@@ -5,6 +5,9 @@ import com.ssafy.backend.domain.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -27,6 +30,9 @@ public class AiChatRoom {
     @Column(nullable = false)
     private AiChatCategory category;
 
-//    @Column(nullable = false)
-//    private String threadId;
+    @OneToMany(mappedBy = "aiChatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AiChatHistory> aiChatHistories = new ArrayList<>();
+
+    @OneToOne(mappedBy = "aiChatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    private AiChatReport aiChatReport;
 }

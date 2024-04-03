@@ -6,7 +6,6 @@ import { useGetAllReport } from "@/api/aiChatReportApi";
 
 function MyChatReport() {
   const { data } = useGetAllReport();
-  console.log("data", data);
 
   return (
     <Wrapper>

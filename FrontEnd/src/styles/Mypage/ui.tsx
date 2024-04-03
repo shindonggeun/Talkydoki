@@ -122,6 +122,10 @@ export const SimpleVocaContainer = styled(Card)`
     .jp {
       font-weight: 600;
     }
+
+    .kr {
+      max-width: 60%;
+    }
   }
 
   @media screen and (max-width: 992px) {
