@@ -2,9 +2,7 @@ package com.ssafy.backend.global.component.openai.dto;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
-import com.ssafy.backend.domain.aichat.entity.AiChatHistory;
 
-import java.util.ArrayList;
 import java.util.List;
 /**
  * GPT와의 대화 요청을 나타내는 레코드입니다.

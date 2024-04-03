@@ -3,7 +3,6 @@ package com.ssafy.backend.domain.aichat.repository;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.backend.domain.aichat.dto.AiChatAndFeedbackInfo;
 import com.ssafy.backend.domain.aichat.entity.QAiChatFeedback;

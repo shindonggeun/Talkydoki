@@ -1,13 +1,8 @@
 package com.ssafy.backend.domain.aichat.service;
 
-import com.ssafy.backend.domain.aichat.dto.AiChatAndFeedbackInfo;
 import com.ssafy.backend.domain.aichat.dto.AiChatReportCreateRequest;
 import com.ssafy.backend.domain.aichat.dto.AiChatReportInfo;
 import com.ssafy.backend.domain.aichat.dto.FullReportInfo;
-import com.ssafy.backend.domain.aichat.repository.AiChatFeedbackRepository;
-import com.ssafy.backend.domain.aichat.repository.AiChatHistoryRepository;
-import com.ssafy.backend.domain.aichat.repository.AiChatReportRepository;
-import com.ssafy.backend.domain.aichat.repository.AiChatRoomRepository;
 import jakarta.transaction.Transactional;
 import reactor.core.publisher.Mono;
 

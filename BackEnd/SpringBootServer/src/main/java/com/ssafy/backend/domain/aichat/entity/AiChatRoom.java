@@ -21,7 +21,6 @@ public class AiChatRoom {
     @Column(columnDefinition = "INT UNSIGNED")
     private Long id;
 
-//    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @ManyToOne
     @JoinColumn
     private Member member;

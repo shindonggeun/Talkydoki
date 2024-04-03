@@ -12,7 +12,7 @@ public enum AiChatCategory {
     SOCCER_CONVERSATION("축구 대화하기"),
     ORDER_HAMBURGER("햄버거 주문하기 (GPT는 햄버거 가게 점원), USER는 햄버거 주문하는 고객"),
     HAIRCUT_AT_SALON("미용실에서 머리 자르기 (GPT는 미용실 점원, USER는 미용실 이용하는 고객)"),
-    DESCRIBE_HEALTH_CONDITION_AT_HOSPITAL("병원에서 몸상태 말하기"),
+    DESCRIBE_HEALTH_CONDITION_AT_HOSPITAL("병원에서 몸상태 말하기 (GPT는 의사선생님, USER는 환자)"),
     FIND_LOST_ITEM_AT_POLICE_STATION("경찰서에서 분실물 찾기 (GPT는 경찰, USER는 분실한 사람"),
     ENGAGE_IN_SOCIAL_DISCUSSION("사회적 토론하기"),
     BEFRIEND_A_COLLEAGUE("동료와 친해지기"),

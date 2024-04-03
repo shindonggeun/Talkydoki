@@ -8,8 +8,6 @@ import com.ssafy.backend.domain.member.exception.MemberException;
 import com.ssafy.backend.domain.member.repository.MemberRepository;
 import com.ssafy.backend.global.component.jwt.JwtTokenProvider;
 import com.ssafy.backend.global.component.jwt.dto.JwtToken;
-import com.ssafy.backend.global.component.jwt.exception.JwtErrorCode;
-import com.ssafy.backend.global.component.jwt.exception.JwtException;
 import com.ssafy.backend.global.component.jwt.repository.RefreshTokenRepository;
 import com.ssafy.backend.global.exception.GlobalErrorCode;
 import com.ssafy.backend.global.exception.GlobalException;

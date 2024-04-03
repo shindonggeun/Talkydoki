@@ -1,7 +1,5 @@
 package com.ssafy.backend.domain.attendance.controller;
 
-import com.ssafy.backend.domain.aichat.dto.AiChatRoomCreateResponse;
-import com.ssafy.backend.domain.aichat.entity.enums.AiChatCategory;
 import com.ssafy.backend.domain.attendance.dto.AttendanceInfo;
 import com.ssafy.backend.domain.attendance.service.AttendanceService;
 import com.ssafy.backend.global.common.dto.Message;

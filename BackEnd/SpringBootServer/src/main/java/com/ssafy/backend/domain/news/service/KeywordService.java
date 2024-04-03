@@ -3,10 +3,8 @@ package com.ssafy.backend.domain.news.service;
 import com.ssafy.backend.domain.news.dto.KeywordMappingRequest;
 import com.ssafy.backend.domain.news.dto.KeywordPostRequest;
 import com.ssafy.backend.domain.news.dto.NewsKeywordHistoryInfo;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
-import java.util.Map;
 
 public interface KeywordService {
 
