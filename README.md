@@ -190,7 +190,7 @@
   - 데이터가 없을 경우 원본 단어와 읽는 방법(일어) 제공
 
 <div width="100%">
-<img src="./exec/myWord.png" width="50%" />
+<img src="./exec/C107_myWord.png" width="50%" />
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/5794b60c-69ac-4100-94cf-08145dc79f45" width="75%">
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/857ed6db-61b9-49b1-8f67-81713ea0c2ef" width="20%">
 </div>
@@ -219,7 +219,7 @@
   - 대화 주제의 난이도에 따라 총 9개의 카테고리 (호텔 체크인, 스포츠, 햄버거 주문, 미용실, 병원, 경찰서, 사회적 토론, 동료와 잡담, 식사 예약) 제공
 
 <div width="100%">
-<img src="./exec/chatList.png" width="75%">
+<img src="./exec/C107_chatList.png" width="75%">
 </div>
 
 ### AI 채팅: 채팅
