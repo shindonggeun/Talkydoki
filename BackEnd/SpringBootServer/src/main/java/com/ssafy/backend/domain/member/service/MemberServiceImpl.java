@@ -1,7 +1,6 @@
 package com.ssafy.backend.domain.member.service;
 
 import com.ssafy.backend.domain.aichat.repository.AiChatReportRepository;
-import com.ssafy.backend.domain.aichat.repository.AiChatRoomRepository;
 import com.ssafy.backend.domain.member.dto.*;
 import com.ssafy.backend.domain.member.entity.Member;
 import com.ssafy.backend.domain.member.exception.MemberErrorCode;
@@ -100,6 +99,7 @@ public class MemberServiceImpl implements MemberService {
      * {@inheritDoc}
      */
     @Override
+    @Transactional
     public void deleteMember(Long memberId) {
         memberRepository.deleteById(memberId);
     }
