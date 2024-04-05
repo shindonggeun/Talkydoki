@@ -294,6 +294,31 @@
 <img src="https://github.com/gisun55555/reactshop2/assets/139519062/e199b36d-bf4c-438e-a75f-06b7feb139b0" width="50%">
 </div>
 
+<div width="100%">
+<img src="https://github.com/gisun55555/reactshop2/assets/139519062/38abb7fd-7799-460e-a8f1-37ee2aa34bb1" width="33%">
+<img src="https://github.com/gisun55555/reactshop2/assets/139519062/48bf35a1-2ca6-4910-aeff-ce0f8e543662" width="33%">
+<img src="https://github.com/gisun55555/reactshop2/assets/139519062/746d2c61-ab76-457a-975f-5226558d3e33" width="33%">
+</div>
+
+### 회원가입 및 로그인
+
+<div width="100%">
+<img src="https://github.com/gisun55555/reactshop2/assets/139519062/7323e8a9-0483-41ae-a3ba-19180d8b235a" width="100%">
+</div>
+
+
+### 프로필수정
+
+<div width="100%">
+<img src="https://github.com/gisun55555/reactshop2/assets/139519062/7c7e05a3-b473-4309-bc09-f123f311edf8" width="100%">
+</div>
+
+### 회원탈퇴
+
+<div width="100%">
+<img src="https://github.com/gisun55555/reactshop2/assets/139519062/17f1699f-fca2-4e83-8d6d-0c1420227987" width="100%">
+</div>
+
 ## 🚀 기술 스택
 
 ### Front-End
