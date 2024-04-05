@@ -290,14 +290,11 @@
 
 - 네이버, 카카오, 구글 아이디로 소셜 로그인 기능 제공
 
-<div width="100%">
-<img src="https://github.com/gisun55555/reactshop2/assets/139519062/e199b36d-bf4c-438e-a75f-06b7feb139b0" width="50%">
-</div>
 
-<div width="100%">
-<img src="https://github.com/gisun55555/reactshop2/assets/139519062/38abb7fd-7799-460e-a8f1-37ee2aa34bb1" width="33%">
-<img src="https://github.com/gisun55555/reactshop2/assets/139519062/48bf35a1-2ca6-4910-aeff-ce0f8e543662" width="33%">
-<img src="https://github.com/gisun55555/reactshop2/assets/139519062/746d2c61-ab76-457a-975f-5226558d3e33" width="33%">
+<div style="display: flex; justify-content: space-between;">
+    <img src="https://github.com/gisun55555/reactshop2/assets/139519062/4c640fc5-764d-4702-981c-e762c89a39f0" width="31%">
+    <img src="https://github.com/gisun55555/reactshop2/assets/139519062/f40c1372-e892-45f7-89f6-4477e49d45f0" width="31%">
+    <img src="https://github.com/gisun55555/reactshop2/assets/139519062/f46100bb-8c09-4870-9bb9-c830b8cead58" width="31%">
 </div>
 
 ### 회원가입 및 로그인
