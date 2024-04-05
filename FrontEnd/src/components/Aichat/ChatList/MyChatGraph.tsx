@@ -34,6 +34,7 @@ function MyChatGraph({}: Props) {
   useEffect(() => {
     if (!data || data == undefined) return;
     const count = data.length;
+    setNewReports([]);
 
     if (count > 0) {
       for (let i = count - 1; i >= 0; i--) {
