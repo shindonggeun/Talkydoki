@@ -16,7 +16,7 @@ type Props = {
 function MypageHeader({ totalShaded, totalTalked }: Props) {
   const navigate = useNavigate();
   const rank =
-    Math.floor((totalShaded + totalTalked) / 15) > 4
+    Math.floor((totalShaded + totalTalked) / 15) > 3
       ? 3
       : Math.floor((totalShaded + totalTalked) / 15);
 
